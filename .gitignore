@@ -1,0 +1,38 @@
+# Large Graphics Files
+*.psd
+Graphics/*.psd
+Assets/*.psd
+
+# Build files
+**/Builds/**/build/
+**/Builds/**/DerivedData/
+**/.vs/
+**/x64/
+**/Debug/
+**/Release/
+
+# IDE files
+**/.vscode/
+**/.idea/
+**/*.vcxproj.user
+**/*.vcxproj.filters.user
+
+# System files
+.DS_Store
+Thumbs.db
+**/.DS_Store
+**/Thumbs.db
+
+# JUCE
+**/JuceLibraryCode/BinaryData.cpp
+**/JuceLibraryCode/BinaryData.h
+**/JuceLibraryCode/BinaryData2.cpp
+
+# Temporary files
+**/*.tmp
+**/*.temp
+**/*.log
+
+# Audio samples (if needed to reduce size)
+# **/Samples/**/*.wav
+# **/Samples/**/*.aiff

@@ -1,0 +1,351 @@
+/*
+  ==============================================================================
+
+    CustomChordComponent.cpp
+    Created: 16 Mar 2019 7:53:22pm
+    Author:  Gary Jones
+
+  ==============================================================================
+*/
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "CustomChordComponent.h"
+
+//==============================================================================
+
+
+CustomChordNoteComponent::CustomChordNoteComponent(int ref, ProjectManager * pm)
+{
+    projectManager  = pm;
+    shortcutRef     = 0;
+    noteRef         = ref; // 1 of max 12..
+    
+    // Font
+    Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
+    Typeface::Ptr AssistantSemiBold     = Typeface::createSystemTypefaceFor(BinaryData::AssistantSemiBold_ttf, BinaryData::AssistantSemiBold_ttfSize);
+    Font fontSemiBold(AssistantSemiBold);
+    Font fontLight(AssistantLight);
+    
+    fontSemiBold.setHeight(33);
+    fontLight.setHeight(33);
+    
+    // Images
+    imageSettingsIcon       = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
+    imageBackgroundActive   = ImageCache::getFromMemory(BinaryData::ChordNoteBackgroundActive_png, BinaryData::ChordNoteBackgroundActive_pngSize);
+    imageBackgroundInactive   = ImageCache::getFromMemory(BinaryData::ChordNoteBackgroundInactive_png, BinaryData::ChordNoteBackgroundInactive_pngSize);
+    
+    imageDetailsBackground  = ImageCache::getFromMemory(BinaryData::CustomChordDetailsBackground_Max_png, BinaryData::CustomChordDetailsBackground_Max_pngSize);
+    imageSettingsBackground = ImageCache::getFromMemory(BinaryData::CustomChordSettingsBackground_Max_png, BinaryData::CustomChordSettingsBackground_Max_pngSize);
+    
+    imageDelete             = ImageCache::getFromMemory(BinaryData::ShortcutClose2x_png, BinaryData::ShortcutClose2x_pngSize);
+    imageAddIcon            = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
+    imageAddNote            = ImageCache::getFromMemory(BinaryData::AddButton2x_png, BinaryData::AddButton2x_pngSize);
+    
+    
+    // background
+    backgroundImageComp     = new ImageComponent();
+    backgroundImageComp     ->setImage(imageBackgroundInactive);
+    addAndMakeVisible(backgroundImageComp);
+    
+    // containers
+    containerView_Active = new Component();
+    addAndMakeVisible(containerView_Active);
+    
+    containerView_Inactive = new Component();
+    addAndMakeVisible(containerView_Inactive);
+    
+    containerView_Details = new Component();
+    addAndMakeVisible(containerView_Details);
+    
+    
+    // Inactive view state 0
+    button_AddActive = new ImageButton();
+    button_AddActive->setTriggeredOnMouseDown(true);
+    button_AddActive->setImages (false, true, true,
+                                 imageAddIcon, 0.999f, Colour (0x00000000),
+                                 Image(), 1.000f, Colour (0x00000000),
+                                 imageAddIcon, 0.75, Colour (0x00000000));
+    button_AddActive->addListener(this);
+    containerView_Inactive->addAndMakeVisible(button_AddActive);
+    
+    // Add Note / Active Settings view State 1
+    button_AddNewNote = new ImageButton();
+    button_AddNewNote->setTriggeredOnMouseDown(true);
+    button_AddNewNote->setImages (false, true, true,
+                                  imageAddNote, 0.999f, Colour (0x00000000),
+                                  Image(), 1.000f, Colour (0x00000000),
+                                  imageAddNote, 0.75, Colour (0x00000000));
+    button_AddNewNote->addListener(this);
+    containerView_Active->addAndMakeVisible(button_AddNewNote);
+    
+    comboBox_Note = new ComboBox();
+    comboBox_Note->setSelectedId(0);
+    comboBox_Note->addListener(this);
+    comboBox_Note->setLookAndFeel(&lookAndFeel);
+    containerView_Active->addAndMakeVisible(comboBox_Note);
+    
+    comboBox_Octave = new ComboBox();
+    comboBox_Octave->addItemList(ProjectStrings::getOctaveArray(), 1);
+    comboBox_Octave->setSelectedId(0);
+    comboBox_Octave->addListener(this);
+    comboBox_Octave->setLookAndFeel(&lookAndFeel);
+    containerView_Active->addAndMakeVisible(comboBox_Octave);
+    
+    
+    // Details View with Delete state 2
+    
+    label_NoteValue = new Label("", "C#Major");
+    label_NoteValue->setFont(fontLight);
+    label_NoteValue->setJustificationType(Justification::right);
+    containerView_Details->addAndMakeVisible(label_NoteValue);
+    
+    
+    label_OctaveValue  = new Label("", "Minor");
+    label_OctaveValue->setFont(fontLight);
+    label_OctaveValue->setJustificationType(Justification::right);
+    containerView_Details->addAndMakeVisible(label_OctaveValue);
+    
+    label_FrequencyLabel  = new Label("", "432Hz");
+    label_FrequencyLabel->setFont(fontLight);
+    label_FrequencyLabel->setJustificationType(Justification::right);
+//    containerView_Details->addAndMakeVisible(label_FrequencyLabel);
+    addAndMakeVisible(label_FrequencyLabel);
+    
+    
+    // active buttons
+    button_Settings = new ImageButton();
+    button_Settings->setTriggeredOnMouseDown(true);
+    button_Settings->setImages (false, true, true,
+                                imageSettingsIcon, 0.999f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000),
+                                imageSettingsIcon, 0.75, Colour (0x00000000));
+    button_Settings->addListener(this);
+    containerView_Details->addAndMakeVisible(button_Settings);
+    
+    button_Delete = new ImageButton();
+    button_Delete->setTriggeredOnMouseDown(true);
+    button_Delete->setImages (false, true, true,
+                              imageDelete, 0.999f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              imageDelete, 0.75, Colour (0x00000000));
+    button_Delete->addListener(this);
+    containerView_Details->addAndMakeVisible(button_Delete);
+    
+    button_DeleteFirst = new ImageButton();
+    button_DeleteFirst->setTriggeredOnMouseDown(true);
+    button_DeleteFirst->setImages (false, true, true,
+                              imageDelete, 0.999f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              imageDelete, 0.75, Colour (0x00000000));
+    button_DeleteFirst->addListener(this);
+    containerView_Active->addAndMakeVisible(button_DeleteFirst);
+    
+    setState(0);
+    
+}
+
+CustomChordNoteComponent::~CustomChordNoteComponent()
+{
+    
+}
+
+void CustomChordNoteComponent::paint (Graphics&){}
+void CustomChordNoteComponent::resized()
+{
+    
+    backgroundImageComp     ->setBounds(noteBoxInset * scaleFactor, noteBoxInset * scaleFactor, backgroundWidth * scaleFactor, backgroundHeight * scaleFactor);
+    containerView_Active    ->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    containerView_Inactive  ->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    containerView_Details   ->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    
+    button_AddActive        ->setBounds(130 * scaleFactor, 110 * scaleFactor, 68 * scaleFactor, 68 * scaleFactor);
+    button_AddNewNote       ->setBounds(70 * scaleFactor, 190 * scaleFactor, 173 * scaleFactor, 43 * scaleFactor);
+    
+    comboBox_Note           ->setBounds(170 * scaleFactor, (24 + 18 - 13) * scaleFactor, 111 * scaleFactor, 35 * scaleFactor);
+    comboBox_Octave         ->setBounds(170 * scaleFactor, (80 + 18 - 20) * scaleFactor, 111 * scaleFactor, 35 * scaleFactor);
+    
+    int xx = 217;
+    label_NoteValue         ->setBounds(xx * scaleFactor, 36 * scaleFactor, 76 * scaleFactor, 26 * scaleFactor);
+    label_OctaveValue       ->setBounds(xx * scaleFactor, 80 * scaleFactor, 76 * scaleFactor, 26 * scaleFactor);
+    label_FrequencyLabel    ->setBounds((xx - 30) * scaleFactor, 126 * scaleFactor, 106 * scaleFactor, 26 * scaleFactor);
+    
+    button_Settings         ->setBounds(26 * scaleFactor, 224 * scaleFactor, 31 * scaleFactor, 31 * scaleFactor);
+    button_Delete           ->setBounds(0, 0, 34 * scaleFactor, 34 * scaleFactor);
+    button_DeleteFirst      ->setBounds(0, 0, 34 * scaleFactor, 34 * scaleFactor);
+    
+}
+
+void CustomChordNoteComponent::buttonClicked (Button*button)
+{
+    if (button == button_Delete)
+    {
+        setState(0);
+        
+        // send false to projectManager CUSTOM_CHORD_ACTIVE_1
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1+noteRef, 0);
+    }
+    if (button == button_DeleteFirst)
+    {
+        setState(0);
+        
+        // send false to projectManager CUSTOM_CHORD_ACTIVE_1
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1+noteRef, 0);
+    }
+    else if (button == button_Settings)
+    {
+        // I think settings returns to note/octave selector, addNote
+        setState(1);
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1+noteRef, 1);
+    }
+    else if (button == button_AddActive)
+    {
+        setState(1);
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1+noteRef, 1);
+    }
+    else if (button == button_AddNewNote)
+    {
+        setState(2);
+        // set to data structure
+        
+        // send to projectManager CUSTOM_CHORD_ACTIVE_1
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1 + noteRef, 2);
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef, chosenNote);
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef, chosenOctave);
+        
+        int noteVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef).operator int();
+        
+        label_NoteValue->setText(ProjectStrings::getKeynoteArray().getReference(noteVal-1), dontSendNotification);
+        
+        int octaveVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef).operator int();
+
+        if (octaveVal > 0)
+        {
+            label_OctaveValue->setText(ProjectStrings::getOctaveArray().getReference(octaveVal-1), dontSendNotification);
+        }
+        
+        int midiNote    = noteVal + ((octaveVal - 1) * 12) - 1;
+        float freqVal   = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef) * 2.f;
+        
+        
+        label_FrequencyLabel->setText(String(freqVal, 3, false), dontSendNotification);
+        
+    }
+
+}
+
+void CustomChordNoteComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    if (comboBoxThatHasChanged == comboBox_Note)
+    {
+        chosenNote = comboBox_Note->getSelectedId();
+        
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef, chosenNote);
+        
+//        label_FrequencyLabel
+        
+        int noteVal     = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef).operator int();
+        int octaveVal   = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef).operator int();
+        int midiNote    = noteVal + ((octaveVal - 1) * 12) - 1;
+        float freqVal   = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef) * 2.f;
+        label_FrequencyLabel->setText(String(freqVal, 3, false), dontSendNotification);
+    }
+    else if (comboBoxThatHasChanged == comboBox_Octave)
+    {
+        chosenOctave = comboBox_Octave->getSelectedId();
+        
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef, chosenOctave);
+        
+        int noteVal     = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef).operator int();
+        int octaveVal   = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef).operator int();
+        int midiNote    = noteVal + ((octaveVal - 1) * 12) - 1;
+        float freqVal   = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef) * 2.f;
+        label_FrequencyLabel->setText(String(freqVal, 3, false), dontSendNotification);
+    }
+}
+
+void CustomChordNoteComponent::syncGUI()
+{
+    ScalesManager * sm = projectManager->frequencyManager->scalesManager;
+    
+    sm->getComboBoxPopupMenuForKeynotes(*comboBox_Note->getRootMenu(), (SCALES_UNIT)shortcutRef);
+
+    // active / state
+    const auto isActive = (int)projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1 + noteRef);
+    if (isActive)
+    {
+        // check state
+        setState(isActive);
+        
+        // labels
+        int noteVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef).operator int();
+        comboBox_Note->setSelectedId(noteVal);
+        
+        int octaveVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef).operator int();
+        comboBox_Octave->setSelectedId(octaveVal);
+
+        label_NoteValue->setText(ProjectStrings::getKeynoteArray().getReference(noteVal-1), dontSendNotification);
+        if (octaveVal > 0)
+            label_OctaveValue->setText(ProjectStrings::getOctaveArray().getReference(octaveVal-1), dontSendNotification);
+        int midiNote = noteVal + ((octaveVal - 1) * 12) - 1;
+        float freqVal = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef) * 2.f;
+        label_FrequencyLabel->setText(String(freqVal, 3, false), dontSendNotification);
+    }
+    else
+    {
+        setState(isActive);
+        
+        // reset
+        label_NoteValue         ->setText("", dontSendNotification);
+        label_OctaveValue       ->setText("", dontSendNotification);
+        label_FrequencyLabel    ->setText("", dontSendNotification);
+//        comboBox_Note           ->setSelectedId(0);
+//        comboBox_Octave         ->setSelectedId(0);
+        
+        int noteVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef).operator int();
+        
+        comboBox_Note->setSelectedId(noteVal);
+        
+        int octaveVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef).operator int();
+
+        comboBox_Octave->setSelectedId(octaveVal);
+        
+    }
+}
+
+void CustomChordNoteComponent::setShortcutRef(int s)
+{
+    shortcutRef = s;
+}
+
+void CustomChordNoteComponent::setState(int isActive)
+{
+    activeState = isActive;
+    
+    if (activeState == 0)
+    {
+        backgroundImageComp     ->setImage(imageBackgroundInactive);
+        containerView_Inactive  ->setVisible(true);
+        containerView_Active    ->setVisible(false);
+        containerView_Details   ->setVisible(false);
+        
+        label_FrequencyLabel->setVisible(false);
+    }
+    else if (activeState == 1)
+    {
+        backgroundImageComp     ->setImage(imageDetailsBackground);
+        containerView_Inactive  ->setVisible(false);
+        containerView_Active    ->setVisible(true);
+        containerView_Details   ->setVisible(false);
+        
+        label_FrequencyLabel->setVisible(true);
+    }
+    else if (activeState == 2)
+    {
+        backgroundImageComp     ->setImage(imageDetailsBackground);
+        containerView_Inactive  ->setVisible(false);
+        containerView_Active    ->setVisible(false);
+        containerView_Details   ->setVisible(true);
+        
+        label_FrequencyLabel->setVisible(true);
+    }
+}
