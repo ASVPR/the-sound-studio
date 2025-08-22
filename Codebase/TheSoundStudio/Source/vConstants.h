@@ -90,7 +90,6 @@ inline bool normalizeBuffer(double* pInputBuffer, unsigned uBufferSize)
     
 	return true;
 }
-#endif
 
 
 // More #defines for MacOS/XCode
@@ -142,3 +141,5 @@ namespace MathConstants {
     constexpr double TWO_PI = 2.0 * 3.14159265358979;
     constexpr double SQRT2_OVER_2 = 0.707106781186547524401; // same as M_SQRT1_2
 }
+
+#endif // vPi_vConstants_h

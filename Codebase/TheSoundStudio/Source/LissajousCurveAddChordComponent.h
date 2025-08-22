@@ -135,7 +135,7 @@ public:
         imageRightButton    = ImageCache::getFromMemory(BinaryData::ShortcutRight2x_png, BinaryData::ShortcutRight2x_pngSize);
         
         // buttons
-        button_Left = new ImageButton();
+        button_Left = std::make_unique<ImageButton>();
         button_Left->setTriggeredOnMouseDown(true);
         button_Left->setImages (false, true, true,
                                 imageLeftButton, 0.999f, Colour (0x00000000),
@@ -143,9 +143,9 @@ public:
                                 imageLeftButton, 0.75, Colour (0x00000000));
         button_Left->addListener(this);
         button_Left->setBounds(leftButtonLeftMargin, leftButtonTopMargin, buttonWidth, buttonHeight);
-        addAndMakeVisible(button_Left);
+        addAndMakeVisible(button_Left.get());
         
-        button_Right = new ImageButton();
+        button_Right = std::make_unique<ImageButton>();
         button_Right->setTriggeredOnMouseDown(true);
         button_Right->setImages (false, true, true,
                                  imageRightButton, 0.999f, Colour (0x00000000),
@@ -153,28 +153,28 @@ public:
                                  imageRightButton, 0.75, Colour (0x00000000));
         button_Right->addListener(this);
         button_Right->setBounds(rightButtonLeftMargin, rightButtonTopMargin, buttonWidth, buttonHeight);
-        addAndMakeVisible(button_Right);
+        addAndMakeVisible(button_Right.get());
         
-        shortcutsContainer = new Component();
+        shortcutsContainer = std::make_unique<Component>();
         shortcutsContainer->setBounds(0, 0, containerWidth, 344);
         
         // shortcuts array
         
         for (int i = 0; i < 12; i++)
         {
-            noteComponent[i] = new LissajousCustomChordNoteComponent(i, projectManager, shortcutRef);
+            noteComponent[i] = std::make_unique<LissajousCustomChordNoteComponent>(i, projectManager, shortcutRef);
             noteComponent[i]->setBounds((noteBoxWidth + noteBoxSpace) * i, 0, noteBoxWidth, noteBoxHeight);
-            shortcutsContainer->addAndMakeVisible(noteComponent[i]);
+            shortcutsContainer->addAndMakeVisible(noteComponent[i].get());
             // other shortcut stuff if required !
         }
         
         // viewport
-        viewport = new Viewport();
+        viewport = std::make_unique<Viewport>();
         viewport->setBounds(viewportLeftMargin, 0, viewportWidth, viewportHeight);
         
-        viewport            ->setViewedComponent(shortcutsContainer);
+        viewport            ->setViewedComponent(shortcutsContainer.get());
         viewport            ->setScrollBarsShown(false, false, false, true);
-        addAndMakeVisible(viewport);
+        addAndMakeVisible(viewport.get());
     }
     
     ~LissajousCustomChordContainerComponent()
@@ -184,12 +184,12 @@ public:
     
     void buttonClicked (Button*button) override
     {
-        if (button == button_Left)
+        if (button == button_Left.get())
         {
             shiftToRight--; if(shiftToRight<=0)shiftToRight=0;
             moveViewport();
         }
-        else if (button == button_Right)
+        else if (button == button_Right.get())
         {
             shiftToRight++; if(shiftToRight>=5)shiftToRight=5;
             moveViewport();
@@ -290,7 +290,7 @@ public:
         backgroundComp->setBounds(42, 366, 1499, 639);
         addAndMakeVisible(backgroundComp);
         
-        button_Close = new ImageButton();
+        button_Close = std::make_unique<ImageButton>();
         button_Close->setTriggeredOnMouseDown(true);
         button_Close->setImages (false, true, true,
                                  imageCloseButton, 0.999f, Colour (0x00000000),
@@ -298,9 +298,9 @@ public:
                                  imageCloseButton, 0.75, Colour (0x00000000));
         button_Close->addListener(this);
         button_Close->setBounds(1470, 405, 28, 28);
-        addAndMakeVisible(button_Close);
+        addAndMakeVisible(button_Close.get());
         
-        button_AddChord = new ImageButton();
+        button_AddChord = std::make_unique<ImageButton>();
         button_AddChord->setTriggeredOnMouseDown(true);
         button_AddChord->setImages (false, true, true,
                                  imageAddChordButton, 0.999f, Colour (0x00000000),
@@ -308,10 +308,10 @@ public:
                                  imageAddChordButton, 0.75, Colour (0x00000000));
         button_AddChord->addListener(this);
         button_AddChord->setBounds(627, 866, 306, 75);
-        addAndMakeVisible(button_AddChord);
+        addAndMakeVisible(button_AddChord.get());
         
-        customChordContainerComponent = new LissajousCustomChordContainerComponent(projectManager, shortcutRef);
-        addAndMakeVisible(customChordContainerComponent);
+        customChordContainerComponent = std::make_unique<LissajousCustomChordContainerComponent>(projectManager, shortcutRef);
+        addAndMakeVisible(customChordContainerComponent.get());
         customChordContainerComponent->setBounds(42, 536, 1475, 320); //
     }
     
@@ -338,12 +338,12 @@ public:
     
     void buttonClicked (Button*button) override
     {
-        if (button == button_Close)
+        if (button == button_Close.get())
         {
             projectManager->setLissajousParameter( CUSTOM_CHORD, false);
             closeView();
         }
-        else if (button == button_AddChord)
+        else if (button == button_AddChord.get())
         {
             projectManager->setLissajousParameter( CUSTOM_CHORD, true);
             closeView();

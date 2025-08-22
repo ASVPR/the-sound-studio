@@ -26,28 +26,28 @@ public:
         
         for (int i = 0 ; i < 4; i++)
         {
-            sliderInputChannel[i]           = new Slider();
+            sliderInputChannel[i]           = std::make_unique<Slider>();
             sliderInputChannel[i]           ->setRange (0, 1.0, 0);
             sliderInputChannel[i]           ->setSliderStyle (Slider::LinearVertical);
             sliderInputChannel[i]           ->addListener (this);
-            addAndMakeVisible(sliderInputChannel[i]);
+            addAndMakeVisible(sliderInputChannel[i].get());
             
             
-            sliderOutputChannel[i]          = new Slider();
+            sliderOutputChannel[i]          = std::make_unique<Slider>();
             sliderOutputChannel[i]          ->setRange (0, 1.0, 0);
             sliderOutputChannel[i]          ->setSliderStyle (Slider::LinearVertical);
             sliderOutputChannel[i]          ->addListener (this);
-            addAndMakeVisible(sliderOutputChannel[i]);
+            addAndMakeVisible(sliderOutputChannel[i].get());
             
-            buttonFFTInputChannel[i]        = new TextButton("");
+            buttonFFTInputChannel[i]        = std::make_unique<TextButton>("");
             buttonFFTInputChannel[i]        ->setButtonText("FFT");
             buttonFFTInputChannel[i]        ->addListener(this);
-            addAndMakeVisible(buttonFFTInputChannel[i]);
+            addAndMakeVisible(buttonFFTInputChannel[i].get());
             
-            buttonFFTOutputChannel[i]       = new TextButton("");
+            buttonFFTOutputChannel[i]       = std::make_unique<TextButton>("");
             buttonFFTOutputChannel[i]       ->setButtonText("FFT");
             buttonFFTOutputChannel[i]       ->addListener(this);
-            addAndMakeVisible(buttonFFTOutputChannel[i]);
+            addAndMakeVisible(buttonFFTOutputChannel[i].get());
         }
         
         syncUI();
@@ -80,35 +80,35 @@ public:
     
     void sliderValueChanged (Slider* slider) override
     {
-        if (slider == sliderInputChannel[0])
+        if (slider == sliderInputChannel[0].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_1, sliderInputChannel[0]->getValue());
         }
-        else if (slider == sliderInputChannel[1])
+        else if (slider == sliderInputChannel[1].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_2, sliderInputChannel[1]->getValue());
         }
-        else if (slider == sliderInputChannel[2])
+        else if (slider == sliderInputChannel[2].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_3, sliderInputChannel[2]->getValue());
         }
-        else if (slider == sliderInputChannel[3])
+        else if (slider == sliderInputChannel[3].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_4, sliderInputChannel[3]->getValue());
         }
-        else if (slider == sliderOutputChannel[0])
+        else if (slider == sliderOutputChannel[0].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_1, sliderOutputChannel[0]->getValue());
         }
-        else if (slider == sliderOutputChannel[1])
+        else if (slider == sliderOutputChannel[1].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_2, sliderOutputChannel[1]->getValue());
         }
-        else if (slider == sliderOutputChannel[2])
+        else if (slider == sliderOutputChannel[2].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_3, sliderOutputChannel[2]->getValue());
         }
-        else if (slider == sliderOutputChannel[3])
+        else if (slider == sliderOutputChannel[3].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_4, sliderOutputChannel[3]->getValue());
         }
@@ -118,35 +118,35 @@ public:
     
     void buttonClicked (Button*button) override
     {
-        if (button == buttonFFTInputChannel[0])
+        if (button == buttonFFTInputChannel[0].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_FFT_1, !buttonFFTInputChannel[0]->getToggleState());
         }
-        else if (button == buttonFFTInputChannel[1])
+        else if (button == buttonFFTInputChannel[1].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_FFT_2, !buttonFFTInputChannel[1]->getToggleState());
         }
-        else if (button == buttonFFTInputChannel[2])
+        else if (button == buttonFFTInputChannel[2].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_FFT_3, !buttonFFTInputChannel[2]->getToggleState());
         }
-        else if (button == buttonFFTInputChannel[3])
+        else if (button == buttonFFTInputChannel[3].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_FFT_4, !buttonFFTInputChannel[3]->getToggleState());
         }
-        else if (button == buttonFFTOutputChannel[0])
+        else if (button == buttonFFTOutputChannel[0].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_FFT_1, !buttonFFTOutputChannel[0]->getToggleState());
         }
-        else if (button == buttonFFTOutputChannel[1])
+        else if (button == buttonFFTOutputChannel[1].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_FFT_2, !buttonFFTOutputChannel[1]->getToggleState());
         }
-        else if (button == buttonFFTOutputChannel[2])
+        else if (button == buttonFFTOutputChannel[2].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_FFT_3, !buttonFFTOutputChannel[2]->getToggleState());
         }
-        else if (button == buttonFFTOutputChannel[3])
+        else if (button == buttonFFTOutputChannel[3].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_OUTPUT_FFT_4, !buttonFFTOutputChannel[3]->getToggleState());
         }
@@ -494,7 +494,7 @@ public:
     void textEditorTextChanged (TextEditor&editor)override {}
     void textEditorReturnKeyPressed (TextEditor&editor)override
     {
-        if (&editor == textEditor_NumHighestPeakFreqs)
+        if (&editor == textEditor_NumHighestPeakFreqs.get())
         {
             // add hz to the string
             int value = editor.getText().getIntValue();
@@ -502,7 +502,7 @@ public:
             // send to projectManager
             projectManager->setProjectSettingsParameter(NUMBER_HIGHEST_PEAK_FREQUENCIES, value);
         }
-        else if (&editor == textEditor_NumHighestPeakOctaves)
+        else if (&editor == textEditor_NumHighestPeakOctaves.get())
         {
             // add hz to the string
             int value = editor.getText().getIntValue();
@@ -510,7 +510,7 @@ public:
             // send to projectManager
             projectManager->setProjectSettingsParameter(NUMBER_HIGHEST_PEAK_OCTAVES, value);
         }
-        else if (&editor == textEditor_FFTDelay)
+        else if (&editor == textEditor_FFTDelay.get())
         {
             // add hz to the string
             int value = editor.getText().getIntValue();

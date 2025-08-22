@@ -191,7 +191,7 @@ void ProjectManager::initializeAnalysisProcessors()
 // FIXED: Thread-safe mode management
 void ProjectManager::setAudioMode(AudioMode newMode)
 {
-    std::lock_guard<std::shared_mutex> lock(stateMutex);
+    std::lock_guard<std::mutex> lock(stateMutex);
     currentMode.store(newMode);
     
     // Notify listeners of mode change

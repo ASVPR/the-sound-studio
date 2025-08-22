@@ -43,36 +43,36 @@ public:
         imagePlayButton                     = ImageCache::getFromMemory(BinaryData::playPause2x_png, BinaryData::playPause2x_pngSize);
         imageRecordButton                   = ImageCache::getFromMemory(BinaryData::RecordButton_png, BinaryData::RecordButton_pngSize);
         
-        visualiserContainerComponent        = new VisualiserContainerComponent2(projectManager, AUDIO_MODE::MODE_REALTIME_ANALYSIS);
+        visualiserContainerComponent        = std::make_unique<VisualiserContainerComponent2>(projectManager, AUDIO_MODE::MODE_REALTIME_ANALYSIS);
         
-        addAndMakeVisible(visualiserContainerComponent);
+        addAndMakeVisible(visualiserContainerComponent.get());
         
-        button_Play = new ImageButton();
+        button_Play = std::make_unique<ImageButton>();
         button_Play->setTriggeredOnMouseDown(true);
         button_Play->setImages (false, true, true,
                                   imagePlayButton, 0.999f, Colour (0x00000000),
                                   Image(), 1.000f, Colour (0x00000000),
                                   imagePlayButton, 0.6, Colour (0x00000000));
         button_Play->addListener(this);
-        addAndMakeVisible(button_Play);
+        addAndMakeVisible(button_Play.get());
         
-        button_Stop = new ImageButton();
+        button_Stop = std::make_unique<ImageButton>();
         button_Stop->setTriggeredOnMouseDown(true);
         button_Stop->setImages (false, true, true,
                                   imageStopButton, 0.999f, Colour (0x00000000),
                                   Image(), 1.000f, Colour (0x00000000),
                                   imageStopButton, 0.6, Colour (0x00000000));
         button_Stop->addListener(this);
-        addAndMakeVisible(button_Stop);
+        addAndMakeVisible(button_Stop.get());
         
-        button_Record = new ImageButton();
+        button_Record = std::make_unique<ImageButton>();
         button_Record->setTriggeredOnMouseDown(true);
         button_Record->setImages (false, true, true,
                                   imageRecordButton, 0.999f, Colour (0x00000000),
                                   Image(), 1.000f, Colour (0x00000000),
                                   imageRecordButton, 0.6, Colour (0x00000000));
         button_Record->addListener(this);
-        addAndMakeVisible(button_Record);
+        addAndMakeVisible(button_Record.get());
         
         
 //        startTimer(TIMER_UPDATE_RATE);
@@ -126,7 +126,7 @@ public:
     
     void buttonClicked (Button*button)override
     {
-        if (button == button_Play)
+        if (button == button_Play.get())
         {
             if (shouldPlayAnalysis && shouldFreeze == false)
             {
@@ -151,17 +151,17 @@ public:
 
             
         }
-        else if (button == button_Stop)
+        else if (button == button_Stop.get())
         {
             shouldPlayAnalysis = false;
             
             projectManager->logFileWriter->stopRecordingLog();
         }
-        else if (button == button_Export)
+        else if (button == button_Export.get())
         {
             
         }
-        else if (button == button_Record)
+        else if (button == button_Record.get())
         {
             isRecording = !isRecording;
             

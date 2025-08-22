@@ -62,6 +62,7 @@ const unsigned char SYSTEM_RESET = 0xFF;
 enum midiChannels{MIDI_CH_1 = 0, MIDI_CH_2, MIDI_CH_3, MIDI_CH_4, MIDI_CH_5, MIDI_CH_6, MIDI_CH_7,
 				  MIDI_CH_8, MIDI_CH_9, MIDI_CH_10, MIDI_CH_11, MIDI_CH_12, MIDI_CH_13,
 				  MIDI_CH_14, MIDI_CH_15, MIDI_CH_16, MIDI_CH_ALL};
+} // End of MidiConstants namespace
 //----------------------------------------------------------------
 // --- END  MIDI Constants
 //----------------------------------------------------------------
@@ -685,7 +686,7 @@ inline double linearIn_dB_DecayTransform(double dValue)
 */
 inline double convexTransform(double dValue)
 {
-	if(dValue <= CONVEX_LIMIT)
+	if(dValue <= SynthConstants::CONVEX_LIMIT)
 		return 0.0;
 
 	return 1.0 + (5.0/12.0)*log10(dValue);
@@ -699,7 +700,7 @@ inline double convexTransform(double dValue)
 */
 inline double convexInvertedTransform(double dValue)
 {
-	if(dValue >= CONCAVE_LIMIT)
+	if(dValue >= SynthConstants::CONCAVE_LIMIT)
 		return 0.0;
 
 	return 1.0 + (5.0/12.0)*log10(1.0 - dValue);
@@ -713,7 +714,7 @@ inline double convexInvertedTransform(double dValue)
 */
 inline double concaveTransform(double dValue)
 {
-	if(dValue >= CONCAVE_LIMIT)
+	if(dValue >= SynthConstants::CONCAVE_LIMIT)
 		return 1.0;
 
 	return -(5.0/12.0)*log10(1.0 - dValue);
@@ -727,7 +728,7 @@ inline double concaveTransform(double dValue)
 */
 inline double concaveInvertedTransform(double dValue)
 {
-	if(dValue <= CONVEX_LIMIT)
+	if(dValue <= SynthConstants::CONVEX_LIMIT)
 		return 1.0;
 
 	return -(5.0/12.0)*log10(dValue);

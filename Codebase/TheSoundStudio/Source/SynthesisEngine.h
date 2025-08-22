@@ -80,8 +80,8 @@ public:
     
 private:
     // Synthesis engines (TODO: Implement remaining engines)
-    std::unique_ptr<class PhysicalModelingSynth> physicalModeling;
-    std::unique_ptr<class KarplusStrongSynth> karplusStrong;
+    std::unique_ptr<class PhysicalModelingEngine> physicalModeling;
+    std::unique_ptr<class KarplusStrongEngine> karplusStrong;
     // TODO: Implement remaining engines
     // std::unique_ptr<class WavetableEngine> wavetable;
     // std::unique_ptr<class HybridEngine> hybrid;

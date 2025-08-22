@@ -62,14 +62,14 @@ public:
 
         imageButtonWindows                  = ImageCache::getFromMemory(BinaryData::Button_SpectrumOpen_png, BinaryData::Button_SpectrumOpen_pngSize);
         
-        button_Popup = new ImageButton();
+        button_Popup = std::make_unique<ImageButton>();
         button_Popup->setTriggeredOnMouseDown(true);
         button_Popup->setImages (false, true, true,
                                  imageButtonWindows, 0.999f, Colour (0x00000000),
                                  Image(), 1.000f, Colour (0x00000000),
                                  imageButtonWindows, 0.75, Colour (0x00000000));
         button_Popup->addListener(this);
-        addAndMakeVisible(button_Popup);
+        addAndMakeVisible(button_Popup.get());
         
         buttonShouldProcess = new ToggleButton("On / Off");
         buttonShouldProcess->setLookAndFeel(&lookAndFeel);
@@ -77,7 +77,7 @@ public:
         buttonShouldProcess->setToggleState(true, dontSendNotification);
         addAndMakeVisible(buttonShouldProcess);
         
-        comboBoxTypeSelector = new ComboBox();
+        comboBoxTypeSelector = std::make_unique<ComboBox>();
         comboBoxTypeSelector->addListener(this);
         comboBoxTypeSelector->setLookAndFeel(&lookAndFeel);
         
@@ -94,18 +94,18 @@ public:
             }
         }
         comboBoxTypeSelector->setSelectedId((int)initialType, dontSendNotification);
-        addAndMakeVisible(comboBoxTypeSelector);
+        addAndMakeVisible(comboBoxTypeSelector.get());
 
         visualiserType = (VISUALISER_TYPE)0;
         
         
-        comboBoxSourceSelector = new ComboBox();
+        comboBoxSourceSelector = std::make_unique<ComboBox>();
         comboBoxSourceSelector->addListener(this);
         comboBoxSourceSelector->setLookAndFeel(&lookAndFeel);
         
         getAvailableSourcesForSourceComboBox();
 
-        addAndMakeVisible(comboBoxSourceSelector);
+        addAndMakeVisible(comboBoxSourceSelector.get());
 
         visualiserSource = (VISUALISER_SOURCE)OUTPUT_1;
 
@@ -216,7 +216,7 @@ public:
     
     void buttonClicked (Button*button) override
     {
-        if (button == button_Popup)
+        if (button == button_Popup.get())
         {
             // open popup
             switch ((int)visualiserType)
@@ -359,11 +359,11 @@ public:
     
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override
     {
-        if (comboBoxThatHasChanged == comboBoxSourceSelector)
+        if (comboBoxThatHasChanged == comboBoxSourceSelector.get())
         {
             setNewVisualiserSource((VISUALISER_SOURCE)comboBoxThatHasChanged->getSelectedId());
         }
-        else if (comboBoxThatHasChanged == comboBoxTypeSelector)
+        else if (comboBoxThatHasChanged == comboBoxTypeSelector.get())
         {
             setNewVisualiserType((VISUALISER_TYPE)comboBoxThatHasChanged->getSelectedId());
         }
@@ -596,23 +596,23 @@ public:
             
             Rectangle<float> spectrumRect(fftWidth, fftHeight);
 
-            visualiserSelectorComponent[0] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[0]);
+            visualiserSelectorComponent[0] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[0].get());
             visualiserSelectorComponent[0]->setBounds(fftLeftMargin * scaleFactor, fftTopMargin * scaleFactor, fftWidth * scaleFactor, fftHeight * scaleFactor);
             visualiserSelectorComponent[0]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM);
             
-            visualiserSelectorComponent[1] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[1]);
+            visualiserSelectorComponent[1] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[1].get());
             visualiserSelectorComponent[1]->setBounds(colorLeftMargin * scaleFactor, colorTopMargin * scaleFactor, fftWidth * scaleFactor, colorHeight * scaleFactor);
             visualiserSelectorComponent[1]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR);
             
-            visualiserSelectorComponent[2] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::FREQ_DATA, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[2]);
+            visualiserSelectorComponent[2] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::FREQ_DATA, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[2].get());
             visualiserSelectorComponent[2]->setBounds(colorLeftMargin * scaleFactor, (colorTopMargin + colorHeight + 40) * scaleFactor, colorWidth * scaleFactor , 350.f * scaleFactor);
             visualiserSelectorComponent[2]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::FREQ_DATA);
             
-            visualiserSelectorComponent[3] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::OSCILLOSCOPE, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[3]);
+            visualiserSelectorComponent[3] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::OSCILLOSCOPE, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[3].get());
             visualiserSelectorComponent[3]->setBounds(820 * scaleFactor, (colorTopMargin + colorHeight + 40) * scaleFactor, colorWidth * scaleFactor , 350.f * scaleFactor);
             visualiserSelectorComponent[3]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::OSCILLOSCOPE);
         }
@@ -622,18 +622,18 @@ public:
             
             Rectangle<float> spectrumRect(fftWidth, fftHeight);
             
-            visualiserSelectorComponent[0] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[0]);
+            visualiserSelectorComponent[0] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[0].get());
             visualiserSelectorComponent[0]->setBounds(fftLeftMargin * scaleFactor, fftTopMargin * scaleFactor, fftWidth * scaleFactor, fftHeight * scaleFactor);
             visualiserSelectorComponent[0]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM);
             
-            visualiserSelectorComponent[1] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[1]);
+            visualiserSelectorComponent[1] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[1].get());
             visualiserSelectorComponent[1]->setBounds(colorLeftMargin * scaleFactor, colorTopMargin * scaleFactor, colorWidth * scaleFactor, colorHeight * scaleFactor);
             visualiserSelectorComponent[1]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR);
             
-            visualiserSelectorComponent[2] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::OCTAVE, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[2]);
+            visualiserSelectorComponent[2] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::OCTAVE, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[2].get());
             visualiserSelectorComponent[2]->setBounds(octaveLeftMergin * scaleFactor, octaveTopMargin * scaleFactor, octaveWidth * scaleFactor, octaveHeight * scaleFactor);
             visualiserSelectorComponent[2]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::OCTAVE);
             
@@ -644,8 +644,8 @@ public:
             
             Rectangle<float> spectrumRect(fftWidthScanner, fftHeightScanner);
 
-            visualiserSelectorComponent[0] = new VisualiserSelectorComponent(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
-            addAndMakeVisible(visualiserSelectorComponent[0]);
+            visualiserSelectorComponent[0] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
+            addAndMakeVisible(visualiserSelectorComponent[0].get());
             visualiserSelectorComponent[0]->setBounds(fftLeftMarginScanner * scaleFactor, fftTopMarginScanner * scaleFactor, fftWidthScanner * scaleFactor, fftHeightScanner * scaleFactor);
             visualiserSelectorComponent[0]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM);
         }

@@ -14,7 +14,8 @@
 //==============================================================================
 PluginBrowser_Component::PluginBrowser_Component(KnownPluginList &list, AudioPluginFormatManager &formatManager) : formatManager(formatManager), list(list)
 {
-    addAndMakeVisible(listBox = new ListBox("listbox"));
+    listBox = std::make_unique<ListBox>("listbox");
+    addAndMakeVisible(listBox.get());
     
     listBox->setModel(this);
     listBox->updateContent();

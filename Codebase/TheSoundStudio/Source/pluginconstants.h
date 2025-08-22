@@ -775,11 +775,11 @@ public:
 	int		nGUIRow;
 	int		nGUIColumn;
 
-	UINT	uControlTheme[CONTROL_THEME_SIZE];
-	double 	dPresetData[PRESET_COUNT];
+	UINT	uControlTheme[PluginConstants::CONTROL_THEME_SIZE];
+	double 	dPresetData[PluginConstants::PRESET_COUNT];
 
-	UINT	uFluxCapControl[PLUGIN_CONTROL_THEME_SIZE];
-	float	fFluxCapData[PLUGIN_CONTROL_THEME_SIZE];
+	UINT	uFluxCapControl[PluginConstants::PLUGIN_CONTROL_THEME_SIZE];
+	float	fFluxCapData[PluginConstants::PLUGIN_CONTROL_THEME_SIZE];
 
 	void*   pvAddlData;
 // ----------------------------------------------------------------------------------------
@@ -833,22 +833,22 @@ public:
 		this->nGUIColumn				= aCUICtrl.nGUIColumn;
 		this->pvAddlData			= aCUICtrl.pvAddlData;
 
-		for(int i=0; i<PRESET_COUNT; i++)
+		for(int i=0; i<PluginConstants::PRESET_COUNT; i++)
 		{
 			this->dPresetData[i] = aCUICtrl.dPresetData[i];
 		}
 
-		for(int i=0; i<CONTROL_THEME_SIZE; i++)
+		for(int i=0; i<PluginConstants::CONTROL_THEME_SIZE; i++)
 		{
 			this->uControlTheme[i] = aCUICtrl.uControlTheme[i];
 		}
 
-		for(int i=0; i<PLUGIN_CONTROL_THEME_SIZE; i++)
+		for(int i=0; i<PluginConstants::PLUGIN_CONTROL_THEME_SIZE; i++)
 		{
 			this->uFluxCapControl[i] = aCUICtrl.uFluxCapControl[i];
 		}
 
-		for(int i=0; i<PLUGIN_CONTROL_THEME_SIZE; i++)
+		for(int i=0; i<PluginConstants::PLUGIN_CONTROL_THEME_SIZE; i++)
 		{
 			this->fFluxCapData[i] = aCUICtrl.fFluxCapData[i];
 		}

@@ -74,76 +74,76 @@ FrequencyDataComponent::FrequencyDataComponent(ProjectManager * pm)
 {
     projectManager = pm;
     
-    labelKeynote = new Label();
+    labelKeynote = std::make_unique<Label>();
     labelKeynote->setText("Keynote", dontSendNotification);
     labelKeynote->setJustificationType(Justification::left);
-    addAndMakeVisible(labelKeynote);
+    addAndMakeVisible(labelKeynote.get());
     
-    labelPeakFrequency = new Label();
+    labelPeakFrequency = std::make_unique<Label>();
     labelPeakFrequency->setText("Peak Frequency", dontSendNotification);
     labelPeakFrequency->setJustificationType(Justification::left);
-    addAndMakeVisible(labelPeakFrequency);
+    addAndMakeVisible(labelPeakFrequency.get());
     
-    labelPeakDB = new Label();
+    labelPeakDB = std::make_unique<Label>();
     labelPeakDB->setText("Peak dB", dontSendNotification);
     labelPeakDB->setJustificationType(Justification::left);
-    addAndMakeVisible(labelPeakDB);
+    addAndMakeVisible(labelPeakDB.get());
     
-    labelEMA = new Label();
+    labelEMA = std::make_unique<Label>();
     labelEMA->setText("EMA", dontSendNotification);
     labelEMA->setJustificationType(Justification::left);
-    addAndMakeVisible(labelEMA);
+    addAndMakeVisible(labelEMA.get());
     
-    labelEMAResult = new Label();
+    labelEMAResult = std::make_unique<Label>();
     labelEMAResult->setText("0.0hz", dontSendNotification);
     labelEMAResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelEMAResult);
+    addAndMakeVisible(labelEMAResult.get());
     
-    labelOctave = new Label();
+    labelOctave = std::make_unique<Label>();
     labelOctave->setText("Octave", dontSendNotification);
     labelOctave->setJustificationType(Justification::left);
-    addAndMakeVisible(labelOctave);
+    addAndMakeVisible(labelOctave.get());
     
-    labelUpperHarmonics = new Label();
+    labelUpperHarmonics = std::make_unique<Label>();
     labelUpperHarmonics->setText("Harmonics + ", dontSendNotification);
     labelUpperHarmonics->setJustificationType(Justification::left);
-    addAndMakeVisible(labelUpperHarmonics);
+    addAndMakeVisible(labelUpperHarmonics.get());
     
-    labelLowerHarmonics = new Label();
+    labelLowerHarmonics = std::make_unique<Label>();
     labelLowerHarmonics->setText("Intervals ", dontSendNotification);
     labelLowerHarmonics->setJustificationType(Justification::left);
-    addAndMakeVisible(labelLowerHarmonics);
+    addAndMakeVisible(labelLowerHarmonics.get());
     
-    labelKeynoteResult = new Label();
+    labelKeynoteResult = std::make_unique<Label>();
     labelKeynoteResult->setText("C#", dontSendNotification);
     labelKeynoteResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelKeynoteResult);
+    addAndMakeVisible(labelKeynoteResult.get());
     
-    labelPeakFrequencyResult = new Label();
+    labelPeakFrequencyResult = std::make_unique<Label>();
     // MAINTAINABILITY: Using named constant instead of hardcoded "432.333" for consistent frequency reference
     labelPeakFrequencyResult->setText(String(AudioConstants::ALTERNATIVE_A4_FREQ, 3) + " hz", dontSendNotification);
     labelPeakFrequencyResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelPeakFrequencyResult);
+    addAndMakeVisible(labelPeakFrequencyResult.get());
     
-    labelPeakDBResult = new Label();
+    labelPeakDBResult = std::make_unique<Label>();
     labelPeakDBResult->setText(" -6.6 dB", dontSendNotification);
     labelPeakDBResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelPeakDBResult);
+    addAndMakeVisible(labelPeakDBResult.get());
     
-    labelUpperHarmonicsResult = new Label();
+    labelUpperHarmonicsResult = std::make_unique<Label>();
     labelUpperHarmonicsResult->setText("", dontSendNotification);
     labelUpperHarmonicsResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelUpperHarmonicsResult);
+    addAndMakeVisible(labelUpperHarmonicsResult.get());
     
-    labelLowerHarmonicsResult = new Label();
+    labelLowerHarmonicsResult = std::make_unique<Label>();
     labelLowerHarmonicsResult->setText("", dontSendNotification);
     labelLowerHarmonicsResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelLowerHarmonicsResult);
+    addAndMakeVisible(labelLowerHarmonicsResult.get());
     
-    labelOctaveResult = new Label();
+    labelOctaveResult = std::make_unique<Label>();
     labelOctaveResult->setText("2", dontSendNotification);
     labelOctaveResult->setJustificationType(Justification::left);
-    addAndMakeVisible(labelOctaveResult);
+    addAndMakeVisible(labelOctaveResult.get());
     
     upperHarmonics  = new Array<float> (6);
     intervals       = new Array<float> (6);

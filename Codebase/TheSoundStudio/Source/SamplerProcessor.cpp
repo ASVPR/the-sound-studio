@@ -32,7 +32,7 @@ SynthSamplerSound::SynthSamplerSound (const String& name, AudioFormatReader& sou
 
         data = std::make_unique<AudioBuffer<float>> (jmin (2, (int) source.numChannels), length + 4);
 
-        source.read (data, 0, length + 4, 0, true, true);
+        source.read (data.get(), 0, length + 4, 0, true, true);
 
         attackSamples   = 10;
         releaseSamples  = roundToInt (7.0 * sourceSampleRate);
@@ -63,7 +63,7 @@ SynthSamplerSound::SynthSamplerSound (const String& name, AudioFormatReader& sou
 //
 //        data = std::make_unique<AudioBuffer<float>> (jmin (2, (int) source.numChannels), length + 4);
 //
-//        source.read (data, 0, length + 4, 0, true, true);
+//        source.read (data.get(), 0, length + 4, 0, true, true);
 //
 //        attackSamples   = roundToInt (attackTimeSecs * sourceSampleRate);
 //        releaseSamples  = roundToInt (releaseTimeSecs * sourceSampleRate);
@@ -82,7 +82,7 @@ const String& SynthSamplerSound::getName() const noexcept
 
 AudioBuffer<float>* SynthSamplerSound::getAudioData() const noexcept
 {
-    return data;
+    return data.get();
 
 }
 //==============================================================================
@@ -373,7 +373,7 @@ void SamplerProcessorVoice::setParameter(int index, var newValue)
 #pragma mark SamplerProcessor
 // ==================================================================
 
-SamplerProcessor::SamplerProcessor(FrequencyManager *fm, SampleLibraryManager * slm, double initialSampleRate, int shortcut)
+SamplerProcessor::SamplerProcessor(FrequencyManager *fm, SynthesisLibraryManager * slm, double initialSampleRate, int shortcut)
 {
     shortcutRef             = shortcut;
     frequencyManager        = fm;
@@ -478,7 +478,7 @@ void SamplerProcessor::setParameter(int index, var newValue)
 void SamplerProcessor::loadInstrument(int filePathIndex) // used for new playing instruments high res
 {
     
-    File instrumentDir(sampleLibraryManager->getInstrumentFilePath(filePathIndex-1));
+    String instrumentName = sampleLibraryManager->getInstrumentName(filePathIndex-1);
     
     // read child files
     
@@ -486,7 +486,7 @@ void SamplerProcessor::loadInstrument(int filePathIndex) // used for new playing
 //    Array<juce::File> results;
 //    instrumentDir.findChildFiles(results, juce::File::TypesOfFileToFind::findFiles , false);
     
-    String instrumentName(instrumentDir.getFileName());
+    // instrumentName already retrieved above
     
     if (filePathIndex > 0)
     {
@@ -507,30 +507,33 @@ void SamplerProcessor::loadInstrument(int filePathIndex) // used for new playing
             fileNameEnumeration.append(enumString, 3);
             fileNameEnumeration.append(".wav", 4);
             
-            // get full path with new string
-            String fullPath(instrumentDir.getFullPathName());
-            fullPath.append("/", 1);
-            fullPath.append(fileNameEnumeration, 30);
+            // FIXED: Synthesis-based system doesn't use file paths
+            // Instead, generate synthesis parameters based on the note and instrument
+            String synthParameterName = instrumentName + "_" + fileNameEnumeration;
             
             int midiNote                    = i;
             double maxSampleLengthSeconds   = 12.f;
             
             BigInteger midiNotes;
 
-            File samplerFile(fullPath);
+            // FIXED: Generate synthesis-based sound instead of loading files
+            midiNotes.setBit(midiNote);
             
-            if (samplerFile.existsAsFile())
-            {
-                std::unique_ptr<AudioFormatReader> formatReader (formatManager.findFormatForFileExtension ("wav")->createReaderFor (new FileInputStream(samplerFile), true));
-                
-                midiNotes.setBit(midiNote);
-                
-                maxSampleLengthSeconds = (double)formatReader->lengthInSamples / formatReader->sampleRate;
-                
-                SynthSamplerSound::Ptr newSound = new SynthSamplerSound("Voice", *formatReader, midiNotes, midiNote, noteFrequency, freqRange, maxSampleLengthSeconds );
-                
-                this->addSound (newSound);
-            }
+            // For synthesis-based system, create procedural sound
+            SynthesisInstrument synthInstrument = sampleLibraryManager->getInstrument(filePathIndex-1);
+            
+            // Create synthesis-based sound with procedural parameters
+            SynthSamplerSound::Ptr newSound = new SynthSamplerSound(
+                synthParameterName, 
+                synthInstrument.synthType,
+                midiNotes, 
+                midiNote, 
+                noteFrequency, 
+                freqRange, 
+                maxSampleLengthSeconds 
+            );
+            
+            this->addSound(newSound);
         }
     }
 

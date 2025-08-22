@@ -96,7 +96,6 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/SynthesisEngine_47ef4457.o \
   $(JUCE_OBJDIR)/PhysicalModelingSynth_bd23446d.o \
   $(JUCE_OBJDIR)/KarplusStrongSynth_56ce6198.o \
-  $(JUCE_OBJDIR)/PianoPhysicalModel_8bd4ded2.o \
   $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o \
   $(JUCE_OBJDIR)/FeedbackInputOutputComponent_e9981f35.o \
   $(JUCE_OBJDIR)/FeedbackModuleComponent_33751fb8.o \
@@ -172,7 +171,6 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/include_juce_audio_basics_8a4e984a.o \
   $(JUCE_OBJDIR)/include_juce_audio_devices_63111d02.o \
   $(JUCE_OBJDIR)/include_juce_audio_formats_15f82001.o \
-  $(JUCE_OBJDIR)/include_juce_audio_plugin_client_ARA_31a052ed.o \
   $(JUCE_OBJDIR)/include_juce_audio_processors_10c03666.o \
   $(JUCE_OBJDIR)/include_juce_audio_processors_ara_2a4c6ef7.o \
   $(JUCE_OBJDIR)/include_juce_audio_processors_lv2_libs_12bdca08.o \
@@ -217,11 +215,6 @@ $(JUCE_OBJDIR)/PhysicalModelingSynth_bd23446d.o: ../../Source/PhysicalModelingSy
 $(JUCE_OBJDIR)/KarplusStrongSynth_56ce6198.o: ../../Source/KarplusStrongSynth.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling KarplusStrongSynth.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/PianoPhysicalModel_8bd4ded2.o: ../../Source/PianoPhysicalModel.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling PianoPhysicalModel.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o: ../../Source/FundamentalFrequencyComponent.cpp
@@ -597,11 +590,6 @@ $(JUCE_OBJDIR)/include_juce_audio_devices_63111d02.o: ../../JuceLibraryCode/incl
 $(JUCE_OBJDIR)/include_juce_audio_formats_15f82001.o: ../../JuceLibraryCode/include_juce_audio_formats.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling include_juce_audio_formats.cpp"
-	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
-
-$(JUCE_OBJDIR)/include_juce_audio_plugin_client_ARA_31a052ed.o: ../../JuceLibraryCode/include_juce_audio_plugin_client_ARA.cpp
-	-$(V_AT)mkdir -p $(@D)
-	@echo "Compiling include_juce_audio_plugin_client_ARA.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/include_juce_audio_processors_10c03666.o: ../../JuceLibraryCode/include_juce_audio_processors.cpp

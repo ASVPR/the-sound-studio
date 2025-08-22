@@ -26,7 +26,7 @@
 class LissajousFrequencyPlayerProcessor : public AudioProcessor
 {
 public:
-    LissajousFrequencyPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm);
+    LissajousFrequencyPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm);
     ~LissajousFrequencyPlayerProcessor();
     
     virtual void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override;
@@ -78,7 +78,7 @@ private:
     bool samplerOrSynth; // switched between processing of Sampler of Synth
     
     FrequencyManager * frequencyManager;
-    SampleLibraryManager * sampleLibraryManager;
+    SynthesisLibraryManager * sampleLibraryManager;
     
     bool isActive;
     bool shouldMute;
@@ -175,7 +175,7 @@ public:
 class LissajousChordPlayerProcessor : public AudioProcessor
 {
 public:
-    LissajousChordPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm);
+    LissajousChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm);
     ~LissajousChordPlayerProcessor();
     
     virtual void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override;
@@ -247,7 +247,7 @@ private:
 
     
     FrequencyManager * frequencyManager;
-    SampleLibraryManager * sampleLibraryManager;
+    SynthesisLibraryManager * sampleLibraryManager;
 
     bool isActive;
     bool shouldMute;
@@ -346,7 +346,7 @@ public:
 class LissajousProcessor
 {
 public:
-    LissajousProcessor(FrequencyManager * fm, SampleLibraryManager * slm)
+    LissajousProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm)
     {
         frequencyManager        = fm;
         sampleLibraryManager    = slm;
@@ -607,7 +607,7 @@ private:
     
     
     FrequencyManager * frequencyManager;
-    SampleLibraryManager * sampleLibraryManager;
+    SynthesisLibraryManager * sampleLibraryManager;
     
     LissajousFrequencyPlayerProcessor * freqPlayer[3]; // x and y
     LissajousChordPlayerProcessor * chordPlayer[3]; // x and y

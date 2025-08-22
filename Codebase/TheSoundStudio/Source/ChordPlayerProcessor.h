@@ -12,7 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SamplerProcessor.h"
 #include "VotanSynthProcessor.h"
-#include "SampleLibraryManager.h"
+#include "SynthesisLibraryManager.h"
 #include "WavetableSynthProcessor.h"
 
 class ProjectManager;
@@ -20,7 +20,7 @@ class ProjectManager;
 class ChordPlayerProcessor : public AudioProcessor
 {
 public:
-    ChordPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm, ProjectManager * pm);
+    ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm);
     ~ChordPlayerProcessor();
     
     virtual void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override;
@@ -87,7 +87,7 @@ private:
     
     
     FrequencyManager * frequencyManager;
-    SampleLibraryManager * sampleLibraryManager;
+    SynthesisLibraryManager * sampleLibraryManager;
 
     bool isActive[NUM_SHORTCUT_SYNTHS];
     bool shouldMute[NUM_SHORTCUT_SYNTHS];

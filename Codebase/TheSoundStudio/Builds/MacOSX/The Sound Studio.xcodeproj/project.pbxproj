@@ -38,7 +38,6 @@
 		52D9CD82B7F8CD59EA851C5D /* OscilloscopeVisualiserComponent.cpp */ = {isa = PBXBuildFile; fileRef = 6370B45080B16022D9521F9C; };
 		53BD7FE9395A86E404851AC6 /* PolyphaseIir2Designer.cpp */ = {isa = PBXBuildFile; fileRef = CA0D4D8E35B4EE383D4DAF99; };
 		59E8996733CA70C1DBB4224B /* Delay.cpp */ = {isa = PBXBuildFile; fileRef = 24B4CFB38930822029FC6454; };
-		5F03E00E55AF608E2D6CA9DD /* PianoPhysicalModel.cpp */ = {isa = PBXBuildFile; fileRef = DEEC8439162EAC10CA38E2A3; };
 		5FD0F22F52E0D00743E2FB87 /* include_juce_gui_basics.mm */ = {isa = PBXBuildFile; fileRef = 1AC97A33BA191327D5DC01DA; };
 		61D858198044F9F72C91A61A /* SettingsComponent.cpp */ = {isa = PBXBuildFile; fileRef = 60D71073039FC3E54D38AEBB; };
 		62FF3696390A9A9133379A65 /* KarplusStrongSynth.cpp */ = {isa = PBXBuildFile; fileRef = 0F4C13F3D773BF064BDADC27; };
@@ -56,7 +55,6 @@
 		80EAF638573F9CA919183977 /* FeedbackModuleProcessor.cpp */ = {isa = PBXBuildFile; fileRef = FFAC541C8D288F7630AC8AE7; };
 		82511670AE738ED3249E238F /* WaveTableOscViewComponent.cpp */ = {isa = PBXBuildFile; fileRef = 37E073ABFC3B3D9E8D38FB69; };
 		853A008048496962CF6A93C9 /* include_juce_data_structures.mm */ = {isa = PBXBuildFile; fileRef = 82FF024A0E8515BBE6842BB8; };
-		86A0D63E2E8A392DC3540A9E /* include_juce_audio_plugin_client_ARA.cpp */ = {isa = PBXBuildFile; fileRef = 3E00302EC2B38A52288AF047; };
 		885D1FAE6A1AE8170E86ED9D /* Scales.cpp */ = {isa = PBXBuildFile; fileRef = C4D2EB5BDED830973EEB7003; };
 		88D1F0CF6BACF2BB5BBE637F /* 2DVisualisers.cpp */ = {isa = PBXBuildFile; fileRef = 1050E948F656F406672DAD71; };
 		8A7E1150762CCBC46F786499 /* LogFileWriter.cpp */ = {isa = PBXBuildFile; fileRef = DFC8E1F1B9E55F466AE108C6; };
@@ -157,7 +155,6 @@
 		107CDA41FE95611B4FE8F914 /* Parameters.h */ /* Parameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Parameters.h; path = ../../Source/Parameters.h; sourceTree = SOURCE_ROOT; };
 		10CCD71235B65B9CA24A3C00 /* pluginconstants.h */ /* pluginconstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pluginconstants.h; path = ../../Source/pluginconstants.h; sourceTree = SOURCE_ROOT; };
 		1205AF32F2591EB2593B11E8 /* FrequencyPlayerComponent.cpp */ /* FrequencyPlayerComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FrequencyPlayerComponent.cpp; path = ../../Source/FrequencyPlayerComponent.cpp; sourceTree = SOURCE_ROOT; };
-		12594664E153B3765909687B /* PianoPhysicalModel.h */ /* PianoPhysicalModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PianoPhysicalModel.h; path = ../../Source/PianoPhysicalModel.h; sourceTree = SOURCE_ROOT; };
 		12C21972DC1EFFC2C228FA30 /* WaveTableOscViewComponent.h */ /* WaveTableOscViewComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WaveTableOscViewComponent.h; path = ../../Source/WaveTableOscViewComponent.h; sourceTree = SOURCE_ROOT; };
 		1564AFAF58DDCB838D54C83B /* ButtonNoisePanic */ /* ButtonNoisePanic */ = {isa = PBXFileReference; lastKnownFileType = file; name = ButtonNoisePanic; path = ../../../../Assets/ButtonNoisePanic; sourceTree = SOURCE_ROOT; };
 		1652BAADF1F5D40CF4555CA1 /* LissajousCurveComponent.cpp */ /* LissajousCurveComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LissajousCurveComponent.cpp; path = ../../Source/LissajousCurveComponent.cpp; sourceTree = SOURCE_ROOT; };
@@ -210,10 +207,8 @@
 		38D98CC0EDA26A9F53EE4FD6 /* MetalKit.framework */ /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		3B92EDA98497ED1C53A19229 /* ColourSpectrumVisualiserComponent.h */ /* ColourSpectrumVisualiserComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ColourSpectrumVisualiserComponent.h; path = ../../Source/ColourSpectrumVisualiserComponent.h; sourceTree = SOURCE_ROOT; };
 		3D5E3BA7F6DDF2E07D7D2F0F /* VotanBuffer.h */ /* VotanBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VotanBuffer.h; path = ../../Source/VotanBuffer.h; sourceTree = SOURCE_ROOT; };
-		3E00302EC2B38A52288AF047 /* include_juce_audio_plugin_client_ARA.cpp */ /* include_juce_audio_plugin_client_ARA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_audio_plugin_client_ARA.cpp; path = ../../JuceLibraryCode/include_juce_audio_plugin_client_ARA.cpp; sourceTree = SOURCE_ROOT; };
 		3F0CB372A274EE7939CBF81D /* OpenGL.framework */ /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3FF0F7293D56563A026D5D2D /* FrequencyPlayerSettingsBackground.png */ /* FrequencyPlayerSettingsBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = FrequencyPlayerSettingsBackground.png; path = ../../../../Assets/FrequencyPlayerSettingsBackground.png; sourceTree = SOURCE_ROOT; };
-		41A4677CD27C8CDCECEB5207 /* juce_audio_plugin_client */ /* juce_audio_plugin_client */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_plugin_client; path = ../../modules/juce_audio_plugin_client; sourceTree = SOURCE_ROOT; };
 		4298E957031A7DD9157BF6A1 /* CustomChordDetailsBackground_Max.png */ /* CustomChordDetailsBackground_Max.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CustomChordDetailsBackground_Max.png; path = ../../../../Assets/CustomChordDetailsBackground_Max.png; sourceTree = SOURCE_ROOT; };
 		43A5440617063D358DC3081C /* Info-App.plist */ /* Info-App.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-App.plist"; path = "Info-App.plist"; sourceTree = SOURCE_ROOT; };
 		43A55829404653F7A3713654 /* FeedbackModuleComponent.h */ /* FeedbackModuleComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FeedbackModuleComponent.h; path = ../../Source/Views/FeedbackModule/FeedbackModuleComponent.h; sourceTree = SOURCE_ROOT; };
@@ -441,7 +436,6 @@
 		DB23839EDC87E33B19AC75D0 /* juce_audio_basics */ /* juce_audio_basics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_basics; path = ../../modules/juce_audio_basics; sourceTree = SOURCE_ROOT; };
 		DBE58C108C4DE38086FB1DB6 /* PluginAssignProcessor.cpp */ /* PluginAssignProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PluginAssignProcessor.cpp; path = ../../Source/PluginAssignProcessor.cpp; sourceTree = SOURCE_ROOT; };
 		DEEB41E911B86150F80DC9E3 /* juce_audio_processors */ /* juce_audio_processors */ = {isa = PBXFileReference; lastKnownFileType = folder; name = juce_audio_processors; path = ../../modules/juce_audio_processors; sourceTree = SOURCE_ROOT; };
-		DEEC8439162EAC10CA38E2A3 /* PianoPhysicalModel.cpp */ /* PianoPhysicalModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PianoPhysicalModel.cpp; path = ../../Source/PianoPhysicalModel.cpp; sourceTree = SOURCE_ROOT; };
 		DF964C8031318D9DFB863D9D /* StageProcFpu.h */ /* StageProcFpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StageProcFpu.h; path = ../../Source/hiir/StageProcFpu.h; sourceTree = SOURCE_ROOT; };
 		DF9F44559856FA0DB70B01A9 /* MainViewComponent.h */ /* MainViewComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MainViewComponent.h; path = ../../Source/MainViewComponent.h; sourceTree = SOURCE_ROOT; };
 		DFC8E1F1B9E55F466AE108C6 /* LogFileWriter.cpp */ /* LogFileWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LogFileWriter.cpp; path = ../../Source/LogFileWriter.cpp; sourceTree = SOURCE_ROOT; };
@@ -747,7 +741,6 @@
 				9F6919AB5A8EE32124BE22CD,
 				0AF316EE8AFC17271BCE6E50,
 				04ED0ADDD79F20741F7B01FB,
-				3E00302EC2B38A52288AF047,
 				A5F901AEBBFFBB9EBF17E095,
 				259D7DAD05FEB0A36C44C1FF,
 				F62900C3EC98EB9BAF302862,
@@ -868,7 +861,6 @@
 				DB23839EDC87E33B19AC75D0,
 				AF3F4FDEB0143C9AF9ADA3C9,
 				A72DC9372141155EB4ADC270,
-				41A4677CD27C8CDCECEB5207,
 				DEEB41E911B86150F80DC9E3,
 				C28980239D7066ACA91E9799,
 				72D783313283E4ADDF026D2D,
@@ -905,8 +897,6 @@
 				79AE5D5C6261F7D84ECBEB7D,
 				51D30F5E50E8932F735ED1C5,
 				0F4C13F3D773BF064BDADC27,
-				12594664E153B3765909687B,
-				DEEC8439162EAC10CA38E2A3,
 			);
 			name = Synthesis;
 			sourceTree = "<group>";
@@ -1289,7 +1279,6 @@
 				1616DB196CEBCCF6AFF1F7C2,
 				27FE9DE75BF7FB10275AEEF9,
 				62FF3696390A9A9133379A65,
-				5F03E00E55AF608E2D6CA9DD,
 				0767F55FEDE4796991F72685,
 				E2C01413336E3076BA34FE21,
 				2C36BA1562684500C65E1160,
@@ -1365,7 +1354,6 @@
 				2A740D132364B699620A1172,
 				471CBF3144D0B19ED72CB21B,
 				31497BDF5D9C7D1084397337,
-				86A0D63E2E8A392DC3540A9E,
 				A1343C4DFE0F90EA8286B804,
 				7410D0A99B3CC851FA4D6FD1,
 				7F907E53340AE2F8FFC6657E,
@@ -1526,7 +1514,6 @@
 					"$(SRCROOT)/../../Source/Views/Interface/",
 					"$(SRCROOT)/../../Source/Views/FeedbackModule/",
 					"$(SRCROOT)/../../Source/",
-					"$(SRCROOT)/../../modules/juce_audio_plugin_client/AU",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Info-App.plist;
@@ -1534,7 +1521,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode $(SRCROOT)/../../user_modules $(SRCROOT)/../../modules $(SRCROOT)/../../Source/Views/Interface/ $(SRCROOT)/../../Source/Views/FeedbackModule/ $(SRCROOT)/../../Source/ $(SRCROOT)/../../modules/juce_audio_plugin_client/AU";
+				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode $(SRCROOT)/../../user_modules $(SRCROOT)/../../modules $(SRCROOT)/../../Source/Views/Interface/ $(SRCROOT)/../../Source/Views/FeedbackModule/ $(SRCROOT)/../../Source/";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.TheSoundStudio;
 				PRODUCT_NAME = "The Sound Studio";
 				USE_HEADERMAP = NO;
@@ -1583,14 +1570,13 @@
 					"$(SRCROOT)/../../Source/Views/Interface/",
 					"$(SRCROOT)/../../Source/Views/FeedbackModule/",
 					"$(SRCROOT)/../../Source/",
-					"$(SRCROOT)/../../modules/juce_audio_plugin_client/AU",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = Info-App.plist;
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode $(SRCROOT)/../../user_modules $(SRCROOT)/../../modules $(SRCROOT)/../../Source/Views/Interface/ $(SRCROOT)/../../Source/Views/FeedbackModule/ $(SRCROOT)/../../Source/ $(SRCROOT)/../../modules/juce_audio_plugin_client/AU";
+				MTL_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../JuceLibraryCode $(SRCROOT)/../../user_modules $(SRCROOT)/../../modules $(SRCROOT)/../../Source/Views/Interface/ $(SRCROOT)/../../Source/Views/FeedbackModule/ $(SRCROOT)/../../Source/";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.TheSoundStudio;
 				PRODUCT_NAME = "The Sound Studio";
 				USE_HEADERMAP = NO;

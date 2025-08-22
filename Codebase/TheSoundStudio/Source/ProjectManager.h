@@ -19,7 +19,7 @@
 #include "FrequencyToLightProcessor.h"
 #include "LissajousCurveProcessor.h"
 #include "ChordManager.h"
-#include "SampleLibraryManager.h"
+#include "SynthesisLibraryManager.h"
 #include "FrequencyManager.h"
 #include "ChordManager.h"
 #include "PluginAssignProcessor.h"
@@ -30,7 +30,9 @@
 #include "AnalyzerNew.h"
 #include <memory>
 #include <atomic>
-#include <shared_mutex>
+#include <mutex>
+#include <condition_variable>
+#include <chrono>
 #include <array>
 
 class MainComponent;
@@ -40,7 +42,7 @@ class ProjectManager : public ChangeListener
 public:
     // FIXED: Thread-safe atomic mode management
     std::atomic<AUDIO_MODE> currentMode { AUDIO_MODE::MODE_CHORD_PLAYER };
-    mutable std::shared_mutex stateMutex;  // For complex state changes
+    mutable std::mutex stateMutex;  // For thread safety
     
     // Deprecated - use currentMode instead
     enum AUDIO_MODE mode;
@@ -202,9 +204,9 @@ public:
     //===============================================================================
     
     // FIXED: Smart pointer for memory safety
-    std::unique_ptr<SampleLibraryManager> sampleLibraryManager;
+    std::unique_ptr<SynthesisLibraryManager> sampleLibraryManager;
     
-    SampleLibraryManager * getSampleLibraryManager() { return sampleLibraryManager; }
+    SynthesisLibraryManager * getSampleLibraryManager() { return sampleLibraryManager.get(); }
     
     //===============================================================================
 #pragma mark Wavetable interface
@@ -633,7 +635,6 @@ private:
     void initializePluginSystem();
     void initializeProcessors();
     void initializeAnalysisProcessors();
-    bool initFFT();
 
 //===============================================================================
 #pragma mark Profiles / Presets Save - Load

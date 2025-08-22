@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ShortcutComponent.h"
+#include "Parameters.h"
 
 //==============================================================================
 ShortcutComponent::ShortcutComponent(int shortcut, ProjectManager * pm)
@@ -47,32 +48,32 @@ ShortcutComponent::ShortcutComponent(int shortcut, ProjectManager * pm)
     addAndMakeVisible(backgroundImageComp);
     
     // containers
-    containerView_Active = new Component();
-    addAndMakeVisible(containerView_Active);
+    containerView_Active = std::make_unique<Component>();
+    addAndMakeVisible(containerView_Active.get());
     
-    containerView_Inactive = new Component();
-    addAndMakeVisible(containerView_Inactive);
+    containerView_Inactive = std::make_unique<Component>();
+    addAndMakeVisible(containerView_Inactive.get());
     
     // active buttons
-    button_Settings = new ImageButton();
+    button_Settings = std::make_unique<ImageButton>();
     button_Settings->setTriggeredOnMouseDown(true);
     button_Settings->setImages (false, true, true,
                                 imageSettingsIcon, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageSettingsIcon, 0.75, Colour (0x00000000));
     button_Settings->addListener(this);
-    containerView_Active->addAndMakeVisible(button_Settings);
+    containerView_Active->addAndMakeVisible(button_Settings.get());
     
-    button_Mute = new ImageButton();
+    button_Mute = std::make_unique<ImageButton>();
     button_Mute->setTriggeredOnMouseDown(true);
     button_Mute->setImages (false, true, true,
                             imageMuteIcon, 0.5f, Colour (0x00000000),
                             Image(), 1.000f, Colour (0x00000000),
                             imageMuteIcon, 0.99, Colour (0x00000000));
     button_Mute->addListener(this);
-    containerView_Active->addAndMakeVisible(button_Mute);
+    containerView_Active->addAndMakeVisible(button_Mute.get());
     
-    button_Loop = new ImageButton();
+    button_Loop = std::make_unique<ImageButton>();
     button_Loop->setTriggeredOnMouseDown(true);
     button_Loop->setImages (false, true, true,
                             imageLoopIcon, 0.5f, Colour (0x00000000),
@@ -81,111 +82,103 @@ ShortcutComponent::ShortcutComponent(int shortcut, ProjectManager * pm)
     button_Loop->addListener(this);
     
     
-    button_Delete = new ImageButton();
+    button_Delete = std::make_unique<ImageButton>();
     button_Delete->setTriggeredOnMouseDown(true);
     button_Delete->setImages (false, true, true,
                               imageDelete, 0.999f, Colour (0x00000000),
                               Image(), 1.000f, Colour (0x00000000),
                               imageDelete, 0.75, Colour (0x00000000));
     button_Delete->addListener(this);
-    containerView_Active->addAndMakeVisible(button_Delete);
+    containerView_Active->addAndMakeVisible(button_Delete.get());
     
     
-    label_Chord = new Label();
+    label_Chord = std::make_unique<Label>();
     label_Chord->setText("Chord", dontSendNotification);
     label_Chord->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Chord->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Chord);
+    containerView_Active->addAndMakeVisible(label_Chord.get());
     
     
-    label_Chordtype = new Label();
+    label_Chordtype = std::make_unique<Label>();
     label_Chordtype->setText("Chord type", dontSendNotification);
     label_Chordtype->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Chordtype->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Chordtype);
+    containerView_Active->addAndMakeVisible(label_Chordtype.get());
     
-    label_Scale = new Label();
+    label_Scale = std::make_unique<Label>();
     label_Scale->setText("Scale", dontSendNotification);
     label_Scale->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Scale->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Scale);
+    containerView_Active->addAndMakeVisible(label_Scale.get());
     
-    label_Instrument = new Label();
+    label_Instrument = std::make_unique<Label>();
     label_Instrument->setText("Instrument", dontSendNotification);
     label_Instrument->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Instrument->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Instrument);
+    containerView_Active->addAndMakeVisible(label_Instrument.get());
     
-    label_Chordtype = new Label();
-    label_Chordtype->setText("Chord type", dontSendNotification);
-    label_Chordtype->setJustificationType(Justification::left);
-    fontSemiBold.setHeight(33);
-    label_Chordtype->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Chordtype);
-    
-    
-    label_Frequency = new Label();
+    label_Frequency = std::make_unique<Label>();
     label_Frequency->setText("Frequency", dontSendNotification);
     label_Frequency->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Frequency->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Frequency);
+    containerView_Active->addAndMakeVisible(label_Frequency.get());
     
-    label_ChordValue = new Label();
+    label_ChordValue = std::make_unique<Label>();
     label_ChordValue->setText(chord, dontSendNotification);
     label_ChordValue->setJustificationType(Justification::right);
     label_ChordValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_ChordValue);
+    containerView_Active->addAndMakeVisible(label_ChordValue.get());
     
-    label_ChordtypeValue = new Label();
+    label_ChordtypeValue = std::make_unique<Label>();
     label_ChordtypeValue->setText(chordType, dontSendNotification);
     label_ChordtypeValue->setJustificationType(Justification::right);
     label_ChordtypeValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_ChordtypeValue);
+    containerView_Active->addAndMakeVisible(label_ChordtypeValue.get());
     
-    label_ScaleValue = new Label();
+    label_ScaleValue = std::make_unique<Label>();
     label_ScaleValue->setText(chordType, dontSendNotification);
     label_ScaleValue->setJustificationType(Justification::right);
     label_ScaleValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_ScaleValue);
+    containerView_Active->addAndMakeVisible(label_ScaleValue.get());
     
-    label_InstrumentValue = new Label();
+    label_InstrumentValue = std::make_unique<Label>();
     label_InstrumentValue->setText(chordType, dontSendNotification);
     label_InstrumentValue->setJustificationType(Justification::right);
     label_InstrumentValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_InstrumentValue);
+    containerView_Active->addAndMakeVisible(label_InstrumentValue.get());
     
     
-    label_FrequencyValue = new Label();
+    label_FrequencyValue = std::make_unique<Label>();
     label_FrequencyValue->setText(frequencyHz, dontSendNotification);
     label_FrequencyValue->setJustificationType(Justification::right);
     label_FrequencyValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_FrequencyValue);
+    containerView_Active->addAndMakeVisible(label_FrequencyValue.get());
     
     
-    shortcutRefLabel = new Label();
+    shortcutRefLabel = std::make_unique<Label>();
     String shortcutString("Shortcut ");
     shortcutString.append(ProjectStrings::getShortcuts().getReference(shortcutRef), 2);
     shortcutRefLabel->setText(shortcutString, dontSendNotification);
     shortcutRefLabel->setJustificationType(Justification::centred);
     fontLight.setHeight(33);
     shortcutRefLabel->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(shortcutRefLabel);
+    containerView_Active->addAndMakeVisible(shortcutRefLabel.get());
     
     
     // inactive button
-    button_Add = new ImageButton();
+    button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                            imageAddIcon, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                            imageAddIcon, 0.75, Colour (0x00000000));
     button_Add->addListener(this);
-    containerView_Inactive->addAndMakeVisible(button_Add);
+    containerView_Inactive->addAndMakeVisible(button_Add.get());
     
     setState(0);
 
@@ -239,19 +232,19 @@ void ShortcutComponent::resized()
 
 void ShortcutComponent::buttonClicked (Button*button)
 {
-    if (button == button_Settings)
+    if (button == button_Settings.get())
     {
         shortcutListeners.call(&ShortcutListener::openChordPlayerSettingsForShortcut, shortcutRef);
     }
-    else if (button == button_Loop)
+    else if (button == button_Loop.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, SHORTCUT_PLAY_AT_SAME_TIME, !button_Loop->getToggleState());
     }
-    else if (button == button_Mute)
+    else if (button == button_Mute.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, SHORTCUT_MUTE, !button_Mute->getToggleState());
     }
-    else if (button == button_Delete)
+    else if (button == button_Delete.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, SHORTCUT_IS_ACTIVE, false);
         
@@ -259,7 +252,7 @@ void ShortcutComponent::buttonClicked (Button*button)
         
 //         projectManager->reorderShortcuts();
     }
-    else if (button == button_Add)
+    else if (button == button_Add.get())
     {
         projectManager->initDefaultChordPlayerParametersForShortcut(shortcutRef);
         
@@ -332,40 +325,40 @@ ShortcutContainerComponent::ShortcutContainerComponent(ProjectManager * pm)
     imageRightButton    = ImageCache::getFromMemory(BinaryData::ShortcutRight2x_png, BinaryData::ShortcutRight2x_pngSize);
     
     // buttons
-    button_Left = new ImageButton();
+    button_Left = std::make_unique<ImageButton>();
     button_Left->setTriggeredOnMouseDown(true);
     button_Left->setImages (false, true, true,
                             imageLeftButton, 0.999f, Colour (0x00000000),
                             Image(), 1.000f, Colour (0x00000000),
                             imageLeftButton, 0.75, Colour (0x00000000));
     button_Left->addListener(this);
-    addAndMakeVisible(button_Left);
+    addAndMakeVisible(button_Left.get());
     
-    button_Right = new ImageButton();
+    button_Right = std::make_unique<ImageButton>();
     button_Right->setTriggeredOnMouseDown(true);
     button_Right->setImages (false, true, true,
                              imageRightButton, 0.999f, Colour (0x00000000),
                              Image(), 1.000f, Colour (0x00000000),
                              imageRightButton, 0.75, Colour (0x00000000));
     button_Right->addListener(this);
-    addAndMakeVisible(button_Right);
+    addAndMakeVisible(button_Right.get());
     
-    shortcutsContainer = new Component();
+    shortcutsContainer = std::make_unique<Component>();
     shortcutsContainer->setBounds(0, 0, containerWidth, 344);
     
     // shortcuts array
     
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
-        shortcutComponent[i] = new ShortcutComponent(i, projectManager);
-        shortcutsContainer->addAndMakeVisible(shortcutComponent[i]);
+        shortcutComponent[i] = std::make_unique<ShortcutComponent>(i, projectManager);
+        shortcutsContainer->addAndMakeVisible(shortcutComponent[i].get());
     }
     
     // viewport
-    viewport = new Viewport();
-    viewport            ->setViewedComponent(shortcutsContainer);
+    viewport = std::make_unique<Viewport>();
+    viewport            ->setViewedComponent(shortcutsContainer.get());
     viewport            ->setScrollBarsShown(false, false, false, true);
-    addAndMakeVisible(viewport);
+    addAndMakeVisible(viewport.get());
 }
 
 void ShortcutContainerComponent::resized()
@@ -386,12 +379,12 @@ void ShortcutContainerComponent::resized()
 
 void ShortcutContainerComponent::buttonClicked (Button*button)
 {
-    if (button == button_Left)
+    if (button == button_Left.get())
     {
         shiftToRight--; if(shiftToRight<=0)shiftToRight=0;
         moveViewport();
     }
-    else if (button == button_Right)
+    else if (button == button_Right.get())
     {
         shiftToRight++; if(shiftToRight>=5)shiftToRight=5;
         moveViewport();
@@ -443,16 +436,16 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
     addAndMakeVisible(backgroundImageComp);
     
     // containers
-    containerView_Active = new Component();
+    containerView_Active = std::make_unique<Component>();
     containerView_Active->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_Active);
+    addAndMakeVisible(containerView_Active.get());
     
-    containerView_Inactive = new Component();
+    containerView_Inactive = std::make_unique<Component>();
     containerView_Inactive->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_Inactive);
+    addAndMakeVisible(containerView_Inactive.get());
     
     // active buttons
-    button_Settings = new ImageButton();
+    button_Settings = std::make_unique<ImageButton>();
     button_Settings->setTriggeredOnMouseDown(true);
     button_Settings->setImages (false, true, true,
                                 imageSettingsIcon, 0.999f, Colour (0x00000000),
@@ -460,9 +453,9 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                                 imageSettingsIcon, 0.75, Colour (0x00000000));
     button_Settings->addListener(this);
     button_Settings->setBounds(settingsLeftMargin, settingsTopMargin, settingsSize, settingsSize);
-    containerView_Active->addAndMakeVisible(button_Settings);
+    containerView_Active->addAndMakeVisible(button_Settings.get());
     
-    button_Mute = new ImageButton();
+    button_Mute = std::make_unique<ImageButton>();
     button_Mute->setTriggeredOnMouseDown(true);
     button_Mute->setImages (false, true, true,
                             imageMuteIcon, 0.5f, Colour (0x00000000),
@@ -470,9 +463,9 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                             imageMuteIcon, 0.99, Colour (0x00000000));
     button_Mute->addListener(this);
     button_Mute->setBounds(loopLeftMargin, loopTopMargin, muteSize, muteSize);
-    containerView_Active->addAndMakeVisible(button_Mute);
+    containerView_Active->addAndMakeVisible(button_Mute.get());
     
-    button_Loop = new ImageButton();
+    button_Loop = std::make_unique<ImageButton>();
     button_Loop->setTriggeredOnMouseDown(true);
     button_Loop->setImages (false, true, true,
                             imageLoopIcon, 0.5f, Colour (0x00000000),
@@ -482,7 +475,7 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
     button_Loop->setBounds(loopLeftMargin, loopTopMargin, loopWidth, loopHeight);
     
     
-    button_Delete = new ImageButton();
+    button_Delete = std::make_unique<ImageButton>();
     button_Delete->setTriggeredOnMouseDown(true);
     button_Delete->setImages (false, true, true,
                               imageDelete, 0.999f, Colour (0x00000000),
@@ -490,45 +483,45 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                               imageDelete, 0.75, Colour (0x00000000));
     button_Delete->addListener(this);
     button_Delete->setBounds(0, deleteTopMargin, deleteSize, deleteSize);
-    containerView_Active->addAndMakeVisible(button_Delete);
+    containerView_Active->addAndMakeVisible(button_Delete.get());
     
 
     
     
-    label_Wavetype = new Label();
+    label_Wavetype = std::make_unique<Label>();
     label_Wavetype->setText("Wave type", dontSendNotification);
     label_Wavetype->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Wavetype->setBounds(insetLeftLabels, label2Top, labelWidth, labelHeight);
     label_Wavetype->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Wavetype);
+    containerView_Active->addAndMakeVisible(label_Wavetype.get());
     
     
-    label_Frequency = new Label();
+    label_Frequency = std::make_unique<Label>();
     label_Frequency->setText("Frequency", dontSendNotification);
     label_Frequency->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
     label_Frequency->setBounds(insetLeftLabels, label3Top, labelWidth, labelHeight);
     label_Frequency->setFont(fontSemiBold);
-    containerView_Active->addAndMakeVisible(label_Frequency);
+    containerView_Active->addAndMakeVisible(label_Frequency.get());
     
-    label_WavetypeValue = new Label();
+    label_WavetypeValue = std::make_unique<Label>();
     label_WavetypeValue->setText(waveType, dontSendNotification);
     label_WavetypeValue->setJustificationType(Justification::right);
     label_WavetypeValue->setBounds(insetRightLabels, label2Top, labelWidth, labelHeight);
     label_WavetypeValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_WavetypeValue);
+    containerView_Active->addAndMakeVisible(label_WavetypeValue.get());
     
     
-    label_FrequencyValue = new Label();
+    label_FrequencyValue = std::make_unique<Label>();
     label_FrequencyValue->setText(frequencyHz, dontSendNotification);
     label_FrequencyValue->setJustificationType(Justification::right);
     label_FrequencyValue->setBounds(insetRightLabels, label3Top, labelWidth, labelHeight);
     label_FrequencyValue->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(label_FrequencyValue);
+    containerView_Active->addAndMakeVisible(label_FrequencyValue.get());
     
     
-    shortcutRefLabel = new Label();
+    shortcutRefLabel = std::make_unique<Label>();
     String shortcutString("Shortcut ");
     shortcutString.append(ProjectStrings::getShortcuts().getReference(shortcutRef), 2);
     shortcutRefLabel->setText(shortcutString, dontSendNotification);
@@ -536,11 +529,11 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
     fontLight.setHeight(33);
     shortcutRefLabel->setBounds(0, 300, mainWidth, labelHeight);
     shortcutRefLabel->setFont(fontLight);
-    containerView_Active->addAndMakeVisible(shortcutRefLabel);
+    containerView_Active->addAndMakeVisible(shortcutRefLabel.get());
     
     
     // inactive button
-    button_Add = new ImageButton();
+    button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                            imageAddIcon, 0.999f, Colour (0x00000000),
@@ -548,7 +541,7 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                            imageAddIcon, 0.75, Colour (0x00000000));
     button_Add->addListener(this);
     button_Add->setBounds(118 + 18, 138, 71, 71);
-    containerView_Inactive->addAndMakeVisible(button_Add);
+    containerView_Inactive->addAndMakeVisible(button_Add.get());
     
     setState(0);
     
@@ -585,25 +578,25 @@ void ShortcutComponentFrequency::resized()
 
 void ShortcutComponentFrequency::buttonClicked (Button*button)
 {
-    if (button == button_Settings)
+    if (button == button_Settings.get())
     {
         shortcutListeners.call(&ShortcutFrequencyListener::openFrequencyPlayerSettingsForShortcut, shortcutRef);
     }
-    else if (button == button_Loop)
+    else if (button == button_Loop.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SHORTCUT_PLAY_AT_SAME_TIME, !button_Loop->getToggleState());
     }
-    else if (button == button_Mute)
+    else if (button == button_Mute.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SHORTCUT_MUTE, !button_Mute->getToggleState());
     }
-    else if (button == button_Delete)
+    else if (button == button_Delete.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SHORTCUT_IS_ACTIVE, false);
         
        
     }
-    else if (button == button_Add)
+    else if (button == button_Add.get())
     {
 
         projectManager->initDefaultFrequencyPlayerParametersForShortcut(shortcutRef);
@@ -660,7 +653,7 @@ ShortcutFrequencyContainerComponent::ShortcutFrequencyContainerComponent(Project
     imageRightButton    = ImageCache::getFromMemory(BinaryData::ShortcutRight2x_png, BinaryData::ShortcutRight2x_pngSize);
     
     // buttons
-    button_Left = new ImageButton();
+    button_Left = std::make_unique<ImageButton>();
     button_Left->setTriggeredOnMouseDown(true);
     button_Left->setImages (false, true, true,
                             imageLeftButton, 0.999f, Colour (0x00000000),
@@ -668,9 +661,9 @@ ShortcutFrequencyContainerComponent::ShortcutFrequencyContainerComponent(Project
                             imageLeftButton, 0.75, Colour (0x00000000));
     button_Left->addListener(this);
     button_Left->setBounds(leftButtonLeftMargin, leftButtonTopMargin, buttonWidth, buttonHeight);
-    addAndMakeVisible(button_Left);
+    addAndMakeVisible(button_Left.get());
     
-    button_Right = new ImageButton();
+    button_Right = std::make_unique<ImageButton>();
     button_Right->setTriggeredOnMouseDown(true);
     button_Right->setImages (false, true, true,
                              imageRightButton, 0.999f, Colour (0x00000000),
@@ -678,27 +671,27 @@ ShortcutFrequencyContainerComponent::ShortcutFrequencyContainerComponent(Project
                              imageRightButton, 0.75, Colour (0x00000000));
     button_Right->addListener(this);
     button_Right->setBounds(rightButtonLeftMargin, rightButtonTopMargin, buttonWidth, buttonHeight);
-    addAndMakeVisible(button_Right);
+    addAndMakeVisible(button_Right.get());
     
-    shortcutsContainer = new Component();
+    shortcutsContainer = std::make_unique<Component>();
     shortcutsContainer->setBounds(0, 0, containerWidth, 344);
     
     // shortcuts array
     
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
-        shortcutComponent[i] = new ShortcutComponentFrequency(i, projectManager);
+        shortcutComponent[i] = std::make_unique<ShortcutComponentFrequency>(i, projectManager);
         shortcutComponent[i]->setBounds(shortcutWidth * i, 0, shortcutWidth, 344);
-        shortcutsContainer->addAndMakeVisible(shortcutComponent[i]);
+        shortcutsContainer->addAndMakeVisible(shortcutComponent[i].get());
     }
     
     // viewport
-    viewport = new Viewport();
+    viewport = std::make_unique<Viewport>();
     viewport->setBounds(viewportLeftMargin, 0, viewportWidth, 344);
     
-    viewport            ->setViewedComponent(shortcutsContainer);
+    viewport            ->setViewedComponent(shortcutsContainer.get());
     viewport            ->setScrollBarsShown(false, false, false, true);
-    addAndMakeVisible(viewport);
+    addAndMakeVisible(viewport.get());
 }
 
 void ShortcutFrequencyContainerComponent::resized()
@@ -717,12 +710,12 @@ void ShortcutFrequencyContainerComponent::resized()
 
 void ShortcutFrequencyContainerComponent::buttonClicked (Button*button)
 {
-    if (button == button_Left)
+    if (button == button_Left.get())
     {
         shiftToRight--; if(shiftToRight<=0)shiftToRight=0;
         moveViewport();
     }
-    else if (button == button_Right)
+    else if (button == button_Right.get())
     {
         shiftToRight++; if(shiftToRight>=5)shiftToRight=5;
         moveViewport();

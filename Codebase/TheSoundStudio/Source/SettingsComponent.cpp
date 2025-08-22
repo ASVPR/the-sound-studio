@@ -49,7 +49,7 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     fontNormal.setHeight(40);
     fontBold.setHeight(30);
 
-    textEditor_NotesFrequency = new TextEditor();
+    textEditor_NotesFrequency = std::make_unique<TextEditor>();
     textEditor_NotesFrequency->setInputRestrictions(10, "0123456789.");
     textEditor_NotesFrequency->setBounds(288, 328, 117, 41);
     textEditor_NotesFrequency->setText("440");
@@ -60,74 +60,74 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_NotesFrequency->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_NotesFrequency->applyFontToAllText(fontNormal);
     textEditor_NotesFrequency->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_NotesFrequency);
+    addAndMakeVisible(textEditor_NotesFrequency.get());
     
     
     // Locations Files
     
-    label_LogFileLocation = new Label("");
+    label_LogFileLocation = std::make_unique<Label>("");
     label_LogFileLocation->setFont(fontNormal);
     label_LogFileLocation->setColour(Label::textColourId, Colours::lightgrey);
     label_LogFileLocation->setJustificationType(Justification::left);
     label_LogFileLocation->setText("file location", dontSendNotification);
-    addAndMakeVisible(label_LogFileLocation);
+    addAndMakeVisible(label_LogFileLocation.get());
     
-    label_RecordFileLocation = new Label("");
+    label_RecordFileLocation = std::make_unique<Label>("");
     label_RecordFileLocation->setFont(fontNormal);
     label_RecordFileLocation->setColour(Label::textColourId, Colours::lightgrey);
     label_RecordFileLocation->setJustificationType(Justification::left);
-    addAndMakeVisible(label_RecordFileLocation);
+    addAndMakeVisible(label_RecordFileLocation.get());
 
-    label_B_Frequency = new Label("");
+    label_B_Frequency = std::make_unique<Label>("");
     label_B_Frequency->setFont(fontNormal);
     label_B_Frequency->setColour(Label::textColourId, Colours::lightgrey);
     label_B_Frequency->setJustificationType(Justification::centred);
     label_B_Frequency->setText("440", dontSendNotification);
     label_B_Frequency->setBounds(443, 328, 117, 41);
-    addAndMakeVisible(label_B_Frequency);
+    addAndMakeVisible(label_B_Frequency.get());
     
-    label_C_Frequency = new Label("");
+    label_C_Frequency = std::make_unique<Label>("");
     label_C_Frequency->setFont(fontNormal);
     label_C_Frequency->setColour(Label::textColourId, Colours::lightgrey);
     label_C_Frequency->setJustificationType(Justification::centred);
     label_C_Frequency->setText("440", dontSendNotification);
     label_C_Frequency->setBounds(598, 328, 117, 41);
-    addAndMakeVisible(label_C_Frequency);
+    addAndMakeVisible(label_C_Frequency.get());
     
-    label_D_Frequency = new Label("");
+    label_D_Frequency = std::make_unique<Label>("");
     label_D_Frequency->setFont(fontNormal);
     label_D_Frequency->setColour(Label::textColourId, Colours::lightgrey);
     label_D_Frequency->setJustificationType(Justification::centred);
     label_D_Frequency->setText("440", dontSendNotification);
     label_D_Frequency->setBounds(754, 328, 117, 41);
-    addAndMakeVisible(label_D_Frequency);
+    addAndMakeVisible(label_D_Frequency.get());
     
-    label_E_Frequency = new Label("");
+    label_E_Frequency = std::make_unique<Label>("");
     label_E_Frequency->setFont(fontNormal);
     label_E_Frequency->setColour(Label::textColourId, Colours::lightgrey);
     label_E_Frequency->setJustificationType(Justification::centred);
     label_E_Frequency->setText("440", dontSendNotification);
     label_E_Frequency->setBounds(909, 328, 117, 41);
-    addAndMakeVisible(label_E_Frequency);
+    addAndMakeVisible(label_E_Frequency.get());
     
-    label_F_Frequency = new Label("");
+    label_F_Frequency = std::make_unique<Label>("");
     label_F_Frequency->setFont(fontNormal);
     label_F_Frequency->setColour(Label::textColourId, Colours::lightgrey);
     label_F_Frequency->setJustificationType(Justification::centred);
     label_F_Frequency->setText("440", dontSendNotification);
     label_F_Frequency->setBounds(1064, 328, 117, 41);
-    addAndMakeVisible(label_F_Frequency);
+    addAndMakeVisible(label_F_Frequency.get());
     
-    label_G_Frequency = new Label("");
+    label_G_Frequency = std::make_unique<Label>("");
     label_G_Frequency->setFont(fontNormal);
     label_G_Frequency->setColour(Label::textColourId, Colours::lightgrey);
     label_G_Frequency->setJustificationType(Justification::centred);
     label_G_Frequency->setText("440", dontSendNotification);
     label_G_Frequency->setBounds(1219, 328, 117, 41);
-    addAndMakeVisible(label_G_Frequency);
+    addAndMakeVisible(label_G_Frequency.get());
     
     
-    textEditor_AmplitudeMin = new TextEditor();
+    textEditor_AmplitudeMin = std::make_unique<TextEditor>();
     textEditor_AmplitudeMin->setInputRestrictions(10, "0123456789.");
     textEditor_AmplitudeMin->setBounds(242, 497, 125, 41);
     textEditor_AmplitudeMin->setText("0");
@@ -138,10 +138,10 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_AmplitudeMin->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_AmplitudeMin->applyFontToAllText(fontNormal);
     textEditor_AmplitudeMin->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_AmplitudeMin);
+    addAndMakeVisible(textEditor_AmplitudeMin.get());
     
     
-    textEditor_AttackMin = new TextEditor();
+    textEditor_AttackMin = std::make_unique<TextEditor>();
     textEditor_AttackMin->setInputRestrictions(10, "0123456789.");
     textEditor_AttackMin->setBounds(242, 596, 125, 41);
     textEditor_AttackMin->setText("0");
@@ -152,9 +152,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_AttackMin->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_AttackMin->applyFontToAllText(fontNormal);
     textEditor_AttackMin->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_AttackMin);
+    addAndMakeVisible(textEditor_AttackMin.get());
     
-    textEditor_DecayMin = new TextEditor();
+    textEditor_DecayMin = std::make_unique<TextEditor>();
     textEditor_DecayMin->setInputRestrictions(10, "0123456789.");
     textEditor_DecayMin->setBounds(242, 660, 125, 41);
     textEditor_DecayMin->setText("0");
@@ -165,9 +165,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_DecayMin->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_DecayMin->applyFontToAllText(fontNormal);
     textEditor_DecayMin->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_DecayMin);
+    addAndMakeVisible(textEditor_DecayMin.get());
     
-    textEditor_SustainMin = new TextEditor();
+    textEditor_SustainMin = std::make_unique<TextEditor>();
     textEditor_SustainMin->setInputRestrictions(10, "0123456789.");
     textEditor_SustainMin->setBounds(242, 723, 125, 41);
     textEditor_SustainMin->setText("0");
@@ -178,9 +178,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_SustainMin->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SustainMin->applyFontToAllText(fontNormal);
     textEditor_SustainMin->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SustainMin);
+    addAndMakeVisible(textEditor_SustainMin.get());
     
-    textEditor_ReleaseMin = new TextEditor();
+    textEditor_ReleaseMin = std::make_unique<TextEditor>();
     textEditor_ReleaseMin->setInputRestrictions(10, "0123456789.");
     textEditor_ReleaseMin->setBounds(242, 787, 125, 41);
     textEditor_ReleaseMin->setText("0");
@@ -191,10 +191,10 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_ReleaseMin->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_ReleaseMin->applyFontToAllText(fontNormal);
     textEditor_ReleaseMin->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_ReleaseMin);
+    addAndMakeVisible(textEditor_ReleaseMin.get());
     
     
-    textEditor_AmplitudeMax = new TextEditor();
+    textEditor_AmplitudeMax = std::make_unique<TextEditor>();
     textEditor_AmplitudeMax->setInputRestrictions(10, "0123456789.");
     textEditor_AmplitudeMax->setBounds(432, 497, 125, 41);
     textEditor_AmplitudeMax->setText("100");
@@ -205,9 +205,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_AmplitudeMax->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_AmplitudeMax->applyFontToAllText(fontNormal);
     textEditor_AmplitudeMax->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_AmplitudeMax);
+    addAndMakeVisible(textEditor_AmplitudeMax.get());
     
-    textEditor_AttackMax = new TextEditor();
+    textEditor_AttackMax = std::make_unique<TextEditor>();
     textEditor_AttackMax->setInputRestrictions(10, "0123456789.");
     textEditor_AttackMax->setBounds(432, 596, 125, 41);
     textEditor_AttackMax->setText("10000");
@@ -218,9 +218,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_AttackMax->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_AttackMax->applyFontToAllText(fontNormal);
     textEditor_AttackMax->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_AttackMax);
+    addAndMakeVisible(textEditor_AttackMax.get());
     
-    textEditor_DecayMax = new TextEditor();
+    textEditor_DecayMax = std::make_unique<TextEditor>();
     textEditor_DecayMax->setInputRestrictions(10, "0123456789.");
     textEditor_DecayMax->setBounds(432, 660, 125, 41);
     textEditor_DecayMax->setText("10000");
@@ -231,9 +231,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_DecayMax->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_DecayMax->applyFontToAllText(fontNormal);
     textEditor_DecayMax->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_DecayMax);
+    addAndMakeVisible(textEditor_DecayMax.get());
     
-    textEditor_SustainMax = new TextEditor();
+    textEditor_SustainMax = std::make_unique<TextEditor>();
     textEditor_SustainMax->setInputRestrictions(10, "0123456789.");
     textEditor_SustainMax->setBounds(432, 723, 125, 41);
     textEditor_SustainMax->setText("100");
@@ -244,9 +244,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_SustainMax->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SustainMax->applyFontToAllText(fontNormal);
     textEditor_SustainMax->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SustainMax);
+    addAndMakeVisible(textEditor_SustainMax.get());
     
-    textEditor_ReleaseMax = new TextEditor();
+    textEditor_ReleaseMax = std::make_unique<TextEditor>();
     textEditor_ReleaseMax->setInputRestrictions(10, "0123456789.");
     textEditor_ReleaseMax->setBounds(432, 787, 125, 41);
     textEditor_ReleaseMax->setText("10000");
@@ -257,26 +257,26 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textEditor_ReleaseMax->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_ReleaseMax->applyFontToAllText(fontNormal);
     textEditor_ReleaseMax->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_ReleaseMax);
+    addAndMakeVisible(textEditor_ReleaseMax.get());
     
     int buttonW = 260;
-    textButton_ResetAmp = new ImageButton();
+    textButton_ResetAmp = std::make_unique<ImageButton>();
     textButton_ResetAmp->setTriggeredOnMouseDown(true);
     textButton_ResetAmp->setImages (false, true, true,
                                 imageButtonReset, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageButtonReset, 1.0, Colour (0x00000000));
     textButton_ResetAmp->addListener(this);
-    addAndMakeVisible(textButton_ResetAmp);
+    addAndMakeVisible(textButton_ResetAmp.get());
 
-    textButton_ResetAttack = new ImageButton();
+    textButton_ResetAttack = std::make_unique<ImageButton>();
     textButton_ResetAttack->setTriggeredOnMouseDown(true);
     textButton_ResetAttack->setImages (false, true, true,
                                                 imageButtonReset, 0.999f, Colour (0x00000000),
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageButtonReset, 1.0, Colour (0x00000000));
     textButton_ResetAttack->addListener(this);
-    addAndMakeVisible(textButton_ResetAttack);
+    addAndMakeVisible(textButton_ResetAttack.get());
     
     textButton_ResetDecay = new ImageButton();
     textButton_ResetDecay->setTriggeredOnMouseDown(true);

@@ -174,7 +174,7 @@ public:
         
         switch (osc_type)
         {
-            case Osc::SINEWAVE:
+            case OSC_TYPE::SINEWAVE:
             {
                 double angle = calcModulo * 2.0 * (double)M_PI - (double)M_PI;
                 
@@ -183,7 +183,7 @@ public:
                 
                 break;
                 
-            case Osc::TRIANGLE:
+            case OSC_TYPE::TRIANGLE:
             {
                 if (shouldWrap)
                 {
@@ -194,13 +194,13 @@ public:
             }
                 break;
                 
-            case Osc::SQUARE:
+            case OSC_TYPE::SQUARE:
             {
                 oscOutput = generateSquare(calcModulo, inc);
             }
                 break;
                 
-            case Osc::SAWTOOTH:
+            case OSC_TYPE::SAWTOOTH:
             {
                 oscOutput = generateSawtooth(calcModulo, inc);
             }
@@ -209,7 +209,7 @@ public:
             default: break;
         }
         
-        incModulo(); if (osc_type == Osc::TRIANGLE) { incModulo(); }
+        incModulo(); if (osc_type == OSC_TYPE::TRIANGLE) { incModulo(); }
         
         return oscOutput;
     }

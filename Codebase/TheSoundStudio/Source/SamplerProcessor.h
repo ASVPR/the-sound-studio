@@ -14,7 +14,7 @@
 #include "ChordManager.h"
 #include "ADSR2.h"
 #include "FrequencyManager.h"
-#include "SampleLibraryManager.h"
+#include "SynthesisLibraryManager.h"
 
 // pure sampler, for playing pianos etc..
 class SynthSamplerSound    : public SynthesiserSound
@@ -110,7 +110,7 @@ private:
 class SamplerProcessor: public Synthesiser
 {
 public:
-    SamplerProcessor(FrequencyManager *fm, SampleLibraryManager * slm, double initialSampleRate, int shortcut);
+    SamplerProcessor(FrequencyManager *fm, SynthesisLibraryManager * slm, double initialSampleRate, int shortcut);
     ~SamplerProcessor();
     
     void processBlock(AudioBuffer<float>& buffer,
@@ -149,7 +149,7 @@ public:
 private:
     int shortcutRef;
     FrequencyManager * frequencyManager;
-    SampleLibraryManager * sampleLibraryManager;
+    SynthesisLibraryManager * sampleLibraryManager;
 };
 
 

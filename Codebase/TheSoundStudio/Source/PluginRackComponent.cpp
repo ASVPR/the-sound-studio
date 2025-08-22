@@ -98,10 +98,10 @@ PluginRackComponent::PluginRackComponent(ProjectManager * pm)
     addAndMakeVisible(comboBoxPluginSelector);
     
     
-    scanPluginsButton = new TextButton("Scan for new plugins");
+    scanPluginsButton = std::make_unique<TextButton>("Scan for new plugins");
     scanPluginsButton->addListener(this);
     scanPluginsButton->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(scanPluginsButton);
+    addAndMakeVisible(scanPluginsButton.get());
     
     
 }
@@ -167,7 +167,7 @@ void PluginRackComponent::buttonClicked (Button*button)
 //            // could do popup alert msg
 //        }
     }
-    else if (button == scanPluginsButton)
+    else if (button == scanPluginsButton.get())
     {
         rescanPlugins();
         

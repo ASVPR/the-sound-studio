@@ -63,7 +63,7 @@ class ProjectManager;
 class ChordScannerProcessor : public AudioProcessor
 {
 public:
-    ChordScannerProcessor(FrequencyManager * fm, SampleLibraryManager * slm, ProjectManager * pm);
+    ChordScannerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm);
     ~ChordScannerProcessor();
     
     virtual void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override;
@@ -132,7 +132,7 @@ private:
     bool samplerOrSynth; // switched between processing of Sampler of Synth
     
     FrequencyManager * frequencyManager;
-    SampleLibraryManager * sampleLibraryManager;
+    SynthesisLibraryManager * sampleLibraryManager;
     
     bool isActive;
     bool shouldMute;

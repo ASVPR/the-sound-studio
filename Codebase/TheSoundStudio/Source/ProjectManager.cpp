@@ -47,7 +47,7 @@ ProjectManager::ProjectManager() : backgroundThread("Audio Recorder Thread")
             logFileWriter->initNewSettingsLogFile();
         }
         
-        sampleLibraryManager = std::make_unique<SampleLibraryManager>();
+        sampleLibraryManager = std::make_unique<SynthesisLibraryManager>();
         
         frequencyManager = std::make_unique<FrequencyManager>();
         frequencyManager->setBaseAFrequency(432);
@@ -5256,7 +5256,7 @@ void ProjectManager::initializeAnalysisProcessors()
 // FIXED: Thread-safe mode management
 void ProjectManager::setAudioMode(AUDIO_MODE newMode)
 {
-    std::lock_guard<std::shared_mutex> lock(stateMutex);
+    std::lock_guard<std::mutex> lock(stateMutex);
     currentMode.store(newMode);
     mode = newMode; // Keep for backward compatibility
     

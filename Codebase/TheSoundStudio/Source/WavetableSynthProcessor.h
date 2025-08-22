@@ -15,7 +15,7 @@
 #include "ADSR2.h"
 #include "VotanBuffer.h"
 #include "FrequencyManager.h"
-#include "SampleLibraryManager.h"
+#include "SynthesisLibraryManager.h"
 #include "WaveStackOsc.h"
 
 #define NUMVOICES 8

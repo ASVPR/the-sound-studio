@@ -784,14 +784,14 @@ private:
     
     virtual void sliderValueChanged (Slider* slider) override
     {
-        if (slider == sliderRangeFrequency)
+        if (slider == sliderRangeFrequency.get())
         {
             zoomRange_FreqLow       = getFrequencyForPosition(sliderRangeFrequency->getMinValue());
             zoomRange_FreqHigh      = getFrequencyForPosition(sliderRangeFrequency->getMaxValue());
             
             viewRangeDidChange();
         }
-        else if (slider == sliderRangeAmplitude)
+        else if (slider == sliderRangeAmplitude.get())
         {
             zoomRange_AmplitudeLow  = getDBForY(sliderRangeAmplitude->getMinValue(), 1.f, 0.f);
             zoomRange_AmplitudeHigh = getDBForY(sliderRangeAmplitude->getMaxValue(), 1.f, 0.f);
