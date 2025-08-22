@@ -47,7 +47,7 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     imageBlueCheckButtonNormal      = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
     imageBlueCheckButtonSelected    = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
-    button_ChordConversion = new ImageButton();
+    button_ChordConversion = std::make_unique<ImageButton>();
     button_ChordConversion->setTriggeredOnMouseDown(true);
     button_ChordConversion->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -55,9 +55,9 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChordConversion->addListener(this);
     button_ChordConversion->setBounds(323, 106, 31, 31);
-    addAndMakeVisible(button_ChordConversion);
+    addAndMakeVisible(button_.get()ChordConversion.get());
     
-    button_FrequencyConversion = new ImageButton();
+    button_FrequencyConversion = std::make_unique<ImageButton>();
     button_FrequencyConversion->setTriggeredOnMouseDown(true);
     button_FrequencyConversion->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -65,7 +65,7 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_FrequencyConversion->addListener(this);
     button_FrequencyConversion->setBounds(835, 106, 31, 31);
-    addAndMakeVisible(button_FrequencyConversion);
+    addAndMakeVisible(button_.get()FrequencyConversion);
     
     component_ColourOutputMain = new ColourOutputComponent();
     component_ColourOutputMain->setBounds(70, 453, 1418, 112);

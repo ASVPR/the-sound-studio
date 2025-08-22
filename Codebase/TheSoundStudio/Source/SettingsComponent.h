@@ -276,26 +276,26 @@ public:
         fontNormal.setHeight(40);
         fontBold.setHeight(30);
         
-        button_Close = new ImageButton();
+        button_Close = std::make_unique<ImageButton>();
         button_Close->setTriggeredOnMouseDown(true);
         button_Close->setImages (false, true, true,
                                imageCloseButton, 0.999f, Colour (0x00000000),
                                Image(), 1.000f, Colour (0x00000000),
                                imageCloseButton, 0.75, Colour (0x00000000));
         button_Close->addListener(this);
-        addAndMakeVisible(button_Close);
+        addAndMakeVisible(button_Close.get());
         
-        button_Add = new ImageButton();
+        button_Add = std::make_unique<ImageButton>();
         button_Add->setTriggeredOnMouseDown(true);
         button_Add->setImages (false, true, true,
                                     imageAddButton, 0.999f, Colour (0x00000000),
                                     Image(), 1.000f, Colour (0x00000000),
                                     imageAddButton, 0.888, Colour (0x00000000));
         button_Add->addListener(this);
-        addAndMakeVisible(button_Add);
+        addAndMakeVisible(button_Add.get());
         
         
-        comboBox_FFTSize = new ComboBox();
+        comboBox_FFTSize = std::make_unique<ComboBox>();
         comboBox_FFTSize->setLookAndFeel(&lookAndFeel);
         comboBox_FFTSize->addListener(this);
         PopupMenu * fftSizeMenu =  comboBox_FFTSize->getRootMenu();
@@ -309,10 +309,10 @@ public:
         fftSizeMenu->addItem(6, "32768 Samples");
         
         
-        addAndMakeVisible(comboBox_FFTSize);
+        addAndMakeVisible(comboBox_FFTSize.get());
         comboBox_FFTSize->setBounds(1000, 880 + 46, 250, 41); //(242, 497, 125, 41);
         
-        comboBox_FFTWindow = new ComboBox();
+        comboBox_FFTWindow = std::make_unique<ComboBox>();
         comboBox_FFTWindow->setLookAndFeel(&lookAndFeel);
         comboBox_FFTWindow->addListener(this);
         PopupMenu * fftWindowMenu =  comboBox_FFTWindow->getRootMenu();
@@ -327,12 +327,12 @@ public:
         fftWindowMenu->addItem(7, "Flat Top");
         fftWindowMenu->addItem(8, "Kaiser");
         
-        addAndMakeVisible(comboBox_FFTWindow);
+        addAndMakeVisible(comboBox_FFTWindow.get());
         comboBox_FFTWindow->setBounds(1000, 980 + 46, 250, 41); //(242, 497, 125, 41);
         
         
         // Bool button
-        button_HighestPeakFreqBool = new ImageButton();
+        button_HighestPeakFreqBool = std::make_unique<ImageButton>();
         button_HighestPeakFreqBool->setTriggeredOnMouseDown(true);
         button_HighestPeakFreqBool->setImages (false, true, true,
                                     imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -340,9 +340,9 @@ public:
                                     imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
         button_HighestPeakFreqBool->addListener(this);
         button_HighestPeakFreqBool->setBounds(666, 6, 38, 38);
-        addAndMakeVisible(button_HighestPeakFreqBool);
+        addAndMakeVisible(button_HighestPeakFreqBool.get());
         
-        button_HighestPeakOctaveBool = new ImageButton();
+        button_HighestPeakOctaveBool = std::make_unique<ImageButton>();
         button_HighestPeakOctaveBool->setTriggeredOnMouseDown(true);
         button_HighestPeakOctaveBool->setImages (false, true, true,
                                     imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -350,9 +350,9 @@ public:
                                     imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
         button_HighestPeakOctaveBool->addListener(this);
         button_HighestPeakOctaveBool->setBounds(666, 6, 38, 38);
-        addAndMakeVisible(button_HighestPeakOctaveBool);
+        addAndMakeVisible(button_HighestPeakOctaveBool.get());
         
-        textEditor_NumHighestPeakFreqs = new TextEditor();
+        textEditor_NumHighestPeakFreqs = std::make_unique<TextEditor>();
         textEditor_NumHighestPeakFreqs->setInputRestrictions(1, "0123456789");
         textEditor_NumHighestPeakFreqs->setBounds(432, 787, 125, 41);
         textEditor_NumHighestPeakFreqs->setText("5 peaks");
@@ -363,9 +363,9 @@ public:
         textEditor_NumHighestPeakFreqs->setColour(TextEditor::textColourId, Colours::darkgrey);
         textEditor_NumHighestPeakFreqs->applyFontToAllText(fontNormal);
         textEditor_NumHighestPeakFreqs->applyColourToAllText(Colours::darkgrey);
-        addAndMakeVisible(textEditor_NumHighestPeakFreqs);
+        addAndMakeVisible(textEditor_NumHighestPeakFreqs.get());
         
-        textEditor_NumHighestPeakOctaves = new TextEditor();
+        textEditor_NumHighestPeakOctaves = std::make_unique<TextEditor>();
         textEditor_NumHighestPeakOctaves->setInputRestrictions(1, "0123456789");
         textEditor_NumHighestPeakOctaves->setBounds(432, 787, 125, 41);
         textEditor_NumHighestPeakOctaves->setText("5 octaves");
@@ -376,9 +376,9 @@ public:
         textEditor_NumHighestPeakOctaves->setColour(TextEditor::textColourId, Colours::darkgrey);
         textEditor_NumHighestPeakOctaves->applyFontToAllText(fontNormal);
         textEditor_NumHighestPeakOctaves->applyColourToAllText(Colours::darkgrey);
-        addAndMakeVisible(textEditor_NumHighestPeakOctaves);
+        addAndMakeVisible(textEditor_NumHighestPeakOctaves.get());
         
-        textEditor_FFTDelay = new TextEditor();
+        textEditor_FFTDelay = std::make_unique<TextEditor>();
         textEditor_FFTDelay->setInputRestrictions(5, "0123456789");
         textEditor_FFTDelay->setBounds(432, 787, 125, 41);
         textEditor_FFTDelay->setText("1000ms");
@@ -389,7 +389,7 @@ public:
         textEditor_FFTDelay->setColour(TextEditor::textColourId, Colours::darkgrey);
         textEditor_FFTDelay->applyFontToAllText(fontNormal);
         textEditor_FFTDelay->applyColourToAllText(Colours::darkgrey);
-        addAndMakeVisible(textEditor_FFTDelay);
+        addAndMakeVisible(textEditor_FFTDelay.get());
         
         colourSelectorFFTMain = new RoundedColourOutputComponentWithSelector(projectManager, 0);
         addAndMakeVisible(colourSelectorFFTMain);
@@ -521,11 +521,11 @@ public:
     }
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged)override
     {
-        if (comboBoxThatHasChanged == comboBox_FFTSize)
+        if (comboBoxThatHasChanged == comboBox_FFTSize.get())
         {
             projectManager->setProjectSettingsParameter(FFT_SIZE, comboBox_FFTSize->getSelectedId());
         }
-        else if (comboBoxThatHasChanged == comboBox_FFTWindow)
+        else if (comboBoxThatHasChanged == comboBox_FFTWindow.get())
         {
             projectManager->setProjectSettingsParameter(FFT_WINDOW, comboBox_FFTWindow->getSelectedId());
         }
@@ -533,19 +533,19 @@ public:
     
     void buttonClicked (Button*button) override
     {
-        if (button == button_HighestPeakFreqBool)
+        if (button == button_HighestPeakFreqBool.get())
         {
             projectManager->setProjectSettingsParameter(SHOW_HIGHEST_PEAK_FREQUENCY, !button->getToggleState());
         }
-        else if (button == button_HighestPeakOctaveBool)
+        else if (button == button_HighestPeakOctaveBool.get())
         {
             projectManager->setProjectSettingsParameter(SHOW_HIGHEST_PEAK_OCTAVES, !button->getToggleState());
         }
-        else if (button == button_Close)
+        else if (button == button_Close.get())
         {
             setVisible(false);
         }
-        else if (button == button_Add)
+        else if (button == button_Add.get())
         {
             setVisible(false);
         }
@@ -773,13 +773,13 @@ private:
         AudioSettingsContainer(){
             mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::AudioSettingsBackground_png, BinaryData::AudioSettingsBackground_pngSize); imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
             
-            button_Close = new ImageButton(); button_Close->setTriggeredOnMouseDown(true);
+            button_Close = std::make_unique<ImageButton>(); button_Close->setTriggeredOnMouseDown(true);
             button_Close->setImages (false, true, true,
                                      imageCloseButton, 0.999f, Colour (0x00000000),
                                      Image(), 1.000f, Colour (0x00000000),
                                      imageCloseButton, 0.75, Colour (0x00000000));
             button_Close->addListener(this); button_Close->setBounds(1407, 130, 150, 28);
-            addAndMakeVisible(button_Close);
+            addAndMakeVisible(button_Close.get());
         }
         ~AudioSettingsContainer(){}
         

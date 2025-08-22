@@ -17,15 +17,24 @@
     <string>The Sound Studio</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
-    <key>CFBundleSignature</key>
-    <string>????</string>
-    <key>CFBundleShortVersionString</key>
-    <string>1.0.0.0</string>
-    <key>CFBundleVersion</key>
-    <string>1.0.0.0</string>
-    <key>NSHumanReadableCopyright</key>
-    <string></string>
-    <key>NSHighResolutionCapable</key>
-    <true/>
+     <key>CFBundleSignature</key>
+     <string>TSS1</string>
+     <key>CFBundleShortVersionString</key>
+     <string>1.0.0</string>
+     <key>CFBundleVersion</key>
+     <string>1.0.0</string>
+     <key>NSHumanReadableCopyright</key>
+     <string>Copyright © 2025 The Sound Studio Team</string>
+     <key>NSHighResolutionCapable</key>
+     <true/>
+     <key>LSMinimumSystemVersion</key>
+     <string>10.13</string>
+     <key>LSApplicationCategoryType</key>
+     <string>public.app-category.music</string>
+     <key>NSAppTransportSecurity</key>
+     <dict>
+         <key>NSAllowsArbitraryLoads</key>
+         <true/>
+     </dict>
   </dict>
 </plist>

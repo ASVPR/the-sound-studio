@@ -43,27 +43,27 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
     
     
     // background
-    backgroundImageComp     = new ImageComponent();
+    backgroundImageComp     = std::make_unique<ImageComponent>();
     backgroundImageComp     ->setImage(imageBackgroundInactive);
     backgroundImageComp     ->setBounds(noteBoxInset, noteBoxInset, backgroundWidth, backgroundHeight);
-    addAndMakeVisible(backgroundImageComp);
+    addAndMakeVisible(backgroundImageComp.get());
     
     // containers
-    containerView_Active = new Component();
+    containerView_Active = std::make_unique<Component>();
     containerView_Active->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_Active);
+    addAndMakeVisible(containerView_.get()Active.get());
     
-    containerView_Inactive = new Component();
+    containerView_Inactive = std::make_unique<Component>();
     containerView_Inactive->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_Inactive);
+    addAndMakeVisible(containerView_.get()Inactive);
     
-    containerView_Details = new Component();
+    containerView_Details = std::make_unique<Component>();
     containerView_Details->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_Details);
+    addAndMakeVisible(containerView_.get()Details);
     
     
     // Inactive view state 0
-    button_AddActive = new ImageButton();
+    button_AddActive = std::make_unique<ImageButton>();
     button_AddActive->setTriggeredOnMouseDown(true);
     button_AddActive->setImages (false, true, true,
                                  imageAddIcon, 0.999f, Colour (0x00000000),
@@ -71,10 +71,10 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
                                  imageAddIcon, 0.75, Colour (0x00000000));
     button_AddActive->addListener(this);
     button_AddActive->setBounds(130, 110, 68, 68);
-    containerView_Inactive->addAndMakeVisible(button_AddActive);
+    containerView_Inactive->addAndMakeVisible(button_AddActive.get());
     
     // Add Note / Active Settings view State 1
-    button_AddNewNote = new ImageButton();
+    button_AddNewNote = std::make_unique<ImageButton>();
     button_AddNewNote->setTriggeredOnMouseDown(true);
     button_AddNewNote->setImages (false, true, true,
                                   imageAddNote, 0.999f, Colour (0x00000000),
@@ -130,7 +130,7 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
     
     
     // active buttons
-    button_Settings = new ImageButton();
+    button_Settings = std::make_unique<ImageButton>();
     button_Settings->setTriggeredOnMouseDown(true);
     button_Settings->setImages (false, true, true,
                                 imageSettingsIcon, 0.999f, Colour (0x00000000),
@@ -140,7 +140,7 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
     button_Settings->setBounds(26, 224, 31, 31);
     containerView_Details->addAndMakeVisible(button_Settings);
     
-    button_Delete = new ImageButton();
+    button_Delete = std::make_unique<ImageButton>();
     button_Delete->setTriggeredOnMouseDown(true);
     button_Delete->setImages (false, true, true,
                               imageDelete, 0.999f, Colour (0x00000000),
@@ -327,7 +327,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     
     
     // place buttons
-    addonButton[AddOn_6] = new ImageButton();
+    addonButton[AddOn_6] = std::make_unique<ImageButton>();
     addonButton[AddOn_6]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_6]->setImages (false, true, true,
                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -345,7 +345,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     addAndMakeVisible(label[AddOn_6]);
     
     //
-    addonButton[AddOn_7] = new ImageButton();
+    addonButton[AddOn_7] = std::make_unique<ImageButton>();
     addonButton[AddOn_7]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_7]->setImages (false, true, true,
                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -363,7 +363,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     addAndMakeVisible(label[AddOn_7]);
     
     //
-    addonButton[AddOn_7Major] = new ImageButton();
+    addonButton[AddOn_7Major] = std::make_unique<ImageButton>();
     addonButton[AddOn_7Major]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_7Major]->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -385,7 +385,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     leftLabelBorder     = leftButtonBorder + 20;
     
     
-    addonButton[AddOn_9] = new ImageButton();
+    addonButton[AddOn_9] = std::make_unique<ImageButton>();
     addonButton[AddOn_9]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_9]->setImages (false, true, true,
                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -402,7 +402,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     label[AddOn_9]->setColour(Label::textColourId, Colours::white);
     addAndMakeVisible(label[AddOn_9]);
     
-    addonButton[AddOn_9flat] = new ImageButton();
+    addonButton[AddOn_9flat] = std::make_unique<ImageButton>();
     addonButton[AddOn_9flat]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_9flat]->setImages (false, true, true,
                                          imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -419,7 +419,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     label[AddOn_9flat]->setColour(Label::textColourId, Colours::white);
     addAndMakeVisible(label[AddOn_9flat]);
     
-    addonButton[AddOn_9sharp] = new ImageButton();
+    addonButton[AddOn_9sharp] = std::make_unique<ImageButton>();
     addonButton[AddOn_9sharp]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_9sharp]->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -437,7 +437,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     addAndMakeVisible(label[AddOn_9sharp]);
     
     
-    addonButton[AddOn_11] = new ImageButton();
+    addonButton[AddOn_11] = std::make_unique<ImageButton>();
     addonButton[AddOn_11]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_11]->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -455,7 +455,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     addAndMakeVisible(label[AddOn_11]);
     
     
-    addonButton[AddOn_11sharp] = new ImageButton();
+    addonButton[AddOn_11sharp] = std::make_unique<ImageButton>();
     addonButton[AddOn_11sharp]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_11sharp]->setImages (false, true, true,
                                            imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -477,7 +477,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     leftButtonBorder    = 270;
     leftLabelBorder     = leftButtonBorder + 20;
     
-    addonButton[AddOn_13] = new ImageButton();
+    addonButton[AddOn_13] = std::make_unique<ImageButton>();
     addonButton[AddOn_13]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_13]->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -495,7 +495,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     addAndMakeVisible(label[AddOn_13]);
     
     
-    addonButton[AddOn_13flat] = new ImageButton();
+    addonButton[AddOn_13flat] = std::make_unique<ImageButton>();
     addonButton[AddOn_13flat]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_13flat]->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -512,7 +512,7 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     label[AddOn_13flat]->setColour(Label::textColourId, Colours::white);
     addAndMakeVisible(label[AddOn_13flat]);
     
-    addonButton[AddOn_Inverted] = new ImageButton();
+    addonButton[AddOn_Inverted] = std::make_unique<ImageButton>();
     addonButton[AddOn_Inverted]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_Inverted]->setImages (false, true, true,
                                             imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -773,7 +773,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
     
-    button_Close = new ImageButton();
+    button_Close = std::make_unique<ImageButton>();
     button_Close->setTriggeredOnMouseDown(true);
     button_Close->setImages (false, true, true,
                            imageCloseButton, 0.999f, Colour (0x00000000),
@@ -783,7 +783,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     addAndMakeVisible(button_Close);
     
     // toggle between these two
-    button_ChooseChordFromList = new ImageButton();
+    button_ChooseChordFromList = std::make_unique<ImageButton>();
     button_ChooseChordFromList->setTriggeredOnMouseDown(true);
     button_ChooseChordFromList->setImages (false, true, true,
                              imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -793,7 +793,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     addAndMakeVisible(button_ChooseChordFromList);
     
     
-    button_ChooseChordFromFrequency = new ImageButton();
+    button_ChooseChordFromFrequency = std::make_unique<ImageButton>();
     button_ChooseChordFromFrequency->setTriggeredOnMouseDown(true);
     button_ChooseChordFromFrequency->setImages (false, true, true,
                                            imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -803,7 +803,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     addAndMakeVisible(button_ChooseChordFromFrequency);
     
     // act as toggle between 5 buttons
-    button_Default = new ImageButton();
+    button_Default = std::make_unique<ImageButton>();
     button_Default->setTriggeredOnMouseDown(true);
     button_Default->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -813,7 +813,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     addAndMakeVisible(button_Default);
     
     int shift = 20;
-    button_Sine = new ImageButton();
+    button_Sine = std::make_unique<ImageButton>();
     button_Sine->setTriggeredOnMouseDown(true);
     button_Sine->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -822,7 +822,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     button_Sine->addListener(this);
     addAndMakeVisible(button_Sine);
     
-    button_Triangle = new ImageButton();
+    button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
     button_Triangle->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -831,7 +831,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     button_Triangle->addListener(this);
     addAndMakeVisible(button_Triangle);
     
-    button_Square = new ImageButton();
+    button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
     button_Square->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -840,7 +840,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     button_Square->addListener(this);
     addAndMakeVisible(button_Square);
     
-    button_Sawtooth = new ImageButton();
+    button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
     button_Sawtooth->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -849,7 +849,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     button_Sawtooth->addListener(this);
     addAndMakeVisible(button_Sawtooth);
     
-    button_Wavetable = new ImageButton();
+    button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
     button_Wavetable->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -866,7 +866,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     addAndMakeVisible(button_WavetableEditor);
     
     
-    button_Add = new ImageButton();
+    button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                                 imageAddButton, 0.999f, Colour (0x00000000),
@@ -876,7 +876,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     addAndMakeVisible(button_Add);
     
     int shiftBack = 8;
-    button_Multiplication = new ImageButton();
+    button_Multiplication = std::make_unique<ImageButton>();
     button_Multiplication->setTriggeredOnMouseDown(true);
     button_Multiplication->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -885,7 +885,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     button_Multiplication->addListener(this);
     addAndMakeVisible(button_Multiplication);
     
-    button_Division = new ImageButton();
+    button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
     button_Division->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1042,7 +1042,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorLength->applyColourToAllText(Colours::lightgrey);
     addAndMakeVisible(textEditorLength);
     
-    button_ManipulateFreq = new ImageButton();
+    button_ManipulateFreq = std::make_unique<ImageButton>();
     button_ManipulateFreq->setTriggeredOnMouseDown(true);
     button_ManipulateFreq->setImages (false, true, true,
                                imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -1162,7 +1162,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     
     imagePanicButton                    = ImageCache::getFromMemory(BinaryData::PanicButton2x_png, BinaryData::PanicButton2x_pngSize);
     
-    button_Panic = new ImageButton();
+    button_Panic = std::make_unique<ImageButton>();
     button_Panic->setTriggeredOnMouseDown(true);
     button_Panic->setImages (false, true, true,
                               imagePanicButton, 0.999f, Colour (0x00000000),
@@ -1867,7 +1867,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
     
-    button_Close = new ImageButton();
+    button_Close = std::make_unique<ImageButton>();
     button_Close->setTriggeredOnMouseDown(true);
     button_Close->setImages (false, true, true,
                              imageCloseButton, 0.999f, Colour (0x00000000),
@@ -1878,7 +1878,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     addAndMakeVisible(button_Close);
     
     // toggle between these two
-    button_ChooseSpecificFrequency = new ImageButton();
+    button_ChooseSpecificFrequency = std::make_unique<ImageButton>();
     button_ChooseSpecificFrequency->setTriggeredOnMouseDown(true);
     button_ChooseSpecificFrequency->setImages (false, true, true,
                                            imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1889,7 +1889,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     addAndMakeVisible(button_ChooseSpecificFrequency);
     
     
-    button_ChooseRangeOfFrequencies = new ImageButton();
+    button_ChooseRangeOfFrequencies = std::make_unique<ImageButton>();
     button_ChooseRangeOfFrequencies->setTriggeredOnMouseDown(true);
     button_ChooseRangeOfFrequencies->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1907,7 +1907,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     
     
     // act as toggle between 5 buttons
-    button_Default = new ImageButton();
+    button_Default = std::make_unique<ImageButton>();
     button_Default->setTriggeredOnMouseDown(true);
     button_Default->setImages (false, true, true,
                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1918,7 +1918,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
 //    addAndMakeVisible(button_Default);
     
 
-    button_Sine = new ImageButton();
+    button_Sine = std::make_unique<ImageButton>();
     button_Sine->setTriggeredOnMouseDown(true);
     button_Sine->setImages (false, true, true,
                             imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1928,7 +1928,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     button_Sine->setBounds(420-shift-10+6, waveY, 38, 38);
     addAndMakeVisible(button_Sine);
     
-    button_Triangle = new ImageButton();
+    button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
     button_Triangle->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1938,7 +1938,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     button_Triangle->setBounds(660-shift+16-16, waveY, 38, 38);
     addAndMakeVisible(button_Triangle);
     
-    button_Square = new ImageButton();
+    button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
     button_Square->setImages (false, true, true,
                               imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1948,7 +1948,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     button_Square->setBounds(910-shift, waveY, 38, 38);
     addAndMakeVisible(button_Square);
     
-    button_Sawtooth = new ImageButton();
+    button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
     button_Sawtooth->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1958,7 +1958,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     button_Sawtooth->setBounds(1180-shift, waveY, 38, 38);
     addAndMakeVisible(button_Sawtooth);
     
-    button_Wavetable = new ImageButton();
+    button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
     button_Wavetable->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -1975,7 +1975,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     addAndMakeVisible(button_WavetableEditor);
 
     
-    button_Add = new ImageButton();
+    button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                            imageAddButton, 0.999f, Colour (0x00000000),
@@ -1986,7 +1986,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     addAndMakeVisible(button_Add);
     
     
-    button_ManipulateFreq = new ImageButton();
+    button_ManipulateFreq = std::make_unique<ImageButton>();
     button_ManipulateFreq->setTriggeredOnMouseDown(true);
     button_ManipulateFreq->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -1996,7 +1996,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     button_ManipulateFreq->setBounds(1054, 357, 30, 30);
     addAndMakeVisible(button_ManipulateFreq);
     
-    button_Log = new ImageButton();
+    button_Log = std::make_unique<ImageButton>();
     button_Log->setTriggeredOnMouseDown(true);
     button_Log->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -2007,7 +2007,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     addAndMakeVisible(button_Log);
     
     
-    button_Multiplication = new ImageButton();
+    button_Multiplication = std::make_unique<ImageButton>();
     button_Multiplication->setTriggeredOnMouseDown(true);
     button_Multiplication->setImages (false, true, true,
                                       imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -2017,7 +2017,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     button_Multiplication->setBounds(1086-shiftBack, mulDivY, 38, 38);
     addAndMakeVisible(button_Multiplication);
     
-    button_Division = new ImageButton();
+    button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
     button_Division->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),

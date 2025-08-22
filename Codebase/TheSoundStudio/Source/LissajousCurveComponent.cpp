@@ -59,7 +59,7 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     int panicHeight         = panicWidth;
     
     
-    button_Play = new ImageButton();
+    button_Play = std::make_unique<ImageButton>();
     button_Play->setTriggeredOnMouseDown(true);
     button_Play->setImages (false, true, true,
                             imagePlayButton, 0.999f, Colour (0x00000000),
@@ -67,9 +67,9 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
                             imagePlayButton, 0.6, Colour (0x00000000));
     button_Play->addListener(this);
     button_Play->setBounds(playLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Play);
+    addAndMakeVisible(button_Play.get());
     
-    button_Stop = new ImageButton();
+    button_Stop = std::make_unique<ImageButton>();
     button_Stop->setTriggeredOnMouseDown(true);
     button_Stop->setImages (false, true, true,
                             imageStopButton, 0.999f, Colour (0x00000000),
@@ -77,30 +77,30 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
                             imageStopButton, 0.6, Colour (0x00000000));
     button_Stop->addListener(this);
     button_Stop->setBounds(stopLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Stop);
+    addAndMakeVisible(button_Stop.get());
     
-    button_Panic = new ImageButton();
+    button_Panic = std::make_unique<ImageButton>();
     button_Panic->setTriggeredOnMouseDown(true);
     button_Panic->setImages (false, true, true,
                              imagePanicButton, 0.999f, Colour (0x00000000),
                              Image(), 1.000f, Colour (0x00000000),
                              imagePanicButton, 0.6, Colour (0x00000000));
     button_Panic->addListener(this);
-    addAndMakeVisible(button_Panic);
+    addAndMakeVisible(button_Panic.get());
     
     // Play In Loop Button
-    button_PlayInLoop = new ToggleButton("Play in Loop");
+    button_PlayInLoop = std::make_unique<ToggleButton>("Play in Loop");
     button_PlayInLoop->setBounds(1173, 1137, 300, 80);
     button_PlayInLoop->setLookAndFeel(&lookAndFeel);
     button_PlayInLoop->addListener(this);
-    addAndMakeVisible(button_PlayInLoop);
+    addAndMakeVisible(button_PlayInLoop.get());
     
     
     
     int knobL = 136;
     int knobY = 1054;
     
-    slider_X    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_X    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_X    ->setRange (0, 100.0, 0);
     slider_X    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_X    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -109,10 +109,10 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_X    ->setBounds(knobL, knobY, 130, 158);
     slider_X    ->setNumDecimalPlacesToDisplay(1);
     slider_X    ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_X);
+    addAndMakeVisible(slider_X.get());
     
     
-    slider_Y    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Y    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Y    ->setRange (0, 100.0, 0);
     slider_Y    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Y    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -121,10 +121,10 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_Y    ->setBounds(knobL + 260, knobY, 130, 158);
     slider_Y    ->setNumDecimalPlacesToDisplay(1);
     slider_Y    ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Y);
+    addAndMakeVisible(slider_Y.get());
     
     
-    slider_Z    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Z    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Z    ->setRange (0, 100.0, 0);
     slider_Z    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Z    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -133,9 +133,9 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_Z    ->setBounds(knobL + 524, knobY, 130, 158);
     slider_Z    ->setNumDecimalPlacesToDisplay(1);
     slider_Z    ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Z);
+    addAndMakeVisible(slider_Z.get());
     
-    slider_PhaseX       = new Slider("");
+    slider_PhaseX       = std::make_unique<Slider>("");
     slider_PhaseX    ->setRange (-100, 100.0, 0);
     slider_PhaseX    ->setSliderStyle (Slider::LinearHorizontal);
     slider_PhaseX    ->setTextBoxStyle (Slider::NoTextBox, false, 78, 28);
@@ -143,9 +143,9 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_PhaseX    ->setTextValueSuffix("%");
     slider_PhaseX    ->setNumDecimalPlacesToDisplay(1);
     slider_PhaseX    ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_PhaseX);
+    addAndMakeVisible(slider_PhaseX.get());
     
-    slider_PhaseY = new Slider("");
+    slider_PhaseY = std::make_unique<Slider>("");
     slider_PhaseY    ->setRange (-100, 100.0, 0);
     slider_PhaseY    ->setSliderStyle (Slider::LinearHorizontal);
     slider_PhaseY    ->setTextBoxStyle (Slider::NoTextBox, false, 78, 28);
@@ -153,9 +153,9 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_PhaseY    ->setTextValueSuffix("%");
     slider_PhaseY    ->setNumDecimalPlacesToDisplay(1);
     slider_PhaseY    ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_PhaseY);
+    addAndMakeVisible(slider_PhaseY.get());
     
-    slider_PhaseZ = new Slider("");
+    slider_PhaseZ = std::make_unique<Slider>("");
     slider_PhaseZ    ->setRange (-100, 100.0, 0);
     slider_PhaseZ    ->setSliderStyle (Slider::LinearHorizontal);
     slider_PhaseZ    ->setTextBoxStyle (Slider::NoTextBox, false, 78, 28);
@@ -163,139 +163,139 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_PhaseZ    ->setTextValueSuffix("%");
     slider_PhaseZ    ->setNumDecimalPlacesToDisplay(1);
     slider_PhaseZ    ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_PhaseZ);
+    addAndMakeVisible(slider_PhaseZ.get());
     
     for (int i = 0; i < 3; i++)
     {
-        buttonFreeFlow[i] = new ImageButton();
+        buttonFreeFlow[i] = std::make_unique<ImageButton>();
         buttonFreeFlow[i]->setTriggeredOnMouseDown(true);
         buttonFreeFlow[i]->setImages (false, true, true,
                                     imageBlueButtonNormal, 0.999f, Colour (0x00000000),
                                     Image(), 1.000f, Colour (0x00000000),
                                     imageBlueButtonSelected, 1.0, Colour (0x00000000));
         buttonFreeFlow[i]->addListener(this);
-        addAndMakeVisible(buttonFreeFlow[i]);
+        addAndMakeVisible(buttonFreeFlow[i].get());
 
         
-        buttonSequencer[i] = new ImageButton();
+        buttonSequencer[i] = std::make_unique<ImageButton>();
         buttonSequencer[i]->setTriggeredOnMouseDown(true);
         buttonSequencer[i]->setImages (false, true, true,
                                     imageBlueButtonNormal, 0.999f, Colour (0x00000000),
                                     Image(), 1.000f, Colour (0x00000000),
                                     imageBlueButtonSelected, 1.0, Colour (0x00000000));
         buttonSequencer[i]->addListener(this);
-        addAndMakeVisible(buttonSequencer[i]);
+        addAndMakeVisible(buttonSequencer[i].get());
         
-        buttonChordOrFrequency[i] = new ImageButton();
+        buttonChordOrFrequency[i] = std::make_unique<ImageButton>();
         buttonChordOrFrequency[i]->setTriggeredOnMouseDown(true);
         buttonChordOrFrequency[i]->setImages (false, true, true,
                                     imageChordFreqButtonNormal, 0.999f, Colour (0x00000000),
                                     Image(), 1.000f, Colour (0x00000000),
                                     imageChordFreqButtonSelected, 1.0, Colour (0x00000000));
         buttonChordOrFrequency[i]->addListener(this);
-        addAndMakeVisible(buttonChordOrFrequency[i]);
+        addAndMakeVisible(buttonChordOrFrequency[i].get());
         
         
         
         
-        buttonOpenSettings[i] = new ImageButton();
+        buttonOpenSettings[i] = std::make_unique<ImageButton>();
         buttonOpenSettings[i]->setTriggeredOnMouseDown(true);
         buttonOpenSettings[i]->setImages (false, true, true,
                                     imageSettingsIcon, 0.999f, Colour (0x00000000),
                                     Image(), 1.000f, Colour (0x00000000),
                                     imageSettingsIcon, 0.75, Colour (0x00000000));
         buttonOpenSettings[i]->addListener(this);
-        addAndMakeVisible(buttonOpenSettings[i]);
+        addAndMakeVisible(buttonOpenSettings[i].get());
         
-        buttonMute[i] = new ImageButton();
+        buttonMute[i] = std::make_unique<ImageButton>();
         buttonMute[i]->setTriggeredOnMouseDown(true);
         buttonMute[i]->setImages (false, true, true,
                                     imageMuteIcon, 0.999f, Colour (0x00000000),
                                     Image(), 1.000f, Colour (0x00000000),
                                     imageMuteIcon, 1.0, Colour (0x00000000));
         buttonMute[i]->addListener(this);
-        addAndMakeVisible(buttonMute[i]);
+        addAndMakeVisible(buttonMute[i].get());
         
-        labelFrequency[i] = new Label("");
+        labelFrequency[i] = std::make_unique<Label>("");
         labelFrequency[i]   ->setText("432hz", dontSendNotification);
         labelFrequency[i]   ->setJustificationType(Justification::left);
         labelFrequency[i]   ->setColour(Label::textColourId, Colours::darkgrey);
-        addAndMakeVisible(labelFrequency[i]);
+        addAndMakeVisible(labelFrequency[i].get());
         
         
     }
     
-    textEditor_SliderX = new TextEditor();
+    textEditor_SliderX = std::make_unique<TextEditor>();
     textEditor_SliderX->setInputRestrictions(3, "0123456789.");
     textEditor_SliderX->addListener(this);
     textEditor_SliderX->setLookAndFeel(&lookAndFeel);
     textEditor_SliderX->setJustification(Justification::centred);
     textEditor_SliderX->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SliderX->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SliderX);
+    addAndMakeVisible(textEditor_SliderX.get());
     
-    textEditor_SliderY = new TextEditor();
+    textEditor_SliderY = std::make_unique<TextEditor>();
     textEditor_SliderY->setInputRestrictions(3, "0123456789.");
     textEditor_SliderY->addListener(this);
     textEditor_SliderY->setLookAndFeel(&lookAndFeel);
     textEditor_SliderY->setJustification(Justification::centred);
     textEditor_SliderY->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SliderY->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SliderY);
+    addAndMakeVisible(textEditor_SliderY.get());
     
-    textEditor_SliderZ = new TextEditor();
+    textEditor_SliderZ = std::make_unique<TextEditor>();
     textEditor_SliderZ->setInputRestrictions(3, "0123456789.");
     textEditor_SliderZ->addListener(this);
     textEditor_SliderZ->setLookAndFeel(&lookAndFeel);
     textEditor_SliderZ->setJustification(Justification::centred);
     textEditor_SliderZ->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SliderZ->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SliderZ);
+    addAndMakeVisible(textEditor_SliderZ.get());
     
-    textEditor_SliderPhaseX = new TextEditor();
+    textEditor_SliderPhaseX = std::make_unique<TextEditor>();
     textEditor_SliderPhaseX->setInputRestrictions(3, "0123456789.-");
     textEditor_SliderPhaseX->addListener(this);
     textEditor_SliderPhaseX->setLookAndFeel(&lookAndFeel);
     textEditor_SliderPhaseX->setJustification(Justification::centred);
     textEditor_SliderPhaseX->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SliderPhaseX->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SliderPhaseX);
+    addAndMakeVisible(textEditor_SliderPhaseX.get());
     
-    textEditor_SliderPhaseY = new TextEditor();
+    textEditor_SliderPhaseY = std::make_unique<TextEditor>();
     textEditor_SliderPhaseY->setInputRestrictions(3, "0123456789.-");
     textEditor_SliderPhaseY->addListener(this);
     textEditor_SliderPhaseY->setLookAndFeel(&lookAndFeel);
     textEditor_SliderPhaseY->setJustification(Justification::centred);
     textEditor_SliderPhaseY->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SliderPhaseY->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SliderPhaseY);
+    addAndMakeVisible(textEditor_SliderPhaseY.get());
     
-    textEditor_SliderPhaseZ = new TextEditor();
+    textEditor_SliderPhaseZ = std::make_unique<TextEditor>();
     textEditor_SliderPhaseZ->setInputRestrictions(3, "0123456789.-");
     textEditor_SliderPhaseZ->addListener(this);
     textEditor_SliderPhaseZ->setLookAndFeel(&lookAndFeel);
     textEditor_SliderPhaseZ->setJustification(Justification::centred);
     textEditor_SliderPhaseZ->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_SliderPhaseZ->applyColourToAllText(Colours::darkgrey);
-    addAndMakeVisible(textEditor_SliderPhaseZ);
+    addAndMakeVisible(textEditor_SliderPhaseZ.get());
 
     
     
-    viewerComponent = new LissajousCurveViewerComponent(projectManager, true);
+    viewerComponent = std::make_unique<LissajousCurveViewerComponent>(projectManager, true);
     viewerComponent->setBounds(38, 48, 1482, 884);
-    addAndMakeVisible(viewerComponent);
+    addAndMakeVisible(viewerComponent.get());
     
     // popups
     
     for (int i = 0; i < 3; i++)
     {
-        settingsChordComponent[i] = new LissajousChordPlayerSettingsComponent(projectManager, i);
-        addAndMakeVisible(settingsChordComponent[i]);
+        settingsChordComponent[i] = std::make_unique<LissajousChordPlayerSettingsComponent>(projectManager, i);
+        addAndMakeVisible(settingsChordComponent[i].get());
         settingsChordComponent[i]->setBounds(0, 0, 1566, 1440);
         settingsChordComponent[i]->setVisible(false);
         
-        settingsFrequencyComponent[i] = new LissajousFrequencyPlayerSettingsComponent(projectManager, i);
-        addAndMakeVisible(settingsFrequencyComponent[i]);
+        settingsFrequencyComponent[i] = std::make_unique<LissajousFrequencyPlayerSettingsComponent>(projectManager, i);
+        addAndMakeVisible(settingsFrequencyComponent[i].get());
         settingsFrequencyComponent[i]->setBounds(0, 0, 1566, 1440);
         settingsFrequencyComponent[i]->setVisible(false);
     }
@@ -419,19 +419,19 @@ void LissajousCurveComponent::resized()
 void LissajousCurveComponent::buttonClicked (Button*button)
 {
 
-    if (button == button_Play)
+    if (button == button_Play.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
     }
-    else if (button == button_Stop)
+    else if (button == button_Stop.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
     }
-    else if (button == button_Panic)
+    else if (button == button_Panic.get())
     {
         projectManager->setPanicButton();
     }
-    else if (button == button_PlayInLoop)
+    else if (button == button_PlayInLoop.get())
     {
         if (button_PlayInLoop->getToggleState())
         {
@@ -443,53 +443,53 @@ void LissajousCurveComponent::buttonClicked (Button*button)
         }
     }
     
-    else if (button == buttonFreeFlow[0])
+    else if (button == buttonFreeFlow[0].get())
     {
         projectManager->setLissajousParameter(UNIT_1_FREE_FLOW, 0);
     }
-    else if (button == buttonFreeFlow[1])
+    else if (button == buttonFreeFlow[1].get())
     {
         projectManager->setLissajousParameter(UNIT_2_FREE_FLOW, 0);
     }
-    else if (button == buttonFreeFlow[2])
+    else if (button == buttonFreeFlow[2].get())
     {
         projectManager->setLissajousParameter(UNIT_3_FREE_FLOW, 0);
     }
-    else if (button == buttonSequencer[0])
+    else if (button == buttonSequencer[0].get())
     {
         projectManager->setLissajousParameter(UNIT_1_FREE_FLOW, 1);
     }
-    else if (button == buttonSequencer[1])
+    else if (button == buttonSequencer[1].get())
     {
         projectManager->setLissajousParameter(UNIT_2_FREE_FLOW, 1);
     }
-    else if (button == buttonSequencer[2])
+    else if (button == buttonSequencer[2].get())
     {
         projectManager->setLissajousParameter(UNIT_3_FREE_FLOW, 1);
     }
     
-    else if (button == buttonChordOrFrequency[0])
+    else if (button == buttonChordOrFrequency[0].get())
     {
         projectManager->setLissajousParameter(UNIT_1_PROCESSOR_TYPE, !buttonChordOrFrequency[0]->getToggleState());
     }
-    else if (button == buttonChordOrFrequency[1])
+    else if (button == buttonChordOrFrequency[1].get())
     {
         projectManager->setLissajousParameter(UNIT_2_PROCESSOR_TYPE, !buttonChordOrFrequency[1]->getToggleState());
     }
-    else if (button == buttonChordOrFrequency[2])
+    else if (button == buttonChordOrFrequency[2].get())
     {
         projectManager->setLissajousParameter(UNIT_3_PROCESSOR_TYPE, !buttonChordOrFrequency[2]->getToggleState());
     }
     
-    else if (button == buttonOpenSettings[0])
+    else if (button == buttonOpenSettings[0].get())
     {
         openSettingsView(0);
     }
-    else if (button == buttonOpenSettings[1])
+    else if (button == buttonOpenSettings[1].get())
     {
         openSettingsView(1);
     }
-    else if (button == buttonOpenSettings[2])
+    else if (button == buttonOpenSettings[2].get())
     {
         openSettingsView(2);
     }
@@ -501,28 +501,28 @@ void LissajousCurveComponent::buttonClicked (Button*button)
 
 void LissajousCurveComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == slider_X)
+    if (slider == slider_X.get())
     {
         projectManager->setLissajousParameter(AMPLITUDE_X, slider_X->getValue());
     }
-    else if (slider == slider_Y)
+    else if (slider == slider_Y.get())
     {
         projectManager->setLissajousParameter(AMPLITUDE_Y, slider_Y->getValue());
     }
-    else if (slider == slider_Z)
+    else if (slider == slider_Z.get())
     {
         projectManager->setLissajousParameter(AMPLITUDE_Z, slider_Z->getValue());
     }
     
-    else if (slider == slider_PhaseX)
+    else if (slider == slider_PhaseX.get())
     {
         projectManager->setLissajousParameter(UNIT_1_PHASE, slider_PhaseX->getValue());
     }
-    else if (slider == slider_PhaseY)
+    else if (slider == slider_PhaseY.get())
     {
         projectManager->setLissajousParameter(UNIT_2_PHASE, slider_PhaseY->getValue());
     }
-    else if (slider == slider_PhaseZ)
+    else if (slider == slider_PhaseZ.get())
     {
         projectManager->setLissajousParameter(UNIT_3_PHASE, slider_PhaseZ->getValue());
     }
@@ -531,7 +531,7 @@ void LissajousCurveComponent::sliderValueChanged (Slider* slider)
 
 void LissajousCurveComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditor_SliderX)
+    if (&editor == textEditor_SliderX.get())
     {
         double value = editor.getText().getDoubleValue();
 
@@ -540,7 +540,7 @@ void LissajousCurveComponent::textEditorReturnKeyPressed (TextEditor&editor)
         
         projectManager->setLissajousParameter(AMPLITUDE_X, value);
     }
-    else if (&editor == textEditor_SliderY)
+    else if (&editor == textEditor_SliderY.get())
     {
         double value = editor.getText().getDoubleValue();
 
@@ -549,7 +549,7 @@ void LissajousCurveComponent::textEditorReturnKeyPressed (TextEditor&editor)
         
         projectManager->setLissajousParameter(AMPLITUDE_Y, value);
     }
-    else if (&editor == textEditor_SliderZ)
+    else if (&editor == textEditor_SliderZ.get())
     {
         double value = editor.getText().getDoubleValue();
 
@@ -559,7 +559,7 @@ void LissajousCurveComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setLissajousParameter(AMPLITUDE_Z, value);
     }
     
-    else if (&editor == textEditor_SliderPhaseX)
+    else if (&editor == textEditor_SliderPhaseX.get())
     {
         double value = editor.getText().getDoubleValue();
 
@@ -568,7 +568,7 @@ void LissajousCurveComponent::textEditorReturnKeyPressed (TextEditor&editor)
         
         projectManager->setLissajousParameter(UNIT_1_PHASE, value);
     }
-    else if (&editor == textEditor_SliderPhaseY)
+    else if (&editor == textEditor_SliderPhaseY.get())
     {
         double value = editor.getText().getDoubleValue();
 
@@ -577,7 +577,7 @@ void LissajousCurveComponent::textEditorReturnKeyPressed (TextEditor&editor)
         
         projectManager->setLissajousParameter(UNIT_2_PHASE, value);
     }
-    else if (&editor == textEditor_SliderPhaseZ)
+    else if (&editor == textEditor_SliderPhaseZ.get())
     {
         double value = editor.getText().getDoubleValue();
 

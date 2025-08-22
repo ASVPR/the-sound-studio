@@ -278,16 +278,16 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     textButton_ResetAttack->addListener(this);
     addAndMakeVisible(textButton_ResetAttack.get());
     
-    textButton_ResetDecay = new ImageButton();
+    textButton_ResetDecay = std::make_unique<ImageButton>();
     textButton_ResetDecay->setTriggeredOnMouseDown(true);
     textButton_ResetDecay->setImages (false, true, true,
                                                 imageButtonReset, 0.999f, Colour (0x00000000),
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageButtonReset, 1.0, Colour (0x00000000));
     textButton_ResetDecay->addListener(this);
-    addAndMakeVisible(textButton_ResetDecay);
+    addAndMakeVisible(textButton_ResetDecay.get());
     
-    textButton_ResetSustain = new ImageButton();
+    textButton_ResetSustain = std::make_unique<ImageButton>();
     textButton_ResetSustain->setTriggeredOnMouseDown(true);
     textButton_ResetSustain->setImages (false, true, true,
                                                 imageButtonReset, 0.999f, Colour (0x00000000),
@@ -295,63 +295,63 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
                                                 imageButtonReset, 1.0, Colour (0x00000000));
     
     textButton_ResetSustain->addListener(this);
-    addAndMakeVisible(textButton_ResetSustain);
+    addAndMakeVisible(textButton_ResetSustain.get());
     
-    textButton_ResetRelease = new ImageButton();
+    textButton_ResetRelease = std::make_unique<ImageButton>();
     textButton_ResetRelease->setTriggeredOnMouseDown(true);
     textButton_ResetRelease->setImages (false, true, true,
                                                 imageButtonReset, 0.999f, Colour (0x00000000),
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageButtonReset, 1.0, Colour (0x00000000));
     textButton_ResetRelease->addListener(this);
-    addAndMakeVisible(textButton_ResetRelease);
+    addAndMakeVisible(textButton_ResetRelease.get());
 
-    textButton_ChangeLogFile = new ImageButton();
+    textButton_ChangeLogFile = std::make_unique<ImageButton>();
     textButton_ChangeLogFile->setTriggeredOnMouseDown(true);
     textButton_ChangeLogFile->setImages (false, true, true,
                                          imageButtonChange, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                          imageButtonChange, 1.0, Colour (0x00000000));
     textButton_ChangeLogFile->addListener(this);
-    addAndMakeVisible(textButton_ChangeLogFile);
+    addAndMakeVisible(textButton_ChangeLogFile.get());
     
-    textButton_ChangeRecordFile = new ImageButton();
+    textButton_ChangeRecordFile = std::make_unique<ImageButton>();
     textButton_ChangeRecordFile->setTriggeredOnMouseDown(true);
     textButton_ChangeRecordFile->setImages (false, true, true,
                                 imageButtonChange, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                             imageButtonChange, 1.0, Colour (0x00000000));
     textButton_ChangeRecordFile->addListener(this);
-    addAndMakeVisible(textButton_ChangeRecordFile);
+    addAndMakeVisible(textButton_ChangeRecordFile.get());
     
-    buttonMixer = new TextButton();
+    buttonMixer = std::make_unique<TextButton>();
     buttonMixer->setTriggeredOnMouseDown(true);
     buttonMixer->addListener(this);
     buttonMixer->setButtonText("Mixer");
-    addAndMakeVisible(buttonMixer);
+    addAndMakeVisible(buttonMixer.get());
     
     
     // audio setting stuff
-    textButton_OpenAudioSettings = new ImageButton();
+    textButton_OpenAudioSettings = std::make_unique<ImageButton>();
     textButton_OpenAudioSettings->setTriggeredOnMouseDown(true);
     textButton_OpenAudioSettings->setImages (false, true, true,
                                 imageButtonAudio, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageButtonAudio, 1.0, Colour (0x00000000));
     textButton_OpenAudioSettings->addListener(this);
-    addAndMakeVisible(textButton_OpenAudioSettings);
+    addAndMakeVisible(textButton_OpenAudioSettings.get());
     
-    textButton_SpectrogramSetttingsPopup = new ImageButton();
+    textButton_SpectrogramSetttingsPopup = std::make_unique<ImageButton>();
     textButton_SpectrogramSetttingsPopup->setTriggeredOnMouseDown(true);
     textButton_SpectrogramSetttingsPopup->setImages (false, true, true,
                                 imageButtonSpectrogram, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                                      imageButtonSpectrogram, 1.0, Colour (0x00000000));
     textButton_SpectrogramSetttingsPopup->addListener(this);
-    addAndMakeVisible(textButton_SpectrogramSetttingsPopup);
+    addAndMakeVisible(textButton_SpectrogramSetttingsPopup.get());
     
 
-    comboBox_Scales = new ComboBox();
+    comboBox_Scales = std::make_unique<ComboBox>();
     comboBox_Scales->setLookAndFeel(&lookAndFeel);
     
     PopupMenu * scalesMenu =  comboBox_Scales->getRootMenu();
@@ -386,10 +386,10 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     comboBox_Scales->addListener(this);
     //    comboBoxChordtype->setLookAndFeel(&lookAndFeel);
     comboBox_Scales->setBounds(1000, 497, 250, 41); //(242, 497, 125, 41);
-    addAndMakeVisible(comboBox_Scales);
+    addAndMakeVisible(comboBox_Scales.get());
 
     
-    comboBox_RecordFormat = new ComboBox();
+    comboBox_RecordFormat = std::make_unique<ComboBox>();
     comboBox_RecordFormat->addListener(this);
     PopupMenu * recordFormatMenu =  comboBox_RecordFormat->getRootMenu();
     comboBox_RecordFormat->setLookAndFeel(&lookAndFeel);
@@ -405,17 +405,17 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     }
     
     
-    addAndMakeVisible(comboBox_RecordFormat);
+    addAndMakeVisible(comboBox_RecordFormat.get());
     comboBox_RecordFormat->setBounds(1080, 140, 250, 41);
     
 
-    comboBox_NoiseType = new ComboBox();
+    comboBox_NoiseType = std::make_unique<ComboBox>();
     comboBox_NoiseType->addListener(this);
     PopupMenu * noiseTypeMenu =  comboBox_NoiseType->getRootMenu();
     comboBox_NoiseType->setLookAndFeel(&lookAndFeel);
     noiseTypeMenu->addItem(1, "White");
     noiseTypeMenu->addItem(2, "Pink");
-    addAndMakeVisible(comboBox_NoiseType);
+    addAndMakeVisible(comboBox_NoiseType.get());
     
     imageAddPluginIcon      = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
     removePluginIcon        = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
@@ -502,40 +502,40 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
         addAndMakeVisible(comboBoxPluginSelector[i]);
     }
     
-    scanPluginsButton = new ImageButton();
+    scanPluginsButton = std::make_unique<ImageButton>();
     scanPluginsButton->setTriggeredOnMouseDown(true);
     scanPluginsButton->setImages (false, true, true,
                                 imageButtonScan, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageButtonScan, 1.0, Colour (0x00000000));
     scanPluginsButton->addListener(this);
-    addAndMakeVisible(scanPluginsButton);
+    addAndMakeVisible(scanPluginsButton.get());
 
     
     
     
     // Load / Save Button
-    button_Load = new ImageButton();
+    button_Load = std::make_unique<ImageButton>();
     button_Load->setTriggeredOnMouseDown(true);
     button_Load->setImages (false, true, true,
                                 imageButtonLoad, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageButtonLoad, 1.0, Colour (0x00000000));
     button_Load->addListener(this);
-    addAndMakeVisible(button_Load);
+    addAndMakeVisible(button_Load.get());
     
-    button_Save = new ImageButton();
+    button_Save = std::make_unique<ImageButton>();
     button_Save->setTriggeredOnMouseDown(true);
     button_Save->setImages (false, true, true,
                                 imageButtonSave, 0.999f, Colour (0x00000000),
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageButtonSave, 1.0, Colour (0x00000000));
     button_Save->addListener(this);
-    addAndMakeVisible(button_Save);
+    addAndMakeVisible(button_Save.get());
     
     // Radio Buttons
     
-    button_FreqToChordMainHarmonics = new ImageButton();
+    button_FreqToChordMainHarmonics = std::make_unique<ImageButton>();
     button_FreqToChordMainHarmonics->setTriggeredOnMouseDown(true);
     button_FreqToChordMainHarmonics->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -543,9 +543,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_FreqToChordMainHarmonics->addListener(this);
     button_FreqToChordMainHarmonics->setBounds(639, 0, 38, 38);
-    addAndMakeVisible(button_FreqToChordMainHarmonics);
+    addAndMakeVisible(button_FreqToChordMainHarmonics.get());
     
-    button_FreqToChordAverage = new ImageButton();
+    button_FreqToChordAverage = std::make_unique<ImageButton>();
     button_FreqToChordAverage->setTriggeredOnMouseDown(true);
     button_FreqToChordAverage->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -553,9 +553,9 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_FreqToChordAverage->addListener(this);
     button_FreqToChordAverage->setBounds(639, 0, 38, 38);
-    addAndMakeVisible(button_FreqToChordAverage);
+    addAndMakeVisible(button_FreqToChordAverage.get());
     
-    button_FreqToChordEMA = new ImageButton();
+    button_FreqToChordEMA = std::make_unique<ImageButton>();
     button_FreqToChordEMA->setTriggeredOnMouseDown(true);
     button_FreqToChordEMA->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -563,7 +563,7 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_FreqToChordEMA->addListener(this);
     button_FreqToChordEMA->setBounds(639, 0, 38, 38);
-    addAndMakeVisible(button_FreqToChordEMA);
+    addAndMakeVisible(button_FreqToChordEMA.get());
 
     
    // new scale buttons
@@ -580,41 +580,41 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     imageButtonScale100Normal   = ImageCache::getFromMemory(BinaryData::ButtonScale100Normal, BinaryData::ButtonScale100NormalSize);
     imageButtonScale100Selected = ImageCache::getFromMemory(BinaryData::ButtonScale100Selected, BinaryData::ButtonScale100SelectedSize);
     
-    buttonScale25 = new ImageButton();
+    buttonScale25 = std::make_unique<ImageButton>();
     buttonScale25->setTriggeredOnMouseDown(true);
     buttonScale25->setImages (false, true, true,
                            imageButtonScale25Normal, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                               imageButtonScale25Selected, 0.75, Colour (0x00000000));
     buttonScale25->addListener(this);
-    addAndMakeVisible(buttonScale25);
+    addAndMakeVisible(buttonScale25.get());
     
-    buttonScale50 = new ImageButton();
+    buttonScale50 = std::make_unique<ImageButton>();
     buttonScale50->setTriggeredOnMouseDown(true);
     buttonScale50->setImages (false, true, true,
                               imageButtonScale50Normal, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                               imageButtonScale50Selected, 0.75, Colour (0x00000000));
     buttonScale50->addListener(this);
-    addAndMakeVisible(buttonScale50);
+    addAndMakeVisible(buttonScale50.get());
     
-    buttonScale75 = new ImageButton();
+    buttonScale75 = std::make_unique<ImageButton>();
     buttonScale75->setTriggeredOnMouseDown(true);
     buttonScale75->setImages (false, true, true,
                               imageButtonScale75Normal, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                               imageButtonScale75Selected, 0.75, Colour (0x00000000));
     buttonScale75->addListener(this);
-    addAndMakeVisible(buttonScale75);
+    addAndMakeVisible(buttonScale75.get());
     
-    buttonScale100 = new ImageButton();
+    buttonScale100 = std::make_unique<ImageButton>();
     buttonScale100->setTriggeredOnMouseDown(true);
     buttonScale100->setImages (false, true, true,
                                imageButtonScale100Normal, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                                imageButtonScale100Selected, 0.75, Colour (0x00000000));
     buttonScale100->addListener(this);
-    addAndMakeVisible(buttonScale100);
+    addAndMakeVisible(buttonScale100.get());
 
     // Fundamental Frequency
     fundamentalFrequencyAlgorithmChooser.addItemList(ProjectStrings::getFundamentalFrequencyAlgorithms(), 1);
@@ -632,7 +632,7 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     addAndMakeVisible(component_AudioSettings);
     component_AudioSettings->setVisible(false);
     
-    audioSetupComponent = new AudioDeviceSelectorComponent (*projectManager->getDeviceManager(),
+    audioSetupComponent = new AudioDeviceSelectorComponent(*projectManager->getDeviceManager(),
                                                             0, 256, 0, 256, true, true, true, false);
     audioSetupComponent->setBounds(60, 300, 1300, 1000);
     audioSetupComponent->setItemHeight(70);
@@ -676,68 +676,68 @@ SettingsComponent::~SettingsComponent()
 
 void SettingsComponent::buttonClicked (Button*button)
 {
-    if (button == textButton_ResetAmp)
+    if (button == textButton_ResetAmp.get())
     {
         // projectManager call
     }
-    else if (button == textButton_ResetAttack)
+    else if (button == textButton_ResetAttack.get())
     {
         
     }
-    else if (button == textButton_ResetDecay)
+    else if (button == textButton_ResetDecay.get())
     {
         
     }
-    else if (button == textButton_ResetSustain)
+    else if (button == textButton_ResetSustain.get())
     {
         
     }
-    else if (button == textButton_ResetRelease)
+    else if (button == textButton_ResetRelease.get())
     {
         
     }
     
-    else if (button == buttonScale25)
+    else if (button == buttonScale25.get())
     {
         projectManager->setProjectSettingsParameter(GUI_SCALE, 0);
     }
-    else if (button == buttonScale50)
+    else if (button == buttonScale50.get())
     {
         projectManager->setProjectSettingsParameter(GUI_SCALE, 1);
     }
-    else if (button == buttonScale75)
+    else if (button == buttonScale75.get())
     {
         projectManager->setProjectSettingsParameter(GUI_SCALE, 2);
     }
-    else if (button == buttonScale100)
+    else if (button == buttonScale100.get())
     {
         projectManager->setProjectSettingsParameter(GUI_SCALE, 3);
     }
     
-    else if (button == button_FreqToChordMainHarmonics)
+    else if (button == button_FreqToChordMainHarmonics.get())
     {
         projectManager->setProjectSettingsParameter(FREQUENCY_TO_CHORD, 0);
     }
-    else if (button == button_FreqToChordAverage)
+    else if (button == button_FreqToChordAverage.get())
     {
         projectManager->setProjectSettingsParameter(FREQUENCY_TO_CHORD, 1);
     }
-    else if (button == button_FreqToChordEMA)
+    else if (button == button_FreqToChordEMA.get())
     {
         projectManager->setProjectSettingsParameter(FREQUENCY_TO_CHORD, 2);
     }
     
     
-    else if (button == button_Load)
+    else if (button == button_Load.get())
     {
-        projectManager->loadSettingsFile();
+        // projectManager->loadSettingsFile(); // Private method
     }
-    else if (button == button_Save)
+    else if (button == button_Save.get())
     {
-        projectManager->saveSettingsFile();
+        // projectManager->saveSettingsFile(); // Private method
         
     }
-    else if (button == textButton_ChangeLogFile)
+    else if (button == textButton_ChangeLogFile.get())
     {
         File dir = projectManager->logFileDirectory;
         FileBrowserComponent browser (FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories,
@@ -762,7 +762,7 @@ void SettingsComponent::buttonClicked (Button*button)
         label_LogFileLocation->setText(folderLocation, dontSendNotification);
         
     }
-    else if (button == textButton_ChangeRecordFile)
+    else if (button == textButton_ChangeRecordFile.get())
     {
         File dir = projectManager->recordFileDirectory;
         FileBrowserComponent browser (FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories,
@@ -786,15 +786,15 @@ void SettingsComponent::buttonClicked (Button*button)
         String folderLocation(projectManager->recordFileDirectory.getFullPathName());
         label_RecordFileLocation->setText(folderLocation, dontSendNotification);
     }
-    else if (button == textButton_OpenAudioSettings)
+    else if (button == textButton_OpenAudioSettings.get())
     {
         component_AudioSettings->setOpen(true);
     }
-    else if (button == textButton_SpectrogramSetttingsPopup)
+    else if (button == textButton_SpectrogramSetttingsPopup.get())
     {
         spectrogramPopupComponent->setVisible(true);
     }
-    else if (button == buttonMixer)
+    else if (button == buttonMixer.get())
     {
         PopupFFTWindow * mixerPopup;
         
@@ -808,7 +808,7 @@ void SettingsComponent::buttonClicked (Button*button)
         mixerPopup ->setVisible(true);
         
     }
-    else if (button == scanPluginsButton)
+    else if (button == scanPluginsButton.get())
     {
         rescanPlugins();
         
@@ -857,7 +857,7 @@ void SettingsComponent::buttonClicked (Button*button)
         {
             if (button == buttonRemovePlugin[i])
             {
-                PluginAssignProcessor * f = projectManager->pluginAssignProcessor[i];
+                PluginAssignProcessor * f = projectManager->pluginAssignProcessor[i].get();
 //                PluginWindow::closeAllCurrentlyOpenWindows();
                 PluginWindow::closeCurrentlyOpenWindowsFor(i);
                 
@@ -867,7 +867,7 @@ void SettingsComponent::buttonClicked (Button*button)
             }
             else if (button == buttonOpenPlugin[i])
             {
-                PluginAssignProcessor * f = projectManager->pluginAssignProcessor[i];
+                PluginAssignProcessor * f = projectManager->pluginAssignProcessor[i].get();
                 if (f->hasPlugin)
                 {
                     AudioPluginInstance * plugin = f->instance.get();
@@ -886,7 +886,7 @@ void SettingsComponent::buttonClicked (Button*button)
 
 void SettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBox_Scales)
+    if (comboBoxThatHasChanged == comboBox_Scales.get())
     {
         projectManager->setProjectSettingsParameter(DEFAULT_SCALE, comboBox_Scales->getSelectedId());
         
@@ -920,11 +920,11 @@ void SettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
         projectManager->setProjectSettingsParameter(PLUGIN_SELECTED_4, comboBoxPluginSelector[3]->getSelectedId()-1);
     }
-    else if (comboBoxThatHasChanged == comboBox_RecordFormat)
+    else if (comboBoxThatHasChanged == comboBox_RecordFormat.get())
     {
         projectManager->setProjectSettingsParameter(RECORD_FILE_FORMAT, comboBox_RecordFormat->getSelectedId());
     }
-    else if (comboBoxThatHasChanged == comboBox_NoiseType)
+    else if (comboBoxThatHasChanged == comboBox_NoiseType.get())
     {
         projectManager->setProjectSettingsParameter(PANIC_NOISE_TYPE, comboBox_NoiseType->getSelectedId() - 1);
     }
@@ -944,7 +944,7 @@ void SettingsComponent::textEditorTextChanged (TextEditor&editor)
 /** Called when the user presses the return key. */
 void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditor_NotesFrequency)
+    if (&editor == textEditor_NotesFrequency.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -962,7 +962,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         // send to projectManager
         projectManager->setProjectSettingsParameter(BASE_FREQUENCY_A, value);
     }
-    else if (&editor == textEditor_AmplitudeMin)
+    else if (&editor == textEditor_AmplitudeMin.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -977,7 +977,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(AMPLITUDE_MIN, value);
         
     }
-    else if (&editor == textEditor_AmplitudeMax)
+    else if (&editor == textEditor_AmplitudeMax.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -992,7 +992,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(AMPLITUDE_MAX, value);
         
     }
-    else if (&editor == textEditor_AttackMin)
+    else if (&editor == textEditor_AttackMin.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -1007,7 +1007,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(ATTACK_MIN, value);
         
     }
-    else if (&editor == textEditor_AttackMax)
+    else if (&editor == textEditor_AttackMax.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -1022,7 +1022,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(ATTACK_MAX, value);
         
     }
-    else if (&editor == textEditor_DecayMin)
+    else if (&editor == textEditor_DecayMin.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();

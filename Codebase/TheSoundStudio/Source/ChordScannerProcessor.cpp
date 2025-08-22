@@ -11,7 +11,7 @@
 #include "ChordScannerProcessor.h"
 #include "ProjectManager.h"
 
-ChordScannerProcessor::ChordScannerProcessor(FrequencyManager * fm, SampleLibraryManager * slm, ProjectManager * pm)
+ChordScannerProcessor::ChordScannerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm)
 {
     projectManager          = pm;
     frequencyManager        = fm;

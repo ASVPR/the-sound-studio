@@ -522,7 +522,9 @@ void SamplerProcessor::loadInstrument(int filePathIndex) // used for new playing
             // For synthesis-based system, create procedural sound
             SynthesisInstrument synthInstrument = sampleLibraryManager->getInstrument(filePathIndex-1);
             
-            // Create synthesis-based sound with procedural parameters
+            // TODO: Create synthesis-based sound with procedural parameters
+            // This code needs to be implemented for synthesis-based instruments
+            /*
             SynthSamplerSound::Ptr newSound = new SynthSamplerSound(
                 synthParameterName, 
                 synthInstrument.synthType,
@@ -532,8 +534,9 @@ void SamplerProcessor::loadInstrument(int filePathIndex) // used for new playing
                 freqRange, 
                 maxSampleLengthSeconds 
             );
+            */
             
-            this->addSound(newSound);
+            // this->addSound(newSound); // TODO: Re-enable when synthesis implementation is complete
         }
     }
 

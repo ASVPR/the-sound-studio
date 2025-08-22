@@ -11,7 +11,7 @@
 #include "LissajousCurveProcessor.h"
 #include "ProjectManager.h"
 
-LissajousFrequencyPlayerProcessor::LissajousFrequencyPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm)
+LissajousFrequencyPlayerProcessor::LissajousFrequencyPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm)
 {
     sampleLibraryManager    = slm;
     frequencyManager        = fm;
@@ -593,7 +593,7 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::processSimultaneousShortcu
 }
 
 
-//LissajousChordPlayerProcessor::LissajousChordPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm)
+//LissajousChordPlayerProcessor::LissajousChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm)
 //{
 //    frequencyManager        = fm;
 //    sampleLibraryManager    = slm;
@@ -1156,7 +1156,7 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::processSimultaneousShortcu
 //}
 
 
-LissajousChordPlayerProcessor::LissajousChordPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm)
+LissajousChordPlayerProcessor::LissajousChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm)
 {
     frequencyManager        = fm;
     sampleLibraryManager    = slm;

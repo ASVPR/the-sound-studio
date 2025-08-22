@@ -407,7 +407,7 @@ void Analyser::setMaxInterval(double max)
 
 void Analyser::initHarmonics()
 {
-    harmonics.initiliaze();
+    harmonics.initialize();
 }
 
 float Analyser::calculateHarmonics()

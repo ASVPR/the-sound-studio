@@ -68,20 +68,20 @@ ShortcutColourComponent::ShortcutColourComponent()
     
     int insetButton = 33;
     
-    button_Add = new ImageButton();
+    button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                            imageAddIcon, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                            imageAddIcon, 0.75, Colour (0x00000000));
     button_Add->setBounds(insetButton, insetButton, shortcutWidth - (insetButton*2), shortcutHeight - (insetButton*2));
-    addAndMakeVisible(button_Add);
+    addAndMakeVisible(button_.get()Add);
     
     int colourInset = 5;
-    colourOutputComponent = new ColourOutputComponent();
+    colourOutputComponent = std::make_unique<ColourOutputComponent>();
     colourOutputComponent->setBounds(colourInset,colourInset, shortcutWidth - (colourInset*2), shortcutHeight-(colourInset*2));
     colourOutputComponent->setBackgroundColour(Colours::darkgrey);
-    addAndMakeVisible(colourOutputComponent);
+    addAndMakeVisible(colourOutputComponent.get());
     
     label_ColourCode = new Label("","some colour code");
     addAndMakeVisible(label_ColourCode);
@@ -90,24 +90,24 @@ ShortcutColourComponent::ShortcutColourComponent()
     label_ColourCode->setJustificationType(Justification::centred);
     
     int baseY = 110;
-    button_OpenSettings = new ImageButton();
+    button_OpenSettings = std::make_unique<ImageButton>();
     button_OpenSettings->setTriggeredOnMouseDown(true);
     button_OpenSettings->setImages (false, true, true,
                            imageSettings, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                            imageSettings, 0.75, Colour (0x00000000));
     button_OpenSettings->setBounds(10, baseY, 20, 20);
-    addAndMakeVisible(button_OpenSettings);
+    addAndMakeVisible(button_.get()OpenSettings);
     
     
-    button_Delete = new ImageButton();
+    button_Delete = std::make_unique<ImageButton>();
     button_Delete->setTriggeredOnMouseDown(true);
     button_Delete->setImages (false, true, true,
                            imageDelete, 0.999f, Colour (0x00000000),
                            Image(), 1.000f, Colour (0x00000000),
                            imageDelete, 0.75, Colour (0x00000000));
     button_Delete->setBounds(150, 10, 20, 20);
-    addAndMakeVisible(button_Delete);
+    addAndMakeVisible(button_.get()Delete);
     
     
     setState(false);
@@ -170,7 +170,7 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
     
     int multY = 666;
     // toggle between these two
-    button_Multiplication = new ImageButton();
+    button_Multiplication = std::make_unique<ImageButton>();
     button_Multiplication->setTriggeredOnMouseDown(true);
     button_Multiplication->setImages (false, true, true,
                                       imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -178,9 +178,9 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
                                       imageBlueButtonSelected, 1.0, Colour (0x00000000));
     
     button_Multiplication->setBounds(591, multY, 31, 31);
-    addAndMakeVisible(button_Multiplication);
+    addAndMakeVisible(button_.get()Multiplication);
     
-    button_Division = new ImageButton();
+    button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
     button_Division->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -188,7 +188,7 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     
     button_Division->setBounds(822, multY, 31, 31);
-    addAndMakeVisible(button_Division);
+    addAndMakeVisible(button_.get()Division);
     
     multY += 43;
     
@@ -222,7 +222,7 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
     textEditorDivision->setBounds(864, multY, 111, 35);
     addAndMakeVisible(textEditorDivision);
     
-    button_Close = new ImageButton();
+    button_Close = std::make_unique<ImageButton>();
     button_Close->setTriggeredOnMouseDown(true);
     button_Close->setImages (false, true, true,
                              imageCloseButton, 0.999f, Colour (0x00000000),
@@ -230,9 +230,9 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
                              imageCloseButton, 0.75, Colour (0x00000000));
     
     button_Close->setBounds(1048, 520, 28, 28);
-    addAndMakeVisible(button_Close);
+    addAndMakeVisible(button_.get()Close);
     
-    button_Save = new ImageButton();
+    button_Save = std::make_unique<ImageButton>();
     button_Save->setTriggeredOnMouseDown(true);
     button_Save->setImages (false, true, true,
                              imageSaveButton, 0.999f, Colour (0x00000000),
@@ -240,7 +240,7 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
                              imageSaveButton, 0.75, Colour (0x00000000));
     
     button_Save->setBounds(668, 818, 235, 65);
-    addAndMakeVisible(button_Save);
+    addAndMakeVisible(button_.get()Save);
 }
 
 ManipulationPopupComponent::~ManipulationPopupComponent() { }

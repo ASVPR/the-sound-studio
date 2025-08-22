@@ -11,7 +11,7 @@
 #include "ChordPlayerProcessor.h"
 #include "ProjectManager.h"
 
-ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SampleLibraryManager * slm, ProjectManager * pm)
+ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm)
 {
     projectManager          = pm;
     frequencyManager        = fm;

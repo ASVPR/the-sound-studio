@@ -125,6 +125,10 @@ public:
             return juce::Font(Typeface::createSystemTypefaceFor(BinaryData::AssistantSemiBold_ttf,
                                                                 BinaryData::AssistantSemiBold_ttfSize));
         }
+        
+        // Default fallback
+        return juce::Font(Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf,
+                                                            BinaryData::AssistantLight_ttfSize));
     }
     
 //===============================================================================
@@ -645,29 +649,10 @@ private:
     void saveSettingsFile();
     void loadSettingsFile();
     
-//===============================================================================
-#pragma mark Panic Button White Noise Generator
-//===============================================================================
-    
-    enum NOISE_TYPE { WHITE_NOISE = 0, PINK_NOISE } noiseType;
-    
-    WhiteNoise     noiseWhite;
-    PinkNoise      noisePink;
-    
-    bool panicButtonIsDown = false;
-    
-    void setPanicButton();
-    bool getIsPanicButtonDown();
-    
-    void processPanicButtonNoise(AudioBuffer<float>& buffer);
-    void processWhiteNoise(AudioBuffer<float>& buffer);
-    void processPinkNoise(AudioBuffer<float>& buffer);
-    
-    
     //===============================================================================
     #pragma mark Multichannel audio
     //===============================================================================
-    
+
     void getOutputsPopupMenu(PopupMenu & outputMenu)
     {
         outputMenu.addItem(AUDIO_OUTPUTS::NO_OUTPUT, "NO OUTPUT");
@@ -675,10 +660,32 @@ private:
         outputMenu.addItem(AUDIO_OUTPUTS::MONO_2, "MONO 2");
         outputMenu.addItem(AUDIO_OUTPUTS::MONO_3, "MONO 3");
         outputMenu.addItem(AUDIO_OUTPUTS::MONO_4, "MONO 4");
-        
+
         outputMenu.addItem(AUDIO_OUTPUTS::STEREO_1_2, "STEREO 1 & 2");
         outputMenu.addItem(AUDIO_OUTPUTS::STEREO_3_4, "STEREO 3 & 4");
     }
+
+
+
+
+
+    //===============================================================================
+    #pragma mark Panic Button White Noise Generator
+    //===============================================================================
+
+    enum NOISE_TYPE { WHITE_NOISE = 0, PINK_NOISE } noiseType;
+
+    WhiteNoise     noiseWhite;
+    PinkNoise      noisePink;
+
+    bool panicButtonIsDown = false;
+
+    void setPanicButton();
+    bool getIsPanicButtonDown();
+
+    void processPanicButtonNoise(AudioBuffer<float>& buffer);
+    void processWhiteNoise(AudioBuffer<float>& buffer);
+    void processPinkNoise(AudioBuffer<float>& buffer);
     
     void getInputsPopupMenu(PopupMenu & inputMenu)
     {

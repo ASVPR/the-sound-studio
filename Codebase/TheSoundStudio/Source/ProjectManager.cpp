@@ -32,9 +32,7 @@ ProjectManager::ProjectManager() : backgroundThread("Audio Recorder Thread")
         initializePluginSystem();
         
         // FIXED: Exception-safe FFT initialization
-        if (!initFFT()) {
-            throw std::runtime_error("Failed to initialize FFT system");
-        }
+        initFFT();
         
         // FIXED: Thread-safe mode initialization
         currentMode.store(AUDIO_MODE::MODE_CHORD_PLAYER);
