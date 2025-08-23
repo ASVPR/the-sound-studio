@@ -4,22 +4,21 @@
 
 **The Sound Studio** is a synthesis-powered evolution of the ASVPR Labs audio platform. While maintaining all the core functionality of ASVPR (frequency analysis, chord playing, real-time visualization), TSS replaces the 5.4GB sample library with advanced real-time synthesis algorithms, reducing the total footprint to under 500MB while maintaining superior sound quality and tuning flexibility.
 
-## ✅ Current Status
+## 🚧 Current Status
 
-**BUILD STATUS: SUCCESSFUL** 🎉
-- **Application**: Working and executable
-- **Location**: `The Sound Studio.app` in main tss folder
+**BUILD STATUS: IN PROGRESS**
+- **Application**: Build partially complete
 - **Platform**: macOS (Universal Binary)
-- **JUCE Integration**: Complete
-- **Build Configuration**: Release mode
+- **JUCE Integration**: Framework integrated
+- **Build Configuration**: Working on compilation issues
 
 ### Recent Updates (August 2025)
 - ✅ JUCE framework integration completed
-- ✅ SampleLibraryManager → SynthesisLibraryManager migration
-- ✅ Thread priority and memory management fixes
-- ✅ Unique pointer and compilation issues resolved
-- ✅ Application bundle structure finalized
-- ✅ Logging system implemented
+- ✅ Project structure regenerated with Projucer
+- ✅ Fixed majority of std::unique_ptr migration issues
+- ⚠️ Remaining compilation issues in UI components
+- 🔧 Working on resolving pointer management in LissajousCurveAddChordComponent
+- 🔧 FrequencyPlayerSettingsComponent pointer issues partially resolved
 
 ## Key Innovations
 
@@ -106,6 +105,7 @@
 - [x] Project structure creation
 - [x] ASVPR codebase migration
 - [x] Core synthesis framework setup
+- [ ] Complete build system fixes
 - [ ] Basic physical modeling implementation
 
 ### Phase 2: Core Instruments
@@ -168,30 +168,32 @@
 
 ## Getting Started
 
-### Quick Start (Current Status)
-1. **✅ Application Ready**: The Sound Studio.app is available in the main tss folder
-2. **✅ Double-click to launch**: Application opens and runs successfully
-3. **✅ JUCE Integration**: Framework properly configured and working
-4. **✅ Build Complete**: All major compilation issues resolved
+### Build Instructions (Current Status)
+1. **Prerequisites**: Xcode, JUCE framework (located at ../../../JUCE)
+2. **Build Location**: Codebase/TheSoundStudio/Builds/MacOSX
+3. **Build Command**: `xcodebuild -scheme "The Sound Studio - App" -configuration Release build`
+4. **Known Issues**: std::unique_ptr migration in progress for UI components
 
-### Application Structure
+### Project Structure
 ```
 tss/
-├── The Sound Studio.app/          # ✅ Working application
-├── logs/                          # ✅ Application logs
-│   ├── application_startup.log    # Startup information
-│   └── build_info.log             # Build details
 ├── Codebase/                      # Source code
+│   └── TheSoundStudio/
+│       ├── Source/                # Application source files
+│       ├── Builds/                # Platform-specific build files
+│       │   └── MacOSX/            # Xcode project
+│       ├── JuceLibraryCode/       # Generated JUCE files
+│       └── user_modules/          # Custom modules (audio_fft, pitch_detector)
 ├── Assets/                        # UI assets and resources
-└── Documentation/                 # Project documentation
+└── README.md                      # Project documentation
 ```
 
-### Running the Application
-- **Method 1**: Double-click `The Sound Studio.app` in Finder
-- **Method 2**: Run `./The Sound Studio.app/Contents/MacOS/The Sound Studio` in Terminal
-- **Status**: ✅ Application launches successfully with GUI dialog
-- **Features**: Shows welcome dialog and runs continuously in background
-- **GUI**: Displays application information and status dialog until manually closed
+### Known Build Issues
+- **std::unique_ptr Migration**: UI components need pointer management updates
+- **Affected Files**: 
+  - LissajousCurveAddChordComponent.cpp/h
+  - FrequencyPlayerSettingsComponent.cpp/h
+- **Progress**: ~90% of files compile successfully
 
 ### Monitoring the Application
 - **Monitor Script**: Run `./monitor_app.sh` to check application status

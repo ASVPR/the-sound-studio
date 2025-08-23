@@ -335,14 +335,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_6]->addListener(this);
     addonButton[AddOn_6]->setBounds(leftButtonBorder, yShift, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_6].get());
+    addAndMakeVisible(addonButton[AddOn_6]);
     
-    label[AddOn_6] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_6));
+    label[AddOn_6] = new Label("", ProjectStrings::getAddons().getReference(AddOn_6));
     label[AddOn_6]->setBounds(leftLabelBorder, yShift, 64, 21);
     label[AddOn_6]->setJustificationType(Justification::left);
     label[AddOn_6]->setFont(fontLight);
     label[AddOn_6]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_6].get());
+    addAndMakeVisible(label[AddOn_6]);
     
     //
     addonButton[AddOn_7] = std::make_unique<ImageButton>();
@@ -353,14 +353,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_7]->addListener(this);
     addonButton[AddOn_7]->setBounds(leftButtonBorder, yShift * 2, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_7].get());
+    addAndMakeVisible(addonButton[AddOn_7]);
     
-    label[AddOn_7] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_7));
+    label[AddOn_7] = new Label("", ProjectStrings::getAddons().getReference(AddOn_7));
     label[AddOn_7]->setBounds(leftLabelBorder, yShift * 2, 64, 21);
     label[AddOn_7]->setJustificationType(Justification::left);
     label[AddOn_7]->setFont(fontLight);
     label[AddOn_7]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_7].get());
+    addAndMakeVisible(label[AddOn_7]);
     
     //
     addonButton[AddOn_7Major] = std::make_unique<ImageButton>();
@@ -371,14 +371,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_7Major]->addListener(this);
     addonButton[AddOn_7Major]->setBounds(leftButtonBorder, yShift * 3, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_7Major].get());
+    addAndMakeVisible(addonButton[AddOn_7Major]);
     
-    label[AddOn_7Major] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_7Major));
+    label[AddOn_7Major] = new Label("", ProjectStrings::getAddons().getReference(AddOn_7Major));
     label[AddOn_7Major]->setBounds(leftLabelBorder, yShift * 3, 64, 21);
     label[AddOn_7Major]->setJustificationType(Justification::left);
     label[AddOn_7Major]->setFont(fontLight);
     label[AddOn_7Major]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_7Major].get());
+    addAndMakeVisible(label[AddOn_7Major]);
     
     ///// next
     leftButtonBorder    = 148;
@@ -393,14 +393,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_9]->addListener(this);
     addonButton[AddOn_9]->setBounds(leftButtonBorder, yShift * 1, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_9].get());
+    addAndMakeVisible(addonButton[AddOn_9]);
     
-    label[AddOn_9] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_9));
+    label[AddOn_9] = new Label("", ProjectStrings::getAddons().getReference(AddOn_9));
     label[AddOn_9]->setBounds(leftLabelBorder, yShift * 1, 64, 21);
     label[AddOn_9]->setJustificationType(Justification::left);
     label[AddOn_9]->setFont(fontLight);
     label[AddOn_9]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_9].get());
+    addAndMakeVisible(label[AddOn_9]);
     
     addonButton[AddOn_9flat] = std::make_unique<ImageButton>();
     addonButton[AddOn_9flat]->setTriggeredOnMouseDown(true);
@@ -410,14 +410,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                          imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_9flat]->addListener(this);
     addonButton[AddOn_9flat]->setBounds(leftButtonBorder, yShift * 2, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_9flat].get());
+    addAndMakeVisible(addonButton[AddOn_9flat]);
     
-    label[AddOn_9flat] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_9flat));
+    label[AddOn_9flat] = new Label("", ProjectStrings::getAddons().getReference(AddOn_9flat));
     label[AddOn_9flat]->setBounds(leftLabelBorder, yShift * 2, 64, 21);
     label[AddOn_9flat]->setJustificationType(Justification::left);
     label[AddOn_9flat]->setFont(fontLight);
     label[AddOn_9flat]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_9flat].get());
+    addAndMakeVisible(label[AddOn_9flat]);
     
     addonButton[AddOn_9sharp] = std::make_unique<ImageButton>();
     addonButton[AddOn_9sharp]->setTriggeredOnMouseDown(true);
@@ -427,14 +427,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_9sharp]->addListener(this);
     addonButton[AddOn_9sharp]->setBounds(leftButtonBorder, yShift * 3, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_9sharp].get());
+    addAndMakeVisible(addonButton[AddOn_9sharp]);
     
-    label[AddOn_9sharp] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_9sharp));
+    label[AddOn_9sharp] = new Label("", ProjectStrings::getAddons().getReference(AddOn_9sharp));
     label[AddOn_9sharp]->setBounds(leftLabelBorder, yShift * 3, 64, 21);
     label[AddOn_9sharp]->setJustificationType(Justification::left);
     label[AddOn_9sharp]->setFont(fontLight);
     label[AddOn_9sharp]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_9sharp].get());
+    addAndMakeVisible(label[AddOn_9sharp]);
     
     
     addonButton[AddOn_11] = std::make_unique<ImageButton>();
@@ -445,14 +445,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_11]->addListener(this);
     addonButton[AddOn_11]->setBounds(leftButtonBorder, yShift * 4, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_11].get());
+    addAndMakeVisible(addonButton[AddOn_11]);
     
-    label[AddOn_11] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_11));
+    label[AddOn_11] = new Label("", ProjectStrings::getAddons().getReference(AddOn_11));
     label[AddOn_11]->setBounds(leftLabelBorder, yShift * 4, 64, 21);
     label[AddOn_11]->setJustificationType(Justification::left);
     label[AddOn_11]->setFont(fontLight);
     label[AddOn_11]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_11].get());
+    addAndMakeVisible(label[AddOn_11]);
     
     
     addonButton[AddOn_11sharp] = std::make_unique<ImageButton>();
@@ -463,14 +463,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                            imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_11sharp]->addListener(this);
     addonButton[AddOn_11sharp]->setBounds(leftButtonBorder, yShift * 5, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_11sharp].get());
+    addAndMakeVisible(addonButton[AddOn_11sharp]);
     
-    label[AddOn_11sharp] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_11sharp));
+    label[AddOn_11sharp] = new Label("", ProjectStrings::getAddons().getReference(AddOn_11sharp));
     label[AddOn_11sharp]->setBounds(leftLabelBorder, yShift * 5, 64, 21);
     label[AddOn_11sharp]->setJustificationType(Justification::left);
     label[AddOn_11sharp]->setFont(fontLight);
     label[AddOn_11sharp]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_11sharp].get());
+    addAndMakeVisible(label[AddOn_11sharp]);
     
     
     ///// next
@@ -485,14 +485,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_13]->addListener(this);
     addonButton[AddOn_13]->setBounds(leftButtonBorder, yShift * 1, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_13].get());
+    addAndMakeVisible(addonButton[AddOn_13]);
     
-    label[AddOn_13] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_13));
+    label[AddOn_13] = new Label("", ProjectStrings::getAddons().getReference(AddOn_13));
     label[AddOn_13]->setBounds(leftLabelBorder, yShift * 1, 64, 21);
     label[AddOn_13]->setJustificationType(Justification::left);
     label[AddOn_13]->setFont(fontLight);
     label[AddOn_13]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_13].get());
+    addAndMakeVisible(label[AddOn_13]);
     
     
     addonButton[AddOn_13flat] = std::make_unique<ImageButton>();
@@ -503,14 +503,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_13flat]->addListener(this);
     addonButton[AddOn_13flat]->setBounds(leftButtonBorder, yShift * 2, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_13flat].get());
+    addAndMakeVisible(addonButton[AddOn_13flat]);
     
-    label[AddOn_13flat] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_13flat));
+    label[AddOn_13flat] = new Label("", ProjectStrings::getAddons().getReference(AddOn_13flat));
     label[AddOn_13flat]->setBounds(leftLabelBorder, yShift * 2, 64, 21);
     label[AddOn_13flat]->setJustificationType(Justification::left);
     label[AddOn_13flat]->setFont(fontLight);
     label[AddOn_13flat]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_13flat].get());
+    addAndMakeVisible(label[AddOn_13flat]);
     
     addonButton[AddOn_Inverted] = std::make_unique<ImageButton>();
     addonButton[AddOn_Inverted]->setTriggeredOnMouseDown(true);
@@ -520,14 +520,14 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
                                             imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_Inverted]->addListener(this);
     addonButton[AddOn_Inverted]->setBounds(leftButtonBorder, yShift * 3, 16, 16);
-    addAndMakeVisible(addonButton[AddOn_Inverted].get());
+    addAndMakeVisible(addonButton[AddOn_Inverted]);
     
-    label[AddOn_Inverted] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_Inverted));
+    label[AddOn_Inverted] = new Label("", ProjectStrings::getAddons().getReference(AddOn_Inverted));
     label[AddOn_Inverted]->setBounds(leftLabelBorder, yShift * 3, 64, 21);
     label[AddOn_Inverted]->setJustificationType(Justification::left);
     label[AddOn_Inverted]->setFont(fontLight);
     label[AddOn_Inverted]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_Inverted].get());
+    addAndMakeVisible(label[AddOn_Inverted]);
     
     paramIndexBase =  UNIT_1_CHORD_PLAYER_SHORTCUT_IS_ACTIVE + ((UNIT_1_CHORD_PLAYER_CHORDPLAYER_SCALE - UNIT_1_CHORD_PLAYER_SHORTCUT_IS_ACTIVE) * shortcutRef);
     

@@ -30,7 +30,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
     
-    button_Close = std::make_unique<ImageButton>();
+    button_Close = new ImageButton();
     button_Close->setTriggeredOnMouseDown(true);
     button_Close->setImages (false, true, true,
                              imageCloseButton, 0.999f, Colour (0x00000000),
@@ -38,10 +38,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                              imageCloseButton, 0.75, Colour (0x00000000));
     button_Close->addListener(this);
     button_Close->setBounds(1408, 275, 150, 28);
-    addAndMakeVisible(button_Close.get());
+    addAndMakeVisible(button_Close);
     
     // toggle between these two
-    button_ChooseSpecificFrequency = std::make_unique<ImageButton>();
+    button_ChooseSpecificFrequency = new ImageButton();
     button_ChooseSpecificFrequency->setTriggeredOnMouseDown(true);
     button_ChooseSpecificFrequency->setImages (false, true, true,
                                            imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -49,10 +49,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                            imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseSpecificFrequency->addListener(this);
     button_ChooseSpecificFrequency->setBounds(90, 360, 38, 38);
-    addAndMakeVisible(button_ChooseSpecificFrequency.get());
+    addAndMakeVisible(button_ChooseSpecificFrequency);
     
     
-    button_ChooseRangeOfFrequencies = std::make_unique<ImageButton>();
+    button_ChooseRangeOfFrequencies = new ImageButton();
     button_ChooseRangeOfFrequencies->setTriggeredOnMouseDown(true);
     button_ChooseRangeOfFrequencies->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -60,7 +60,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseRangeOfFrequencies->addListener(this);
     button_ChooseRangeOfFrequencies->setBounds(628, 360, 38, 38);
-    addAndMakeVisible(button_ChooseRangeOfFrequencies.get());
+    addAndMakeVisible(button_ChooseRangeOfFrequencies);
     
     
     int shift = 0;
@@ -70,7 +70,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     
     
     // act as toggle between 5 buttons
-    button_Default = std::make_unique<ImageButton>();
+    button_Default = new ImageButton();
     button_Default->setTriggeredOnMouseDown(true);
     button_Default->setImages (false, true, true,
                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -78,10 +78,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Default->addListener(this);
     button_Default->setBounds(260, waveY, 38, 38);
-//    addAndMakeVisible(button_Default.get());
+//    addAndMakeVisible(button_Default);
     
 
-    button_Sine = std::make_unique<ImageButton>();
+    button_Sine = new ImageButton();
     button_Sine->setTriggeredOnMouseDown(true);
     button_Sine->setImages (false, true, true,
                             imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -89,9 +89,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                             imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sine->addListener(this);
     button_Sine->setBounds(420-shift-10+6, waveY, 38, 38);
-    addAndMakeVisible(button_Sine.get());
+    addAndMakeVisible(button_Sine);
     
-    button_Triangle = std::make_unique<ImageButton>();
+    button_Triangle = new ImageButton();
     button_Triangle->setTriggeredOnMouseDown(true);
     button_Triangle->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -99,9 +99,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Triangle->addListener(this);
     button_Triangle->setBounds(660-shift+16-16, waveY, 38, 38);
-    addAndMakeVisible(button_Triangle.get());
+    addAndMakeVisible(button_Triangle);
     
-    button_Square = std::make_unique<ImageButton>();
+    button_Square = new ImageButton();
     button_Square->setTriggeredOnMouseDown(true);
     button_Square->setImages (false, true, true,
                               imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -109,9 +109,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                               imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Square->addListener(this);
     button_Square->setBounds(910-shift, waveY, 38, 38);
-    addAndMakeVisible(button_Square.get());
+    addAndMakeVisible(button_Square);
     
-    button_Sawtooth = std::make_unique<ImageButton>();
+    button_Sawtooth = new ImageButton();
     button_Sawtooth->setTriggeredOnMouseDown(true);
     button_Sawtooth->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -119,16 +119,16 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sawtooth->addListener(this);
     button_Sawtooth->setBounds(1180-shift, waveY, 38, 38);
-    addAndMakeVisible(button_Sawtooth.get());
+    addAndMakeVisible(button_Sawtooth);
     
-    button_Wavetable = std::make_unique<ImageButton>();
+    button_Wavetable = new ImageButton();
     button_Wavetable->setTriggeredOnMouseDown(true);
     button_Wavetable->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Wavetable->addListener(this);
-    addAndMakeVisible(button_Wavetable.get());
+    addAndMakeVisible(button_Wavetable);
     
     
     button_WavetableEditor = new TextButton("");
@@ -138,7 +138,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     addAndMakeVisible(button_WavetableEditor);
 
     
-    button_Add = std::make_unique<ImageButton>();
+    button_Add = new ImageButton();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                            imageAddButton, 0.999f, Colour (0x00000000),
@@ -146,10 +146,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                            imageAddButton, 0.888, Colour (0x00000000));
     button_Add->addListener(this);
     button_Add->setBounds(609, 980, 341, 84);
-    addAndMakeVisible(button_Add.get());
+    addAndMakeVisible(button_Add);
     
     
-    button_ManipulateFreq = std::make_unique<ImageButton>();
+    button_ManipulateFreq = new ImageButton();
     button_ManipulateFreq->setTriggeredOnMouseDown(true);
     button_ManipulateFreq->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -157,9 +157,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_ManipulateFreq->addListener(this);
     button_ManipulateFreq->setBounds(1054, 357, 30, 30);
-    addAndMakeVisible(button_ManipulateFreq.get());
+    addAndMakeVisible(button_ManipulateFreq);
     
-    button_Log = std::make_unique<ImageButton>();
+    button_Log = new ImageButton();
     button_Log->setTriggeredOnMouseDown(true);
     button_Log->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -167,10 +167,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_Log->addListener(this);
     button_Log->setBounds(632, 460, 30, 30);
-    addAndMakeVisible(button_Log.get());
+    addAndMakeVisible(button_Log);
     
     
-    button_Multiplication = std::make_unique<ImageButton>();
+    button_Multiplication = new ImageButton();
     button_Multiplication->setTriggeredOnMouseDown(true);
     button_Multiplication->setImages (false, true, true,
                                       imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -178,9 +178,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                       imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Multiplication->addListener(this);
     button_Multiplication->setBounds(1086-shiftBack, mulDivY, 38, 38);
-    addAndMakeVisible(button_Multiplication.get());
+    addAndMakeVisible(button_Multiplication);
     
-    button_Division = std::make_unique<ImageButton>();
+    button_Division = new ImageButton();
     button_Division->setTriggeredOnMouseDown(true);
     button_Division->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -188,7 +188,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Division->addListener(this);
     button_Division->setBounds(1317-shiftBack, mulDivY, 38, 38);
-    addAndMakeVisible(button_Division.get());
+    addAndMakeVisible(button_Division);
     
     // Font
     Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
@@ -201,15 +201,15 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     
     int playY = 894;
     
-    comboBoxOutputSelection = std::make_unique<ComboBox>();
+    comboBoxOutputSelection = new ComboBox();
     comboBoxOutputSelection->setLookAndFeel(&lookAndFeel);
     comboBoxOutputSelection->addListener(this);
     comboBoxOutputSelection->setSelectedId(0);
     projectManager->getOutputsPopupMenu(*comboBoxOutputSelection->getRootMenu());
-    addAndMakeVisible(comboBoxOutputSelection.get());
+    addAndMakeVisible(comboBoxOutputSelection);
 
 
-    textEditorRepeat = std::make_unique<TextEditor>(");
+    textEditorRepeat = new TextEditor("");
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(2, "0123456789");
     textEditorRepeat->setMultiLine(false);
@@ -222,9 +222,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorRepeat->applyFontToAllText(fontSemiBold);
     textEditorRepeat->applyColourToAllText(Colours::lightgrey);
     textEditorRepeat->setBounds(466, playY, 111, 35);
-    addAndMakeVisible(textEditorRepeat.get());
+    addAndMakeVisible(textEditorRepeat);
     
-    textEditorPause = std::make_unique<TextEditor>(");
+    textEditorPause = new TextEditor("");
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789");
     textEditorPause->setMultiLine(false);
@@ -237,10 +237,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorPause->applyFontToAllText(fontSemiBold);
     textEditorPause->applyColourToAllText(Colours::lightgrey);
     textEditorPause->setBounds(1094, playY, 111, 35);
-    addAndMakeVisible(textEditorPause.get());
+    addAndMakeVisible(textEditorPause);
     
     
-    textEditorLength = std::make_unique<TextEditor>(");
+    textEditorLength = new TextEditor("");
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
     textEditorLength->setInputRestrictions(5, "0123456789");
@@ -253,12 +253,12 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorLength->applyFontToAllText(fontSemiBold);
     textEditorLength->applyColourToAllText(Colours::lightgrey);
     textEditorLength->setBounds(794, playY, 111, 35);
-    addAndMakeVisible(textEditorLength.get());
+    addAndMakeVisible(textEditorLength);
     
 
     
     // TextEntryBoxes
-    textEditorInsertFreq = std::make_unique<TextEditor>(");
+    textEditorInsertFreq = new TextEditor("");
     textEditorInsertFreq->setReturnKeyStartsNewLine(false);
     textEditorInsertFreq->setMultiLine(false);
     textEditorInsertFreq->setInputRestrictions(12, "0123456789.");
@@ -271,11 +271,11 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorInsertFreq->applyFontToAllText(fontSemiBold);
     textEditorInsertFreq->applyColourToAllText(Colours::lightgrey);
     textEditorInsertFreq->setBounds(476, 360, 96, 35);
-    addAndMakeVisible(textEditorInsertFreq.get());
+    addAndMakeVisible(textEditorInsertFreq);
     
     
     int y = 402;
-    textEditorFreqFrom = std::make_unique<TextEditor>(");
+    textEditorFreqFrom = new TextEditor("");
     textEditorFreqFrom->setReturnKeyStartsNewLine(false);
     textEditorFreqFrom->setMultiLine(false);
     textEditorFreqFrom->setInputRestrictions(12, "0123456789.");
@@ -288,7 +288,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorFreqFrom->applyFontToAllText(fontSemiBold);
     textEditorFreqFrom->applyColourToAllText(Colours::lightgrey);
     textEditorFreqFrom->setBounds(708, y, 96, 35);
-    addAndMakeVisible(textEditorFreqFrom.get());
+    addAndMakeVisible(textEditorFreqFrom);
     
     textEditorFreqTo = new TextEditor("");
     textEditorFreqTo->setReturnKeyStartsNewLine(false);
@@ -624,53 +624,53 @@ void FrequencyPlayerSettingsComponent::updateMinMaxSettings(int paramIndex)
 
 void FrequencyPlayerSettingsComponent::buttonClicked (Button*button)
 {
-    if (button == button_Close.get())
+    if (button == button_Close)
     {
         closeView();
         
         popupWavetableWindow->setVisible(false);
     }
-    else if (button == button_ChooseSpecificFrequency.get())
+    else if (button == button_ChooseSpecificFrequency)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_FREQ_SOURCE, false);
     }
-    else if (button == button_ChooseRangeOfFrequencies.get())
+    else if (button == button_ChooseRangeOfFrequencies)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_FREQ_SOURCE, true);
     }
-    else if (button == button_Multiplication.get())
+    else if (button == button_Multiplication)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION, false);
     }
-    else if (button == button_Division.get())
+    else if (button == button_Division)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION, true);
     }
-    else if (button == button_ManipulateFreq.get())
+    else if (button == button_ManipulateFreq)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MANIPULATE_CHOSEN_FREQUENCY, !button_ManipulateFreq->getToggleState());
     }
-    else if (button == button_Default.get())
+    else if (button == button_Default)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 0);
     }
-    else if (button == button_Sine.get())
+    else if (button == button_Sine)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 1);
     }
-    else if (button == button_Triangle.get())
+    else if (button == button_Triangle)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 2);
     }
-    else if (button == button_Square.get())
+    else if (button == button_Square)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 3);
     }
-    else if (button == button_Sawtooth.get())
+    else if (button == button_Sawtooth)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 4);
     }
-    else if (button == button_Wavetable.get())
+    else if (button == button_Wavetable)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 5);
     }
@@ -683,11 +683,11 @@ void FrequencyPlayerSettingsComponent::buttonClicked (Button*button)
         }
         else popupWavetableWindow ->setVisible(false);
     }
-    else if (button == button_Log.get())
+    else if (button == button_Log)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_LOG, !button_Log->getToggleState());
     }
-    else if (button == button_Add.get())
+    else if (button == button_Add)
     {
         closeView();
         
