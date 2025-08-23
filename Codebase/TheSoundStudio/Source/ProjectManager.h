@@ -632,6 +632,19 @@ public:
     // FIXED: Smart pointer for memory safety
     std::unique_ptr<LogFileWriter> logFileWriter;
     
+    String getProjectVersionString()
+    {
+      return String(ProjectInfo::versionString);
+    }
+    
+    String getProjectName()
+    {
+        return String(ProjectInfo::projectName);
+    }
+    
+    void setPanicButton();
+    bool getIsPanicButtonDown();
+    
 private:
     // FIXED: Exception-safe helper methods
     void cleanup() noexcept;
@@ -680,9 +693,6 @@ private:
 
     bool panicButtonIsDown = false;
 
-    void setPanicButton();
-    bool getIsPanicButtonDown();
-
     void processPanicButtonNoise(AudioBuffer<float>& buffer);
     void processWhiteNoise(AudioBuffer<float>& buffer);
     void processPinkNoise(AudioBuffer<float>& buffer);
@@ -697,19 +707,6 @@ private:
         
         inputMenu.addItem(AUDIO_OUTPUTS::STEREO_1_2, "STEREO 1 & 2");
         inputMenu.addItem(AUDIO_OUTPUTS::STEREO_3_4, "STEREO 3 & 4");
-    }
-    
-    
-    
-    
-    String getProjectVersionString()
-    {
-      return String(ProjectInfo::versionString);
-    }
-    
-    String getProjectName()
-    {
-        return String(ProjectInfo::projectName);
     }
 };
 

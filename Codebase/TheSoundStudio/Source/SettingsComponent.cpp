@@ -1037,7 +1037,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(DECAY_MIN, value);
         
     }
-    else if (&editor == textEditor_DecayMax)
+    else if (&editor == textEditor_DecayMax.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -1052,7 +1052,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(DECAY_MAX, value);
         
     }
-    else if (&editor == textEditor_SustainMin)
+    else if (&editor == textEditor_SustainMin.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -1067,7 +1067,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(SUSTAIN_MIN, value);
         
     }
-    else if (&editor == textEditor_SustainMax)
+    else if (&editor == textEditor_SustainMax.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -1082,7 +1082,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(SUSTAIN_MAX, value);
         
     }
-    else if (&editor == textEditor_ReleaseMin)
+    else if (&editor == textEditor_ReleaseMin.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();
@@ -1097,7 +1097,7 @@ void SettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
         projectManager->setProjectSettingsParameter(RELEASE_MIN, value);
         
     }
-    else if (&editor == textEditor_ReleaseMax)
+    else if (&editor == textEditor_ReleaseMax.get())
     {
         // add hz to the string
         double value = editor.getText().getDoubleValue();

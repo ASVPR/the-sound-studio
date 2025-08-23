@@ -51,15 +51,15 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
     // containers
     containerView_Active = std::make_unique<Component>();
     containerView_Active->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_.get()Active.get());
+    addAndMakeVisible(containerView_Active.get());
     
     containerView_Inactive = std::make_unique<Component>();
     containerView_Inactive->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_.get()Inactive);
+    addAndMakeVisible(containerView_Inactive.get());
     
     containerView_Details = std::make_unique<Component>();
     containerView_Details->setBounds(0, 0, mainWidth, mainHeight);
-    addAndMakeVisible(containerView_.get()Details);
+    addAndMakeVisible(containerView_Details.get());
     
     
     // Inactive view state 0
@@ -82,11 +82,11 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
                                   imageAddNote, 0.75, Colour (0x00000000));
     button_AddNewNote->addListener(this);
     button_AddNewNote->setBounds(70, 190, 173, 43);
-    containerView_Active->addAndMakeVisible(button_AddNewNote);
+    containerView_Active->addAndMakeVisible(button_AddNewNote.get());
     
     ScalesManager * sm = projectManager->frequencyManager->scalesManager;
     
-    comboBox_Note = new ComboBox();
+    comboBox_Note = std::make_unique<ComboBox>();
     sm->getComboBoxPopupMenuForChords(*comboBox_Note->getRootMenu(), SCALES_UNIT::LISSAJOUS_SCALE);
 
     comboBox_Note->setLookAndFeel(&lookAndFeel);
@@ -94,39 +94,39 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
     comboBox_Note->setSelectedId(0);
     comboBox_Note->addListener(this);
     comboBox_Note->setBounds(170, 24+18, 111, 35);
-    containerView_Active->addAndMakeVisible(comboBox_Note);
+    containerView_Active->addAndMakeVisible(comboBox_Note.get());
     
-    comboBox_Octave = new ComboBox();
+    comboBox_Octave = std::make_unique<ComboBox>();
     comboBox_Octave->addItemList(ProjectStrings::getOctaveArray(), 1);
     comboBox_Octave->setSelectedId(0);
     comboBox_Octave->addListener(this);
     comboBox_Octave->setLookAndFeel(&lookAndFeel);
     comboBox_Octave->setBounds(170, 80+18, 111, 35);
-    containerView_Active->addAndMakeVisible(comboBox_Octave);
+    containerView_Active->addAndMakeVisible(comboBox_Octave.get());
     
     
     
     
     // Details View with Delete state 2
     
-    label_NoteValue = new Label("", "C#Major");
+    label_NoteValue = std::make_unique<Label>("", "C#Major");
     label_NoteValue->setBounds(217, 36, 76, 26);
     label_NoteValue->setFont(fontLight);
     label_NoteValue->setJustificationType(Justification::left);
-    containerView_Details->addAndMakeVisible(label_NoteValue);
+    containerView_Details->addAndMakeVisible(label_NoteValue.get());
     
     
-    label_OctaveValue  = new Label("", "Minor");
+    label_OctaveValue  = std::make_unique<Label>("", "Minor");
     label_OctaveValue->setBounds(217, 80, 76, 26);
     label_OctaveValue->setFont(fontLight);
     label_OctaveValue->setJustificationType(Justification::left);
-    containerView_Details->addAndMakeVisible(label_OctaveValue);
+    containerView_Details->addAndMakeVisible(label_OctaveValue.get());
     
-    label_FrequencyLabel  = new Label("", "432Hz");
+    label_FrequencyLabel  = std::make_unique<Label>("", "432Hz");
     label_FrequencyLabel->setBounds(217, 126, 76, 26);
     label_FrequencyLabel->setFont(fontLight);
     label_FrequencyLabel->setJustificationType(Justification::left);
-    containerView_Details->addAndMakeVisible(label_FrequencyLabel);
+    containerView_Details->addAndMakeVisible(label_FrequencyLabel.get());
     
     
     // active buttons
@@ -138,7 +138,7 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
                                 imageSettingsIcon, 0.75, Colour (0x00000000));
     button_Settings->addListener(this);
     button_Settings->setBounds(26, 224, 31, 31);
-    containerView_Details->addAndMakeVisible(button_Settings);
+    containerView_Details->addAndMakeVisible(button_Settings.get());
     
     button_Delete = std::make_unique<ImageButton>();
     button_Delete->setTriggeredOnMouseDown(true);
@@ -148,7 +148,7 @@ LissajousCustomChordNoteComponent::LissajousCustomChordNoteComponent(int ref, Pr
                               imageDelete, 0.75, Colour (0x00000000));
     button_Delete->addListener(this);
     button_Delete->setBounds(0, 0, 34, 34);
-    containerView_Details->addAndMakeVisible(button_Delete);
+    containerView_Details->addAndMakeVisible(button_Delete.get());
     
     paramIndexBase =  UNIT_1_CHORD_PLAYER_SHORTCUT_IS_ACTIVE + ((UNIT_1_CHORD_PLAYER_CHORDPLAYER_SCALE - UNIT_1_CHORD_PLAYER_SHORTCUT_IS_ACTIVE) * shortcutRef);
     
@@ -185,25 +185,25 @@ void LissajousCustomChordNoteComponent::paint (Graphics&){}
 
 void LissajousCustomChordNoteComponent::buttonClicked (Button*button)
 {
-    if (button == button_Delete)
+    if (button == button_Delete.get())
     {
         setState(0);
         
         // send false to projectManager CUSTOM_CHORD_ACTIVE_1
         projectManager->setLissajousParameter(paramIndexBase + CUSTOM_CHORD_ACTIVE_1+noteRef, 0);
     }
-    else if (button == button_Settings)
+    else if (button == button_Settings.get())
     {
         // I think settings returns to note/octave selector, addNote
         setState(1);
         projectManager->setLissajousParameter(paramIndexBase + CUSTOM_CHORD_ACTIVE_1+noteRef, 1);
     }
-    else if (button == button_AddActive)
+    else if (button == button_AddActive.get())
     {
         setState(1);
         projectManager->setLissajousParameter(paramIndexBase +  CUSTOM_CHORD_ACTIVE_1+noteRef, 1);
     }
-    else if (button == button_AddNewNote)
+    else if (button == button_AddNewNote.get())
     {
         setState(2);
         // set to data structure
@@ -231,13 +231,13 @@ void LissajousCustomChordNoteComponent::buttonClicked (Button*button)
 
 void LissajousCustomChordNoteComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBox_Note)
+    if (comboBoxThatHasChanged == comboBox_Note.get())
     {
         chosenNote = comboBox_Note->getSelectedId();
         
         projectManager->setLissajousParameter(paramIndexBase +  CUSTOM_CHORD_NOTE_1 + noteRef, chosenNote);
     }
-    else if (comboBoxThatHasChanged == comboBox_Octave)
+    else if (comboBoxThatHasChanged == comboBox_Octave.get())
     {
         chosenOctave = comboBox_Octave->getSelectedId();
         

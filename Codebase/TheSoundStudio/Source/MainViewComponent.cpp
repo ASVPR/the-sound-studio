@@ -201,7 +201,7 @@ void MainViewComponent::buttonClicked (Button* button)
         if (button == menuButtons[i].get()) {
             currentMenuItem = (MenuItem)i;
             switchMenuView();
-            if (menuItemToModeMap.contains(currentMenuItem)) {
+            if (menuItemToModeMap.find(currentMenuItem) != menuItemToModeMap.end()) {
                 projectManager->setMode(menuItemToModeMap.at(currentMenuItem));
             }
         }
