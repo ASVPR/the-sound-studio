@@ -645,6 +645,20 @@ public:
     void setPanicButton();
     bool getIsPanicButtonDown();
     
+    void saveProfileForMode(AUDIO_MODE mode);
+    void loadProfileForMode(AUDIO_MODE mode);
+    
+    void getOutputsPopupMenu(PopupMenu & outputMenu)
+    {
+        outputMenu.addItem(AUDIO_OUTPUTS::NO_OUTPUT, "NO OUTPUT");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_1, "MONO 1");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_2, "MONO 2");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_3, "MONO 3");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_4, "MONO 4");
+        outputMenu.addItem(AUDIO_OUTPUTS::STEREO_1_2, "STEREO 1 & 2");
+        outputMenu.addItem(AUDIO_OUTPUTS::STEREO_3_4, "STEREO 3 & 4");
+    }
+    
 private:
     // FIXED: Exception-safe helper methods
     void cleanup() noexcept;
@@ -657,26 +671,12 @@ private:
 #pragma mark Profiles / Presets Save - Load
 //===============================================================================
     
-    void saveProfileForMode(AUDIO_MODE mode);
-    void loadProfileForMode(AUDIO_MODE mode);
     void saveSettingsFile();
     void loadSettingsFile();
     
     //===============================================================================
     #pragma mark Multichannel audio
     //===============================================================================
-
-    void getOutputsPopupMenu(PopupMenu & outputMenu)
-    {
-        outputMenu.addItem(AUDIO_OUTPUTS::NO_OUTPUT, "NO OUTPUT");
-        outputMenu.addItem(AUDIO_OUTPUTS::MONO_1, "MONO 1");
-        outputMenu.addItem(AUDIO_OUTPUTS::MONO_2, "MONO 2");
-        outputMenu.addItem(AUDIO_OUTPUTS::MONO_3, "MONO 3");
-        outputMenu.addItem(AUDIO_OUTPUTS::MONO_4, "MONO 4");
-
-        outputMenu.addItem(AUDIO_OUTPUTS::STEREO_1_2, "STEREO 1 & 2");
-        outputMenu.addItem(AUDIO_OUTPUTS::STEREO_3_4, "STEREO 3 & 4");
-    }
 
 
 

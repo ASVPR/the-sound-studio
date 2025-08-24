@@ -93,7 +93,7 @@ private:
     // needs custom progress bar
     std::unique_ptr<CustomProgressBar> progressBar;
     
-    ImageComponent * imageComp;
+    std::unique_ptr<ImageComponent> imageComp;
 
     // Image Cache
     Image imageCheckboxBackground;

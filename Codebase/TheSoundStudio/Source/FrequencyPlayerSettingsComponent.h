@@ -79,8 +79,8 @@ private:
     std::unique_ptr<ImageButton> button_Add;
     
     std::unique_ptr<TextButton>   button_WavetableEditor;
-    WaveTableOscViewComponent * wavetableEditorComponent;
-    PopupFFTWindow *            popupWavetableWindow;
+    std::unique_ptr<WaveTableOscViewComponent> wavetableEditorComponent;
+    std::unique_ptr<PopupFFTWindow> popupWavetableWindow;
     
     // Text Entry for Repeater
     std::unique_ptr<TextEditor> textEditorRepeat;

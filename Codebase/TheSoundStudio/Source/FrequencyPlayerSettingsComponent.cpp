@@ -209,7 +209,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     addAndMakeVisible(comboBoxOutputSelection.get());
 
 
-    textEditorRepeat = std::make_unique<TextEditor>(");
+    textEditorRepeat = std::make_unique<TextEditor>();
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(2, "0123456789");
     textEditorRepeat->setMultiLine(false);
@@ -224,7 +224,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorRepeat->setBounds(466, playY, 111, 35);
     addAndMakeVisible(textEditorRepeat.get());
     
-    textEditorPause = std::make_unique<TextEditor>(");
+    textEditorPause = std::make_unique<TextEditor>();
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789");
     textEditorPause->setMultiLine(false);
@@ -240,7 +240,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     addAndMakeVisible(textEditorPause.get());
     
     
-    textEditorLength = std::make_unique<TextEditor>(");
+    textEditorLength = std::make_unique<TextEditor>();
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
     textEditorLength->setInputRestrictions(5, "0123456789");
@@ -258,7 +258,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
 
     
     // TextEntryBoxes
-    textEditorInsertFreq = std::make_unique<TextEditor>(");
+    textEditorInsertFreq = std::make_unique<TextEditor>();
     textEditorInsertFreq->setReturnKeyStartsNewLine(false);
     textEditorInsertFreq->setMultiLine(false);
     textEditorInsertFreq->setInputRestrictions(12, "0123456789.");
@@ -275,7 +275,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     
     
     int y = 402;
-    textEditorFreqFrom = std::make_unique<TextEditor>(");
+    textEditorFreqFrom = std::make_unique<TextEditor>();
     textEditorFreqFrom->setReturnKeyStartsNewLine(false);
     textEditorFreqFrom->setMultiLine(false);
     textEditorFreqFrom->setInputRestrictions(12, "0123456789.");
@@ -674,7 +674,7 @@ void FrequencyPlayerSettingsComponent::buttonClicked (Button*button)
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 5);
     }
-    else if (button == button_WavetableEditor)
+    else if (button == button_WavetableEditor.get())
     {
         if (!popupWavetableWindow ->isVisible())
         {
@@ -699,23 +699,23 @@ void FrequencyPlayerSettingsComponent::buttonClicked (Button*button)
 
 void FrequencyPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == slider_Amplitude)
+    if (slider == slider_Amplitude.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_AMPLITUDE, slider_Amplitude->getValue());
     }
-    else if (slider == slider_Attack)
+    else if (slider == slider_Attack.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_ATTACK, slider_Attack->getValue());
     }
-    else if (slider == slider_Decay)
+    else if (slider == slider_Decay.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_DECAY, slider_Decay->getValue());
     }
-    else if (slider == slider_Sustain)
+    else if (slider == slider_Sustain.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SUSTAIN, slider_Sustain->getValue());
     }
-    else if (slider == slider_Release)
+    else if (slider == slider_Release.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RELEASE, slider_Release->getValue());
     }
@@ -723,7 +723,7 @@ void FrequencyPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 
 void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditorPause)
+    if (&editor == textEditorPause.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -736,7 +736,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_PAUSE, value);
     }
-    else if (&editor == textEditorRepeat)
+    else if (&editor == textEditorRepeat.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -749,7 +749,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_REPEATS, value);
     }
-    else if (&editor == textEditorLength)
+    else if (&editor == textEditorLength.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -762,7 +762,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_DURATION, value);
     }
-    else if (&editor == textEditorDivision)
+    else if (&editor == textEditorDivision.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -775,7 +775,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_DIVISION_VALUE, value);
     }
-    else if (&editor == textEditorMultiplication)
+    else if (&editor == textEditorMultiplication.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -788,7 +788,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_VALUE, value);
     }
-    else if (&editor == textEditorInsertFreq)
+    else if (&editor == textEditorInsertFreq.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -801,7 +801,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_CHOOSE_FREQ, value);
     }
-    else if (&editor == textEditorFreqFrom)
+    else if (&editor == textEditorFreqFrom.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -814,7 +814,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_MIN, value);
     }
-    else if (&editor == textEditorFreqTo)
+    else if (&editor == textEditorFreqTo.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -827,7 +827,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
         // send to projectManager
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_MAX, value);
     }
-    else if (&editor == textEditorRangeLength)
+    else if (&editor == textEditorRangeLength.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -846,7 +846,7 @@ void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&ed
 
 void FrequencyPlayerSettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBoxOutputSelection)
+    if (comboBoxThatHasChanged == comboBoxOutputSelection.get())
     {
         projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_OUTPUT_SELECTION, comboBoxOutputSelection->getSelectedId());
     }

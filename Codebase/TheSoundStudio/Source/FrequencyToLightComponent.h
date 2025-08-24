@@ -112,7 +112,7 @@ private:
     ProjectManager * projectManager;
     
     FrequencyManager * frequencyManager;
-    ChordManager * chordManager;
+    std::unique_ptr<ChordManager> chordManager;
     
     std::unique_ptr<ImageButton> button_ChordConversion;
     std::unique_ptr<ImageButton> button_FrequencyConversion;
@@ -131,7 +131,7 @@ private:
     std::unique_ptr<ShortcutColourComponent> shortcutComponent[5];
     
     // Colour Slider
-    RoundedColourOutputComponent * roundedColourOutput[5];
+    std::unique_ptr<RoundedColourOutputComponent> roundedColourOutput[5];
     
     std::unique_ptr<Label> labelWavelength[5];
     std::unique_ptr<Label> labelFrequency[5];

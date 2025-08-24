@@ -51,7 +51,7 @@ FrequencyPlayerComponent::FrequencyPlayerComponent(ProjectManager * pm)
     imageOctaveSpectrumMockup           = ImageCache::getFromMemory(BinaryData::OctaveSpectrumMockup_png, BinaryData::OctaveSpectrumMockup_pngSize);
     
     
-    containerView_Shortcut = new ShortcutFrequencyContainerComponent(projectManager);
+    containerView_Shortcut = std::make_unique<ShortcutFrequencyContainerComponent>(projectManager);
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
         // add ShortcutListener to open settings view for selected shortcut
@@ -59,34 +59,34 @@ FrequencyPlayerComponent::FrequencyPlayerComponent(ProjectManager * pm)
     }
     
     containerView_Shortcut->setBounds(0, 0, shortcutWidth, shortcutHeight);
-    addAndMakeVisible(containerView_Shortcut);
+    addAndMakeVisible(containerView_Shortcut.get());
     
     
-    containerView_Main = new Component();
+    containerView_Main = std::make_unique<Component>();
     containerView_Main->setBounds(0, shortcutHeight, shortcutWidth, 1096);
     
-    imageComp = new ImageComponent(); imageComp->setImage(imageMainContainerBackground);
+    imageComp = std::make_unique<ImageComponent>(); imageComp->setImage(imageMainContainerBackground);
     imageComp->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight());
-    containerView_Main->addAndMakeVisible(imageComp);
-    addAndMakeVisible(containerView_Main);
+    containerView_Main->addAndMakeVisible(imageComp.get());
+    addAndMakeVisible(containerView_Main.get());
     
     // visualiser component
-    visualiserContainerComponent = new VisualiserContainerComponent2(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER);
+    visualiserContainerComponent = std::make_unique<VisualiserContainerComponent2>(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER);
     visualiserContainerComponent->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight()-300);
-    containerView_Main->addAndMakeVisible(visualiserContainerComponent);
+    containerView_Main->addAndMakeVisible(visualiserContainerComponent.get());
     
 
     
-    label_Playing   = new Label();
+    label_Playing = std::make_unique<Label>();
     label_Playing->setText("Playing (00:40)", dontSendNotification);
     label_Playing->setJustificationType(Justification::left);
     fontNormal.setHeight(33);
     label_Playing->setBounds(playingLeftMargin, playingTopMargin, 300, 40);
     label_Playing->setFont(fontNormal);
-    containerView_Main->addAndMakeVisible(label_Playing);
+    containerView_Main->addAndMakeVisible(label_Playing.get());
     
     
-    button_Record = new ImageButton();
+    button_Record = std::make_unique<ImageButton>();
     button_Record->setTriggeredOnMouseDown(true);
     button_Record->setImages (false, true, true,
                               imageRecordButton, 0.999f, Colour (0x00000000),
@@ -94,9 +94,9 @@ FrequencyPlayerComponent::FrequencyPlayerComponent(ProjectManager * pm)
                               imageRecordButton, 0.6, Colour (0x00000000));
     button_Record->addListener(this);
     button_Record->setBounds(recordLeftMargin, recordTopMargin, recordWidth, recordHeight);
-    containerView_Main->addAndMakeVisible(button_Record);
+    containerView_Main->addAndMakeVisible(button_Record.get());
     
-    button_Play = new ImageButton();
+    button_Play = std::make_unique<ImageButton>();
     button_Play->setTriggeredOnMouseDown(true);
     button_Play->setImages (false, true, true,
                             imagePlayButton, 0.999f, Colour (0x00000000),
@@ -104,9 +104,9 @@ FrequencyPlayerComponent::FrequencyPlayerComponent(ProjectManager * pm)
                             imagePlayButton, 0.6, Colour (0x00000000));
     button_Play->addListener(this);
     button_Play->setBounds(playLeftMargin, playTopMargin, playWidth, playHeight);
-    containerView_Main->addAndMakeVisible(button_Play);
+    containerView_Main->addAndMakeVisible(button_Play.get());
     
-    button_Stop = new ImageButton();
+    button_Stop = std::make_unique<ImageButton>();
     button_Stop->setTriggeredOnMouseDown(true);
     button_Stop->setImages (false, true, true,
                             imageStopButton, 0.999f, Colour (0x00000000),
@@ -114,9 +114,9 @@ FrequencyPlayerComponent::FrequencyPlayerComponent(ProjectManager * pm)
                             imageStopButton, 0.6, Colour (0x00000000));
     button_Stop->addListener(this);
     button_Stop->setBounds(stopLeftMargin, stopTopMargin, playWidth, playHeight);
-    containerView_Main->addAndMakeVisible(button_Stop);
+    containerView_Main->addAndMakeVisible(button_Stop.get());
     
-    button_Panic = new ImageButton();
+    button_Panic = std::make_unique<ImageButton>();
     button_Panic->setTriggeredOnMouseDown(true);
     button_Panic->setImages (false, true, true,
                              imagePanicButton, 0.999f, Colour (0x00000000),
@@ -124,45 +124,45 @@ FrequencyPlayerComponent::FrequencyPlayerComponent(ProjectManager * pm)
                              imagePanicButton, 0.6, Colour (0x00000000));
     button_Panic->addListener(this);
     button_Panic->setBounds(panicLeftMargin, panicTopMargin, panicWidth, panicHeight);
-    containerView_Main->addAndMakeVisible(button_Panic);
+    containerView_Main->addAndMakeVisible(button_Panic.get());
     
     // Progress bar
-    progressBar = new CustomProgressBar();
+    progressBar = std::make_unique<CustomProgressBar>();
     progressBar->setBounds(214, 1196, 1126, 56);
-    addAndMakeVisible(progressBar);
+    addAndMakeVisible(progressBar.get());
     
     // Play In Loop Button
-    button_PlayInLoop = new ToggleButton("Loop");
+    button_PlayInLoop = std::make_unique<ToggleButton>("Loop");
     button_PlayInLoop->setBounds(1173, 1100, 200, 100);
     button_PlayInLoop->setLookAndFeel(&lookAndFeel);
     button_PlayInLoop->addListener(this);
-    addAndMakeVisible(button_PlayInLoop);
+    addAndMakeVisible(button_PlayInLoop.get());
     // needs resiszing
     
-    button_PlaySimultaneous = new ToggleButton("Simultaneous");
+    button_PlaySimultaneous = std::make_unique<ToggleButton>("Simultaneous");
     button_PlaySimultaneous->setBounds(1173-340, 1100, 300, 100);
     button_PlaySimultaneous->setLookAndFeel(&lookAndFeel);
     button_PlaySimultaneous->addListener(this);
-    addAndMakeVisible(button_PlaySimultaneous);
+    addAndMakeVisible(button_PlaySimultaneous.get());
     
     
     // Load / Save Button
-    button_Load = new TextButton("Load");
+    button_Load = std::make_unique<TextButton>("Load");
     button_Load->setBounds(1470, 1204, 100, 40);
     button_Load->addListener(this);
     button_Load->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Load);
+    addAndMakeVisible(button_Load.get());
     
-    button_Save = new TextButton("Save");
+    button_Save = std::make_unique<TextButton>("Save");
     button_Save->setBounds(1360, 1204, 100, 40);
     button_Save->addListener(this);
     button_Save->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Save);
+    addAndMakeVisible(button_Save.get());
     
     
     // settings component
-    frequencyPlayerSettingsComponent = new FrequencyPlayerSettingsComponent(projectManager);
-    addAndMakeVisible(frequencyPlayerSettingsComponent);
+    frequencyPlayerSettingsComponent = std::make_unique<FrequencyPlayerSettingsComponent>(projectManager);
+    addAndMakeVisible(frequencyPlayerSettingsComponent.get());
     int w = shortcutWidth; int h =mainContainerHeight + shortcutHeight;
     frequencyPlayerSettingsComponent->setBounds(0, 0, w, h);
     frequencyPlayerSettingsComponent->setVisible(false);
@@ -268,7 +268,7 @@ void FrequencyPlayerComponent::paint (Graphics& g)
 
 void FrequencyPlayerComponent::buttonClicked (Button*button)
 {
-    if (button == button_Record)
+    if (button == button_Record.get())
     {
 //        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_RECORD);
         
@@ -282,19 +282,19 @@ void FrequencyPlayerComponent::buttonClicked (Button*button)
             projectManager->startRecording();
         }
     }
-    else if (button == button_Play)
+    else if (button == button_Play.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
     }
-    else if (button == button_Stop)
+    else if (button == button_Stop.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
     }
-    else if (button == button_Panic)
+    else if (button == button_Panic.get())
     {
         projectManager->setPanicButton();
     }
-    else if (button == button_PlayInLoop)
+    else if (button == button_PlayInLoop.get())
     {
         if (button_PlayInLoop->getToggleState())
         {
@@ -305,7 +305,7 @@ void FrequencyPlayerComponent::buttonClicked (Button*button)
             projectManager->setPlayerPlayMode(PLAY_MODE::NORMAL); // might be trigger for shortcuts..
         }
     }
-    else if (button == button_PlaySimultaneous)
+    else if (button == button_PlaySimultaneous.get())
     {
         if (button_PlaySimultaneous->getToggleState())
         {
@@ -316,11 +316,11 @@ void FrequencyPlayerComponent::buttonClicked (Button*button)
             projectManager->setProjectSettingsParameter(PLAYER_PLAY_SIMULTANEOUS, 0.0);
         }
     }
-    else if (button == button_Load)
+    else if (button == button_Load.get())
     {
         projectManager->loadProfileForMode(AUDIO_MODE::MODE_FREQUENCY_PLAYER);
     }
-    else if (button == button_Save)
+    else if (button == button_Save.get())
     {
         projectManager->saveProfileForMode(AUDIO_MODE::MODE_FREQUENCY_PLAYER);
     }

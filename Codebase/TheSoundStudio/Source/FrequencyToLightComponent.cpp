@@ -20,7 +20,7 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     
     frequencyManager = projectManager->frequencyManager.get();
     
-    chordManager = new ChordManager(frequencyManager);
+    chordManager = std::make_unique<ChordManager>(frequencyManager);
     chordManager->setOctave(4);
     chordManager->setKeyNote(KEYNOTES::KEY_C);
     chordManager->setChordType(CHORD_TYPES::Major);
@@ -55,7 +55,7 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChordConversion->addListener(this);
     button_ChordConversion->setBounds(323, 106, 31, 31);
-    addAndMakeVisible(button_.get()ChordConversion.get());
+    addAndMakeVisible(button_ChordConversion.get());
     
     button_FrequencyConversion = std::make_unique<ImageButton>();
     button_FrequencyConversion->setTriggeredOnMouseDown(true);
@@ -65,15 +65,15 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_FrequencyConversion->addListener(this);
     button_FrequencyConversion->setBounds(835, 106, 31, 31);
-    addAndMakeVisible(button_.get()FrequencyConversion);
+    addAndMakeVisible(button_FrequencyConversion.get());
     
-    component_ColourOutputMain = new ColourOutputComponent();
+    component_ColourOutputMain = std::make_unique<ColourOutputComponent>();
     component_ColourOutputMain->setBounds(70, 453, 1418, 112);
     component_ColourOutputMain->setBackgroundColour(Colours::green);
-    addAndMakeVisible(component_ColourOutputMain);
+    addAndMakeVisible(component_ColourOutputMain.get());
     
-    label_ColourCode = new Label("","some colour code");
-    addAndMakeVisible(label_ColourCode);
+    label_ColourCode = std::make_unique<Label>("","some colour code");
+    addAndMakeVisible(label_ColourCode.get());
     label_ColourCode->setBounds(70,453,1418, 112);
     label_ColourCode->setJustificationType(Justification::centred);
     
@@ -91,79 +91,79 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     
     for (int i = 0; i < 5; i++)
     {
-        shortcutComponent[i] = new ShortcutColourComponent();
+        shortcutComponent[i] = std::make_unique<ShortcutColourComponent>();
         shortcutComponent[i]->setBounds(shortcutX + ((shortcutWidth + shortcutSpace) * i), shortcutY, shortcutWidth, shortcutHeight);
         shortcutComponent[i]->button_Add->addListener(this);
         shortcutComponent[i]->button_OpenSettings->addListener(this);
         shortcutComponent[i]->button_Delete->addListener(this);
-        addAndMakeVisible(shortcutComponent[i]);
+        addAndMakeVisible(shortcutComponent[i].get());
 
         
-        labelWavelength[i] = new Label();
+        labelWavelength[i] = std::make_unique<Label>();
         labelWavelength[i]->setText("1.0", dontSendNotification);
         labelWavelength[i]->setBounds(labelWaveLengthX, labelWaveLengthY[i], 233, 51);
         labelWavelength[i]->setJustificationType(Justification::centred);
         fontLight.setHeight(33);
         labelWavelength[i]->setFont(fontLight);
         labelWavelength[i]->setColour(Label::textColourId, Colours::darkgrey);  
-        addAndMakeVisible(labelWavelength[i]);
+        addAndMakeVisible(labelWavelength[i].get());
         
-        labelFrequency[i] = new Label();
+        labelFrequency[i] = std::make_unique<Label>();
         labelFrequency[i]->setText("1.0", dontSendNotification);
         labelFrequency[i]->setBounds(labelFrequencyX, labelWaveLengthY[i], 800, 51);
         labelFrequency[i]->setJustificationType(Justification::centred);
         fontLight.setHeight(33);
         labelFrequency[i]->setFont(fontLight);
         labelFrequency[i]->setColour(Label::textColourId, Colours::darkgrey);
-        addAndMakeVisible(labelFrequency[i]);
+        addAndMakeVisible(labelFrequency[i].get());
         
-        roundedColourOutput[i] = new RoundedColourOutputComponent();
+        roundedColourOutput[i] = std::make_unique<RoundedColourOutputComponent>();
         roundedColourOutput[i]->setBounds(roundedColourX, labelWaveLengthY[i]+10, 130, 24);
-        addAndMakeVisible(roundedColourOutput[i]);
+        addAndMakeVisible(roundedColourOutput[i].get());
     }
 
     ScalesManager * sm = frequencyManager->scalesManager;
     
     // Combobox
-    comboBoxKeynote     = new ComboBox();
+    comboBoxKeynote = std::make_unique<ComboBox>();
     comboBoxKeynote->addListener(this);
     comboBoxKeynote->setBounds(420, 191, 149, 35);
     comboBoxKeynote->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxKeynote);
+    addAndMakeVisible(comboBoxKeynote.get());
     sm->getComboBoxPopupMenuForKeynotes(*comboBoxKeynote->getRootMenu(), SCALES_UNIT::MAIN_SCALE);
 
-    comboBoxChordtype= new ComboBox();
+    comboBoxChordtype = std::make_unique<ComboBox>();
     comboBoxChordtype->addListener(this);
     comboBoxChordtype->setBounds(420, 257, 149, 35);
     comboBoxChordtype->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxChordtype);
+    addAndMakeVisible(comboBoxChordtype.get());
     sm->getComboBoxPopupMenuForChords(*comboBoxChordtype->getRootMenu(), SCALES_UNIT::MAIN_SCALE);
     
     int lX = 1166;
     int lw = 104;
     
-    comboBox_FrequencySuffix= new ComboBox();
+    comboBox_FrequencySuffix = std::make_unique<ComboBox>();
     comboBox_FrequencySuffix->addItemList(StringArray("Hz", "KHz", "MHz", "GHz", "THz"), 1);
     comboBox_FrequencySuffix->addListener(this);
     comboBox_FrequencySuffix->setBounds(lX, 155, lw, 35);
     comboBox_FrequencySuffix->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBox_FrequencySuffix);
+    addAndMakeVisible(comboBox_FrequencySuffix.get());
     
-    comboBox_WavelgnthSuffix = new ComboBox();
+    comboBox_WavelgnthSuffix = std::make_unique<ComboBox>();
     comboBox_WavelgnthSuffix->addItemList(StringArray("nm", "mcm", "mm", "cm", "m"), 1);
     comboBox_WavelgnthSuffix->addListener(this);
     comboBox_WavelgnthSuffix->setBounds(lX, 220, lw, 35);
     comboBox_WavelgnthSuffix->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBox_WavelgnthSuffix);
+    addAndMakeVisible(comboBox_WavelgnthSuffix.get());
     
-    comboBox_PhaseSpeed = new ComboBox();
+    comboBox_PhaseSpeed = std::make_unique<ComboBox>();
     comboBox_PhaseSpeed->addItemList(StringArray("Light | Vacuum", "Light | Water", "Sound | Air", "Sound | Water"), 1);
     comboBox_PhaseSpeed->addListener(this);
     comboBox_PhaseSpeed->setBounds(1000, 285, 220, 35);
     comboBox_PhaseSpeed->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBox_PhaseSpeed);
+    addAndMakeVisible(comboBox_PhaseSpeed.get());
     
-    textEditor_Frequency = new TextEditor("");
+    textEditor_Frequency = std::make_unique<TextEditor>("");
     textEditor_Frequency->setReturnKeyStartsNewLine(false);
     textEditor_Frequency->setInputRestrictions(10, "0123456789.");
     textEditor_Frequency->setMultiLine(false);
@@ -175,10 +175,10 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     textEditor_Frequency->applyFontToAllText(fontSemiBold);
     textEditor_Frequency->applyColourToAllText(Colours::darkgrey);
     textEditor_Frequency->setBounds(1011, 159, 136, 35);
-    addAndMakeVisible(textEditor_Frequency);
+    addAndMakeVisible(textEditor_Frequency.get());
     
     
-    textEditor_Wavelength = new TextEditor("");
+    textEditor_Wavelength = std::make_unique<TextEditor>("");
     textEditor_Wavelength->setReturnKeyStartsNewLine(false);
     textEditor_Wavelength->setInputRestrictions(10, "0123456789.");
     textEditor_Wavelength->setMultiLine(false);
@@ -190,15 +190,15 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     textEditor_Wavelength->applyFontToAllText(fontSemiBold);
     textEditor_Wavelength->applyColourToAllText(Colours::darkgrey);
     textEditor_Wavelength->setBounds(1011, 221, 136, 35);
-    addAndMakeVisible(textEditor_Wavelength);
+    addAndMakeVisible(textEditor_Wavelength.get());
     
     
     
     for (int i = 0; i < 5; i++)
     {
-        manipulationPopupComponent[i] = new ManipulationPopupComponent();
+        manipulationPopupComponent[i] = std::make_unique<ManipulationPopupComponent>();
         manipulationPopupComponent[i]->setBounds(0, 0, 1566, 1440);
-        addAndMakeVisible(manipulationPopupComponent[i]);
+        addAndMakeVisible(manipulationPopupComponent[i].get());
         manipulationPopupComponent[i]->setVisible(false);
         
         manipulationPopupComponent[i]->button_Multiplication->addListener(this);
@@ -212,13 +212,13 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     }
     
     // Colour Slider
-    sliderColour = new Slider("");
+    sliderColour = std::make_unique<Slider>("");
     sliderColour->addListener(this);
     sliderColour->setSliderStyle(Slider::LinearHorizontal);
     sliderColour->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
     sliderColour->setRange(0.f, 1.f);
     sliderColour->setBounds(66, 882, 1430, 60);
-    addAndMakeVisible(sliderColour);
+    addAndMakeVisible(sliderColour.get());
     
     
     // internal params
@@ -453,7 +453,7 @@ void FrequencyToLightComponent::calculateValuesFromColourSlider(double val)
 
 void FrequencyToLightComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == sliderColour)
+    if (slider == sliderColour.get())
     {
         calculateValuesFromColourSlider(slider->getValue());
     }
@@ -461,7 +461,7 @@ void FrequencyToLightComponent::sliderValueChanged (Slider* slider)
 
 void FrequencyToLightComponent::buttonClicked (Button* button)
 {
-    if (button == button_ChordConversion)
+    if (button == button_ChordConversion.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_CONVERSION_SOURCE, false);
         
@@ -474,7 +474,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
         setControls();
 
     }
-    else if (button == button_FrequencyConversion)
+    else if (button == button_FrequencyConversion.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_CONVERSION_SOURCE, true);
         
@@ -490,7 +490,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
     {
         for (int i = 0; i < 5; i++)
         {
-            if (button == shortcutComponent[i]->button_Add)
+            if (button == shortcutComponent[i]->button_Add.get())
             {
                 projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_MANIPULATE_CHOSEN_FREQUENCY1 + (i * 4), true);
                 
@@ -500,7 +500,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
                 
                 openPopup(i);
             }
-            else if (button == shortcutComponent[i]->button_Delete)
+            else if (button == shortcutComponent[i]->button_Delete.get())
             {
                 projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_MANIPULATE_CHOSEN_FREQUENCY1 + (i * 4), false);
                 
@@ -509,7 +509,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
                 setControls();
 
             }
-            else if (button == shortcutComponent[i]->button_OpenSettings)
+            else if (button == shortcutComponent[i]->button_OpenSettings.get())
             {
                 setControls();
                 
@@ -519,7 +519,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
         
         for (int i = 0; i < 5; i++)
         {
-            if (button == manipulationPopupComponent[i]->button_Close)
+            if (button == manipulationPopupComponent[i]->button_Close.get())
             {
                 manipulateChosenFrequency[i] = false;
                 
@@ -531,7 +531,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
         
         for (int i = 0; i < 5; i++)
         {
-            if (button == manipulationPopupComponent[i]->button_Multiplication)
+            if (button == manipulationPopupComponent[i]->button_Multiplication.get())
             {
                 multOrDivide[i] = false;
                 
@@ -539,7 +539,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
                 
                 setControls();
             }
-            else if  ( button == manipulationPopupComponent[i]->button_Division )
+            else if  ( button == manipulationPopupComponent[i]->button_Division.get() )
             {
                 multOrDivide[i] = true;
                 
@@ -551,7 +551,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
         
         for (int i = 0; i < 5; i++)
         {
-            if (button == manipulationPopupComponent[i]->button_Save)
+            if (button == manipulationPopupComponent[i]->button_Save.get())
             {
                 // need all the manipulation text, booleans etc to be sent here...
                 float value =  manipulationPopupComponent[i]->textEditorDivision->getText().getFloatValue();
@@ -587,7 +587,7 @@ void FrequencyToLightComponent::buttonClicked (Button* button)
 
 void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditor_Frequency)
+    if (&editor == textEditor_Frequency.get())
     {
         double value = editor.getText().getDoubleValue(); // could be in hz, mhz, hghz
         
@@ -604,7 +604,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
 
         
     }
-    else if (&editor == textEditor_Wavelength)
+    else if (&editor == textEditor_Wavelength.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -621,7 +621,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
 
     }
     
-    else if (&editor == manipulationPopupComponent[0]->textEditorDivision)
+    else if (&editor == manipulationPopupComponent[0]->textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -634,7 +634,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
         divisionValue[0] = value;
         
     }
-    else if (&editor == manipulationPopupComponent[0]->textEditorMultiplication)
+    else if (&editor == manipulationPopupComponent[0]->textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -648,7 +648,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
     }
     
     // 2
-    else if (&editor == manipulationPopupComponent[1]->textEditorDivision)
+    else if (&editor == manipulationPopupComponent[1]->textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -662,7 +662,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
         
 
     }
-    else if (&editor == manipulationPopupComponent[1]->textEditorMultiplication)
+    else if (&editor == manipulationPopupComponent[1]->textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -676,7 +676,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
     }
     
     // 3
-    else if (&editor == manipulationPopupComponent[2]->textEditorDivision)
+    else if (&editor == manipulationPopupComponent[2]->textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -687,7 +687,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
         String newVal(value); editor.setText(newVal);
 
     }
-    else if (&editor == manipulationPopupComponent[2]->textEditorMultiplication)
+    else if (&editor == manipulationPopupComponent[2]->textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -700,7 +700,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
     }
     
     // 4
-    else if (&editor == manipulationPopupComponent[3]->textEditorDivision)
+    else if (&editor == manipulationPopupComponent[3]->textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -711,7 +711,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
         String newVal(value); editor.setText(newVal);
 
     }
-    else if (&editor == manipulationPopupComponent[3]->textEditorMultiplication)
+    else if (&editor == manipulationPopupComponent[3]->textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -724,7 +724,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
     }
     
     // 5
-    else if (&editor == manipulationPopupComponent[4]->textEditorDivision)
+    else if (&editor == manipulationPopupComponent[4]->textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -735,7 +735,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
         String newVal(value); editor.setText(newVal);
 
     }
-    else if (&editor == manipulationPopupComponent[4]->textEditorMultiplication)
+    else if (&editor == manipulationPopupComponent[4]->textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -751,7 +751,7 @@ void FrequencyToLightComponent::textEditorReturnKeyPressed (TextEditor&editor)
 
 void FrequencyToLightComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBoxKeynote)
+    if (comboBoxThatHasChanged == comboBoxKeynote.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_KEYNOTE, comboBoxKeynote->getSelectedId());
         
@@ -763,7 +763,7 @@ void FrequencyToLightComponent::comboBoxChanged (ComboBox* comboBoxThatHasChange
         
         setControls();
     }
-    else if (comboBoxThatHasChanged == comboBoxChordtype)
+    else if (comboBoxThatHasChanged == comboBoxChordtype.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_CHORDTYPE, comboBoxChordtype->getSelectedId());
         
@@ -778,7 +778,7 @@ void FrequencyToLightComponent::comboBoxChanged (ComboBox* comboBoxThatHasChange
     
     
     // other drop downs should just change displayed value
-    else if (comboBoxThatHasChanged == comboBox_FrequencySuffix)
+    else if (comboBoxThatHasChanged == comboBox_FrequencySuffix.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_FREQUENCY_UNIT, comboBox_FrequencySuffix->getSelectedId());
         
@@ -786,7 +786,7 @@ void FrequencyToLightComponent::comboBoxChanged (ComboBox* comboBoxThatHasChange
         
         setControls();
     }
-    else if (comboBoxThatHasChanged == comboBox_WavelgnthSuffix)
+    else if (comboBoxThatHasChanged == comboBox_WavelgnthSuffix.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_WAVELENGTH_UNIT, comboBox_WavelgnthSuffix->getSelectedId());
         
@@ -795,7 +795,7 @@ void FrequencyToLightComponent::comboBoxChanged (ComboBox* comboBoxThatHasChange
         
         setControls();
     }
-    else if (comboBoxThatHasChanged == comboBox_PhaseSpeed)
+    else if (comboBoxThatHasChanged == comboBox_PhaseSpeed.get())
     {
         projectManager->setFrequencyToLightParameter(FREQUENCY_LIGHT_PHASESPEED, comboBox_PhaseSpeed->getSelectedId());
         

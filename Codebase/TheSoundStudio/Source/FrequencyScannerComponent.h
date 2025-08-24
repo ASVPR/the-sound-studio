@@ -118,8 +118,8 @@ private:
     std::unique_ptr<ImageButton> button_Wavetable;    // wavetable
     
     std::unique_ptr<TextButton>   button_WavetableEditor;
-    WaveTableOscViewComponent * wavetableEditorComponent;
-    PopupFFTWindow *            popupWavetableWindow;
+    std::unique_ptr<WaveTableOscViewComponent> wavetableEditorComponent;
+    std::unique_ptr<PopupFFTWindow> popupWavetableWindow;
     
     //Chord Scan buttons
     std::unique_ptr<ImageButton> button_ScanAllFrequencies;

@@ -611,7 +611,7 @@ void LissajousAddOnPopupComponent::paint (Graphics&g)
 
 void LissajousAddOnPopupComponent::buttonClicked (Button*button)
 {
-    if (button == addonButton[AddOn_6])
+    if (button == addonButton[AddOn_6].get())
     {
         if (button->getToggleState())
         {
@@ -623,7 +623,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
         }
         
     }
-    else if (button == addonButton[AddOn_7])
+    else if (button == addonButton[AddOn_7].get())
     {
         if (button->getToggleState())
         {
@@ -634,7 +634,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase +  ADD_ONS, AddOn_7);
         }
     }
-    else if (button == addonButton[AddOn_7Major])
+    else if (button == addonButton[AddOn_7Major].get())
     {
         if (button->getToggleState())
         {
@@ -645,7 +645,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase +  ADD_ONS, AddOn_7Major);
         }
     }
-    else if (button == addonButton[AddOn_9])
+    else if (button == addonButton[AddOn_9].get())
     {
         if (button->getToggleState())
         {
@@ -656,7 +656,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase +  ADD_ONS, AddOn_9);
         }
     }
-    else if (button == addonButton[AddOn_9flat])
+    else if (button == addonButton[AddOn_9flat].get())
     {
         if (button->getToggleState())
         {
@@ -667,7 +667,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase +  ADD_ONS, AddOn_9flat);
         }
     }
-    else if (button == addonButton[AddOn_9sharp])
+    else if (button == addonButton[AddOn_9sharp].get())
     {
         if (button->getToggleState())
         {
@@ -678,7 +678,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase + ADD_ONS, AddOn_9sharp);
         }
     }
-    else if (button == addonButton[AddOn_11])
+    else if (button == addonButton[AddOn_11].get())
     {
         if (button->getToggleState())
         {
@@ -689,7 +689,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase + ADD_ONS, AddOn_11);
         }
     }
-    else if (button == addonButton[AddOn_11sharp])
+    else if (button == addonButton[AddOn_11sharp].get())
     {
         if (button->getToggleState())
         {
@@ -700,7 +700,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase + ADD_ONS, AddOn_11sharp);
         }
     }
-    else if (button == addonButton[AddOn_13])
+    else if (button == addonButton[AddOn_13].get())
     {
         if (button->getToggleState())
         {
@@ -711,7 +711,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase + ADD_ONS, AddOn_13);
         }
     }
-    else if (button == addonButton[AddOn_13flat])
+    else if (button == addonButton[AddOn_13flat].get())
     {
         if (button->getToggleState())
         {
@@ -722,7 +722,7 @@ void LissajousAddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setLissajousParameter(paramIndexBase + ADD_ONS, AddOn_13flat);
         }
     }
-    else if (button == addonButton[AddOn_Inverted])
+    else if (button == addonButton[AddOn_Inverted].get())
     {
         if (button->getToggleState())
         {
@@ -780,7 +780,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                            Image(), 1.000f, Colour (0x00000000),
                            imageCloseButton, 0.75, Colour (0x00000000));
     button_Close->addListener(this);
-    addAndMakeVisible(button_Close);
+    addAndMakeVisible(button_Close.get());
     
     // toggle between these two
     button_ChooseChordFromList = std::make_unique<ImageButton>();
@@ -790,7 +790,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                              Image(), 1.000f, Colour (0x00000000),
                              imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseChordFromList->addListener(this);
-    addAndMakeVisible(button_ChooseChordFromList);
+    addAndMakeVisible(button_ChooseChordFromList.get());
     
     
     button_ChooseChordFromFrequency = std::make_unique<ImageButton>();
@@ -800,7 +800,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                            Image(), 1.000f, Colour (0x00000000),
                                            imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseChordFromFrequency->addListener(this);
-    addAndMakeVisible(button_ChooseChordFromFrequency);
+    addAndMakeVisible(button_ChooseChordFromFrequency.get());
     
     // act as toggle between 5 buttons
     button_Default = std::make_unique<ImageButton>();
@@ -810,7 +810,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Default->addListener(this);
-    addAndMakeVisible(button_Default);
+    addAndMakeVisible(button_Default.get());
     
     int shift = 20;
     button_Sine = std::make_unique<ImageButton>();
@@ -820,7 +820,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sine->addListener(this);
-    addAndMakeVisible(button_Sine);
+    addAndMakeVisible(button_Sine.get());
     
     button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
@@ -829,7 +829,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Triangle->addListener(this);
-    addAndMakeVisible(button_Triangle);
+    addAndMakeVisible(button_Triangle.get());
     
     button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
@@ -838,7 +838,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Square->addListener(this);
-    addAndMakeVisible(button_Square);
+    addAndMakeVisible(button_Square.get());
     
     button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
@@ -847,7 +847,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sawtooth->addListener(this);
-    addAndMakeVisible(button_Sawtooth);
+    addAndMakeVisible(button_Sawtooth.get());
     
     button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
@@ -856,14 +856,14 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Wavetable->addListener(this);
-    addAndMakeVisible(button_Wavetable);
+    addAndMakeVisible(button_Wavetable.get());
     
     
-    button_WavetableEditor = new TextButton("");
+    button_WavetableEditor = std::make_unique<TextButton>("");
     button_WavetableEditor->setButtonText("WT Editor");
     button_WavetableEditor->setLookAndFeel(&lookAndFeel);
     button_WavetableEditor->addListener(this);
-    addAndMakeVisible(button_WavetableEditor);
+    addAndMakeVisible(button_WavetableEditor.get());
     
     
     button_Add = std::make_unique<ImageButton>();
@@ -873,7 +873,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageAddButton, 0.888, Colour (0x00000000));
     button_Add->addListener(this);
-    addAndMakeVisible(button_Add);
+    addAndMakeVisible(button_Add.get());
     
     int shiftBack = 8;
     button_Multiplication = std::make_unique<ImageButton>();
@@ -883,7 +883,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Multiplication->addListener(this);
-    addAndMakeVisible(button_Multiplication);
+    addAndMakeVisible(button_Multiplication.get());
     
     button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
@@ -892,12 +892,12 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Division->addListener(this);
-    addAndMakeVisible(button_Division);
+    addAndMakeVisible(button_Division.get());
     
     
     
     // Knobs
-    slider_Amplitude    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Amplitude = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Amplitude    ->setRange (0, 1.0, 0);
     slider_Amplitude    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -906,11 +906,11 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
     slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
     
-    addAndMakeVisible(slider_Amplitude);
+    addAndMakeVisible(slider_Amplitude.get());
     
     int dif = 219;
     
-    slider_Attack       = new CustomRotarySlider(CustomRotarySlider::ROTARY_ATTACK);
+    slider_Attack = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
     slider_Attack       ->setRange (0, 1.0, 0);
     slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -918,9 +918,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     slider_Attack       ->setTextValueSuffix("Ms");
     slider_Attack       ->setNumDecimalPlacesToDisplay(0);
     slider_Attack       ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Attack);
+    addAndMakeVisible(slider_Attack.get());
     
-    slider_Decay        = new CustomRotarySlider(CustomRotarySlider::ROTARY_DECAY);
+    slider_Decay = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
     slider_Decay        ->setRange (0, 1.0, 0);
     slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -928,9 +928,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     slider_Decay        ->setTextValueSuffix("Ms");
     slider_Decay        ->setNumDecimalPlacesToDisplay(0);
     slider_Decay        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Decay);
+    addAndMakeVisible(slider_Decay.get());
     
-    slider_Sustain      = new CustomRotarySlider(CustomRotarySlider::ROTARY_SUSTAIN);
+    slider_Sustain = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
     slider_Sustain      ->setRange (0, 1.0, 0);
     slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -938,9 +938,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     slider_Sustain      ->setTextValueSuffix("%");
     slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
     slider_Sustain        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Sustain);
+    addAndMakeVisible(slider_Sustain.get());
     
-    slider_Release      = new CustomRotarySlider(CustomRotarySlider::ROTARY_RELEASE);
+    slider_Release = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
     slider_Release      ->setRange (0, 1.0, 0);
     slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -948,7 +948,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     slider_Release      ->setTextValueSuffix("Ms");
     slider_Release      ->setNumDecimalPlacesToDisplay(0);
     slider_Release      ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Release);
+    addAndMakeVisible(slider_Release.get());
     
     // Font
     Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
@@ -960,19 +960,19 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     fontLight.setHeight(33);
     
     // Combobox
-    comboBoxKeynote     = new ComboBox();
+    comboBoxKeynote = std::make_unique<ComboBox>();
     comboBoxKeynote->setSelectedId(0);
     comboBoxKeynote->addListener(this);
     comboBoxKeynote->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxKeynote);
+    addAndMakeVisible(comboBoxKeynote.get());
     
-    comboBoxChordtype= new ComboBox();
+    comboBoxChordtype = std::make_unique<ComboBox>();
     comboBoxChordtype->setSelectedId(0);
     comboBoxChordtype->addListener(this);
     comboBoxChordtype->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxChordtype);
+    addAndMakeVisible(comboBoxChordtype.get());
 
-    comboBoxPlayingInstrument = new ComboBox();
+    comboBoxPlayingInstrument = std::make_unique<ComboBox>();
     
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
@@ -997,9 +997,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     comboBoxPlayingInstrument->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->getRootMenu()->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->addListener(this);
-    addAndMakeVisible(comboBoxPlayingInstrument);
+    addAndMakeVisible(comboBoxPlayingInstrument.get());
     
-    textEditorRepeat = new TextEditor("");
+    textEditorRepeat = std::make_unique<TextEditor>("");
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(2, "0123456789");
     textEditorRepeat->setMultiLine(false);
@@ -1011,9 +1011,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorRepeat->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorRepeat->applyFontToAllText(fontSemiBold);
     textEditorRepeat->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorRepeat);
+    addAndMakeVisible(textEditorRepeat.get());
     
-    textEditorPause = new TextEditor("");
+    textEditorPause = std::make_unique<TextEditor>("");
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789");
     textEditorPause->setMultiLine(false);
@@ -1025,10 +1025,10 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorPause->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorPause->applyFontToAllText(fontSemiBold);
     textEditorPause->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorPause);
+    addAndMakeVisible(textEditorPause.get());
     
     
-    textEditorLength = new TextEditor("");
+    textEditorLength = std::make_unique<TextEditor>("");
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
     textEditorLength->setInputRestrictions(5, "0123456789");
@@ -1040,7 +1040,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorLength->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorLength->applyFontToAllText(fontSemiBold);
     textEditorLength->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorLength);
+    addAndMakeVisible(textEditorLength.get());
     
     button_ManipulateFreq = std::make_unique<ImageButton>();
     button_ManipulateFreq->setTriggeredOnMouseDown(true);
@@ -1049,10 +1049,10 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                                Image(), 1.000f, Colour (0x00000000),
                                imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_ManipulateFreq->addListener(this);
-    addAndMakeVisible(button_ManipulateFreq);
+    addAndMakeVisible(button_ManipulateFreq.get());
     
     // TextEntryBoxes
-    textEditorInsertFreq = new TextEditor("");
+    textEditorInsertFreq = std::make_unique<TextEditor>("");
     textEditorInsertFreq->setReturnKeyStartsNewLine(false);
     textEditorInsertFreq->setMultiLine(false);
     textEditorInsertFreq->setInputRestrictions(5, "0123456789");
@@ -1065,9 +1065,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorInsertFreq->applyFontToAllText(fontSemiBold);
     textEditorInsertFreq->applyColourToAllText(Colours::lightgrey);
 
-    addAndMakeVisible(textEditorInsertFreq);
+    addAndMakeVisible(textEditorInsertFreq.get());
     
-    textEditorMultiplication = new TextEditor("");
+    textEditorMultiplication = std::make_unique<TextEditor>("");
     textEditorMultiplication->setReturnKeyStartsNewLine(false);
     textEditorMultiplication->setMultiLine(false);
     textEditorMultiplication->setInputRestrictions(6, "0123456789.");
@@ -1079,9 +1079,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorMultiplication->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorMultiplication->applyFontToAllText(fontSemiBold);
     textEditorMultiplication->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorMultiplication);
+    addAndMakeVisible(textEditorMultiplication.get());
     
-    textEditorDivision= new TextEditor("");
+    textEditorDivision = std::make_unique<TextEditor>("");
     textEditorDivision->setReturnKeyStartsNewLine(false);
     textEditorDivision->setMultiLine(false);
     textEditorDivision->setInputRestrictions(6, "0123456789.");
@@ -1093,9 +1093,9 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditorDivision->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorDivision->applyFontToAllText(fontSemiBold);
     textEditorDivision->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorDivision);
+    addAndMakeVisible(textEditorDivision.get());
     
-    textEditor_Octave = new TextEditor("");
+    textEditor_Octave = std::make_unique<TextEditor>("");
     textEditor_Octave->setReturnKeyStartsNewLine(false);
     textEditor_Octave->setMultiLine(false);
     textEditor_Octave->setInputRestrictions(6, "0123456789.");
@@ -1107,25 +1107,25 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     textEditor_Octave->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_Octave->applyFontToAllText(fontSemiBold);
     textEditor_Octave->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditor_Octave);
+    addAndMakeVisible(textEditor_Octave.get());
     
     
-    button_AddCustomChord = new TextButton("Add Custom Chord");
+    button_AddCustomChord = std::make_unique<TextButton>("Add Custom Chord");
     button_AddCustomChord->addListener(this);
     button_AddCustomChord->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_AddCustomChord);
+    addAndMakeVisible(button_AddCustomChord.get());
     
-    button_Addons = new TextButton("Addons");
+    button_Addons = std::make_unique<TextButton>("Addons");
     button_Addons->addListener(this);
     button_Addons->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Addons);
+    addAndMakeVisible(button_Addons.get());
     
 
     
     
     // Labels
     
-    comboBox_Scales = new ComboBox();
+    comboBox_Scales = std::make_unique<ComboBox>();
     PopupMenu * scalesMenu =  comboBox_Scales->getRootMenu();
     scalesMenu->setLookAndFeel(&lookAndFeel);
         // return full popup menu system for dropdown in Settings / ChordPlayer
@@ -1157,7 +1157,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     comboBox_Scales->setSelectedId(DIATONIC_PYTHAGOREAN);
     comboBox_Scales->addListener(this);
     comboBox_Scales->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBox_Scales);
+    addAndMakeVisible(comboBox_Scales.get());
     
     
     imagePanicButton                    = ImageCache::getFromMemory(BinaryData::PanicButton2x_png, BinaryData::PanicButton2x_pngSize);
@@ -1169,15 +1169,15 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
                               Image(), 1.000f, Colour (0x00000000),
                               imagePanicButton, 0.6, Colour (0x00000000));
     button_Panic->addListener(this);
-    addAndMakeVisible(button_Panic);
+    addAndMakeVisible(button_Panic.get());
     
     // add on popup component
-    addOnPopupComponent = new LissajousAddOnPopupComponent(projectManager, shortcutRef);
-    addAndMakeVisible(addOnPopupComponent);
+    addOnPopupComponent = std::make_unique<LissajousAddOnPopupComponent>(projectManager, shortcutRef);
+    addAndMakeVisible(addOnPopupComponent.get());
     addOnPopupComponent->setVisible(false);
     
-    customChordPopupComponent = new LissajousCustomChordPopupComponent(projectManager, shortcutRef);
-    addAndMakeVisible(customChordPopupComponent);
+    customChordPopupComponent = std::make_unique<LissajousCustomChordPopupComponent>(projectManager, shortcutRef);
+    addAndMakeVisible(customChordPopupComponent.get());
     customChordPopupComponent->setVisible(false);
     
     for (int i = AMPLITUDE_MIN; i <= RELEASE_MAX; i++)
@@ -1185,10 +1185,10 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
+    wavetableEditorComponent = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
-    popupWavetableWindow = new PopupFFTWindow("Wavetable Editor - Chord Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Chord Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);
@@ -1307,60 +1307,60 @@ void LissajousChordPlayerSettingsComponent::paint (Graphics&g)
 
 void LissajousChordPlayerSettingsComponent::buttonClicked (Button*button)
 {
-    if (button == button_Close)
+    if (button == button_Close.get())
     {
         closeView();
     }
-    else if (button == button_ChooseChordFromList)
+    else if (button == button_ChooseChordFromList.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + CHORD_SOURCE, false);
     }
-    else if (button == button_ChooseChordFromFrequency)
+    else if (button == button_ChooseChordFromFrequency.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + CHORD_SOURCE, true);
     }
-    else if (button == button_Multiplication)
+    else if (button == button_Multiplication.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + MULTIPLY_OR_DIVISION, false);
     }
-    else if (button == button_Division)
+    else if (button == button_Division.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + MULTIPLY_OR_DIVISION, true);
     }
-    else if (button == button_ManipulateFreq)
+    else if (button == button_ManipulateFreq.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + MANIPULATE_CHOSEN_FREQUENCY, !button_ManipulateFreq->getToggleState());
     }
-    else if (button == button_Default)
+    else if (button == button_Default.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + WAVEFORM_TYPE, 0);
     }
-    else if (button == button_Sine)
+    else if (button == button_Sine.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + WAVEFORM_TYPE, 1);
     }
-    else if (button == button_Triangle)
+    else if (button == button_Triangle.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + WAVEFORM_TYPE, 2);
     }
-    else if (button == button_Square)
+    else if (button == button_Square.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + WAVEFORM_TYPE, 3);
     }
-    else if (button == button_Sawtooth)
+    else if (button == button_Sawtooth.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + WAVEFORM_TYPE, 4);
     }
-    else if (button == button_Wavetable)
+    else if (button == button_Wavetable.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + WAVEFORM_TYPE, 5);
     }
-    else if (button == button_WavetableEditor)
+    else if (button == button_WavetableEditor.get())
     {
         if (!popupWavetableWindow ->isVisible()) { popupWavetableWindow ->setVisible(true); }
         else popupWavetableWindow ->setVisible(false);
     }
-    else if (button == button_Add)
+    else if (button == button_Add.get())
     {
         projectManager->setLissajousParameter(paramIndexBase +  SHORTCUT_IS_ACTIVE, true);
         closeView();
@@ -1368,11 +1368,11 @@ void LissajousChordPlayerSettingsComponent::buttonClicked (Button*button)
 
         
     }
-    else if (button == button_AddCustomChord)
+    else if (button == button_AddCustomChord.get())
     {
         customChordPopupComponent->openView();
     }
-    else if (button == button_Addons)
+    else if (button == button_Addons.get())
     {
         addOnPopupComponent->setVisible(!addOnPopupComponent->isVisible());
         addOnPopupComponent->syncGUI();
@@ -1381,23 +1381,23 @@ void LissajousChordPlayerSettingsComponent::buttonClicked (Button*button)
 
 void LissajousChordPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == slider_Amplitude)
+    if (slider == slider_Amplitude.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + ENV_AMPLITUDE, slider_Amplitude->getValue());
     }
-    else if (slider == slider_Attack)
+    else if (slider == slider_Attack.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + ENV_ATTACK, slider_Attack->getValue());
     }
-    else if (slider == slider_Decay)
+    else if (slider == slider_Decay.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + ENV_DECAY, slider_Decay->getValue());
     }
-    else if (slider == slider_Sustain)
+    else if (slider == slider_Sustain.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + ENV_SUSTAIN, slider_Sustain->getValue());
     }
-    else if (slider == slider_Release)
+    else if (slider == slider_Release.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + ENV_RELEASE, slider_Release->getValue());
     }
@@ -1405,20 +1405,20 @@ void LissajousChordPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 
 void LissajousChordPlayerSettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBoxKeynote)
+    if (comboBoxThatHasChanged == comboBoxKeynote.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + KEYNOTE, comboBoxKeynote->getSelectedId());
     }
-    else if (comboBoxThatHasChanged == comboBoxPlayingInstrument)
+    else if (comboBoxThatHasChanged == comboBoxPlayingInstrument.get())
     {
         int selectedID = comboBoxPlayingInstrument->getSelectedId();
         projectManager->setLissajousParameter( paramIndexBase + INSTRUMENT_TYPE, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxChordtype)
+    else if (comboBoxThatHasChanged == comboBoxChordtype.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + CHORD_TYPE, comboBoxChordtype->getSelectedId());
     }
-    else if (comboBoxThatHasChanged == comboBox_Scales)
+    else if (comboBoxThatHasChanged == comboBox_Scales.get())
     {
         projectManager->setLissajousParameter( paramIndexBase + CHORDPLAYER_SCALE, comboBox_Scales->getSelectedId());
     }
@@ -1426,7 +1426,7 @@ void LissajousChordPlayerSettingsComponent::comboBoxChanged (ComboBox* comboBoxT
 
 void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditorPause)
+    if (&editor == textEditorPause.get())
     {
         int value = editor.getText().getIntValue();
 
@@ -1439,7 +1439,7 @@ void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEdit
         // send to projectManager
         projectManager->setLissajousParameter( paramIndexBase + NUM_PAUSE, value);
     }
-    else if (&editor == textEditorRepeat)
+    else if (&editor == textEditorRepeat.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1452,7 +1452,7 @@ void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEdit
         // send to projectManager
         projectManager->setLissajousParameter( paramIndexBase + NUM_REPEATS, value);
     }
-    else if (&editor == textEditorLength)
+    else if (&editor == textEditorLength.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1465,7 +1465,7 @@ void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEdit
         // send to projectManager
         projectManager->setLissajousParameter( paramIndexBase + NUM_DURATION, value);
     }
-    else if (&editor == textEditorDivision)
+    else if (&editor == textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1478,7 +1478,7 @@ void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEdit
         // send to projectManager
         projectManager->setLissajousParameter( paramIndexBase + DIVISION_VALUE, value);
     }
-    else if (&editor == textEditorMultiplication)
+    else if (&editor == textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1491,7 +1491,7 @@ void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEdit
         // send to projectManager
         projectManager->setLissajousParameter( paramIndexBase + MULTIPLY_VALUE, value);
     }
-    else if (&editor == textEditorInsertFreq)
+    else if (&editor == textEditorInsertFreq.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1504,7 +1504,7 @@ void LissajousChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEdit
         // send to projectManager
         projectManager->setLissajousParameter( paramIndexBase + INSERT_FREQUENCY, value);
     }
-    else if (&editor == textEditor_Octave)
+    else if (&editor == textEditor_Octave.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1875,7 +1875,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                              imageCloseButton, 0.75, Colour (0x00000000));
     button_Close->addListener(this);
     button_Close->setBounds(1408, 275, 150, 28);
-    addAndMakeVisible(button_Close);
+    addAndMakeVisible(button_Close.get());
     
     // toggle between these two
     button_ChooseSpecificFrequency = std::make_unique<ImageButton>();
@@ -1886,7 +1886,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                            imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseSpecificFrequency->addListener(this);
     button_ChooseSpecificFrequency->setBounds(90, 360, 38, 38);
-    addAndMakeVisible(button_ChooseSpecificFrequency);
+    addAndMakeVisible(button_ChooseSpecificFrequency.get());
     
     
     button_ChooseRangeOfFrequencies = std::make_unique<ImageButton>();
@@ -1897,7 +1897,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseRangeOfFrequencies->addListener(this);
     button_ChooseRangeOfFrequencies->setBounds(628, 360, 38, 38);
-    addAndMakeVisible(button_ChooseRangeOfFrequencies);
+    addAndMakeVisible(button_ChooseRangeOfFrequencies.get());
     
     
     int shift = 0;
@@ -1915,7 +1915,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Default->addListener(this);
     button_Default->setBounds(260, waveY, 38, 38);
-//    addAndMakeVisible(button_Default);
+//    addAndMakeVisible(button_Default.get());
     
 
     button_Sine = std::make_unique<ImageButton>();
@@ -1926,7 +1926,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                             imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sine->addListener(this);
     button_Sine->setBounds(420-shift-10+6, waveY, 38, 38);
-    addAndMakeVisible(button_Sine);
+    addAndMakeVisible(button_Sine.get());
     
     button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
@@ -1936,7 +1936,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Triangle->addListener(this);
     button_Triangle->setBounds(660-shift+16-16, waveY, 38, 38);
-    addAndMakeVisible(button_Triangle);
+    addAndMakeVisible(button_Triangle.get());
     
     button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
@@ -1946,7 +1946,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                               imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Square->addListener(this);
     button_Square->setBounds(910-shift, waveY, 38, 38);
-    addAndMakeVisible(button_Square);
+    addAndMakeVisible(button_Square.get());
     
     button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
@@ -1956,7 +1956,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sawtooth->addListener(this);
     button_Sawtooth->setBounds(1180-shift, waveY, 38, 38);
-    addAndMakeVisible(button_Sawtooth);
+    addAndMakeVisible(button_Sawtooth.get());
     
     button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
@@ -1965,14 +1965,14 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Wavetable->addListener(this);
-    addAndMakeVisible(button_Wavetable);
+    addAndMakeVisible(button_Wavetable.get());
     
     
-    button_WavetableEditor = new TextButton("");
+    button_WavetableEditor = std::make_unique<TextButton>("");
     button_WavetableEditor->setButtonText("WT Editor");
     button_WavetableEditor->setLookAndFeel(&lookAndFeel);
     button_WavetableEditor->addListener(this);
-    addAndMakeVisible(button_WavetableEditor);
+    addAndMakeVisible(button_WavetableEditor.get());
 
     
     button_Add = std::make_unique<ImageButton>();
@@ -1983,7 +1983,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                            imageAddButton, 0.888, Colour (0x00000000));
     button_Add->addListener(this);
     button_Add->setBounds(609, 980, 341, 84);
-    addAndMakeVisible(button_Add);
+    addAndMakeVisible(button_Add.get());
     
     
     button_ManipulateFreq = std::make_unique<ImageButton>();
@@ -1994,7 +1994,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_ManipulateFreq->addListener(this);
     button_ManipulateFreq->setBounds(1054, 357, 30, 30);
-    addAndMakeVisible(button_ManipulateFreq);
+    addAndMakeVisible(button_ManipulateFreq.get());
     
     button_Log = std::make_unique<ImageButton>();
     button_Log->setTriggeredOnMouseDown(true);
@@ -2004,7 +2004,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_Log->addListener(this);
     button_Log->setBounds(632, 460, 30, 30);
-    addAndMakeVisible(button_Log);
+    addAndMakeVisible(button_Log.get());
     
     
     button_Multiplication = std::make_unique<ImageButton>();
@@ -2015,7 +2015,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                       imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Multiplication->addListener(this);
     button_Multiplication->setBounds(1086-shiftBack, mulDivY, 38, 38);
-    addAndMakeVisible(button_Multiplication);
+    addAndMakeVisible(button_Multiplication.get());
     
     button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
@@ -2025,7 +2025,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Division->addListener(this);
     button_Division->setBounds(1317-shiftBack, mulDivY, 38, 38);
-    addAndMakeVisible(button_Division);
+    addAndMakeVisible(button_Division.get());
     
     // Font
     Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
@@ -2039,7 +2039,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     int playY = 894;
 
 
-    textEditorRepeat = new TextEditor("");
+    textEditorRepeat = std::make_unique<TextEditor>("");
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(2, "0123456789");
     textEditorRepeat->setMultiLine(false);
@@ -2052,9 +2052,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorRepeat->applyFontToAllText(fontSemiBold);
     textEditorRepeat->applyColourToAllText(Colours::lightgrey);
     textEditorRepeat->setBounds(466, playY, 111, 35);
-    addAndMakeVisible(textEditorRepeat);
+    addAndMakeVisible(textEditorRepeat.get());
     
-    textEditorPause = new TextEditor("");
+    textEditorPause = std::make_unique<TextEditor>("");
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789");
     textEditorPause->setMultiLine(false);
@@ -2067,10 +2067,10 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorPause->applyFontToAllText(fontSemiBold);
     textEditorPause->applyColourToAllText(Colours::lightgrey);
     textEditorPause->setBounds(1094, playY, 111, 35);
-    addAndMakeVisible(textEditorPause);
+    addAndMakeVisible(textEditorPause.get());
     
     
-    textEditorLength = new TextEditor("");
+    textEditorLength = std::make_unique<TextEditor>("");
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
     textEditorLength->setInputRestrictions(5, "0123456789");
@@ -2083,12 +2083,12 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorLength->applyFontToAllText(fontSemiBold);
     textEditorLength->applyColourToAllText(Colours::lightgrey);
     textEditorLength->setBounds(794, playY, 111, 35);
-    addAndMakeVisible(textEditorLength);
+    addAndMakeVisible(textEditorLength.get());
     
 
     
     // TextEntryBoxes
-    textEditorInsertFreq = new TextEditor("");
+    textEditorInsertFreq = std::make_unique<TextEditor>("");
     textEditorInsertFreq->setReturnKeyStartsNewLine(false);
     textEditorInsertFreq->setMultiLine(false);
     textEditorInsertFreq->setInputRestrictions(12, "0123456789.");
@@ -2101,11 +2101,11 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorInsertFreq->applyFontToAllText(fontSemiBold);
     textEditorInsertFreq->applyColourToAllText(Colours::lightgrey);
     textEditorInsertFreq->setBounds(476, 360, 96, 35);
-    addAndMakeVisible(textEditorInsertFreq);
+    addAndMakeVisible(textEditorInsertFreq.get());
     
     
     int y = 402;
-    textEditorFreqFrom = new TextEditor("");
+    textEditorFreqFrom = std::make_unique<TextEditor>("");
     textEditorFreqFrom->setReturnKeyStartsNewLine(false);
     textEditorFreqFrom->setMultiLine(false);
     textEditorFreqFrom->setInputRestrictions(12, "0123456789.");
@@ -2118,9 +2118,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorFreqFrom->applyFontToAllText(fontSemiBold);
     textEditorFreqFrom->applyColourToAllText(Colours::lightgrey);
     textEditorFreqFrom->setBounds(708, y, 96, 35);
-    addAndMakeVisible(textEditorFreqFrom);
+    addAndMakeVisible(textEditorFreqFrom.get());
     
-    textEditorFreqTo = new TextEditor("");
+    textEditorFreqTo = std::make_unique<TextEditor>("");
     textEditorFreqTo->setReturnKeyStartsNewLine(false);
     textEditorFreqTo->setMultiLine(false);
     textEditorFreqTo->setInputRestrictions(12, "0123456789.");
@@ -2133,9 +2133,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorFreqTo->applyFontToAllText(fontSemiBold);
     textEditorFreqTo->applyColourToAllText(Colours::lightgrey);
     textEditorFreqTo->setBounds(910, y, 96, 35);
-    addAndMakeVisible(textEditorFreqTo);
+    addAndMakeVisible(textEditorFreqTo.get());
     
-    textEditorRangeLength = new TextEditor("");
+    textEditorRangeLength = std::make_unique<TextEditor>("");
     textEditorRangeLength->setReturnKeyStartsNewLine(false);
     textEditorRangeLength->setMultiLine(false);
     textEditorRangeLength->setInputRestrictions(5, "0123456789.");
@@ -2148,11 +2148,11 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorRangeLength->applyFontToAllText(fontSemiBold);
     textEditorRangeLength->applyColourToAllText(Colours::lightgrey);
     textEditorRangeLength->setBounds(907, 456, 96, 35);
-    addAndMakeVisible(textEditorRangeLength);
+    addAndMakeVisible(textEditorRangeLength.get());
     
     int multTy= 458;
     int shiftxx = 12;
-    textEditorMultiplication = new TextEditor("");
+    textEditorMultiplication = std::make_unique<TextEditor>("");
     textEditorMultiplication->setReturnKeyStartsNewLine(false);
     textEditorMultiplication->setMultiLine(false);
     textEditorMultiplication->setInputRestrictions(10, "0123456789.");
@@ -2165,9 +2165,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorMultiplication->applyFontToAllText(fontSemiBold);
     textEditorMultiplication->applyColourToAllText(Colours::lightgrey);
     textEditorMultiplication->setBounds(1128-shiftxx, multTy, 111, 35);
-    addAndMakeVisible(textEditorMultiplication);
+    addAndMakeVisible(textEditorMultiplication.get());
     
-    textEditorDivision= new TextEditor("");
+    textEditorDivision = std::make_unique<TextEditor>("");
     textEditorDivision->setReturnKeyStartsNewLine(false);
     textEditorDivision->setMultiLine(false);
     textEditorDivision->setInputRestrictions(10, "0123456789.");
@@ -2180,7 +2180,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     textEditorDivision->applyFontToAllText(fontSemiBold);
     textEditorDivision->applyColourToAllText(Colours::lightgrey);
     textEditorDivision->setBounds(1359-shiftxx, multTy, 111, 35);
-    addAndMakeVisible(textEditorDivision);
+    addAndMakeVisible(textEditorDivision.get());
     
     
     // Knobs
@@ -2191,7 +2191,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     
     
     
-    slider_Amplitude    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Amplitude = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Amplitude    ->setRange (0, 1.0, 0);
     slider_Amplitude    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -2201,10 +2201,10 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
     slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
     
-    addAndMakeVisible(slider_Amplitude);
+    addAndMakeVisible(slider_Amplitude.get());
     
     
-    slider_Attack       = new CustomRotarySlider(CustomRotarySlider::ROTARY_ATTACK);
+    slider_Attack = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
     slider_Attack       ->setRange (0, 1.0, 0);
     slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -2213,9 +2213,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     slider_Attack       ->setBounds(426+(1 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Attack       ->setNumDecimalPlacesToDisplay(0);
     slider_Attack       ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Attack);
+    addAndMakeVisible(slider_Attack.get());
     
-    slider_Decay        = new CustomRotarySlider(CustomRotarySlider::ROTARY_DECAY);
+    slider_Decay = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
     slider_Decay        ->setRange (0, 1.0, 0);
     slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -2224,9 +2224,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     slider_Decay        ->setBounds(426+(3 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Decay        ->setNumDecimalPlacesToDisplay(0);
     slider_Decay        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Decay);
+    addAndMakeVisible(slider_Decay.get());
     
-    slider_Sustain      = new CustomRotarySlider(CustomRotarySlider::ROTARY_SUSTAIN);
+    slider_Sustain = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
     slider_Sustain      ->setRange (0, 1.0, 0);
     slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -2235,9 +2235,9 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     slider_Sustain      ->setBounds(426+(2 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
     slider_Sustain        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Sustain);
+    addAndMakeVisible(slider_Sustain.get());
     
-    slider_Release      = new CustomRotarySlider(CustomRotarySlider::ROTARY_RELEASE);
+    slider_Release = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
     slider_Release      ->setRange (0, 1.0, 0);
     slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -2246,7 +2246,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     slider_Release      ->setBounds(426+(4 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Release      ->setNumDecimalPlacesToDisplay(0);
     slider_Release      ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Release);
+    addAndMakeVisible(slider_Release.get());
     
 
     for (int i = AMPLITUDE_MIN; i <= RELEASE_MAX; i++)
@@ -2254,12 +2254,12 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
+    wavetableEditorComponent = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
     // need to update the contents of each editor for each shortcut.....
     
-    popupWavetableWindow = new PopupFFTWindow("Wavetable Editor - Frequency Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);
@@ -2458,57 +2458,57 @@ void LissajousFrequencyPlayerSettingsComponent::updateMinMaxSettings(int paramIn
 
 void LissajousFrequencyPlayerSettingsComponent::buttonClicked (Button*button)
 {
-    if (button == button_Close)
+    if (button == button_Close.get())
     {
         closeView();
         
         popupWavetableWindow->setVisible(false);
     }
-    else if (button == button_ChooseSpecificFrequency)
+    else if (button == button_ChooseSpecificFrequency.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_FREQ_SOURCE, false);
     }
-    else if (button == button_ChooseRangeOfFrequencies)
+    else if (button == button_ChooseRangeOfFrequencies.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_FREQ_SOURCE, true);
     }
-    else if (button == button_Multiplication)
+    else if (button == button_Multiplication.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION, false);
     }
-    else if (button == button_Division)
+    else if (button == button_Division.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION, true);
     }
-    else if (button == button_ManipulateFreq)
+    else if (button == button_ManipulateFreq.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_MANIPULATE_CHOSEN_FREQUENCY, !button_ManipulateFreq->getToggleState());
     }
-    else if (button == button_Default)
+    else if (button == button_Default.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_WAVEFORM_TYPE, 0);
     }
-    else if (button == button_Sine)
+    else if (button == button_Sine.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_WAVEFORM_TYPE, 1);
     }
-    else if (button == button_Triangle)
+    else if (button == button_Triangle.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_WAVEFORM_TYPE, 2);
     }
-    else if (button == button_Square)
+    else if (button == button_Square.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_WAVEFORM_TYPE, 3);
     }
-    else if (button == button_Sawtooth)
+    else if (button == button_Sawtooth.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_WAVEFORM_TYPE, 4);
     }
-    else if (button == button_Wavetable)
+    else if (button == button_Wavetable.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_WAVEFORM_TYPE, 5);
     }
-    else if (button == button_WavetableEditor)
+    else if (button == button_WavetableEditor.get())
     {
         if (!popupWavetableWindow ->isVisible())
         {
@@ -2517,11 +2517,11 @@ void LissajousFrequencyPlayerSettingsComponent::buttonClicked (Button*button)
         }
         else popupWavetableWindow ->setVisible(false);
     }
-    else if (button == button_Log)
+    else if (button == button_Log.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_RANGE_LOG, !button_Log->getToggleState());
     }
-    else if (button == button_Add)
+    else if (button == button_Add.get())
     {
         closeView();
         
@@ -2533,23 +2533,23 @@ void LissajousFrequencyPlayerSettingsComponent::buttonClicked (Button*button)
 
 void LissajousFrequencyPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == slider_Amplitude)
+    if (slider == slider_Amplitude.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_AMPLITUDE, slider_Amplitude->getValue());
     }
-    else if (slider == slider_Attack)
+    else if (slider == slider_Attack.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_ATTACK, slider_Attack->getValue());
     }
-    else if (slider == slider_Decay)
+    else if (slider == slider_Decay.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_DECAY, slider_Decay->getValue());
     }
-    else if (slider == slider_Sustain)
+    else if (slider == slider_Sustain.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_SUSTAIN, slider_Sustain->getValue());
     }
-    else if (slider == slider_Release)
+    else if (slider == slider_Release.get())
     {
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_RELEASE, slider_Release->getValue());
     }
@@ -2557,7 +2557,7 @@ void LissajousFrequencyPlayerSettingsComponent::sliderValueChanged (Slider* slid
 
 void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditorPause)
+    if (&editor == textEditorPause.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -2570,7 +2570,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_NUM_PAUSE, value);
     }
-    else if (&editor == textEditorRepeat)
+    else if (&editor == textEditorRepeat.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -2583,7 +2583,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_NUM_REPEATS, value);
     }
-    else if (&editor == textEditorLength)
+    else if (&editor == textEditorLength.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -2596,7 +2596,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_NUM_DURATION, value);
     }
-    else if (&editor == textEditorDivision)
+    else if (&editor == textEditorDivision.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -2609,7 +2609,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_DIVISION_VALUE, value);
     }
-    else if (&editor == textEditorMultiplication)
+    else if (&editor == textEditorMultiplication.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -2622,7 +2622,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_MULTIPLY_VALUE, value);
     }
-    else if (&editor == textEditorInsertFreq)
+    else if (&editor == textEditorInsertFreq.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -2635,7 +2635,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_CHOOSE_FREQ, value);
     }
-    else if (&editor == textEditorFreqFrom)
+    else if (&editor == textEditorFreqFrom.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -2648,7 +2648,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_RANGE_MIN, value);
     }
-    else if (&editor == textEditorFreqTo)
+    else if (&editor == textEditorFreqTo.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -2661,7 +2661,7 @@ void LissajousFrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (Text
         // send to projectManager
         projectManager->setLissajousParameter(paramIndexBase + FREQUENCY_PLAYER_RANGE_MAX, value);
     }
-    else if (&editor == textEditorRangeLength)
+    else if (&editor == textEditorRangeLength.get())
     {
         float value = editor.getText().getFloatValue();
         
