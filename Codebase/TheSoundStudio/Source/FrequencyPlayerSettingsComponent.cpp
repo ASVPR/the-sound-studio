@@ -131,11 +131,11 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     addAndMakeVisible(button_Wavetable.get());
     
     
-    button_WavetableEditor = new TextButton("");
+    button_WavetableEditor = std::make_unique<TextButton>("");
     button_WavetableEditor->setButtonText("WT Editor");
     button_WavetableEditor->setLookAndFeel(&lookAndFeel);
     button_WavetableEditor->addListener(this);
-    addAndMakeVisible(button_WavetableEditor);
+    addAndMakeVisible(button_WavetableEditor.get());
 
     
     button_Add = std::make_unique<ImageButton>();
@@ -290,7 +290,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorFreqFrom->setBounds(708, y, 96, 35);
     addAndMakeVisible(textEditorFreqFrom.get());
     
-    textEditorFreqTo = new TextEditor("");
+    textEditorFreqTo = std::make_unique<TextEditor>("");
     textEditorFreqTo->setReturnKeyStartsNewLine(false);
     textEditorFreqTo->setMultiLine(false);
     textEditorFreqTo->setInputRestrictions(12, "0123456789.");
@@ -303,9 +303,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorFreqTo->applyFontToAllText(fontSemiBold);
     textEditorFreqTo->applyColourToAllText(Colours::lightgrey);
     textEditorFreqTo->setBounds(910, y, 96, 35);
-    addAndMakeVisible(textEditorFreqTo);
+    addAndMakeVisible(textEditorFreqTo.get());
     
-    textEditorRangeLength = new TextEditor("");
+    textEditorRangeLength = std::make_unique<TextEditor>("");
     textEditorRangeLength->setReturnKeyStartsNewLine(false);
     textEditorRangeLength->setMultiLine(false);
     textEditorRangeLength->setInputRestrictions(5, "0123456789.");
@@ -318,11 +318,11 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorRangeLength->applyFontToAllText(fontSemiBold);
     textEditorRangeLength->applyColourToAllText(Colours::lightgrey);
     textEditorRangeLength->setBounds(907, 456, 96, 35);
-    addAndMakeVisible(textEditorRangeLength);
+    addAndMakeVisible(textEditorRangeLength.get());
     
     int multTy= 458;
     int shiftxx = 12;
-    textEditorMultiplication = new TextEditor("");
+    textEditorMultiplication = std::make_unique<TextEditor>("");
     textEditorMultiplication->setReturnKeyStartsNewLine(false);
     textEditorMultiplication->setMultiLine(false);
     textEditorMultiplication->setInputRestrictions(10, "0123456789.");
@@ -335,9 +335,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorMultiplication->applyFontToAllText(fontSemiBold);
     textEditorMultiplication->applyColourToAllText(Colours::lightgrey);
     textEditorMultiplication->setBounds(1128-shiftxx, multTy, 111, 35);
-    addAndMakeVisible(textEditorMultiplication);
+    addAndMakeVisible(textEditorMultiplication.get());
     
-    textEditorDivision= new TextEditor("");
+    textEditorDivision = std::make_unique<TextEditor>("");
     textEditorDivision->setReturnKeyStartsNewLine(false);
     textEditorDivision->setMultiLine(false);
     textEditorDivision->setInputRestrictions(10, "0123456789.");
@@ -350,7 +350,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     textEditorDivision->applyFontToAllText(fontSemiBold);
     textEditorDivision->applyColourToAllText(Colours::lightgrey);
     textEditorDivision->setBounds(1359-shiftxx, multTy, 111, 35);
-    addAndMakeVisible(textEditorDivision);
+    addAndMakeVisible(textEditorDivision.get());
     
     
     // Knobs
@@ -358,7 +358,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     int sliderXShift = 14;
     int dif = 219;
 
-    slider_Amplitude    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Amplitude    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Amplitude    ->setRange (0, 1.0, 0);
     slider_Amplitude    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -368,10 +368,10 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
     slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
     
-    addAndMakeVisible(slider_Amplitude);
+    addAndMakeVisible(slider_Amplitude.get());
     
     
-    slider_Attack       = new CustomRotarySlider(CustomRotarySlider::ROTARY_ATTACK);
+    slider_Attack       = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
     slider_Attack       ->setRange (0, 1.0, 0);
     slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -380,9 +380,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     slider_Attack       ->setBounds(426+(1 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Attack       ->setNumDecimalPlacesToDisplay(0);
     slider_Attack       ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Attack);
+    addAndMakeVisible(slider_Attack.get());
     
-    slider_Decay        = new CustomRotarySlider(CustomRotarySlider::ROTARY_DECAY);
+    slider_Decay        = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
     slider_Decay        ->setRange (0, 1.0, 0);
     slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -391,9 +391,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     slider_Decay        ->setBounds(426+(3 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Decay        ->setNumDecimalPlacesToDisplay(0);
     slider_Decay        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Decay);
+    addAndMakeVisible(slider_Decay.get());
     
-    slider_Sustain      = new CustomRotarySlider(CustomRotarySlider::ROTARY_SUSTAIN);
+    slider_Sustain      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
     slider_Sustain      ->setRange (0, 1.0, 0);
     slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -402,9 +402,9 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     slider_Sustain      ->setBounds(426+(2 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
     slider_Sustain        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Sustain);
+    addAndMakeVisible(slider_Sustain.get());
     
-    slider_Release      = new CustomRotarySlider(CustomRotarySlider::ROTARY_RELEASE);
+    slider_Release      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
     slider_Release      ->setRange (0, 1.0, 0);
     slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -413,7 +413,7 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     slider_Release      ->setBounds(426+(4 * dif)+sliderXShift, sliderY, 130, 158);
     slider_Release      ->setNumDecimalPlacesToDisplay(0);
     slider_Release      ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Release);
+    addAndMakeVisible(slider_Release.get());
     
 
     for (int i = AMPLITUDE_MIN; i <= RELEASE_MAX; i++)
@@ -421,12 +421,12 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
+    wavetableEditorComponent          = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
     // need to update the contents of each editor for each shortcut.....
     
-    popupWavetableWindow = new PopupFFTWindow("Wavetable Editor - Frequency Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);

@@ -284,11 +284,11 @@ public:
         
         imageCloseButton = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
         
-        // nackground()
-        backgroundComp = new ImageComponent();
+        // background()
+        backgroundComp = std::make_unique<ImageComponent>();
         backgroundComp->setImage(imageBackground);
         backgroundComp->setBounds(42, 366, 1499, 639);
-        addAndMakeVisible(backgroundComp);
+        addAndMakeVisible(backgroundComp.get());
         
         button_Close = std::make_unique<ImageButton>();
         button_Close->setTriggeredOnMouseDown(true);
@@ -388,7 +388,7 @@ private:
     Image imageBackground;
     Image imageCloseButton;
     
-    ImageComponent * backgroundComp;
+    std::unique_ptr<ImageComponent> backgroundComp;
     
     // ui variables
     
@@ -526,8 +526,8 @@ private:
     
     std::unique_ptr<TextButton>   button_WavetableEditor;
     
-    WaveTableOscViewComponent * wavetableEditorComponent;
-    PopupFFTWindow *            popupWavetableWindow;
+    std::unique_ptr<WaveTableOscViewComponent> wavetableEditorComponent;
+    std::unique_ptr<PopupFFTWindow> popupWavetableWindow;
     
     // Combobox
     std::unique_ptr<ComboBox> comboBoxKeynote;
@@ -650,8 +650,8 @@ private:
     std::unique_ptr<ImageButton> button_Add;
     
     std::unique_ptr<TextButton>   button_WavetableEditor;
-    WaveTableOscViewComponent * wavetableEditorComponent;
-    PopupFFTWindow *            popupWavetableWindow;
+    std::unique_ptr<WaveTableOscViewComponent> wavetableEditorComponent;
+    std::unique_ptr<PopupFFTWindow> popupWavetableWindow;
     
     // Text Entry for Repeater
     std::unique_ptr<TextEditor> textEditorRepeat;
