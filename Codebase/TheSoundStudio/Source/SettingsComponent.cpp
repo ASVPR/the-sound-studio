@@ -1470,21 +1470,9 @@ void SettingsComponent::rescanPlugins()
     // only scan for FX , not instruments
 
 
-    AlertWindow alertWindow(TRANS("Plugin Scanning"), \
-                            TRANS("If you choose to scan folders that contain non-plugin files, "
-                                  "then scanning may take a long time, and can cause crashes when "
-                                  "attempting to load unsuitable files."),
-                            AlertWindow::WarningIcon);
-    
-    alertWindow.addButton("OK", 1);
-    alertWindow.addButton("Cancel", 0);
-    
-//    double val = 0;
-//
-//    alertWindow.addProgressBarComponent(val);
-    
-    int result = alertWindow.runModalLoop();
-
+    // Skip plugin scanning popup to prevent blocking main window visibility
+    // Automatically proceed with scanning without user interaction
+    int result = 1; // Simulate user clicking "OK"
     
     if (result)
     {

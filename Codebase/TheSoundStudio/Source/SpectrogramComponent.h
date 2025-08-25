@@ -1004,7 +1004,7 @@ private:
         gradientDecibels.addColour(0.6f, Colours::yellow);
         gradientDecibels.addColour(0.8f, Colours::white);
         
-        double posDb;
+        double posDb = 0.0;
         gradientDecibels.getColourAtPosition(posDb);
         
     }

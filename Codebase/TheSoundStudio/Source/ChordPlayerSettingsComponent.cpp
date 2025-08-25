@@ -35,185 +35,185 @@ AddOnPopupComponent::AddOnPopupComponent(ProjectManager * pm)
     
     
     // place buttons
-    addonButton[AddOn_6] = new ImageButton();
+    addonButton[AddOn_6] = std::make_unique<ImageButton>();
     addonButton[AddOn_6]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_6]->setImages (false, true, true,
                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                      Image(), 1.000f, Colour (0x00000000),
                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_6]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_6]);
+    addAndMakeVisible(addonButton[AddOn_6].get());
     
-    label[AddOn_6] = new Label("", ProjectStrings::getAddons().getReference(AddOn_6));
+    label[AddOn_6] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_6));
     label[AddOn_6]->setJustificationType(Justification::left);
     label[AddOn_6]->setFont(fontLight);
     label[AddOn_6]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_6]);
+    addAndMakeVisible(label[AddOn_6].get());
     
     //
-    addonButton[AddOn_7] = new ImageButton();
+    addonButton[AddOn_7] = std::make_unique<ImageButton>();
     addonButton[AddOn_7]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_7]->setImages (false, true, true,
                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                      Image(), 1.000f, Colour (0x00000000),
                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_7]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_7]);
+    addAndMakeVisible(addonButton[AddOn_7].get());
     
-    label[AddOn_7] = new Label("", ProjectStrings::getAddons().getReference(AddOn_7));
+    label[AddOn_7] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_7));
     label[AddOn_7]->setJustificationType(Justification::left);
     label[AddOn_7]->setFont(fontLight);
     label[AddOn_7]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_7]);
+    addAndMakeVisible(label[AddOn_7].get());
     
     //
-    addonButton[AddOn_7Major] = new ImageButton();
+    addonButton[AddOn_7Major] = std::make_unique<ImageButton>();
     addonButton[AddOn_7Major]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_7Major]->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_7Major]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_7Major]);
+    addAndMakeVisible(addonButton[AddOn_7Major].get());
     
-    label[AddOn_7Major] = new Label("", ProjectStrings::getAddons().getReference(AddOn_7Major));
+    label[AddOn_7Major] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_7Major));
     label[AddOn_7Major]->setJustificationType(Justification::left);
     label[AddOn_7Major]->setFont(fontLight);
     label[AddOn_7Major]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_7Major]);
+    addAndMakeVisible(label[AddOn_7Major].get());
     
     ///// next
     leftButtonBorder    = 148;
     leftLabelBorder     = leftButtonBorder + 20;
     
     
-    addonButton[AddOn_9] = new ImageButton();
+    addonButton[AddOn_9] = std::make_unique<ImageButton>();
     addonButton[AddOn_9]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_9]->setImages (false, true, true,
                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                      Image(), 1.000f, Colour (0x00000000),
                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_9]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_9]);
+    addAndMakeVisible(addonButton[AddOn_9].get());
     
-    label[AddOn_9] = new Label("", ProjectStrings::getAddons().getReference(AddOn_9));
+    label[AddOn_9] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_9));
     label[AddOn_9]->setJustificationType(Justification::left);
     label[AddOn_9]->setFont(fontLight);
     label[AddOn_9]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_9]);
+    addAndMakeVisible(label[AddOn_9].get());
     
-    addonButton[AddOn_9flat] = new ImageButton();
+    addonButton[AddOn_9flat] = std::make_unique<ImageButton>();
     addonButton[AddOn_9flat]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_9flat]->setImages (false, true, true,
                                          imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                          Image(), 1.000f, Colour (0x00000000),
                                          imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_9flat]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_9flat]);
+    addAndMakeVisible(addonButton[AddOn_9flat].get());
     
-    label[AddOn_9flat] = new Label("", ProjectStrings::getAddons().getReference(AddOn_9flat));
+    label[AddOn_9flat] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_9flat));
     label[AddOn_9flat]->setJustificationType(Justification::left);
     label[AddOn_9flat]->setFont(fontLight);
     label[AddOn_9flat]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_9flat]);
+    addAndMakeVisible(label[AddOn_9flat].get());
     
-    addonButton[AddOn_9sharp] = new ImageButton();
+    addonButton[AddOn_9sharp] = std::make_unique<ImageButton>();
     addonButton[AddOn_9sharp]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_9sharp]->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_9sharp]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_9sharp]);
+    addAndMakeVisible(addonButton[AddOn_9sharp].get());
     
-    label[AddOn_9sharp] = new Label("", ProjectStrings::getAddons().getReference(AddOn_9sharp));
+    label[AddOn_9sharp] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_9sharp));
     label[AddOn_9sharp]->setJustificationType(Justification::left);
     label[AddOn_9sharp]->setFont(fontLight);
     label[AddOn_9sharp]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_9sharp]);
+    addAndMakeVisible(label[AddOn_9sharp].get());
     
     
-    addonButton[AddOn_11] = new ImageButton();
+    addonButton[AddOn_11] = std::make_unique<ImageButton>();
     addonButton[AddOn_11]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_11]->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                       Image(), 1.000f, Colour (0x00000000),
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_11]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_11]);
+    addAndMakeVisible(addonButton[AddOn_11].get());
     
-    label[AddOn_11] = new Label("", ProjectStrings::getAddons().getReference(AddOn_11));
+    label[AddOn_11] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_11));
     label[AddOn_11]->setJustificationType(Justification::left);
     label[AddOn_11]->setFont(fontLight);
     label[AddOn_11]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_11]);
+    addAndMakeVisible(label[AddOn_11].get());
     
     
-    addonButton[AddOn_11sharp] = new ImageButton();
+    addonButton[AddOn_11sharp] = std::make_unique<ImageButton>();
     addonButton[AddOn_11sharp]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_11sharp]->setImages (false, true, true,
                                            imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                            Image(), 1.000f, Colour (0x00000000),
                                            imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_11sharp]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_11sharp]);
+    addAndMakeVisible(addonButton[AddOn_11sharp].get());
     
-    label[AddOn_11sharp] = new Label("", ProjectStrings::getAddons().getReference(AddOn_11sharp));
+    label[AddOn_11sharp] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_11sharp));
     label[AddOn_11sharp]->setJustificationType(Justification::left);
     label[AddOn_11sharp]->setFont(fontLight);
     label[AddOn_11sharp]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_11sharp]);
+    addAndMakeVisible(label[AddOn_11sharp].get());
     
     
     ///// next
     leftButtonBorder    = 270;
     leftLabelBorder     = leftButtonBorder + 20;
     
-    addonButton[AddOn_13] = new ImageButton();
+    addonButton[AddOn_13] = std::make_unique<ImageButton>();
     addonButton[AddOn_13]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_13]->setImages (false, true, true,
                                       imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                       Image(), 1.000f, Colour (0x00000000),
                                       imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_13]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_13]);
+    addAndMakeVisible(addonButton[AddOn_13].get());
     
-    label[AddOn_13] = new Label("", ProjectStrings::getAddons().getReference(AddOn_13));
+    label[AddOn_13] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_13));
     label[AddOn_13]->setJustificationType(Justification::left);
     label[AddOn_13]->setFont(fontLight);
     label[AddOn_13]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_13]);
+    addAndMakeVisible(label[AddOn_13].get());
     
     
-    addonButton[AddOn_13flat] = new ImageButton();
+    addonButton[AddOn_13flat] = std::make_unique<ImageButton>();
     addonButton[AddOn_13flat]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_13flat]->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_13flat]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_13flat]);
+    addAndMakeVisible(addonButton[AddOn_13flat].get());
     
-    label[AddOn_13flat] = new Label("", ProjectStrings::getAddons().getReference(AddOn_13flat));
+    label[AddOn_13flat] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_13flat));
     label[AddOn_13flat]->setJustificationType(Justification::left);
     label[AddOn_13flat]->setFont(fontLight);
     label[AddOn_13flat]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_13flat]);
+    addAndMakeVisible(label[AddOn_13flat].get());
     
-    addonButton[AddOn_Inverted] = new ImageButton();
+    addonButton[AddOn_Inverted] = std::make_unique<ImageButton>();
     addonButton[AddOn_Inverted]->setTriggeredOnMouseDown(true);
     addonButton[AddOn_Inverted]->setImages (false, true, true,
                                             imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                             Image(), 1.000f, Colour (0x00000000),
                                             imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     addonButton[AddOn_Inverted]->addListener(this);
-    addAndMakeVisible(addonButton[AddOn_Inverted]);
+    addAndMakeVisible(addonButton[AddOn_Inverted].get());
     
-    label[AddOn_Inverted] = new Label("", ProjectStrings::getAddons().getReference(AddOn_Inverted));
+    label[AddOn_Inverted] = std::make_unique<Label>("", ProjectStrings::getAddons().getReference(AddOn_Inverted));
     label[AddOn_Inverted]->setJustificationType(Justification::left);
     label[AddOn_Inverted]->setFont(fontLight);
     label[AddOn_Inverted]->setColour(Label::textColourId, Colours::white);
-    addAndMakeVisible(label[AddOn_Inverted]);
+    addAndMakeVisible(label[AddOn_Inverted].get());
     
     
     
@@ -464,7 +464,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
     
-    button_Close = new ImageButton();
+    button_Close = std::make_unique<ImageButton>();
     button_Close->setTriggeredOnMouseDown(true);
     button_Close->setImages (false, true, true,
                            imageCloseButton, 0.999f, Colour (0x00000000),
@@ -474,7 +474,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     addAndMakeVisible(button_Close);
     
     // toggle between these two
-    button_ChooseChordFromList = new ImageButton();
+    button_ChooseChordFromList = std::make_unique<ImageButton>();
     button_ChooseChordFromList->setTriggeredOnMouseDown(true);
     button_ChooseChordFromList->setImages (false, true, true,
                              imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -484,7 +484,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     addAndMakeVisible(button_ChooseChordFromList);
     
     
-    button_ChooseChordFromFrequency = new ImageButton();
+    button_ChooseChordFromFrequency = std::make_unique<ImageButton>();
     button_ChooseChordFromFrequency->setTriggeredOnMouseDown(true);
     button_ChooseChordFromFrequency->setImages (false, true, true,
                                            imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -494,7 +494,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     addAndMakeVisible(button_ChooseChordFromFrequency);
     
     // act as toggle between 5 buttons
-    button_Default = new ImageButton();
+    button_Default = std::make_unique<ImageButton>();
     button_Default->setTriggeredOnMouseDown(true);
     button_Default->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -504,7 +504,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     addAndMakeVisible(button_Default);
     
     int shift = 20;
-    button_Sine = new ImageButton();
+    button_Sine = std::make_unique<ImageButton>();
     button_Sine->setTriggeredOnMouseDown(true);
     button_Sine->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -513,7 +513,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     button_Sine->addListener(this);
     addAndMakeVisible(button_Sine);
     
-    button_Triangle = new ImageButton();
+    button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
     button_Triangle->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -522,7 +522,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     button_Triangle->addListener(this);
     addAndMakeVisible(button_Triangle);
     
-    button_Square = new ImageButton();
+    button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
     button_Square->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -531,7 +531,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     button_Square->addListener(this);
     addAndMakeVisible(button_Square);
     
-    button_Sawtooth = new ImageButton();
+    button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
     button_Sawtooth->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -540,7 +540,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     button_Sawtooth->addListener(this);
     addAndMakeVisible(button_Sawtooth);
     
-    button_Wavetable = new ImageButton();
+    button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
     button_Wavetable->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -557,7 +557,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     addAndMakeVisible(button_WavetableEditor);
     
     
-    button_Add = new ImageButton();
+    button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
     button_Add->setImages (false, true, true,
                                 imageAddButton, 0.999f, Colour (0x00000000),
@@ -567,7 +567,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     addAndMakeVisible(button_Add);
     
     int shiftBack = 8;
-    button_Multiplication = new ImageButton();
+    button_Multiplication = std::make_unique<ImageButton>();
     button_Multiplication->setTriggeredOnMouseDown(true);
     button_Multiplication->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -576,7 +576,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     button_Multiplication->addListener(this);
     addAndMakeVisible(button_Multiplication);
     
-    button_Division = new ImageButton();
+    button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
     button_Division->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -740,7 +740,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorLength->applyColourToAllText(Colours::lightgrey);
     addAndMakeVisible(textEditorLength);
     
-    button_ManipulateFreq = new ImageButton();
+    button_ManipulateFreq = std::make_unique<ImageButton>();
     button_ManipulateFreq->setTriggeredOnMouseDown(true);
     button_ManipulateFreq->setImages (false, true, true,
                                imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
@@ -860,7 +860,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     
     imagePanicButton                    = ImageCache::getFromMemory(BinaryData::PanicButton2x_png, BinaryData::PanicButton2x_pngSize);
     
-    button_Panic = new ImageButton();
+    button_Panic = std::make_unique<ImageButton>();
     button_Panic->setTriggeredOnMouseDown(true);
     button_Panic->setImages (false, true, true,
                               imagePanicButton, 0.999f, Colour (0x00000000),

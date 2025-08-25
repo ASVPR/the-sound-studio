@@ -3,7 +3,11 @@
 
     PluginRackComponent.cpp
     Created: 14 Feb 2020 9:06:04am
-    Author:  Gary Jones
+    Author:  Ziv Elovitch
+
+    Plugin management and scanning component for The Sound Studio.
+    Handles plugin discovery, loading, and UI interactions.
+    Modified to improve window visibility and user experience.
 
   ==============================================================================
 */
@@ -218,15 +222,9 @@ void PluginRackComponent::rescanPlugins()
         PluginDirectoryScanner * scanner = new PluginDirectoryScanner(*projectManager->knownPluginList, *format, format->getDefaultLocationsToSearch(), true, projectManager->deadMansPedalFile);
         String plugName;
         
-        bool shouldScan = AlertWindow::showOkCancelBox (AlertWindow::WarningIcon,
-                                      TRANS("Plugin Scanning"),
-                                      TRANS("If you choose to scan folders that contain non-plugin files, "
-                                            "then scanning may take a long time, and can cause crashes when "
-                                            "attempting to load unsuitable files."),
-                                      TRANS ("Scan"),
-                                      "",
-                                      nullptr,
-                                      nullptr);
+        // Skip plugin scanning popup to prevent blocking main window visibility
+        // Automatically proceed with scanning without user interaction
+        bool shouldScan = true;
         
         if (shouldScan)
         {

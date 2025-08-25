@@ -73,11 +73,11 @@ typedef unsigned char       BYTE;
 #endif
 
 #ifndef itoa
-#define itoa(value,string,radix)  sprintf(string, "%d", value)
+#define itoa(value,string,radix)  snprintf(string, 32, "%d", value)
 #endif
 
 #ifndef ltoa
-#define ltoa(value,string,radix)  sprintf(string, "%u", value)
+#define ltoa(value,string,radix)  snprintf(string, 32, "%u", value)
 #endif
 
 // C++17: Use constexpr instead of macros for better type safety
@@ -287,7 +287,7 @@ inline char* floatToString(float value, int nSigDigits)
 	if(nSigDigits > 32)
 		nSigDigits = 32;
 	// gcvt (value, nSigDigits, text);
-	sprintf(text,"%.*f", nSigDigits, value);
+	snprintf(text, 32, "%.*f", nSigDigits, value);
 
 	return text;
 }
@@ -299,7 +299,7 @@ inline char* doubleToString(double value, int nSigDigits)
 	if(nSigDigits > 32)
 		nSigDigits = 32;
 	// gcvt (value, nSigDigits, text);
-	sprintf(text,"%.*f", nSigDigits, value);
+	snprintf(text, 32, "%.*f", nSigDigits, value);
 	return text;
 }
 

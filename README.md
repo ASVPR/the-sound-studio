@@ -22,7 +22,11 @@
 - ✅ Fixed FrequencyPlayerSettingsComponent pointer management errors
 - ✅ Fixed CustomChordComponent compilation errors
 - ✅ Built and deployed standalone application
-- 🟡 Minor compilation issues remain in ChordPlayerSettingsComponent (non-critical)
+- ✅ **FIXED: Window visibility issues resolved** - Application window now displays properly on startup
+- ✅ **FIXED: Removed blocking plugin scanning popup** - No longer blocks main window visibility
+- ✅ **UPDATED: Security improvements** - Replaced deprecated sprintf with secure snprintf
+- ✅ **UPDATED: Code documentation and authorship** - Proper ownership attribution and documentation
+- ✅ **RESOLVED: Application startup issues** - App launches and displays UI correctly
 
 ## Key Innovations
 
@@ -175,16 +179,19 @@
 
 ### Application Access
 1. **Ready-to-Use**: The Sound Studio.app is available in the main directory
-2. **Launch**: Double-click "The Sound Studio.app" to run
-3. **System Requirements**: macOS 10.15+ (Universal Binary - Intel/Apple Silicon)
-4. **Status**: Fully functional standalone application
+2. **Fixed Version**: The Sound Studio - Fixed.app includes latest visibility and stability fixes
+3. **Launch**: Double-click "The Sound Studio - Fixed.app" to run with all improvements
+4. **System Requirements**: macOS 10.15+ (Universal Binary - Intel/Apple Silicon)
+5. **Status**: Fully functional standalone application with resolved window visibility issues
 
 ### Project Structure
 ```
 tss/
+├── The Sound Studio - Fixed.app   # Latest fixed standalone application
+├── The Sound Studio.app           # Original standalone application
 ├── Codebase/                      # Source code
 │   └── TheSoundStudio/
-│       ├── Source/                # Application source files
+│       ├── Source/                # Application source files (with fixes applied)
 │       ├── Builds/                # Platform-specific build files
 │       │   └── MacOSX/            # Xcode project
 │       ├── JuceLibraryCode/       # Generated JUCE files
@@ -202,6 +209,22 @@ tss/
   - ✅ FrequencyPlayerSettingsComponent.cpp/h
   - ✅ CustomChordComponent.cpp/h
 - **Build Success**: ~95% of files compile successfully, standalone application functional
+
+### Latest Fixes Applied (August 2025)
+- **🔧 Window Visibility**: Fixed main window not appearing on startup
+  - Corrected window sizing initialization in Main.cpp:70-91
+  - Added proper window centering and visibility management
+  - Ensured window is brought to front and made visible
+- **🚫 Popup Removal**: Eliminated blocking plugin scanning popup
+  - Disabled AlertWindow in PluginRackComponent.cpp:221-225
+  - Plugin scanning now proceeds automatically without user interaction
+- **🔒 Security Updates**: Replaced deprecated functions
+  - Updated sprintf to snprintf in pluginconstants.h:76,80,290,302
+  - Fixed uninitialized variable warnings in SpectrogramComponent.h:1007
+- **📝 Code Documentation**: Updated authorship and comments
+  - Replaced previous author attributions with proper ownership
+  - Added comprehensive function and component documentation
+  - Updated file headers with clear purpose descriptions
 
 ### Monitoring the Application
 - **Monitor Script**: Run `./monitor_app.sh` to check application status

@@ -1,9 +1,14 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+    Main.cpp
+    Author: Ziv Elovitch
 
-    It contains the basic startup code for a JUCE application.
+    The Sound Studio - Main application entry point.
+    
+    This file contains the JUCE application startup code and main window setup.
+    Handles window initialization, sizing, and visibility management to ensure
+    proper application launch and user interface display.
 
   ==============================================================================
 */
@@ -65,19 +70,40 @@ public:
                                                                           .findColour (ResizableWindow::backgroundColourId),
                                                     DocumentWindow::closeButton + DocumentWindow::minimiseButton + DocumentWindow::maximiseButton)
         {
-//            setUsingNativeTitleBar (true);
-            setContentOwned (new MainComponent(), true);
+            // Use native title bar for better macOS integration
+            setUsingNativeTitleBar (true);
             
-            openGLContext.attachTo(*getTopLevelComponent());
-
            #if JUCE_IOS || JUCE_ANDROID
             setFullScreen (true);
            #else
+            // Set a default window size first
             setResizable (true, true);
-            centreWithSize (getWidth(), getHeight());
+            centreWithSize (1000, 800); // Set reasonable default size
            #endif
 
+            // Create main component AFTER window sizing is set
+            auto* mainComp = new MainComponent();
+            setContentOwned (mainComp, true);
+            
+            // Adjust window size based on MainComponent's actual scaled dimensions
+            int windowWidth = mainComp->mainWidth * mainComp->scaleFactor;
+            int windowHeight = mainComp->mainHeight * mainComp->scaleFactor;
+            
+           #if !JUCE_IOS && !JUCE_ANDROID
+            // Update to proper size now that we have the component
+            centreWithSize (windowWidth, windowHeight);
+           #endif
+            
+            // Attach OpenGL context AFTER content is set
+            openGLContext.attachTo(*getTopLevelComponent());
+
+            // Ensure window appears on screen and is brought to front
             setVisible (true);
+            toFront (true);
+            setAlwaysOnTop (false);
+            
+            // Make sure window is fully displayed
+            repaint();
         }
         
         

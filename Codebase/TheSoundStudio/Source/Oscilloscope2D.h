@@ -277,8 +277,8 @@ private:
             //projectionMatrix = createUniform (openGLContext, shaderProgram, "projectionMatrix");
             //viewMatrix       = createUniform (openGLContext, shaderProgram, "viewMatrix");
             
-            resolution          = createUniform (openGLContext, shaderProgram, "resolution");
-            audioSampleData     = createUniform (openGLContext, shaderProgram, "audioSampleData");
+            resolution          = std::unique_ptr<OpenGLShaderProgram::Uniform>(createUniform (openGLContext, shaderProgram, "resolution"));
+            audioSampleData     = std::unique_ptr<OpenGLShaderProgram::Uniform>(createUniform (openGLContext, shaderProgram, "audioSampleData"));
             
         }
         

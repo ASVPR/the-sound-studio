@@ -61,7 +61,7 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
 
     
     
-    slider_Amplitude    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Amplitude    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Amplitude    ->setRange (0, 1.0, 0);
     slider_Amplitude    ->addListener (this);
     slider_Amplitude    ->setTextValueSuffix("%");
@@ -71,11 +71,11 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
     slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
     
-    addAndMakeVisible(slider_Amplitude);
+    addAndMakeVisible(slider_Amplitude.get());
     
     int dif = 248;
     
-    slider_Attack       = new CustomRotarySlider(CustomRotarySlider::ROTARY_ATTACK);
+    slider_Attack       = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
     slider_Attack       ->setRange (0, 1.0, 0);
     slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Attack       ->addListener (this);
@@ -84,9 +84,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     slider_Attack       ->setBounds(knobL+(1 * dif), knobY, 130, 158);
     slider_Attack       ->setNumDecimalPlacesToDisplay(0);
     slider_Attack       ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Attack);
+    addAndMakeVisible(slider_Attack.get());
     
-    slider_Sustain      = new CustomRotarySlider(CustomRotarySlider::ROTARY_SUSTAIN);
+    slider_Sustain      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
     slider_Sustain      ->setRange (0, 1.0, 0);
     slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Sustain      ->addListener (this);
@@ -95,9 +95,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     slider_Sustain      ->setBounds(knobL+(2 * dif), knobY, 130, 158);
     slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
     slider_Sustain        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Sustain);
+    addAndMakeVisible(slider_Sustain.get());
     
-    slider_Decay        = new CustomRotarySlider(CustomRotarySlider::ROTARY_DECAY);
+    slider_Decay        = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
     slider_Decay        ->setRange (0, 1.0, 0);
     slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Decay        ->addListener (this);
@@ -106,9 +106,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     slider_Decay        ->setBounds(knobL+(3 * dif), knobY, 130, 158);
     slider_Decay        ->setNumDecimalPlacesToDisplay(0);
     slider_Decay        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Decay);
+    addAndMakeVisible(slider_Decay.get());
     
-    slider_Release      = new CustomRotarySlider(CustomRotarySlider::ROTARY_RELEASE);
+    slider_Release      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
     slider_Release      ->setRange (0, 1.0, 0);
     slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Release      ->addListener (this);
@@ -117,7 +117,7 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     slider_Release      ->setBounds(knobL+(4 * dif), knobY, 130, 158);
     slider_Release      ->setNumDecimalPlacesToDisplay(0);
     slider_Release      ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Release);
+    addAndMakeVisible(slider_Release.get());
     
     // FFT
 

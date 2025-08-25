@@ -372,8 +372,8 @@ private:
     {
         Uniforms (OpenGLContext& openGLContext, OpenGLShaderProgram& shaderProgram)
         {
-            projectionMatrix = createUniform (openGLContext, shaderProgram, "projectionMatrix");
-            viewMatrix       = createUniform (openGLContext, shaderProgram, "viewMatrix");
+            projectionMatrix = std::unique_ptr<OpenGLShaderProgram::Uniform>(createUniform (openGLContext, shaderProgram, "projectionMatrix"));
+            viewMatrix       = std::unique_ptr<OpenGLShaderProgram::Uniform>(createUniform (openGLContext, shaderProgram, "viewMatrix"));
         }
         
         std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix;
