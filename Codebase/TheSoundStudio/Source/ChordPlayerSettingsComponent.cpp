@@ -3,7 +3,7 @@
 
     ChordPlayerSettingsComponent.cpp
     Created: 14 Mar 2019 9:01:08pm
-    Author:  Gary Jones
+    Author:  Ziv Elovitch - The Sound Studio Team
 
   ==============================================================================
 */
@@ -298,7 +298,7 @@ void AddOnPopupComponent::paint (Graphics&g)
 
 void AddOnPopupComponent::buttonClicked (Button*button)
 {
-    if (button == addonButton[AddOn_6])
+    if (button == addonButton[AddOn_6].get())
     {
         if (button->getToggleState())
         {
@@ -310,7 +310,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
         }
         
     }
-    else if (button == addonButton[AddOn_7])
+    else if (button == addonButton[AddOn_7].get())
     {
         if (button->getToggleState())
         {
@@ -321,7 +321,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_7);
         }
     }
-    else if (button == addonButton[AddOn_7Major])
+    else if (button == addonButton[AddOn_7Major].get())
     {
         if (button->getToggleState())
         {
@@ -332,7 +332,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_7Major);
         }
     }
-    else if (button == addonButton[AddOn_9])
+    else if (button == addonButton[AddOn_9].get())
     {
         if (button->getToggleState())
         {
@@ -343,7 +343,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_9);
         }
     }
-    else if (button == addonButton[AddOn_9flat])
+    else if (button == addonButton[AddOn_9flat].get())
     {
         if (button->getToggleState())
         {
@@ -354,7 +354,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_9flat);
         }
     }
-    else if (button == addonButton[AddOn_9sharp])
+    else if (button == addonButton[AddOn_9sharp].get())
     {
         if (button->getToggleState())
         {
@@ -365,7 +365,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_9sharp);
         }
     }
-    else if (button == addonButton[AddOn_11])
+    else if (button == addonButton[AddOn_11].get())
     {
         if (button->getToggleState())
         {
@@ -376,7 +376,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_11);
         }
     }
-    else if (button == addonButton[AddOn_11sharp])
+    else if (button == addonButton[AddOn_11sharp].get())
     {
         if (button->getToggleState())
         {
@@ -387,7 +387,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_11sharp);
         }
     }
-    else if (button == addonButton[AddOn_13])
+    else if (button == addonButton[AddOn_13].get())
     {
         if (button->getToggleState())
         {
@@ -398,7 +398,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_13);
         }
     }
-    else if (button == addonButton[AddOn_13flat])
+    else if (button == addonButton[AddOn_13flat].get())
     {
         if (button->getToggleState())
         {
@@ -409,7 +409,7 @@ void AddOnPopupComponent::buttonClicked (Button*button)
             projectManager->setChordPlayerParameter(shortcutRef, ADD_ONS, AddOn_13flat);
         }
     }
-    else if (button == addonButton[AddOn_Inverted])
+    else if (button == addonButton[AddOn_Inverted].get())
     {
         if (button->getToggleState())
         {
@@ -471,7 +471,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                            Image(), 1.000f, Colour (0x00000000),
                            imageCloseButton, 0.75, Colour (0x00000000));
     button_Close->addListener(this);
-    addAndMakeVisible(button_Close);
+    addAndMakeVisible(button_Close.get());
     
     // toggle between these two
     button_ChooseChordFromList = std::make_unique<ImageButton>();
@@ -481,7 +481,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                              Image(), 1.000f, Colour (0x00000000),
                              imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseChordFromList->addListener(this);
-    addAndMakeVisible(button_ChooseChordFromList);
+    addAndMakeVisible(button_ChooseChordFromList.get());
     
     
     button_ChooseChordFromFrequency = std::make_unique<ImageButton>();
@@ -491,7 +491,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                            Image(), 1.000f, Colour (0x00000000),
                                            imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ChooseChordFromFrequency->addListener(this);
-    addAndMakeVisible(button_ChooseChordFromFrequency);
+    addAndMakeVisible(button_ChooseChordFromFrequency.get());
     
     // act as toggle between 5 buttons
     button_Default = std::make_unique<ImageButton>();
@@ -501,7 +501,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Default->addListener(this);
-    addAndMakeVisible(button_Default);
+    addAndMakeVisible(button_Default.get());
     
     int shift = 20;
     button_Sine = std::make_unique<ImageButton>();
@@ -511,7 +511,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sine->addListener(this);
-    addAndMakeVisible(button_Sine);
+    addAndMakeVisible(button_Sine.get());
     
     button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
@@ -520,7 +520,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Triangle->addListener(this);
-    addAndMakeVisible(button_Triangle);
+    addAndMakeVisible(button_Triangle.get());
     
     button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
@@ -529,7 +529,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Square->addListener(this);
-    addAndMakeVisible(button_Square);
+    addAndMakeVisible(button_Square.get());
     
     button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
@@ -538,7 +538,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sawtooth->addListener(this);
-    addAndMakeVisible(button_Sawtooth);
+    addAndMakeVisible(button_Sawtooth.get());
     
     button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
@@ -547,14 +547,14 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Wavetable->addListener(this);
-    addAndMakeVisible(button_Wavetable);
+    addAndMakeVisible(button_Wavetable.get());
     
     
-    button_WavetableEditor = new TextButton("");
+    button_WavetableEditor = std::make_unique<TextButton>("");
     button_WavetableEditor->setButtonText("WT Editor");
     button_WavetableEditor->setLookAndFeel(&lookAndFeel);
     button_WavetableEditor->addListener(this);
-    addAndMakeVisible(button_WavetableEditor);
+    addAndMakeVisible(button_WavetableEditor.get());
     
     
     button_Add = std::make_unique<ImageButton>();
@@ -564,7 +564,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageAddButton, 0.888, Colour (0x00000000));
     button_Add->addListener(this);
-    addAndMakeVisible(button_Add);
+    addAndMakeVisible(button_Add.get());
     
     int shiftBack = 8;
     button_Multiplication = std::make_unique<ImageButton>();
@@ -574,7 +574,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Multiplication->addListener(this);
-    addAndMakeVisible(button_Multiplication);
+    addAndMakeVisible(button_Multiplication.get());
     
     button_Division = std::make_unique<ImageButton>();
     button_Division->setTriggeredOnMouseDown(true);
@@ -583,12 +583,12 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Division->addListener(this);
-    addAndMakeVisible(button_Division);
+    addAndMakeVisible(button_Division.get());
     
     
     
     // Knobs
-    slider_Amplitude    = new CustomRotarySlider(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Amplitude    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Amplitude    ->setRange (0, 1.0, 0);
     slider_Amplitude    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -597,11 +597,11 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
     slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
     
-    addAndMakeVisible(slider_Amplitude);
+    addAndMakeVisible(slider_Amplitude.get());
     
     int dif = 219;
     
-    slider_Attack       = new CustomRotarySlider(CustomRotarySlider::ROTARY_ATTACK);
+    slider_Attack       = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
     slider_Attack       ->setRange (0, 1.0, 0);
     slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -609,9 +609,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     slider_Attack       ->setTextValueSuffix("Ms");
     slider_Attack       ->setNumDecimalPlacesToDisplay(0);
     slider_Attack       ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Attack);
+    addAndMakeVisible(slider_Attack.get());
     
-    slider_Decay        = new CustomRotarySlider(CustomRotarySlider::ROTARY_DECAY);
+    slider_Decay        = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
     slider_Decay        ->setRange (0, 1.0, 0);
     slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -619,9 +619,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     slider_Decay        ->setTextValueSuffix("Ms");
     slider_Decay        ->setNumDecimalPlacesToDisplay(0);
     slider_Decay        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Decay);
+    addAndMakeVisible(slider_Decay.get());
     
-    slider_Sustain      = new CustomRotarySlider(CustomRotarySlider::ROTARY_SUSTAIN);
+    slider_Sustain      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
     slider_Sustain      ->setRange (0, 1.0, 0);
     slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -629,9 +629,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     slider_Sustain      ->setTextValueSuffix("%");
     slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
     slider_Sustain        ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Sustain);
+    addAndMakeVisible(slider_Sustain.get());
     
-    slider_Release      = new CustomRotarySlider(CustomRotarySlider::ROTARY_RELEASE);
+    slider_Release      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
     slider_Release      ->setRange (0, 1.0, 0);
     slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
@@ -639,7 +639,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     slider_Release      ->setTextValueSuffix("Ms");
     slider_Release      ->setNumDecimalPlacesToDisplay(0);
     slider_Release      ->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(slider_Release);
+    addAndMakeVisible(slider_Release.get());
     
     // Font
     Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
@@ -651,19 +651,19 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     fontLight.setHeight(33);
     
     // Combobox
-    comboBoxKeynote     = new ComboBox();
+    comboBoxKeynote     = std::make_unique<ComboBox>();
     comboBoxKeynote->setSelectedId(0);
     comboBoxKeynote->addListener(this);
     comboBoxKeynote->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxKeynote);
+    addAndMakeVisible(comboBoxKeynote.get());
     
-    comboBoxChordtype= new ComboBox();
+    comboBoxChordtype= std::make_unique<ComboBox>();
     comboBoxChordtype->setSelectedId(0);
     comboBoxChordtype->addListener(this);
     comboBoxChordtype->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxChordtype);
+    addAndMakeVisible(comboBoxChordtype.get());
 
-    comboBoxPlayingInstrument = new ComboBox();
+    comboBoxPlayingInstrument = std::make_unique<ComboBox>();
     
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
@@ -688,16 +688,16 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     comboBoxPlayingInstrument->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->getRootMenu()->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->addListener(this);
-    addAndMakeVisible(comboBoxPlayingInstrument);
+    addAndMakeVisible(comboBoxPlayingInstrument.get());
     
-    comboBoxOutputSelection = new ComboBox();
+    comboBoxOutputSelection = std::make_unique<ComboBox>();
     comboBoxOutputSelection->setLookAndFeel(&lookAndFeel);
     comboBoxOutputSelection->addListener(this);
     comboBoxOutputSelection->setSelectedId(0);
     projectManager->getOutputsPopupMenu(*comboBoxOutputSelection->getRootMenu());
-    addAndMakeVisible(comboBoxOutputSelection);
+    addAndMakeVisible(comboBoxOutputSelection.get());
     
-    textEditorRepeat = new TextEditor("");
+    textEditorRepeat = std::make_unique<TextEditor>("");
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(2, "0123456789");
     textEditorRepeat->setMultiLine(false);
@@ -709,9 +709,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorRepeat->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorRepeat->applyFontToAllText(fontSemiBold);
     textEditorRepeat->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorRepeat);
+    addAndMakeVisible(textEditorRepeat.get());
     
-    textEditorPause = new TextEditor("");
+    textEditorPause = std::make_unique<TextEditor>("");
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789");
     textEditorPause->setMultiLine(false);
@@ -723,10 +723,10 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorPause->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorPause->applyFontToAllText(fontSemiBold);
     textEditorPause->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorPause);
+    addAndMakeVisible(textEditorPause.get());
     
     
-    textEditorLength = new TextEditor("");
+    textEditorLength = std::make_unique<TextEditor>("");
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
     textEditorLength->setInputRestrictions(5, "0123456789");
@@ -738,7 +738,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorLength->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorLength->applyFontToAllText(fontSemiBold);
     textEditorLength->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorLength);
+    addAndMakeVisible(textEditorLength.get());
     
     button_ManipulateFreq = std::make_unique<ImageButton>();
     button_ManipulateFreq->setTriggeredOnMouseDown(true);
@@ -747,10 +747,10 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                                Image(), 1.000f, Colour (0x00000000),
                                imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_ManipulateFreq->addListener(this);
-    addAndMakeVisible(button_ManipulateFreq);
+    addAndMakeVisible(button_ManipulateFreq.get());
     
     // TextEntryBoxes
-    textEditorInsertFreq = new TextEditor("");
+    textEditorInsertFreq = std::make_unique<TextEditor>("");
     textEditorInsertFreq->setReturnKeyStartsNewLine(false);
     textEditorInsertFreq->setMultiLine(false);
     textEditorInsertFreq->setInputRestrictions(5, "0123456789");
@@ -763,9 +763,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorInsertFreq->applyFontToAllText(fontSemiBold);
     textEditorInsertFreq->applyColourToAllText(Colours::lightgrey);
 
-    addAndMakeVisible(textEditorInsertFreq);
+    addAndMakeVisible(textEditorInsertFreq.get());
     
-    textEditorMultiplication = new TextEditor("");
+    textEditorMultiplication = std::make_unique<TextEditor>("");
     textEditorMultiplication->setReturnKeyStartsNewLine(false);
     textEditorMultiplication->setMultiLine(false);
     textEditorMultiplication->setInputRestrictions(6, "0123456789.");
@@ -777,9 +777,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorMultiplication->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorMultiplication->applyFontToAllText(fontSemiBold);
     textEditorMultiplication->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorMultiplication);
+    addAndMakeVisible(textEditorMultiplication.get());
     
-    textEditorDivision= new TextEditor("");
+    textEditorDivision= std::make_unique<TextEditor>("");
     textEditorDivision->setReturnKeyStartsNewLine(false);
     textEditorDivision->setMultiLine(false);
     textEditorDivision->setInputRestrictions(6, "0123456789.");
@@ -791,9 +791,9 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditorDivision->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorDivision->applyFontToAllText(fontSemiBold);
     textEditorDivision->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditorDivision);
+    addAndMakeVisible(textEditorDivision.get());
     
-    textEditor_Octave = new TextEditor("");
+    textEditor_Octave = std::make_unique<TextEditor>("");
     textEditor_Octave->setReturnKeyStartsNewLine(false);
     textEditor_Octave->setMultiLine(false);
     textEditor_Octave->setInputRestrictions(6, "0123456789.");
@@ -805,25 +805,25 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditor_Octave->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditor_Octave->applyFontToAllText(fontSemiBold);
     textEditor_Octave->applyColourToAllText(Colours::lightgrey);
-    addAndMakeVisible(textEditor_Octave);
+    addAndMakeVisible(textEditor_Octave.get());
     
     
-    button_AddCustomChord = new TextButton("Add Custom Chord");
+    button_AddCustomChord = std::make_unique<TextButton>("Add Custom Chord");
     button_AddCustomChord->addListener(this);
     button_AddCustomChord->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_AddCustomChord);
+    addAndMakeVisible(button_AddCustomChord.get());
     
-    button_Addons = new TextButton("Addons");
+    button_Addons = std::make_unique<TextButton>("Addons");
     button_Addons->addListener(this);
     button_Addons->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Addons);
+    addAndMakeVisible(button_Addons.get());
     
 
     
     
     // Labels
     
-    comboBox_Scales = new ComboBox();
+    comboBox_Scales = std::make_unique<ComboBox>();
     PopupMenu * scalesMenu =  comboBox_Scales->getRootMenu();
     scalesMenu->setLookAndFeel(&lookAndFeel);
         // return full popup menu system for dropdown in Settings / ChordPlayer
@@ -855,7 +855,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     comboBox_Scales->setSelectedId(DIATONIC_PYTHAGOREAN);
     comboBox_Scales->addListener(this);
     comboBox_Scales->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBox_Scales);
+    addAndMakeVisible(comboBox_Scales.get());
     
     
     imagePanicButton                    = ImageCache::getFromMemory(BinaryData::PanicButton2x_png, BinaryData::PanicButton2x_pngSize);
@@ -867,15 +867,15 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
                               Image(), 1.000f, Colour (0x00000000),
                               imagePanicButton, 0.6, Colour (0x00000000));
     button_Panic->addListener(this);
-    addAndMakeVisible(button_Panic);
+    addAndMakeVisible(button_Panic.get());
     
     // add on popup component
-    addOnPopupComponent = new AddOnPopupComponent(projectManager);
-    addAndMakeVisible(addOnPopupComponent);
+    addOnPopupComponent = std::make_unique<AddOnPopupComponent>(projectManager);
+    addAndMakeVisible(addOnPopupComponent.get());
     addOnPopupComponent->setVisible(false);
     
-    customChordPopupComponent = new CustomChordPopupComponent(projectManager);
-    addAndMakeVisible(customChordPopupComponent);
+    customChordPopupComponent = std::make_unique<CustomChordPopupComponent>(projectManager);
+    addAndMakeVisible(customChordPopupComponent.get());
     customChordPopupComponent->setVisible(false);
     
     for (int i = AMPLITUDE_MIN; i <= RELEASE_MAX; i++)
@@ -883,10 +883,10 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
+    wavetableEditorComponent          = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
-    popupWavetableWindow = new PopupFFTWindow("Wavetable Editor - Chord Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Chord Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);
@@ -1005,58 +1005,58 @@ void ChordPlayerSettingsComponent::paint (Graphics&g)
 
 void ChordPlayerSettingsComponent::buttonClicked (Button*button)
 {
-    if (button == button_Close)
+    if (button == button_Close.get())
     {
         closeView();
 
         popupWavetableWindow->setVisible(false);
         
     }
-    else if (button == button_ChooseChordFromList)
+    else if (button == button_ChooseChordFromList.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, CHORD_SOURCE, false);
     }
-    else if (button == button_ChooseChordFromFrequency)
+    else if (button == button_ChooseChordFromFrequency.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, CHORD_SOURCE, true);
     }
-    else if (button == button_Multiplication)
+    else if (button == button_Multiplication.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, MULTIPLY_OR_DIVISION, false);
     }
-    else if (button == button_Division)
+    else if (button == button_Division.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, MULTIPLY_OR_DIVISION, true);
     }
-    else if (button == button_ManipulateFreq)
+    else if (button == button_ManipulateFreq.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, MANIPULATE_CHOSEN_FREQUENCY, !button_ManipulateFreq->getToggleState());
     }
-    else if (button == button_Default)
+    else if (button == button_Default.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, WAVEFORM_TYPE, 0);
     }
-    else if (button == button_Sine)
+    else if (button == button_Sine.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, WAVEFORM_TYPE, 1);
     }
-    else if (button == button_Triangle)
+    else if (button == button_Triangle.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, WAVEFORM_TYPE, 2);
     }
-    else if (button == button_Square)
+    else if (button == button_Square.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, WAVEFORM_TYPE, 3);
     }
-    else if (button == button_Sawtooth)
+    else if (button == button_Sawtooth.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, WAVEFORM_TYPE, 4);
     }
-    else if (button == button_Wavetable)
+    else if (button == button_Wavetable.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, WAVEFORM_TYPE, 5);
     }
-    else if (button == button_WavetableEditor)
+    else if (button == button_WavetableEditor.get())
     {
         if (!popupWavetableWindow ->isVisible())
         {
@@ -1066,7 +1066,7 @@ void ChordPlayerSettingsComponent::buttonClicked (Button*button)
         else
             popupWavetableWindow ->setVisible(false);
     }
-    else if (button == button_Add)
+    else if (button == button_Add.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, SHORTCUT_IS_ACTIVE,  true);
         
@@ -1074,18 +1074,18 @@ void ChordPlayerSettingsComponent::buttonClicked (Button*button)
         
         projectManager->logFileWriter->processLog_ChordPlayer_Parameters();
     }
-    else if (button == button_AddCustomChord)
+    else if (button == button_AddCustomChord.get())
     {
         customChordPopupComponent->openView(shortcutRef);
         customChordPopupComponent->syncGUI();
     }
-    else if (button == button_Addons)
+    else if (button == button_Addons.get())
     {
         addOnPopupComponent->setShortcutRef(shortcutRef);
         addOnPopupComponent->setVisible(!addOnPopupComponent->isVisible());
         addOnPopupComponent->syncGUI();
     }
-    else if (button == button_Panic)
+    else if (button == button_Panic.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PANIC);
     }
@@ -1093,23 +1093,23 @@ void ChordPlayerSettingsComponent::buttonClicked (Button*button)
 
 void ChordPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == slider_Amplitude)
+    if (slider == slider_Amplitude.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, ENV_AMPLITUDE, slider_Amplitude->getValue());
     }
-    else if (slider == slider_Attack)
+    else if (slider == slider_Attack.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, ENV_ATTACK, slider_Attack->getValue());
     }
-    else if (slider == slider_Decay)
+    else if (slider == slider_Decay.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, ENV_DECAY, slider_Decay->getValue());
     }
-    else if (slider == slider_Sustain)
+    else if (slider == slider_Sustain.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, ENV_SUSTAIN, slider_Sustain->getValue());
     }
-    else if (slider == slider_Release)
+    else if (slider == slider_Release.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, ENV_RELEASE, slider_Release->getValue());
     }
@@ -1117,29 +1117,29 @@ void ChordPlayerSettingsComponent::sliderValueChanged (Slider* slider)
 
 void ChordPlayerSettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBoxKeynote)
+    if (comboBoxThatHasChanged == comboBoxKeynote.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, KEYNOTE, comboBoxKeynote->getSelectedId());
         
         projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD, false);
     }
-    else if (comboBoxThatHasChanged == comboBoxPlayingInstrument)
+    else if (comboBoxThatHasChanged == comboBoxPlayingInstrument.get())
     {
         int selectedID = comboBoxPlayingInstrument->getSelectedId();
         projectManager->setChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxChordtype)
+    else if (comboBoxThatHasChanged == comboBoxChordtype.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, CHORD_TYPE, comboBoxChordtype->getSelectedId());
         
         projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD, false);
     }
-    else if (comboBoxThatHasChanged == comboBoxOutputSelection)
+    else if (comboBoxThatHasChanged == comboBoxOutputSelection.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, CHORD_PLAYER_OUTPUT_SELECTION, comboBoxOutputSelection->getSelectedId());
     }
     
-    if (comboBoxThatHasChanged == comboBox_Scales)
+    if (comboBoxThatHasChanged == comboBox_Scales.get())
     {
         projectManager->setChordPlayerParameter(shortcutRef, CHORDPLAYER_SCALE, comboBox_Scales->getSelectedId());
     }
@@ -1148,7 +1148,7 @@ void ChordPlayerSettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasCha
 
 void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditorPause)
+    if (&editor == textEditorPause.get())
     {
         int value = editor.getText().getIntValue();
 
@@ -1161,7 +1161,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         // send to projectManager
         projectManager->setChordPlayerParameter(shortcutRef, NUM_PAUSE, value);
     }
-    else if (&editor == textEditorRepeat)
+    else if (&editor == textEditorRepeat.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1174,7 +1174,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         // send to projectManager
         projectManager->setChordPlayerParameter(shortcutRef, NUM_REPEATS, value);
     }
-    else if (&editor == textEditorLength)
+    else if (&editor == textEditorLength.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1187,7 +1187,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         // send to projectManager
         projectManager->setChordPlayerParameter(shortcutRef, NUM_DURATION, value);
     }
-    else if (&editor == textEditorDivision)
+    else if (&editor == textEditorDivision.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1200,7 +1200,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         // send to projectManager
         projectManager->setChordPlayerParameter(shortcutRef, DIVISION_VALUE, value);
     }
-    else if (&editor == textEditorMultiplication)
+    else if (&editor == textEditorMultiplication.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1213,7 +1213,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         // send to projectManager
         projectManager->setChordPlayerParameter(shortcutRef, MULTIPLY_VALUE, value);
     }
-    else if (&editor == textEditorInsertFreq)
+    else if (&editor == textEditorInsertFreq.get())
     {
         float value = editor.getText().getFloatValue();
         
@@ -1226,7 +1226,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         // send to projectManager
         projectManager->setChordPlayerParameter(shortcutRef, INSERT_FREQUENCY, value);
     }
-    else if (&editor == textEditor_Octave)
+    else if (&editor == textEditor_Octave.get())
     {
         float value = editor.getText().getFloatValue();
         

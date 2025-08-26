@@ -3,7 +3,7 @@
 
     ChordPlayerSettingsComponent.h
     Created: 14 Mar 2019 9:01:08pm
-    Author:  Gary Jones
+    Author:  Ziv Elovitch - The Sound Studio Team
 
   ==============================================================================
 */
@@ -139,8 +139,8 @@ private:
     
     std::unique_ptr<TextButton>   button_WavetableEditor;
     
-    WaveTableOscViewComponent * wavetableEditorComponent;
-    PopupFFTWindow *            popupWavetableWindow;
+    std::unique_ptr<WaveTableOscViewComponent> wavetableEditorComponent;
+    std::unique_ptr<PopupFFTWindow>            popupWavetableWindow;
     
     // Combobox
     std::unique_ptr<ComboBox> comboBoxKeynote;

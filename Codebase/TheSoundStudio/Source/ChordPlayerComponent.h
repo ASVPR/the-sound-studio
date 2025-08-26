@@ -3,7 +3,7 @@
 
     ChordPlayerComponent.h
     Created: 13 Mar 2019 9:54:54pm
-    Author:  Gary Jones
+    Author:  Ziv Elovitch - The Sound Studio Team
 
   ==============================================================================
 */
@@ -74,7 +74,7 @@ private:
     
     std::unique_ptr<ChordPlayerSettingsComponent> chordPlayerSettingsComponent;
     
-    ImageComponent * imageComp;
+    std::unique_ptr<ImageComponent> imageComp;
     
     std::unique_ptr<ShortcutContainerComponent> containerView_Shortcut;
     std::unique_ptr<Component> containerView_Main;

@@ -3,7 +3,10 @@
 
     2DVisualisers.h
     Created: 28 Nov 2019 8:41:05am
-    Author:  Gary Jones
+    Author:  Ziv Elovitch - The Sound Studio Team
+    
+    2D visualization components for audio analysis and rendering.
+    Uses modern C++ smart pointer management and OpenGL for efficient graphics.
 
   ==============================================================================
 */
@@ -248,7 +251,7 @@ private:
         {
             uniforms = nullptr;
             
-            shader = newShader;
+            shader = std::move(newShader);
             shader->use();
             
             uniforms = std::make_unique<Uniforms>(openGLContext, *shader);

@@ -3,7 +3,10 @@
 
     ChordScannerComponent.cpp
     Created: 13 Mar 2019 9:55:10pm
-    Author:  Gary Jones
+    Author:  Ziv Elovitch - The Sound Studio Team
+    
+    ChordScannerComponent provides chord scanning and analysis functionality.
+    Uses modern C++ smart pointer management for UI component lifecycle.
 
   ==============================================================================
 */
@@ -121,16 +124,18 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     
     // FFT
 
-    label_Playing   = new Label();
+    // Initialize playing status label with proper smart pointer management
+    label_Playing = std::make_unique<Label>();
     label_Playing->setText("Playing (00:40)", dontSendNotification);
     label_Playing->setJustificationType(Justification::left);
     fontLight.setHeight(33);
     label_Playing->setBounds(playingLeftMargin, playingTopMargin, 300, 40);
     label_Playing->setFont(fontLight);
-    addAndMakeVisible(label_Playing);
+    addAndMakeVisible(label_Playing.get());
 
     
-    button_Play = new ImageButton();
+    // Initialize play button with proper smart pointer management
+    button_Play = std::make_unique<ImageButton>();
     button_Play->setTriggeredOnMouseDown(true);
     button_Play->setImages (false, true, true,
                             imagePlayButton, 0.999f, Colour (0x00000000),
@@ -138,9 +143,10 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                             imagePlayButton, 0.6, Colour (0x00000000));
     button_Play->addListener(this);
     button_Play->setBounds(playLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Play);
+    addAndMakeVisible(button_Play.get());
     
-    button_Stop = new ImageButton();
+    // Initialize stop button with proper smart pointer management
+    button_Stop = std::make_unique<ImageButton>();
     button_Stop->setTriggeredOnMouseDown(true);
     button_Stop->setImages (false, true, true,
                             imageStopButton, 0.999f, Colour (0x00000000),
@@ -148,9 +154,10 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                             imageStopButton, 0.6, Colour (0x00000000));
     button_Stop->addListener(this);
     button_Stop->setBounds(stopLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Stop);
+    addAndMakeVisible(button_Stop.get());
     
-    button_Panic = new ImageButton();
+    // Initialize panic button with proper smart pointer management
+    button_Panic = std::make_unique<ImageButton>();
     button_Panic->setTriggeredOnMouseDown(true);
     button_Panic->setImages (false, true, true,
                              imagePanicButton, 0.999f, Colour (0x00000000),
@@ -158,13 +165,14 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                              imagePanicButton, 0.6, Colour (0x00000000));
     button_Panic->addListener(this);
     button_Panic->setBounds(panicLeftMargin, panicTopMargin, panicWidth, panicHeight);
-    addAndMakeVisible(button_Panic);
+    addAndMakeVisible(button_Panic.get());
 
 
     // Waveform buttons
     int waveY = 842;
     // act as toggle between 5 buttons
-    button_Default = new ImageButton();
+    // Initialize waveform selection buttons with proper smart pointer management
+    button_Default = std::make_unique<ImageButton>();
     button_Default->setTriggeredOnMouseDown(true);
     button_Default->setImages (false, true, true,
                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -172,9 +180,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Default->addListener(this);
     button_Default->setBounds(183, waveY, 38, 38);
-    addAndMakeVisible(button_Default);
+    addAndMakeVisible(button_Default.get());
     
-    button_Sine = new ImageButton();
+    button_Sine = std::make_unique<ImageButton>();
     button_Sine->setTriggeredOnMouseDown(true);
     button_Sine->setImages (false, true, true,
                             imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -182,9 +190,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                             imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sine->addListener(this);
     button_Sine->setBounds(330, waveY, 38, 38);
-    addAndMakeVisible(button_Sine);
+    addAndMakeVisible(button_Sine.get());
     
-    button_Triangle = new ImageButton();
+    button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
     button_Triangle->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -192,9 +200,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Triangle->addListener(this);
     button_Triangle->setBounds(639, waveY, 38, 38);
-    addAndMakeVisible(button_Triangle);
+    addAndMakeVisible(button_Triangle.get());
     
-    button_Square = new ImageButton();
+    button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
     button_Square->setImages (false, true, true,
                               imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -202,9 +210,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                               imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Square->addListener(this);
     button_Square->setBounds(924, waveY, 38, 38);
-    addAndMakeVisible(button_Square);
+    addAndMakeVisible(button_Square.get());
     
-    button_Sawtooth = new ImageButton();
+    button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
     button_Sawtooth->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -212,16 +220,16 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sawtooth->addListener(this);
     button_Sawtooth->setBounds(1240, waveY, 38, 38);
-    addAndMakeVisible(button_Sawtooth);
+    addAndMakeVisible(button_Sawtooth.get());
     
-    button_Wavetable = new ImageButton();
+    button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
     button_Wavetable->setImages (false, true, true,
                                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
                                                 Image(), 1.000f, Colour (0x00000000),
                                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Wavetable->addListener(this);
-    addAndMakeVisible(button_Wavetable);
+    addAndMakeVisible(button_Wavetable.get());
 
     
     //Chord Scan buttons
@@ -229,7 +237,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     int scanY   = 462;
 
     
-    button_ScanOnlyMainChords = new ImageButton();
+    // Initialize chord scanning buttons with proper smart pointer management
+    button_ScanOnlyMainChords = std::make_unique<ImageButton>();
     button_ScanOnlyMainChords->setTriggeredOnMouseDown(true);
     button_ScanOnlyMainChords->setImages (false, true, true,
                                 imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -237,9 +246,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanOnlyMainChords->addListener(this);
     button_ScanOnlyMainChords->setBounds(150, scanY, size, size);
-    addAndMakeVisible(button_ScanOnlyMainChords);
+    addAndMakeVisible(button_ScanOnlyMainChords.get());
 
-    button_ScanAllChords = new ImageButton();
+    button_ScanAllChords = std::make_unique<ImageButton>();
     button_ScanAllChords->setTriggeredOnMouseDown(true);
     button_ScanAllChords->setImages (false, true, true,
                                           imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -247,9 +256,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanAllChords->addListener(this);
     button_ScanAllChords->setBounds(542, scanY, size, size);
-    addAndMakeVisible(button_ScanAllChords);
+    addAndMakeVisible(button_ScanAllChords.get());
     
-    button_ScanSpecificRange = new ImageButton();
+    button_ScanSpecificRange = std::make_unique<ImageButton>();
     button_ScanSpecificRange->setTriggeredOnMouseDown(true);
     button_ScanSpecificRange->setImages (false, true, true,
                                           imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -257,10 +266,10 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanSpecificRange->addListener(this);
     button_ScanSpecificRange->setBounds(880, scanY, size, size);
-    addAndMakeVisible(button_ScanSpecificRange);
+    addAndMakeVisible(button_ScanSpecificRange.get());
     
     
-    button_ScanByFrequency = new ImageButton();
+    button_ScanByFrequency = std::make_unique<ImageButton>();
     button_ScanByFrequency->setTriggeredOnMouseDown(true);
     button_ScanByFrequency->setImages (false, true, true,
                                           imageBlueButtonNormal, 0.999f, Colour (0x00000000),
@@ -268,27 +277,29 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanByFrequency->addListener(this);
     button_ScanByFrequency->setBounds(1240, scanY, size, size);
-    addAndMakeVisible(button_ScanByFrequency);
+    addAndMakeVisible(button_ScanByFrequency.get());
     
     imageBlueCheckButtonNormal  = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
     
-    button_ExtendedRange = new ImageButton();
+    // Initialize range control button
+    button_ExtendedRange = std::make_unique<ImageButton>();
     button_ExtendedRange->setTriggeredOnMouseDown(true);
     button_ExtendedRange->setImages (false, true, true,
                                           imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
     button_ExtendedRange->addListener(this);
-    addAndMakeVisible(button_ExtendedRange);
+    addAndMakeVisible(button_ExtendedRange.get());
     
     
     
     // Text Entry for Repeater
     int playY = 1252;
     
-    textEditorRepeat = new TextEditor("");
+    // Initialize text editors for timing controls
+    textEditorRepeat = std::make_unique<TextEditor>("");
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(5, "0123456789");
     textEditorRepeat->setMultiLine(false);
@@ -301,10 +312,10 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorRepeat->applyFontToAllText(fontSemiBold);
     textEditorRepeat->applyColourToAllText(Colours::lightgrey);
     textEditorRepeat->setBounds(500, playY, 111, 35);
-    addAndMakeVisible(textEditorRepeat);
+    addAndMakeVisible(textEditorRepeat.get());
 
     
-    textEditorPause = new TextEditor("");
+    textEditorPause = std::make_unique<TextEditor>("");
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789.");
     textEditorPause->setMultiLine(false);
@@ -317,10 +328,10 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorPause->applyFontToAllText(fontSemiBold);
     textEditorPause->applyColourToAllText(Colours::lightgrey);
     textEditorPause->setBounds(1094, playY, 111, 35);
-    addAndMakeVisible(textEditorPause);
+    addAndMakeVisible(textEditorPause.get());
     
     
-    textEditorLength = new TextEditor("");
+    textEditorLength = std::make_unique<TextEditor>("");
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
     textEditorLength->setInputRestrictions(5, "0123456789.");
@@ -333,18 +344,20 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorLength->applyFontToAllText(fontSemiBold);
     textEditorLength->applyColourToAllText(Colours::lightgrey);
     textEditorLength->setBounds(794, playY, 111, 35);
-    addAndMakeVisible(textEditorLength);
+    addAndMakeVisible(textEditorLength.get());
     
     
     // visualiser component
-    visualiserContainerComponent = new VisualiserContainerComponent2(projectManager, AUDIO_MODE::MODE_CHORD_SCANNER);
+    // Initialize visualizer container component
+    visualiserContainerComponent = std::make_unique<VisualiserContainerComponent2>(projectManager, AUDIO_MODE::MODE_CHORD_SCANNER);
     visualiserContainerComponent->setBounds(350, 28, 1146, 320);
-    addAndMakeVisible(visualiserContainerComponent);
+    addAndMakeVisible(visualiserContainerComponent.get());
     
     // Progress bar
-    progressBar = new CustomProgressBar();
+    // Initialize progress bar component
+    progressBar = std::make_unique<CustomProgressBar>();
     progressBar->setBounds(292, 372, 1226, 42);
-    addAndMakeVisible(progressBar);
+    addAndMakeVisible(progressBar.get());
     
     
     // Load / Save Button
@@ -359,21 +372,21 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
 //    addAndMakeVisible(button_Save);
 
     
-    // Load / Save Button
-    button_Load = new TextButton("Load");
+    // Initialize save/load buttons with proper smart pointer management
+    button_Load = std::make_unique<TextButton>("Load");
     button_Load->setBounds(1470, 1204, 100, 40);
     button_Load->addListener(this);
     button_Load->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Load);
+    addAndMakeVisible(button_Load.get());
     
-    button_Save = new TextButton("Save");
+    button_Save = std::make_unique<TextButton>("Save");
     button_Save->setBounds(1360, 1204, 100, 40);
     button_Save->addListener(this);
     button_Save->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Save);
+    addAndMakeVisible(button_Save.get());
     
     // combobox playing instrument
-    comboBoxPlayingInstrument = new ComboBox();
+    comboBoxPlayingInstrument = std::make_unique<ComboBox>();
     
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
@@ -399,54 +412,56 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     comboBoxPlayingInstrument->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->getRootMenu()->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->addListener(this);
-    addAndMakeVisible(comboBoxPlayingInstrument);
+    addAndMakeVisible(comboBoxPlayingInstrument.get());
     
-    comboBoxOutputSelection = new ComboBox();
+    comboBoxOutputSelection = std::make_unique<ComboBox>();
     comboBoxOutputSelection->setLookAndFeel(&lookAndFeel);
     comboBoxOutputSelection->addListener(this);
     comboBoxOutputSelection->setSelectedId(0);
     projectManager->getOutputsPopupMenu(*comboBoxOutputSelection->getRootMenu());
-    addAndMakeVisible(comboBoxOutputSelection);
+    addAndMakeVisible(comboBoxOutputSelection.get());
 
     
     
-    label_CurrentPlayingChord = new Label();
+    // Initialize information display labels with proper memory management
+    label_CurrentPlayingChord = std::make_unique<Label>();
     label_CurrentPlayingChord->setText("F#Maj7", dontSendNotification);
     label_CurrentPlayingChord->setBounds(140, 310, 300, 40);
     fontLight.setHeight(33);
     label_CurrentPlayingChord->setJustificationType(Justification::left);
     label_CurrentPlayingChord->setFont(fontLight);
     label_CurrentPlayingChord->setColour(Label::textColourId , Colours::darkgrey);
-    addAndMakeVisible(label_CurrentPlayingChord);
+    addAndMakeVisible(label_CurrentPlayingChord.get());
     
-    label_Frequency = new Label();
+    label_Frequency = std::make_unique<Label>();
     label_Frequency->setText("440hz", dontSendNotification);
     label_Frequency->setBounds(250, 659, 300, 40);
     label_Frequency->setJustificationType(Justification::left);
     fontLight.setHeight(33);
     label_Frequency->setFont(fontLight);
     label_Frequency->setColour(Label::textColourId , Colours::darkgrey);
-    addAndMakeVisible(label_Frequency);
+    addAndMakeVisible(label_Frequency.get());
     
-    label_ClosestChord = new Label();
+    label_ClosestChord = std::make_unique<Label>();
     label_ClosestChord->setText("A Minor", dontSendNotification);
     label_ClosestChord->setBounds(1030, 659, 300, 40);
     label_ClosestChord->setJustificationType(Justification::left);
     fontLight.setHeight(33);
     label_ClosestChord->setFont(fontLight);
     label_ClosestChord->setColour(Label::textColourId , Colours::darkgrey);
-    addAndMakeVisible(label_ClosestChord);
+    addAndMakeVisible(label_ClosestChord.get());
     
     
-    component_KeynoteContainer = new Component();
+    // Initialize container components for UI organization
+    component_KeynoteContainer = std::make_unique<Component>();
     component_KeynoteContainer->setBounds(0, 563, 600, 35);
-    addAndMakeVisible(component_KeynoteContainer);
+    addAndMakeVisible(component_KeynoteContainer.get());
     
     //=============================================
     
-    component_FrequencyContainer = new Component();
+    component_FrequencyContainer = std::make_unique<Component>();
     component_FrequencyContainer->setBounds(0, 563, 600, 35);
-    addAndMakeVisible(component_FrequencyContainer);
+    addAndMakeVisible(component_FrequencyContainer.get());
     
     switchKeynoteFrequencyComponent(true);
     
@@ -458,39 +473,42 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     int comboBoxWidth = 186;
     
     
-    comboBoxOctaveFrom = new ComboBox();
+    // Initialize octave selection combo boxes
+    comboBoxOctaveFrom = std::make_unique<ComboBox>();
     comboBoxOctaveFrom->addItemList(ProjectStrings::getOctaveArray(), 1);
     comboBoxOctaveFrom->setSelectedId(1);
     comboBoxOctaveFrom->addListener(this);
     comboBoxOctaveFrom->setBounds(1174-250-40, octaveY, comboBoxWidth, 35);
     comboBoxOctaveFrom->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxOctaveFrom);
+    addAndMakeVisible(comboBoxOctaveFrom.get());
     
-    comboBoxOctaveTo = new ComboBox();
+    comboBoxOctaveTo = std::make_unique<ComboBox>();
     comboBoxOctaveTo->addItemList(ProjectStrings::getOctaveArray(), 1);
     comboBoxOctaveTo->setSelectedId(1);
     comboBoxOctaveTo->addListener(this);
     comboBoxOctaveTo->setBounds(1174-40, octaveY, comboBoxWidth, 35);
     comboBoxOctaveTo->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(comboBoxOctaveTo);
+    addAndMakeVisible(comboBoxOctaveTo.get());
     
-    comboBoxKeynoteFrom = new ComboBox();
+    // Initialize keynote selection combo boxes
+    comboBoxKeynoteFrom = std::make_unique<ComboBox>();
     comboBoxKeynoteFrom->addItemList(ProjectStrings::getKeynoteArray(), 1);
     comboBoxKeynoteFrom->setSelectedId(1);
     comboBoxKeynoteFrom->addListener(this);
     comboBoxKeynoteFrom->setBounds(keynoteFromX, 0, comboBoxWidth, 35);
     comboBoxKeynoteFrom->setLookAndFeel(&lookAndFeel);
-    component_KeynoteContainer->addAndMakeVisible(comboBoxKeynoteFrom);
+    component_KeynoteContainer->addAndMakeVisible(comboBoxKeynoteFrom.get());
     
-    comboBoxKeynoteTo = new ComboBox();
+    comboBoxKeynoteTo = std::make_unique<ComboBox>();
     comboBoxKeynoteTo->addItemList(ProjectStrings::getKeynoteArray(), 1);
     comboBoxKeynoteTo->setSelectedId(1);
     comboBoxKeynoteTo->addListener(this);
     comboBoxKeynoteTo->setBounds(keynoteToX, 0, comboBoxWidth, 35);
     comboBoxKeynoteTo->setLookAndFeel(&lookAndFeel);
-    component_KeynoteContainer->addAndMakeVisible(comboBoxKeynoteTo);
+    component_KeynoteContainer->addAndMakeVisible(comboBoxKeynoteTo.get());
     
-    textEditorFrequencyFrom = new TextEditor("");
+    // Initialize frequency input text editors
+    textEditorFrequencyFrom = std::make_unique<TextEditor>("");
     textEditorFrequencyFrom->setReturnKeyStartsNewLine(false);
     textEditorFrequencyFrom->setMultiLine(false);
     textEditorFrequencyFrom->setInputRestrictions(12, "0123456789.");
@@ -502,9 +520,9 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorFrequencyFrom->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorFrequencyFrom->applyFontToAllText(fontSemiBold);
     textEditorFrequencyFrom->setBounds(keynoteFromX, 0, comboBoxWidth, 35);
-    component_FrequencyContainer->addAndMakeVisible(textEditorFrequencyFrom);
+    component_FrequencyContainer->addAndMakeVisible(textEditorFrequencyFrom.get());
     
-    textEditorFrequencyTo = new TextEditor("");
+    textEditorFrequencyTo = std::make_unique<TextEditor>("");
     textEditorFrequencyTo->setReturnKeyStartsNewLine(false);
     textEditorFrequencyTo->setMultiLine(false);
     textEditorFrequencyTo->setInputRestrictions(12, "0123456789.");
@@ -516,7 +534,7 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorFrequencyTo->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorFrequencyTo->applyFontToAllText(fontSemiBold);
     textEditorFrequencyTo->setBounds(keynoteToX, 0, comboBoxWidth, 35);
-    component_FrequencyContainer->addAndMakeVisible(textEditorFrequencyTo);
+    component_FrequencyContainer->addAndMakeVisible(textEditorFrequencyTo.get());
     
 
     //===========================================================
@@ -527,13 +545,15 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
         updateMinMaxSettings(i);
     }
     
-    button_WavetableEditor = new TextButton("");
+    // Initialize wavetable editor button
+    button_WavetableEditor = std::make_unique<TextButton>("");
     button_WavetableEditor->setButtonText("WT Editor");
     button_WavetableEditor->setLookAndFeel(&lookAndFeel);
     button_WavetableEditor->addListener(this);
-    addAndMakeVisible(button_WavetableEditor);
+    addAndMakeVisible(button_WavetableEditor.get());
 
-    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_CHORD_SCANNER, -1);
+    // Initialize wavetable editor components (raw pointer for compatibility)
+    wavetableEditorComponent = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_CHORD_SCANNER, -1);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
     popupWavetableWindow = new PopupFFTWindow("Wavetable Editor", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
@@ -717,48 +737,48 @@ void ChordScannerComponent::paint (Graphics& g)
 
 void ChordScannerComponent::buttonClicked (Button*button)
 {
-    if (button == button_Record)
+    if (button == button_Record.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_RECORD);
     }
-    else if (button == button_Play)
+    else if (button == button_Play.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
     }
-    else if (button == button_Stop)
+    else if (button == button_Stop.get())
     {
         projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
     }
-    else if (button == button_Panic)
+    else if (button == button_Panic.get())
     {
         projectManager->setPanicButton();
     }
 
-    else if (button == button_Default)
+    else if (button == button_Default.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 0);
     }
-    else if (button == button_Sine)
+    else if (button == button_Sine.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 1);
     }
-    else if (button == button_Triangle)
+    else if (button == button_Triangle.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 2);
     }
-    else if (button == button_Square)
+    else if (button == button_Square.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 3);
     }
-    else if (button == button_Sawtooth)
+    else if (button == button_Sawtooth.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 4);
     }
-    else if (button == button_Wavetable)
+    else if (button == button_Wavetable.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 5);
     }
-    else if (button == button_WavetableEditor)
+    else if (button == button_WavetableEditor.get())
     {
         if (!popupWavetableWindow ->isVisible())
         {
@@ -768,39 +788,39 @@ void ChordScannerComponent::buttonClicked (Button*button)
         else popupWavetableWindow ->setVisible(false);
     }
     
-    else if (button == button_ScanOnlyMainChords)
+    else if (button == button_ScanOnlyMainChords.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_MODE, 0);
         
         switchKeynoteFrequencyComponent(true);
     }
-    else if (button == button_ScanAllChords)
+    else if (button == button_ScanAllChords.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_MODE, 1);
         
         switchKeynoteFrequencyComponent(true);
     }
-    else if (button == button_ScanSpecificRange)
+    else if (button == button_ScanSpecificRange.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_MODE, 2);
         
         switchKeynoteFrequencyComponent(true);
     }
-    else if (button == button_ScanByFrequency)
+    else if (button == button_ScanByFrequency.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_MODE, 3);
         
         switchKeynoteFrequencyComponent(false);
     }
-    else if (button == button_ExtendedRange)
+    else if (button == button_ExtendedRange.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_OCTAVE_EXTENDED, !button_ExtendedRange->getToggleState());
     }
-    else if (button == button_Load)
+    else if (button == button_Load.get())
     {
         projectManager->loadProfileForMode(AUDIO_MODE::MODE_CHORD_SCANNER);
     }
-    else if (button == button_Save)
+    else if (button == button_Save.get())
     {
         projectManager->saveProfileForMode(AUDIO_MODE::MODE_CHORD_SCANNER);
     }
@@ -808,23 +828,23 @@ void ChordScannerComponent::buttonClicked (Button*button)
 
 void ChordScannerComponent::sliderValueChanged (Slider* slider)
 {
-    if (slider == slider_Amplitude)
+    if (slider == slider_Amplitude.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_AMPLITUDE, slider_Amplitude->getValue());
     }
-    else if (slider == slider_Attack)
+    else if (slider == slider_Attack.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_ATTACK, slider_Attack->getValue());
     }
-    else if (slider == slider_Decay)
+    else if (slider == slider_Decay.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_DECAY, slider_Decay->getValue());
     }
-    else if (slider == slider_Sustain)
+    else if (slider == slider_Sustain.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_SUSTAIN, slider_Sustain->getValue());
     }
-    else if (slider == slider_Release)
+    else if (slider == slider_Release.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_RELEASE, slider_Release->getValue());
     }
@@ -832,32 +852,32 @@ void ChordScannerComponent::sliderValueChanged (Slider* slider)
 
 void ChordScannerComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if (comboBoxThatHasChanged == comboBoxPlayingInstrument)
+    if (comboBoxThatHasChanged == comboBoxPlayingInstrument.get())
     {
         int selectedID = comboBoxPlayingInstrument->getSelectedId();
         projectManager->setChordScannerParameter(CHORD_SCANNER_INSTRUMENT_TYPE, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxKeynoteTo)
+    else if (comboBoxThatHasChanged == comboBoxKeynoteTo.get())
     {
         int selectedID = comboBoxKeynoteTo->getSelectedId();
         projectManager->setChordScannerParameter(CHORD_SCANNER_KEYNOTE_TO, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxKeynoteFrom)
+    else if (comboBoxThatHasChanged == comboBoxKeynoteFrom.get())
     {
         int selectedID = comboBoxKeynoteFrom->getSelectedId();
         projectManager->setChordScannerParameter(CHORD_SCANNER_KEYNOTE_FROM, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxOctaveTo)
+    else if (comboBoxThatHasChanged == comboBoxOctaveTo.get())
     {
         int selectedID = comboBoxOctaveTo->getSelectedId() - 1;
         projectManager->setChordScannerParameter(CHORD_SCANNER_OCTAVE_TO, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxOctaveFrom)
+    else if (comboBoxThatHasChanged == comboBoxOctaveFrom.get())
     {
         int selectedID = comboBoxOctaveFrom->getSelectedId() - 1;
         projectManager->setChordScannerParameter(CHORD_SCANNER_OCTAVE_FROM, selectedID);
     }
-    else if (comboBoxThatHasChanged == comboBoxOutputSelection)
+    else if (comboBoxThatHasChanged == comboBoxOutputSelection.get())
     {
         projectManager->setChordScannerParameter( CHORD_SCANNER_OUTPUT_SELECTION, comboBoxOutputSelection->getSelectedId());
     }
@@ -1137,7 +1157,7 @@ void ChordScannerComponent::updateChordScannerUIParameter(int paramIndex)
 
 void ChordScannerComponent::textEditorReturnKeyPressed (TextEditor&editor)
 {
-    if (&editor == textEditorPause)
+    if (&editor == textEditorPause.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1150,7 +1170,7 @@ void ChordScannerComponent::textEditorReturnKeyPressed (TextEditor&editor)
         // send to projectManager
         projectManager->setChordScannerParameter(CHORD_SCANNER_NUM_PAUSE, value);
     }
-    else if (&editor == textEditorRepeat)
+    else if (&editor == textEditorRepeat.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1163,7 +1183,7 @@ void ChordScannerComponent::textEditorReturnKeyPressed (TextEditor&editor)
         // send to projectManager
         projectManager->setChordScannerParameter(CHORD_SCANNER_NUM_REPEATS, value);
     }
-    else if (&editor == textEditorLength)
+    else if (&editor == textEditorLength.get())
     {
         int value = editor.getText().getIntValue();
         
@@ -1176,7 +1196,7 @@ void ChordScannerComponent::textEditorReturnKeyPressed (TextEditor&editor)
         // send to projectManager
         projectManager->setChordScannerParameter(CHORD_SCANNER_NUM_DURATION, value);
     }
-    else if (&editor == textEditorFrequencyTo)
+    else if (&editor == textEditorFrequencyTo.get())
     {
         double value = editor.getText().getDoubleValue();
         
@@ -1189,7 +1209,7 @@ void ChordScannerComponent::textEditorReturnKeyPressed (TextEditor&editor)
         // send to projectManager
         projectManager->setChordScannerParameter(CHORD_SCANNER_FREQUENCY_TO, value);
     }
-    else if (&editor == textEditorFrequencyFrom)
+    else if (&editor == textEditorFrequencyFrom.get())
     {
         double value = editor.getText().getDoubleValue();
         

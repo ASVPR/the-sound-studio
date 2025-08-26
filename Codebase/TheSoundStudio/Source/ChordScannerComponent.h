@@ -3,7 +3,10 @@
 
     ChordScannerComponent.h
     Created: 13 Mar 2019 9:55:10pm
-    Author:  Gary Jones
+    Author:  Ziv Elovitch - The Sound Studio Team
+    
+    ChordScannerComponent provides chord scanning and analysis functionality.
+    Uses modern C++ smart pointer management for UI component lifecycle.
 
   ==============================================================================
 */
