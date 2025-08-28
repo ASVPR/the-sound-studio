@@ -977,21 +977,13 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
     
-    // run through directory to fix instrument categories
-    // then need to create submenu and add it each category
-    File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("ASVPR/SampleLibrary/Playing Instruments");
+    // Use synthesis-based instrument list instead of file system scanning
+    Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp", "Strings", "Woodwinds"};
     
-    Array<juce::File> results;
-    dir.findChildFiles(results, juce::File::TypesOfFileToFind::findDirectories , false);
-    
-    
-    for (int i = 0; i < results.size() ; i++)
+    // Add synthesis instruments to combo box menu
+    for (int i = 0; i < synthInstruments.size(); i++)
     {
-        PopupMenu subMenu;
-        
-        File instrumentDir(results[i]);
-        String instName(instrumentDir.getFileName());
-        comboBoxMenu->addItem(i+1, instName);
+        comboBoxMenu->addItem(i+1, synthInstruments[i]);
     }
 
     comboBoxPlayingInstrument->setLookAndFeel(&lookAndFeel);

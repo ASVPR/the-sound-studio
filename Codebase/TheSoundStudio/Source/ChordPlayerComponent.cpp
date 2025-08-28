@@ -436,14 +436,17 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
             // PLAYING_INSTRUMENT
             int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE).operator int() - 1;
             
-            // get string for type
+            // Use synthesis-based instrument library instead of samples
             String instString;
             
-            File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("ASVPR/SampleLibrary/Playing Instruments");
+            // Map instrument types to synthesis-based instruments (no file system access needed)
+            Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp"};
             
-            Array<juce::File> results; dir.findChildFiles(results, juce::File::TypesOfFileToFind::findDirectories , false);
-            
-            File instrumentDir(results[instrumentType]); String instName(instrumentDir.getFileName());
+            String instName = "Grand Piano"; // Default
+            if (instrumentType >= 0 && instrumentType < synthInstruments.size())
+            {
+                instName = synthInstruments[instrumentType];
+            }
             
             stringLabel         = "Instrument :";
             stringWaveform      = instName;

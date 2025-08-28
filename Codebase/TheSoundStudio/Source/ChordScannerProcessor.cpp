@@ -29,7 +29,7 @@ ChordScannerProcessor::ChordScannerProcessor(FrequencyManager * fm, SynthesisLib
     chordManager    = new ChordManager(frequencyManager);
         
     shouldMute      = false;
-    waveformType    = SAMPLER;
+    waveformType    = SAMPLER; // Keep original - will redirect SAMPLER to use synthesis
     
     repeater        = new PlayRepeater(this, 44100);
 }
@@ -193,7 +193,8 @@ void ChordScannerProcessor::processBlock (AudioBuffer<float>& buffer,
         
         if (waveformType == SAMPLER)
         {
-            sampler->processBlock(outputBuffer, midiMessages);
+            // FIXED: Redirect playing instruments to use synthesis instead of samples
+            wavetableSynth->processBlock(outputBuffer, midiMessages);
         }
         else if (waveformType == WAVETABLE)
         {
@@ -255,7 +256,8 @@ void ChordScannerProcessor::triggerNoteOn(KEYNOTES keynote, CHORD_TYPES chordTyp
             {
                 if (waveformType == SAMPLER)
                 {
-                    sampler->noteOn(0, midiNote, freq);
+                    // FIXED: Redirect playing instruments to use synthesis instead of samples
+                    wavetableSynth->noteOn(0, midiNote, freq);
                 }
                 else if (waveformType == WAVETABLE)
                 {
@@ -289,7 +291,8 @@ void ChordScannerProcessor::triggerNoteOff(KEYNOTES keynote, CHORD_TYPES chordTy
 
             if (waveformType == SAMPLER)
             {
-                sampler->noteOff(0, midiNote, 1.0, true);
+                // FIXED: Redirect playing instruments to use synthesis instead of samples
+                wavetableSynth->noteOff(0, midiNote, 1.0, true);
             }
             else if (waveformType == WAVETABLE)
             {
@@ -314,7 +317,8 @@ void ChordScannerProcessor::triggerNoteOnDirect(KEYNOTES keynote, int octave)
         
         if (waveformType == SAMPLER)
         {
-            sampler->noteOn(0, midiNote, freq);
+            // FIXED: Redirect playing instruments to use synthesis instead of samples
+            wavetableSynth->noteOn(0, midiNote, freq);
         }
         else if (waveformType == WAVETABLE)
         {

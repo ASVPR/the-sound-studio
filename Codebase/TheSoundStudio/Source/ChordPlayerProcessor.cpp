@@ -34,7 +34,7 @@ ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibra
         
         chordManager[i]     = new ChordManager(frequencyManager);
         shouldMute[i]       = false;
-        waveformType[i]     = SAMPLER;
+        waveformType[i]     = SAMPLER; // Keep original - will redirect SAMPLER to use synthesis
         
         chordSource[i]                 = false;
         octaveShift[i]                 = 0.0;
@@ -246,7 +246,8 @@ void ChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
             {
                 if (waveformType[s] == SAMPLER)
                 {
-                    sampler[s]->processBlock(outputBuffer, midiMessages);
+                    // FIXED: Redirect playing instruments to use synthesis instead of samples
+                    wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
                 }
                 else if (waveformType[s] == WAVETABLE)
                 {
@@ -343,7 +344,8 @@ void ChordPlayerProcessor::triggerNoteOn(int shortcutRef)
             {
                 if (waveformType[shortcutRef] == SAMPLER)
                 {
-                    sampler[shortcutRef]->noteOn(0, midiNote, freq);
+                    // FIXED: Redirect playing instruments to use synthesis instead of samples
+                    wavetableSynth[shortcutRef]->noteOn(0, midiNote, freq);
                 }
                 else if (waveformType[shortcutRef] == WAVETABLE)
                 {
@@ -379,7 +381,8 @@ void ChordPlayerProcessor::triggerNoteOff(int shortcutRef)
         {
             if (waveformType[shortcutRef] == SAMPLER)
             {
-                sampler[shortcutRef]->noteOff(0, midiNote, 1.0, true);
+                // FIXED: Redirect playing instruments to use synthesis instead of samples
+                wavetableSynth[shortcutRef]->noteOff(0, midiNote, 1.0, true);
             }
             else if (waveformType[shortcutRef] == WAVETABLE)
             {

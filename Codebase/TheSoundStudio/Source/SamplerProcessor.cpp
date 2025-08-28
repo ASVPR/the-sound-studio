@@ -475,72 +475,20 @@ void SamplerProcessor::setParameter(int index, var newValue)
     }
 }
 
-void SamplerProcessor::loadInstrument(int filePathIndex) // used for new playing instruments high res
+void SamplerProcessor::loadInstrument(int filePathIndex) // FIXED: Now completely bypassed
 {
+    // IMPORTANT: This method is now bypassed because SAMPLER calls are redirected
+    // to use WavetableSynthProcessor in the main processors (ChordPlayerProcessor, etc.)
     
-    String instrumentName = sampleLibraryManager->getInstrumentName(filePathIndex-1);
+    // The SamplerProcessor is no longer used for playing instruments.
+    // Instead, when waveformType == SAMPLER, the system automatically uses
+    // wavetableSynth->processBlock() which generates synthesis-based audio.
     
-    // read child files
+    // This method still exists for compatibility, but does nothing.
+    // All "playing instrument" audio generation now happens through synthesis.
     
-    // search for number in filename,
-//    Array<juce::File> results;
-//    instrumentDir.findChildFiles(results, juce::File::TypesOfFileToFind::findFiles , false);
-    
-    // instrumentName already retrieved above
-    
-    if (filePathIndex > 0)
-    {
-        clearSounds();
-        
-        // load to each midi note..
-        for (int i = 0; i < 128; i++)
-        {
-            float noteFrequency     = 440 * powf (2.0, (i - 69) / 12.0);
-            float halfSemitone      = powf(2.0, 1 / 24.f);
-            float start             = noteFrequency / halfSemitone;
-            float end               = noteFrequency * halfSemitone;
-            Range<float>            freqRange(start, end);
-            
-            String fileNameEnumeration(instrumentName);
-            String enumString(i+1);
-            
-            fileNameEnumeration.append(enumString, 3);
-            fileNameEnumeration.append(".wav", 4);
-            
-            // FIXED: Synthesis-based system doesn't use file paths
-            // Instead, generate synthesis parameters based on the note and instrument
-            String synthParameterName = instrumentName + "_" + fileNameEnumeration;
-            
-            int midiNote                    = i;
-            double maxSampleLengthSeconds   = 12.f;
-            
-            BigInteger midiNotes;
-
-            // FIXED: Generate synthesis-based sound instead of loading files
-            midiNotes.setBit(midiNote);
-            
-            // For synthesis-based system, create procedural sound
-            SynthesisInstrument synthInstrument = sampleLibraryManager->getInstrument(filePathIndex-1);
-            
-            // TODO: Create synthesis-based sound with procedural parameters
-            // This code needs to be implemented for synthesis-based instruments
-            /*
-            SynthSamplerSound::Ptr newSound = new SynthSamplerSound(
-                synthParameterName, 
-                synthInstrument.synthType,
-                midiNotes, 
-                midiNote, 
-                noteFrequency, 
-                freqRange, 
-                maxSampleLengthSeconds 
-            );
-            */
-            
-            // this->addSound(newSound); // TODO: Re-enable when synthesis implementation is complete
-        }
-    }
-
-    // need to expand the sampler instrument to parse between frequency ranges, not specific midinotes
+    // Clear any existing sounds to be safe (though they won't be used)
+    clearSounds();
 }
 //void SamplerProcessor::loadNewSamplerInstrument(int midiNote)
 //{

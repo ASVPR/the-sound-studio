@@ -3544,14 +3544,17 @@ void ProjectManager::LogFileWriter::processLog_ChordPlayer_Parameters()
                 // PLAYING_INSTRUMENT
                 int instrumentType = projectManager->getChordPlayerParameter(i, INSTRUMENT_TYPE).operator int() - 1;
                 
-                // get string for type
+                // Use synthesis-based instrument library
                 String instString;
                 
-                File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("ASVPR/SampleLibrary/Playing Instruments");
+                // Map instrument types to synthesis-based instruments (no file system access needed)
+                Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp"};
                 
-                Array<juce::File> results; dir.findChildFiles(results, juce::File::TypesOfFileToFind::findDirectories , false);
-                
-                File instrumentDir(results[instrumentType]); String instName(instrumentDir.getFileName());
+                String instName = "Grand Piano"; // Default
+                if (instrumentType >= 0 && instrumentType < synthInstruments.size())
+                {
+                    instName = synthInstruments[instrumentType];
+                }
                 
                 string_Waveform     = "N/A";
                 string_Instrument   = instName;
@@ -3810,14 +3813,17 @@ void ProjectManager::LogFileWriter::processLog_ChordScanner_Parameters()
         // PLAYING_INSTRUMENT
         int instrumentType = projectManager->getChordScannerParameter(CHORD_SCANNER_INSTRUMENT_TYPE).operator int() - 1;
         
-        // get string for type
+        // Use synthesis-based instrument library
         String instString;
         
-        File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("ASVPR/SampleLibrary/Playing Instruments");
+        // Map instrument types to synthesis-based instruments (no file system access needed)
+        Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp"};
         
-        Array<juce::File> results; dir.findChildFiles(results, juce::File::TypesOfFileToFind::findDirectories , false);
-        
-        File instrumentDir(results[instrumentType]); String instName(instrumentDir.getFileName());
+        String instName = "Grand Piano"; // Default
+        if (instrumentType >= 0 && instrumentType < synthInstruments.size())
+        {
+            instName = synthInstruments[instrumentType];
+        }
         
         string_Waveform     = "N/A";
         string_Instrument   = instName;

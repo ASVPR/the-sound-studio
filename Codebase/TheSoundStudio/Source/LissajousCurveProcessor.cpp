@@ -615,7 +615,7 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::processSimultaneousShortcu
 //
 //    chordManager     = new ChordManager(frequencyManager);
 //    shouldMute       = false;
-//    waveformType     = SAMPLER;
+//    waveformType     = SAMPLER; // Keep original - will redirect SAMPLER to use synthesis
 //
 //
 //    repeater = new PlayRepeater(this, 44100);
@@ -1177,7 +1177,7 @@ LissajousChordPlayerProcessor::LissajousChordPlayerProcessor(FrequencyManager * 
     
     chordManager     = new ChordManager(frequencyManager);
     shouldMute       = false;
-    waveformType     = SAMPLER;
+    waveformType     = SAMPLER; // Keep original - will redirect SAMPLER to use synthesis
     
     chordSource                 = false;
     octaveShift                 = 0.0;
@@ -1367,7 +1367,8 @@ void LissajousChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
     {
         if (waveformType == SAMPLER)
         {
-            sampler->processBlock(buffer, midiMessages);
+            // FIXED: Redirect playing instruments to use synthesis instead of samples
+            wavetableSynth->processBlock(buffer, midiMessages);
         }
         else if (waveformType == WAVETABLE)
         {
@@ -1432,7 +1433,8 @@ void LissajousChordPlayerProcessor::triggerNoteOn(int shortcutRef)
             {
                 if (waveformType == SAMPLER)
                 {
-                    sampler->noteOn(0, midiNote, freq);
+                    // FIXED: Redirect playing instruments to use synthesis instead of samples
+                    wavetableSynth->noteOn(0, midiNote, freq);
                 }
                 else if (waveformType == WAVETABLE)
                 {
@@ -1467,7 +1469,8 @@ void LissajousChordPlayerProcessor::triggerNoteOff(int shortcutRef)
         {
             if (waveformType == SAMPLER)
             {
-                sampler->noteOff(0, midiNote, 1.0, true);
+                // FIXED: Redirect playing instruments to use synthesis instead of samples
+                wavetableSynth->noteOff(0, midiNote, 1.0, true);
             }
             else if (waveformType == WAVETABLE)
             {

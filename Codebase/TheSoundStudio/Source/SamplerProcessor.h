@@ -144,7 +144,7 @@ public:
 //    void loadSampleIntoPlayerNew (String filePath);
 //    void loadSampleIntoPlayer (int filePathIndex);
 //
-    void loadInstrument(int filePathIndex); // used for new playing instruments high res
+    void loadInstrument(int filePathIndex); // FIXED: Redirects to synthesis system
 
 private:
     int shortcutRef;
