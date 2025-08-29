@@ -75,10 +75,13 @@ namespace BinaryData
     const int            SettingsBackgroundNewSize = 82099;
 
     extern const char*   icon_128_png;
-    const int            icon_128_pngSize = 20500;
+    const int            icon_128_pngSize = 12742;
 
     extern const char*   icon_512_png;
-    const int            icon_512_pngSize = 98711;
+    const int            icon_512_pngSize = 198135;
+
+    extern const char*   icon_large_png;
+    const int            icon_large_pngSize = 996222;
 
     extern const char*   ButtonChordFrequencyNormal;
     const int            ButtonChordFrequencyNormalSize = 3609;
@@ -336,7 +339,7 @@ namespace BinaryData
     const int            stop2x_pngSize = 7388;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 109;
+    const int namedResourceListSize = 110;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

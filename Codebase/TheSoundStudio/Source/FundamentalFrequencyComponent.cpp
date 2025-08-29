@@ -13,7 +13,8 @@
 
 FundamentalFrequencyComponent::FundamentalFrequencyComponent(ProjectManager& pm) :
 projectManager(pm),
-frequencyProcessor(*pm.fundamentalFrequencyProcessor)
+frequencyProcessor(pm.fundamentalFrequencyProcessor ? *pm.fundamentalFrequencyProcessor : 
+                   throw std::runtime_error("FundamentalFrequencyProcessor is null"))
 {
     Image imagePlayButton                     = ImageCache::getFromMemory(BinaryData::playPause2x_png, BinaryData::playPause2x_pngSize);
     Image imageStopButton                     = ImageCache::getFromMemory(BinaryData::stop2x_png, BinaryData::stop2x_pngSize);

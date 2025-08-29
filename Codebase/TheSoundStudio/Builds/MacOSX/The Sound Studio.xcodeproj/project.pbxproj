@@ -252,6 +252,7 @@
 		5732D5C23CF994626BB217EE /* InputChannelBody.h */ /* InputChannelBody.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InputChannelBody.h; path = ../../Source/Views/FeedbackModule/Support/InputChannelBody.h; sourceTree = SOURCE_ROOT; };
 		589653BD4C5B8F1DA4885DDF /* PhaseHalfPiFpu.hpp */ /* PhaseHalfPiFpu.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PhaseHalfPiFpu.hpp; path = ../../Source/hiir/PhaseHalfPiFpu.hpp; sourceTree = SOURCE_ROOT; };
 		5978043B92B8DC7D9022537F /* include_pitch_detector.mm */ /* include_pitch_detector.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_pitch_detector.mm; path = ../../JuceLibraryCode/include_pitch_detector.mm; sourceTree = SOURCE_ROOT; };
+		5A5FDB5D74A0798DFEA0365D /* icon_large.png */ /* icon_large.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_large.png; path = ../../../../Assets/icon_large.png; sourceTree = SOURCE_ROOT; };
 		5B045F6D1B7AA44FFE4F516C /* RealtimeAnalysisProcessor.h */ /* RealtimeAnalysisProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RealtimeAnalysisProcessor.h; path = ../../Source/RealtimeAnalysisProcessor.h; sourceTree = SOURCE_ROOT; };
 		5DE316F0D1403E021A05068D /* VAOscillator.h */ /* VAOscillator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VAOscillator.h; path = ../../Source/VAOscillator.h; sourceTree = SOURCE_ROOT; };
 		5E736263D94380BF155FAEAD /* SynthesisEngine.h */ /* SynthesisEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SynthesisEngine.h; path = ../../Source/SynthesisEngine.h; sourceTree = SOURCE_ROOT; };
@@ -307,7 +308,6 @@
 		7E8724EF1D5C63E9D8C7C59A /* Foundation.framework */ /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		7F73A4C643937700C3C0FFC5 /* PluginWindow.h */ /* PluginWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PluginWindow.h; path = ../../Source/PluginWindow.h; sourceTree = SOURCE_ROOT; };
 		80A6186FE50F4B34FF1A987E /* ButtonSettingsLoad */ /* ButtonSettingsLoad */ = {isa = PBXFileReference; lastKnownFileType = file; name = ButtonSettingsLoad; path = ../../../../Assets/ButtonSettingsLoad; sourceTree = SOURCE_ROOT; };
-		81550530DE70BF4BFF08C89D /* App.entitlements */ /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = App.entitlements; path = App.entitlements; sourceTree = SOURCE_ROOT; };
 		817225F693352407CCDE3AC1 /* ProgressBarFill@2x.png */ /* ProgressBarFill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "ProgressBarFill@2x.png"; path = "../../../../Assets/ProgressBarFill@2x.png"; sourceTree = SOURCE_ROOT; };
 		81A45C57D6F00E9E3D3FF3B0 /* WavetableSynthProcessor.h */ /* WavetableSynthProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WavetableSynthProcessor.h; path = ../../Source/WavetableSynthProcessor.h; sourceTree = SOURCE_ROOT; };
 		81DA916FA98B6A5160D4AA0C /* ColourSpectrumVisualiserComponent.cpp */ /* ColourSpectrumVisualiserComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ColourSpectrumVisualiserComponent.cpp; path = ../../Source/ColourSpectrumVisualiserComponent.cpp; sourceTree = SOURCE_ROOT; };
@@ -686,6 +686,7 @@
 				85EBC33D11B5AF22494F09A8,
 				7D55D536D0FDCDB3A0903084,
 				4DB12F363E059CC31FEC9DF1,
+				5A5FDB5D74A0798DFEA0365D,
 				9575E1C8834538F3ED734DDA,
 				446C45F97AB884287A06299C,
 				6D6EDE99AFD224BE961285C1,
@@ -1225,7 +1226,7 @@
 								enabled = 0;
 							};
 							com.apple.HardenedRuntime = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.InAppPurchase = {
 								enabled = 0;
@@ -1480,11 +1481,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
-				CODE_SIGN_ENTITLEMENTS = "App.entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
 				DEAD_CODE_STRIPPING = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				EXCLUDED_ARCHS = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -1536,11 +1535,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
-				CODE_SIGN_ENTITLEMENTS = "App.entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/build/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
-				ENABLE_HARDENED_RUNTIME = YES;
 				EXCLUDED_ARCHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;

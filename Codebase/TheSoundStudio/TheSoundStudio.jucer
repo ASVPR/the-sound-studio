@@ -62,6 +62,7 @@
               file="../../Assets/SettingsBackgroundNew"/>
         <FILE id="p4m5wf" name="icon_128.png" compile="0" resource="1" file="../../Assets/icon_128.png"/>
         <FILE id="Rq6E4Q" name="icon_512.png" compile="0" resource="1" file="../../Assets/icon_512.png"/>
+        <FILE id="iconLarge" name="icon_large.png" compile="0" resource="1" file="../../Assets/icon_large.png"/>
         <FILE id="jIxgBB" name="ButtonChordFrequencyNormal" compile="0" resource="1"
               file="../../Assets/ButtonChordFrequencyNormal"/>
         <FILE id="RHX9rz" name="FrequencyPlayerSettingsBackground2.png" compile="0"
@@ -610,8 +611,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="p4m5wf" bigIcon="Rq6E4Q"
-               hardenedRuntime="1" hardenedRuntimeOptions="com.apple.security.cs.disable-library-validation,com.apple.security.device.audio-input"
-               microphonePermissionNeeded="1" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TSS_SYNTHESIS_ENGINE=1"
+               hardenedRuntime="0" microphonePermissionNeeded="1" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TSS_SYNTHESIS_ENGINE=1"
                enableGNUExtensions="1">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" macOSDeploymentTarget="10.13" osxCompatibility="10.13 SDK"/>

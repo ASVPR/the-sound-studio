@@ -5252,9 +5252,28 @@ void ProjectManager::initializeProcessors()
 
 void ProjectManager::initializeAnalysisProcessors()
 {
-    // These are already using smart pointers in the header
-    fundamentalFrequencyProcessor = std::make_unique<FundamentalFrequencyProcessor>(*this, *frequencyManager);
-    feedbackModuleProcessor = std::make_unique<FeedbackModuleProcessor>(*this, *frequencyManager);
+    try {
+        // These are already using smart pointers in the header
+        if (!frequencyManager) {
+            throw std::runtime_error("FrequencyManager is null during analysis processor initialization");
+        }
+        
+        fundamentalFrequencyProcessor = std::make_unique<FundamentalFrequencyProcessor>(*this, *frequencyManager);
+        if (!fundamentalFrequencyProcessor) {
+            throw std::runtime_error("Failed to create FundamentalFrequencyProcessor");
+        }
+        
+        feedbackModuleProcessor = std::make_unique<FeedbackModuleProcessor>(*this, *frequencyManager);
+        if (!feedbackModuleProcessor) {
+            throw std::runtime_error("Failed to create FeedbackModuleProcessor");
+        }
+        
+        DBG("Analysis processors initialized successfully");
+    }
+    catch (const std::exception& e) {
+        DBG("Failed to initialize analysis processors: " << e.what());
+        throw;
+    }
 }
 
 // FIXED: Thread-safe mode management
