@@ -16,9 +16,9 @@ ProjectManager::ProjectManager() : backgroundThread("Audio Recorder Thread")
     try 
     {
         // Initialize directories with proper error handling
-        logFileDirectory = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("ASVPR/Logs");
-        recordFileDirectory = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("ASVPR/Recordings");
-        profileDirectory = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("ASVPR/Profiles");
+        logFileDirectory = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("TSS/Logs");
+        recordFileDirectory = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("TSS/Recordings");
+        profileDirectory = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("TSS/Profiles");
         
         // Create directories if they don't exist
         logFileDirectory.createDirectory();
@@ -3624,7 +3624,7 @@ void ProjectManager::LogFileWriter::processLog_ChordPlayer_Parameters()
             stringBaseA.append(baseFreqAString, 12);
             stringBaseA.append("hz", 3);
             
-            int scaleRef = (int)projectManager->getProjectSettingsParameter(ASVPR_SETTINGS::DEFAULT_SCALE);
+            int scaleRef = (int)projectManager->getProjectSettingsParameter(TSS_SETTINGS::DEFAULT_SCALE);
             
             String stringScale(getScaleString(scaleRef));
             
@@ -3881,7 +3881,7 @@ void ProjectManager::LogFileWriter::processLog_ChordScanner_Parameters()
     stringBaseA.append(baseFreqAString, 12);
     stringBaseA.append("hz", 3);
     
-    int scaleRef = (int)projectManager->getProjectSettingsParameter(ASVPR_SETTINGS::DEFAULT_SCALE);
+    int scaleRef = (int)projectManager->getProjectSettingsParameter(TSS_SETTINGS::DEFAULT_SCALE);
     
     String stringScale(getScaleString(scaleRef));
     
@@ -4419,7 +4419,7 @@ void ProjectManager::LogFileWriter::processLog_Settings_Parameters()
     newEntry.append(stringBaseA, 16); newEntry.append(" | ", 3);
     
     //SCALE
-    int scaleRef = (int)projectManager->getProjectSettingsParameter(ASVPR_SETTINGS::DEFAULT_SCALE);
+    int scaleRef = (int)projectManager->getProjectSettingsParameter(TSS_SETTINGS::DEFAULT_SCALE);
     String stringScale(getScaleString(scaleRef));
     
     newEntry.append(stringScale, 100); newEntry.append(" | ", 3);
@@ -5186,7 +5186,7 @@ void ProjectManager::initializeApplicationProperties()
 {
     if (!appProperties) {
         PropertiesFile::Options options;
-        options.applicationName = "ASVPR";
+        options.applicationName = "TSS";
         options.filenameSuffix = "settings";
         options.osxLibrarySubFolder = "Preferences";
         

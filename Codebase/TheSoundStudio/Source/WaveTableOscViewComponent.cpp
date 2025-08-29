@@ -406,13 +406,13 @@ void WaveTableOscViewComponent::buttonClicked (Button* button)
         // open directory, load into
         
         WildcardFileFilter wildcardFilter (".table", String(), "Wavetable files");
-        File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("ASVPR/Wavetables");
+        File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("TSS/Wavetables");
         FileBrowserComponent browser (FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
                                       dir,
                                       nullptr,
                                       nullptr);
         
-        FileChooserDialogBox dialogBox ("Open an ASVPR Wavetable file",
+        FileChooserDialogBox dialogBox ("Open a TSS Wavetable file",
                                         "Please choose the file that you want to open...",
                                         browser,
                                         false,
@@ -450,13 +450,13 @@ void WaveTableOscViewComponent::buttonClicked (Button* button)
     }
     else if (button == buttonSaveWavetableFile.get())
     {
-        File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("ASVPR/Wavetables");
+        File dir = File::getSpecialLocation (File::userDocumentsDirectory).getChildFile ("TSS/Wavetables");
         FileBrowserComponent browser (FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles,
                                              dir,
                                              nullptr,
                                              nullptr);
                
-        FileChooserDialogBox dialogBox ("Save an ASVPR Wavetable file",
+        FileChooserDialogBox dialogBox ("Save a TSS Wavetable file",
                                                "Please choose or name the file that you want to save",
                                                browser,
                                                false,

@@ -340,6 +340,6 @@ void FeedbackSpectrumSettingsComponent::setScale(const float factor)
 
 void FeedbackSpectrumSettingsComponent::updateSettingsUIParameter(int settingIndex)
 {
-    if (settingIndex == ASVPR_SETTINGS::FUNDAMENTAL_FREQUENCY_ALGORITHM)
+    if (settingIndex == TSS_SETTINGS::FUNDAMENTAL_FREQUENCY_ALGORITHM)
         comboBoxAlgorithm.setSelectedItemIndex((int)projectManager.getProjectSettingsParameter(FUNDAMENTAL_FREQUENCY_ALGORITHM));
 }

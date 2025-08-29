@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#define DEFAULT_SAMPLER_FILEPATH   "/Users/garyjones/Documents/ASVPR/SampleLibrary/Instruments/Ethnic/Steel Drum/Steel Drum - Island Drum 060.wav"
+#define DEFAULT_SAMPLER_FILEPATH   "/Users/garyjones/Documents/TSS/SampleLibrary/Instruments/Ethnic/Steel Drum/Steel Drum - Island Drum 060.wav"
 #define NUM_SHORTCUT_SYNTHS 20
 #define NUM_PLUGIN_SLOTS 4
 #define TIMER_UPDATE_RATE 20
@@ -83,7 +83,7 @@ enum AUDIO_MODE
     NUM_MODES
 };
 
-enum ASVPR_SETTINGS
+enum TSS_SETTINGS
 {
     SAMPLE_RATE = 0,        // double
     OVERSAMPLE_FACTOR,      // int
