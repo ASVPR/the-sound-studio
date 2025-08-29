@@ -337,6 +337,40 @@ void OctaveVisualiserComponent2::mouseUp (const MouseEvent& event)
     displayData = false;
 }
 
+// FFT Improvements: Add zoom functionality
+void OctaveVisualiserComponent2::didSwipe (float deltaX, float deltaY, Point<float> position)
+{
+    // Delta X (horizontal zoom/pan)
+    if (range_X_Min_Factor + deltaX >= 0 && range_X_Min_Factor + deltaX <= 0.9)
+    {
+        range_X_Min_Factor += deltaX;
+    }
+    
+    if (range_X_Max_Factor + deltaX >= 0.1 && range_X_Max_Factor + deltaX <= 1.f)
+    {
+        range_X_Max_Factor += deltaX;
+    }
+    
+    // Delta Y (vertical zoom)
+    deltaY *= 0.5;
+    
+    if (range_Y_Min_Factor + deltaY >= 0 && range_Y_Min_Factor + deltaY <= 0.9)
+    {
+        range_Y_Min_Factor += deltaY;
+    }
+    
+    if (range_Y_Max_Factor - deltaY >= 0.1 && range_Y_Max_Factor - deltaY <= 1.f)
+    {
+        range_Y_Max_Factor -= deltaY;
+    }
+    
+    // Update zoom ranges
+    zoomRange_FreqLow       = kDefaultMinHertz + (range_X_Min_Factor * (kDefaultMaxHertz - kDefaultMinHertz));
+    zoomRange_FreqHigh      = kDefaultMinHertz + (range_X_Max_Factor * (kDefaultMaxHertz - kDefaultMinHertz));
+    zoomRange_AmplitudeLow  = kDefaultMinDbFS + (range_Y_Min_Factor * (kDefaultMaxDbFS - kDefaultMinDbFS));
+    zoomRange_AmplitudeHigh = kDefaultMinDbFS + (range_Y_Max_Factor * (kDefaultMaxDbFS - kDefaultMinDbFS));
+}
+
 void OctaveVisualiserComponent2::paint (Graphics&g)
 {
     Array<float> magnitudes;

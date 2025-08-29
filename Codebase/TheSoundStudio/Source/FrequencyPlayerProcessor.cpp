@@ -37,7 +37,21 @@ FrequencyPlayerProcessor::FrequencyPlayerProcessor(FrequencyManager * fm, Projec
 
 FrequencyPlayerProcessor::~FrequencyPlayerProcessor()
 {
-    
+    // Properly clean up allocated resources
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        if (synth[i])
+        {
+            delete synth[i];
+            synth[i] = nullptr;
+        }
+        
+        if (wavetableSynth[i])
+        {
+            delete wavetableSynth[i];
+            wavetableSynth[i] = nullptr;
+        }
+    }
 }
 
 void FrequencyPlayerProcessor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)

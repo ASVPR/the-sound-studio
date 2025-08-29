@@ -32,7 +32,24 @@ FrequencyScannerProcessor::FrequencyScannerProcessor(FrequencyManager * fm, Proj
 
 FrequencyScannerProcessor::~FrequencyScannerProcessor()
 {
+    // Properly clean up allocated resources
+    if (synth)
+    {
+        delete synth;
+        synth = nullptr;
+    }
     
+    if (wavetableSynth)
+    {
+        delete wavetableSynth;
+        wavetableSynth = nullptr;
+    }
+    
+    if (repeater)
+    {
+        delete repeater;
+        repeater = nullptr;
+    }
 }
 
 void FrequencyScannerProcessor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)

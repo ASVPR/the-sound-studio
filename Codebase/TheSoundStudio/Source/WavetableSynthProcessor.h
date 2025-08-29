@@ -67,6 +67,13 @@ private:
     
     void process_adsr(float *bufferLeft, float * bufferRight, int numSamples);
     
+    // Instrument-specific synthesis methods
+    void synthesizePiano(float* bufferLeft, float* bufferRight, int numSamples);
+    void synthesizeFlute(float* bufferLeft, float* bufferRight, int numSamples);
+    void synthesizeGuitar(float* bufferLeft, float* bufferRight, int numSamples);
+    void synthesizeStrings(float* bufferLeft, float* bufferRight, int numSamples);
+    void synthesizeHarp(float* bufferLeft, float* bufferRight, int numSamples);
+    
     FrequencyManager * frequencyManager;
     
     
@@ -102,6 +109,9 @@ private:
     float divisionValue;
     
     float currentFrequency;
+    
+    // Instrument selection
+    int instrumentType; // Based on INSTRUMENTS enum
     
 };
 

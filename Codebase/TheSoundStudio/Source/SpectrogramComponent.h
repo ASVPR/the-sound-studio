@@ -555,6 +555,14 @@ public:
     void mouseDrag (const MouseEvent& event) override;
     void mouseUp (const MouseEvent& event) override;
     
+    // FFT Improvements: Add mouse wheel zoom support
+    void mouseWheelMove (const MouseEvent&event, const MouseWheelDetails&wheel)override
+    {
+        didSwipe(wheel.deltaX, wheel.deltaY, event.position);
+    }
+
+    void didSwipe (float deltaX, float deltaY, Point<float> position);
+    
     void paint (Graphics&g) override;
     void drawDBLinesNew(Graphics&g);
     void drawDataDisplay(Graphics &g);
@@ -572,6 +580,17 @@ public:
     void pushUpdate();
     
     void setScale(float factor) { scaleFactor = factor; }
+    
+    // FFT Improvements: Add zoom range support
+    double zoomRange_FreqLow        = kDefaultMinHertz;
+    double zoomRange_FreqHigh       = kDefaultMaxHertz;
+    double zoomRange_AmplitudeLow   = kDefaultMinDbFS;
+    double zoomRange_AmplitudeHigh  = kDefaultMaxDbFS;
+    
+    float range_X_Min_Factor        = 0.f;
+    float range_X_Max_Factor        = 1.f;
+    float range_Y_Min_Factor        = 0.f;
+    float range_Y_Max_Factor        = 1.f;
     
     bool shouldUpdate = false;
     void setShouldUpdate(bool should)

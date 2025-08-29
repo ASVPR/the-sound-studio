@@ -52,7 +52,39 @@ ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibra
 
 ChordPlayerProcessor::~ChordPlayerProcessor()
 {
+    // Properly clean up allocated resources
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        if (synth[i])
+        {
+            delete synth[i];
+            synth[i] = nullptr;
+        }
+        
+        if (sampler[i])
+        {
+            delete sampler[i];
+            sampler[i] = nullptr;
+        }
+        
+        if (wavetableSynth[i])
+        {
+            delete wavetableSynth[i];
+            wavetableSynth[i] = nullptr;
+        }
+        
+        if (chordManager[i])
+        {
+            delete chordManager[i];
+            chordManager[i] = nullptr;
+        }
+    }
     
+    if (repeater)
+    {
+        delete repeater;
+        repeater = nullptr;
+    }
 }
 
 void ChordPlayerProcessor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)
@@ -246,7 +278,8 @@ void ChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
             {
                 if (waveformType[s] == SAMPLER)
                 {
-                    // FIXED: Redirect playing instruments to use synthesis instead of samples
+                    // Use synthesis instead of samples for playing instruments
+                    // Configure appropriate synthesis for piano-like sound
                     wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
                 }
                 else if (waveformType[s] == WAVETABLE)
@@ -344,7 +377,7 @@ void ChordPlayerProcessor::triggerNoteOn(int shortcutRef)
             {
                 if (waveformType[shortcutRef] == SAMPLER)
                 {
-                    // FIXED: Redirect playing instruments to use synthesis instead of samples
+                    // Use synthesis instead of samples for playing instruments
                     wavetableSynth[shortcutRef]->noteOn(0, midiNote, freq);
                 }
                 else if (waveformType[shortcutRef] == WAVETABLE)
@@ -381,7 +414,7 @@ void ChordPlayerProcessor::triggerNoteOff(int shortcutRef)
         {
             if (waveformType[shortcutRef] == SAMPLER)
             {
-                // FIXED: Redirect playing instruments to use synthesis instead of samples
+                // Use synthesis instead of samples for playing instruments
                 wavetableSynth[shortcutRef]->noteOff(0, midiNote, 1.0, true);
             }
             else if (waveformType[shortcutRef] == WAVETABLE)

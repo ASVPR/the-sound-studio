@@ -887,7 +887,28 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
 
 ChordPlayerSettingsComponent::~ChordPlayerSettingsComponent()
 {
+    // Remove ourselves as a UI listener to prevent accessing invalid pointers during destruction
+    if (projectManager)
+    {
+        projectManager->removeUIListener(this);
+    }
     
+    // Close any popup windows before destruction
+    if (popupWavetableWindow && popupWavetableWindow->isVisible())
+    {
+        popupWavetableWindow->setVisible(false);
+    }
+    
+    // Make sure all child components are properly hidden before destruction
+    if (addOnPopupComponent && addOnPopupComponent->isVisible())
+    {
+        addOnPopupComponent->setVisible(false);
+    }
+    
+    if (customChordPopupComponent && customChordPopupComponent->isVisible())
+    {
+        customChordPopupComponent->setVisible(false);
+    }
 }
 
 

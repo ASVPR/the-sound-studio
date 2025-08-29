@@ -36,7 +36,36 @@ ChordScannerProcessor::ChordScannerProcessor(FrequencyManager * fm, SynthesisLib
 
 ChordScannerProcessor::~ChordScannerProcessor()
 {
+    // Properly clean up allocated resources
+    if (synth)
+    {
+        delete synth;
+        synth = nullptr;
+    }
     
+    if (sampler)
+    {
+        delete sampler;
+        sampler = nullptr;
+    }
+    
+    if (wavetableSynth)
+    {
+        delete wavetableSynth;
+        wavetableSynth = nullptr;
+    }
+    
+    if (chordManager)
+    {
+        delete chordManager;
+        chordManager = nullptr;
+    }
+    
+    if (repeater)
+    {
+        delete repeater;
+        repeater = nullptr;
+    }
 }
 
 void ChordScannerProcessor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)
