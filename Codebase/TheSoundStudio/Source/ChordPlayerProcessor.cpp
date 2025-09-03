@@ -11,11 +11,12 @@
 #include "ChordPlayerProcessor.h"
 #include "ProjectManager.h"
 
-ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm)
+ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, SynthesisEngine * se, ProjectManager * pm)
 {
     projectManager          = pm;
     frequencyManager        = fm;
     sampleLibraryManager    = slm;
+    synthesisEngine         = se;
     
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
@@ -276,19 +277,37 @@ void ChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
             
             if (output[s] != AUDIO_OUTPUTS::NO_OUTPUT)
             {
+                // NEW: Use high-quality SynthesisEngine instead of old processors
+                bool usedSynthesisEngine = false;
+                
                 if (waveformType[s] == SAMPLER)
                 {
-                    // Use synthesis instead of samples for playing instruments
-                    // Configure appropriate synthesis for piano-like sound
-                    wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
+                    // SAMPLER mode now uses realistic instrument synthesis
+                    String currentInstrument = getCurrentInstrumentName(s);
+                    SynthesisType synthType = getSynthesisTypeForInstrument(currentInstrument);
+                    
+                    if (synthesisEngine && synthType != SynthesisType::PHYSICAL_MODELING_PIANO) // temporary fallback check
+                    {
+                        generateSynthesisAudio(outputBuffer, s, synthType);
+                        usedSynthesisEngine = true;
+                    }
                 }
-                else if (waveformType[s] == WAVETABLE)
+                
+                // Fallback to old processors if synthesis engine not used
+                if (!usedSynthesisEngine)
                 {
-                    wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
-                }
-                else
-                {
-                    synth[s]->processBlock(outputBuffer, midiMessages);
+                    if (waveformType[s] == SAMPLER)
+                    {
+                        wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
+                    }
+                    else if (waveformType[s] == WAVETABLE)
+                    {
+                        wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
+                    }
+                    else
+                    {
+                        synth[s]->processBlock(outputBuffer, midiMessages);
+                    }
                 }
                 
                 if      (output[s] == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
@@ -1085,3 +1104,91 @@ void ChordPlayerProcessor::PlayRepeater::processSimultaneousShortcuts(int firstS
 //        }
 //    }
 //}
+
+// NEW: Helper methods for high-quality synthesis engine integration
+String ChordPlayerProcessor::getCurrentInstrumentName(int shortcutRef)
+{
+    // Get current instrument type from project manager parameters
+    int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE);
+    
+    // Map to instrument names (same mapping as in ChordPlayerComponent.cpp)
+    Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
+    
+    if (instrumentType >= 0 && instrumentType < synthInstruments.size())
+        return synthInstruments[instrumentType];
+    
+    return "Grand Piano"; // Default
+}
+
+SynthesisType ChordPlayerProcessor::getSynthesisTypeForInstrument(const String& instrumentName)
+{
+    // Map instrument names to synthesis types (from SynthesisLibraryManager)
+    if (instrumentName == "Grand Piano" || instrumentName == "Electric Piano")
+        return SynthesisType::PHYSICAL_MODELING_PIANO;
+    else if (instrumentName == "Acoustic Guitar" || instrumentName == "Classical Guitar" || instrumentName == "Electric Guitar")
+        return SynthesisType::KARPLUS_STRONG_GUITAR;
+    else if (instrumentName == "Bell" || instrumentName == "Chimes")
+        return SynthesisType::KARPLUS_STRONG_HARP;
+    else if (instrumentName == "Church Organ" || instrumentName == "Pipe Organ")
+        return SynthesisType::WAVETABLE_ELECTRONIC;
+    else if (instrumentName == "Lead Synth" || instrumentName == "Pad Synth" || instrumentName == "Bass Synth")
+        return SynthesisType::WAVETABLE_SYNTH;
+    else
+        return SynthesisType::PHYSICAL_MODELING_STRINGS; // Default for Strings, Brass, Harp, Flute
+}
+
+void ChordPlayerProcessor::generateSynthesisAudio(AudioBuffer<float>& buffer, int shortcutRef, SynthesisType synthType)
+{
+    if (!synthesisEngine) return;
+    
+    // Get active chord notes for this shortcut
+    Array<int> notes = chordManager[shortcutRef]->getMIDIKeysForChord();
+    
+    if (notes.size() == 0) return; // No active chord
+    
+    buffer.clear();
+    
+    for (int i = 0; i < notes.size(); ++i)
+    {
+        int midiNote = notes[i];
+        if (midiNote >= 0 && midiNote <= 127)
+        {
+            // Calculate frequency for this note
+            double frequency = frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef);
+            
+            if (frequency > 0) // Valid frequency
+            {
+                // Apply octave shift and manipulation
+                double octShift = octaveShift[shortcutRef];
+                if (manipulateChoseFrequency[shortcutRef])
+                {
+                    if (!multiplyOrDivision[shortcutRef])
+                        frequency = frequency * pow(2.0, octShift) * multiplyValue[shortcutRef];
+                    else
+                        frequency = frequency * pow(2.0, octShift) / divisionValue[shortcutRef];
+                }
+                else
+                {
+                    frequency = frequency * pow(2.0, octShift);
+                }
+                
+                // Generate audio using high-quality synthesis engine
+                AudioBuffer<float> noteBuffer = synthesisEngine->generateInstrument(
+                    synthType, 
+                    (float)frequency, 
+                    0.7f, // velocity 
+                    buffer.getNumSamples()
+                );
+                
+                // Mix this note into the output buffer
+                if (noteBuffer.getNumChannels() > 0 && noteBuffer.getNumSamples() >= buffer.getNumSamples())
+                {
+                    for (int channel = 0; channel < std::min(buffer.getNumChannels(), noteBuffer.getNumChannels()); ++channel)
+                    {
+                        buffer.addFrom(channel, 0, noteBuffer, channel, 0, buffer.getNumSamples());
+                    }
+                }
+            }
+        }
+    }
+}

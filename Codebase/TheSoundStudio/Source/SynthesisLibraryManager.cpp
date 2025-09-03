@@ -31,16 +31,14 @@ void SynthesisLibraryManager::initializePianos()
     if (!categoryNames.contains(category))
         categoryNames.add(category);
     
-    addInstrument("Grand Classic", category, SynthesisType::PHYSICAL_MODELING_PIANO, 
-                 "Classic grand piano with rich harmonics");
-    addInstrument("Studio EP", category, SynthesisType::PHYSICAL_MODELING_PIANO,
-                 "Electric piano with bell-like tones");
-    addInstrument("Church Organ", category, SynthesisType::WAVETABLE_SYNTH,
-                 "Majestic pipe organ simulation");
-    addInstrument("Rhodes EP", category, SynthesisType::PHYSICAL_MODELING_PIANO,
-                 "Vintage electric piano with bark");
-    addInstrument("DX Supreme", category, SynthesisType::WAVETABLE_SYNTH,
-                 "FM electric piano synthesis");
+    addInstrument("Grand Piano", category, SynthesisType::PHYSICAL_MODELING_PIANO, 
+                 "Realistic grand piano with inharmonic partials");
+    addInstrument("Electric Piano", category, SynthesisType::PHYSICAL_MODELING_PIANO,
+                 "Electric piano with bell-like attack");
+    addInstrument("Church Organ", category, SynthesisType::WAVETABLE_ELECTRONIC,
+                 "Hammond-style organ with drawbar simulation");
+    addInstrument("Pipe Organ", category, SynthesisType::WAVETABLE_ELECTRONIC,
+                 "Classical pipe organ with rich harmonics");
 }
 
 void SynthesisLibraryManager::initializeGuitars()
@@ -49,12 +47,12 @@ void SynthesisLibraryManager::initializeGuitars()
     if (!categoryNames.contains(category))
         categoryNames.add(category);
     
-    addInstrument("Steel Guitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Bright acoustic steel string guitar");
-    addInstrument("Nylon Guitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Warm classical nylon string guitar");
-    addInstrument("Popular Guitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Modern acoustic guitar sound");
+    addInstrument("Acoustic Guitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Steel string acoustic guitar with body resonance");
+    addInstrument("Classical Guitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Nylon string classical guitar");
+    addInstrument("Electric Guitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Clean electric guitar tone");
 }
 
 void SynthesisLibraryManager::initializeBells()
@@ -63,14 +61,14 @@ void SynthesisLibraryManager::initializeBells()
     if (!categoryNames.contains(category))
         categoryNames.add(category);
     
-    addInstrument("Kingdom Bell", category, SynthesisType::PHYSICAL_MODELING_STRINGS,
-                 "Majestic bell with long decay");
-    addInstrument("Tubular Bell", category, SynthesisType::PHYSICAL_MODELING_STRINGS,
-                 "Large orchestral tubular bells");
+    addInstrument("Bell", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Church bell with long resonant decay");
+    addInstrument("Chimes", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Tubular chimes with bright attack");
     addInstrument("Xylophone", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Bright wooden bar percussion");
-    addInstrument("Marimba", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Warm wooden mallet instrument");
+                 "Wooden mallet percussion");
+    addInstrument("Vibraphone", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Metal bar vibraphone");
 }
 
 void SynthesisLibraryManager::initializeCinematic()
@@ -79,14 +77,14 @@ void SynthesisLibraryManager::initializeCinematic()
     if (!categoryNames.contains(category))
         categoryNames.add(category);
     
-    addInstrument("Epic Strings", category, SynthesisType::PHYSICAL_MODELING_STRINGS,
-                 "Lush orchestral string section");
-    addInstrument("Brass Section", category, SynthesisType::WAVETABLE_SYNTH,
-                 "Powerful orchestral brass");
-    addInstrument("Concert Harp", category, SynthesisType::KARPLUS_STRONG_HARP,
-                 "Elegant orchestral harp");
-    addInstrument("Choir Pad", category, SynthesisType::WAVETABLE_SYNTH,
-                 "Ethereal vocal pad");
+    addInstrument("Strings", category, SynthesisType::PHYSICAL_MODELING_STRINGS,
+                 "Rich orchestral string ensemble");
+    addInstrument("Brass", category, SynthesisType::WAVETABLE_SYNTH,
+                 "Powerful brass section");
+    addInstrument("Harp", category, SynthesisType::KARPLUS_STRONG_HARP,
+                 "Concert harp with plucked resonance");
+    addInstrument("Flute", category, SynthesisType::WAVETABLE_SYNTH,
+                 "Woodwind flute with breath modeling");
 }
 
 void SynthesisLibraryManager::initializeSynthesizers()
@@ -95,14 +93,14 @@ void SynthesisLibraryManager::initializeSynthesizers()
     if (!categoryNames.contains(category))
         categoryNames.add(category);
     
-    addInstrument("Analog Lead", category, SynthesisType::VA_ANALOG_MODELING,
-                 "Classic analog synthesizer lead");
-    addInstrument("Poly Synth", category, SynthesisType::WAVETABLE_SYNTH,
-                 "Rich polyphonic synthesizer");
-    addInstrument("Bass Synth", category, SynthesisType::VA_ANALOG_MODELING,
-                 "Deep analog bass synthesizer");
+    addInstrument("Lead Synth", category, SynthesisType::WAVETABLE_SYNTH,
+                 "Bright synthesizer lead sound");
     addInstrument("Pad Synth", category, SynthesisType::WAVETABLE_SYNTH,
-                 "Ambient atmospheric pad");
+                 "Warm synthesizer pad");
+    addInstrument("Bass Synth", category, SynthesisType::WAVETABLE_SYNTH,
+                 "Deep synthesizer bass");
+    addInstrument("Pluck Synth", category, SynthesisType::WAVETABLE_SYNTH,
+                 "Percussive synthesizer pluck");
 }
 
 void SynthesisLibraryManager::initializeEthnic()
@@ -112,13 +110,13 @@ void SynthesisLibraryManager::initializeEthnic()
         categoryNames.add(category);
     
     addInstrument("Sitar", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Indian classical string instrument");
+                 "Indian string instrument with sympathetic strings");
     addInstrument("Koto", category, SynthesisType::KARPLUS_STRONG_GUITAR,
-                 "Japanese traditional string instrument");
-    addInstrument("Steel Drum", category, SynthesisType::PHYSICAL_MODELING_STRINGS,
-                 "Caribbean steel drum");
-    addInstrument("Ethnic Flute", category, SynthesisType::WAVETABLE_SYNTH,
-                 "World wind instrument");
+                 "Japanese plucked string instrument");
+    addInstrument("Steel Drum", category, SynthesisType::KARPLUS_STRONG_GUITAR,
+                 "Caribbean steel percussion");
+    addInstrument("Shakuhachi", category, SynthesisType::WAVETABLE_SYNTH,
+                 "Japanese bamboo flute");
 }
 
 void SynthesisLibraryManager::addInstrument(const String& name, const String& category, 

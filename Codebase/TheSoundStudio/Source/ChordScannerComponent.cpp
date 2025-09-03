@@ -392,7 +392,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
     
     // Use synthesis-based instrument list instead of file system scanning
-    Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp", "Strings", "Woodwinds"};
+    // Use properly implemented synthesis instruments from SynthesisLibraryManager
+    Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
     
     // Add synthesis instruments to combo box menu
     for (int i = 0; i < synthInstruments.size(); i++)

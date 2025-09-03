@@ -13,6 +13,7 @@
 #include "SamplerProcessor.h"
 #include "VotanSynthProcessor.h"
 #include "SynthesisLibraryManager.h"
+#include "SynthesisEngine.h"
 #include "WavetableSynthProcessor.h"
 
 class ProjectManager;
@@ -20,7 +21,7 @@ class ProjectManager;
 class ChordPlayerProcessor : public AudioProcessor
 {
 public:
-    ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm);
+    ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, SynthesisEngine * se, ProjectManager * pm);
     ~ChordPlayerProcessor();
     
     virtual void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override;
@@ -88,6 +89,7 @@ private:
     
     FrequencyManager * frequencyManager;
     SynthesisLibraryManager * sampleLibraryManager;
+    SynthesisEngine * synthesisEngine;
 
     bool isActive[NUM_SHORTCUT_SYNTHS];
     bool shouldMute[NUM_SHORTCUT_SYNTHS];
@@ -185,6 +187,11 @@ public:
     PlayRepeater * repeater;
     
     ProjectManager * projectManager;
+    
+    // Helper methods for synthesis engine integration
+    String getCurrentInstrumentName(int shortcutRef);
+    SynthesisType getSynthesisTypeForInstrument(const String& instrumentName);
+    void generateSynthesisAudio(AudioBuffer<float>& buffer, int shortcutRef, SynthesisType synthType);
 };
 
 

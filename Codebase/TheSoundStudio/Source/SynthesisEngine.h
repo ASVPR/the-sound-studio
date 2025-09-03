@@ -18,6 +18,7 @@
 #include "FrequencyManager.h"
 #include "PhysicalModelingSynth.h"
 #include "KarplusStrongSynth.h"
+#include "WavetableSynth.h"
 
 // Synthesis types supported by TSS
 enum class SynthesisType {
@@ -79,11 +80,11 @@ public:
     void setScale(int scaleType);
     
 private:
-    // Synthesis engines (TODO: Implement remaining engines)
+    // Synthesis engines
     std::unique_ptr<class PhysicalModelingEngine> physicalModeling;
     std::unique_ptr<class KarplusStrongEngine> karplusStrong;
+    std::unique_ptr<class WavetableEngine> wavetable;
     // TODO: Implement remaining engines
-    // std::unique_ptr<class WavetableEngine> wavetable;
     // std::unique_ptr<class HybridEngine> hybrid;
     
     // Audio processing

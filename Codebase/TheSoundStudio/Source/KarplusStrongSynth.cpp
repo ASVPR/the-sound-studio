@@ -49,8 +49,9 @@ void KarplusStrongEngine::generateGuitar(AudioBuffer<float>& buffer, float frequ
     const int numSamples = buffer.getNumSamples();
     
     // Generate mono guitar signal with guitar-specific parameters
-    HeapBlock<float> monoBuffer(numSamples);
-    generateKSNote(monoBuffer, numSamples, frequency, velocity, stringDamping, bodyResonance);
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generateKSNote(monoBuffer.getData(), numSamples, frequency, velocity, stringDamping, bodyResonance);
     
     // Copy to stereo channels with slight variations for width
     for (int channel = 0; channel < numChannels; ++channel)
@@ -60,7 +61,7 @@ void KarplusStrongEngine::generateGuitar(AudioBuffer<float>& buffer, float frequ
         
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer[sample] * pan;
+            channelData[sample] = monoBuffer.getData()[sample] * pan;
         }
     }
 }
@@ -71,11 +72,12 @@ void KarplusStrongEngine::generateHarp(AudioBuffer<float>& buffer, float frequen
     const int numSamples = buffer.getNumSamples();
     
     // Generate mono harp signal with harp-specific parameters
-    HeapBlock<float> monoBuffer(numSamples);
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
     const float harpDamping = stringDamping * 0.5f; // Less damping for harp
     const float harpResonance = bodyResonance * 1.2f; // More resonance for harp
     
-    generateKSNote(monoBuffer, numSamples, frequency, velocity, harpDamping, harpResonance);
+    generateKSNote(monoBuffer.getData(), numSamples, frequency, velocity, harpDamping, harpResonance);
     
     // Copy to stereo channels
     for (int channel = 0; channel < numChannels; ++channel)
@@ -83,7 +85,7 @@ void KarplusStrongEngine::generateHarp(AudioBuffer<float>& buffer, float frequen
         auto* channelData = buffer.getWritePointer(channel);
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer[sample];
+            channelData[sample] = monoBuffer.getData()[sample];
         }
     }
 }
@@ -95,7 +97,7 @@ void KarplusStrongEngine::setParameters(const float* parameters)
         bodyResonance = parameters[0];
         stringDamping = parameters[1];
         pluckPosition = parameters[2];
-        feedback = juce::jlimit(0.1f, 0.99f, parameters[3]);
+        feedback = jlimit(0.1f, 0.99f, parameters[3]);
     }
 }
 
@@ -106,46 +108,65 @@ void KarplusStrongEngine::updateTuning(double newTuningReference)
 
 void KarplusStrongEngine::generateKSNote(float* output, int numSamples, float frequency, float velocity, float damping, float resonance)
 {
-    // Calculate delay line length based on frequency
-    const int delayLength = (int)(sampleRate / frequency);
+    // Calculate delay line length with fractional delay support
+    const float exactDelayLength = (float)sampleRate / frequency;
+    const int delayLength = (int)exactDelayLength;
+    const float fractionalPart = exactDelayLength - delayLength;
+    
     if (delayLength < 2) return; // Frequency too high
     
     // Resize delay line if necessary
     if (delayLine.length != delayLength)
     {
-        delayLine.resize(delayLength);
+        delayLine.resize(delayLength + 1); // +1 for fractional delay interpolation
         
-        // Initialize with pluck excitation
-        HeapBlock<float> excitation(delayLength);
-        generatePluck(excitation, delayLength, velocity, pluckPosition);
+        // Initialize with more realistic pluck excitation
+        HeapBlock<float> excitation;
+        excitation.allocate(delayLength, true);
+        generatePluck(excitation.getData(), delayLength, velocity, pluckPosition);
         
         // Fill delay line with excitation
         for (int i = 0; i < delayLength; ++i)
         {
-            delayLine.write(excitation[i]);
+            delayLine.write(excitation.getData()[i]);
         }
     }
     
-    // Generate output using Karplus-Strong algorithm
+    // Generate output using Enhanced Karplus-Strong algorithm
     for (int i = 0; i < numSamples; ++i)
     {
-        // Read from delay line
+        // Read from delay line with fractional delay interpolation
         float delayOutput = delayLine.read();
+        float nextSample = (delayLine.readIndex < delayLine.length - 1) ? 
+            delayLine.buffer.getUnchecked(delayLine.readIndex) : 
+            delayLine.buffer.getUnchecked(0);
         
-        // Apply lowpass filtering for damping
-        delayOutput = lowpassFilter(delayOutput, 1.0f - damping);
+        // Linear interpolation for fractional delay
+        delayOutput = delayOutput * (1.0f - fractionalPart) + nextSample * fractionalPart;
         
-        // Apply feedback
-        delayOutput *= feedback;
+        // Enhanced damping filter (more realistic frequency response)
+        float dampedOutput = lowpassFilter(delayOutput, 0.5f + (1.0f - damping) * 0.5f);
+        dampedOutput = highpassFilter(dampedOutput, damping * 0.1f); // Remove DC
+        
+        // Nonlinear saturation for more realistic pluck behavior
+        dampedOutput = std::tanh(dampedOutput * 1.5f) * 0.7f;
+        
+        // Apply dynamic feedback based on frequency content
+        float dynamicFeedback = feedback * (0.99f - std::abs(dampedOutput) * 0.1f);
+        dampedOutput *= dynamicFeedback;
         
         // Write back to delay line
-        delayLine.write(delayOutput);
+        delayLine.write(dampedOutput);
         
-        // Apply body resonance
-        float bodyResponse = highpassFilter(delayOutput, resonance * 0.1f);
+        // Enhanced body resonance modeling
+        float bodyResponse = highpassFilter(dampedOutput * 0.3f, resonance * 0.05f);
+        bodyResponse += lowpassFilter(dampedOutput * 0.2f, resonance * 0.3f);
         
-        // Combine direct and body response
-        output[i] = delayOutput + bodyResponse * resonance;
+        // Combine direct signal with body resonance
+        output[i] = dampedOutput * 0.8f + bodyResponse * resonance * 0.4f;
+        
+        // Add slight harmonic content for realism
+        output[i] += std::sin(2.0f * juce::MathConstants<float>::pi * frequency * 2.0f * i / sampleRate) * velocity * 0.05f;
     }
 }
 
@@ -160,44 +181,56 @@ void KarplusStrongEngine::generateNoise(float* buffer, int numSamples, float amp
 
 void KarplusStrongEngine::generatePluck(float* buffer, int numSamples, float amplitude, float position)
 {
-    // Generate pluck excitation signal
-    Random random;
-    const int pluckPoint = (int)(position * numSamples);
+    // Generate more realistic pluck excitation signal
+    Random random(Time::currentTimeMillis());
+    const int pluckPoint = jlimit(1, numSamples - 1, (int)(position * numSamples));
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Create triangular pluck shape
         float sample = 0.0f;
         
+        // Create more realistic pluck shape with exponential curves
         if (i <= pluckPoint)
         {
-            sample = (float)i / pluckPoint;
+            float t = (float)i / pluckPoint;
+            sample = t * (2.0f - t); // Quadratic rise
         }
         else
         {
-            sample = 1.0f - (float)(i - pluckPoint) / (numSamples - pluckPoint);
+            float t = (float)(i - pluckPoint) / (numSamples - pluckPoint);
+            sample = std::exp(-3.0f * t); // Exponential decay
         }
         
-        // Add some noise for realism
-        sample += (random.nextFloat() * 2.0f - 1.0f) * 0.1f;
+        // Add controlled noise for finger/pick variation
+        float noiseAmount = 0.15f * (1.0f - std::abs(sample));
+        sample += (random.nextFloat() * 2.0f - 1.0f) * noiseAmount;
         
-        buffer[i] = sample * amplitude;
+        // Add slight harmonic content to initial pluck
+        sample += 0.1f * std::sin(2.0f * juce::MathConstants<float>::pi * i * 3.0f / numSamples);
+        
+        buffer[i] = jlimit(-1.0f, 1.0f, sample * amplitude);
     }
 }
 
 float KarplusStrongEngine::lowpassFilter(float input, float cutoff)
 {
-    // Simple one-pole lowpass filter
-    const float alpha = cutoff;
+    // Enhanced one-pole lowpass filter with better frequency response
+    const float alpha = jlimit(0.0f, 0.99f, cutoff);
     lowpassState = lowpassState * (1.0f - alpha) + input * alpha;
+    
+    // Add slight resonance for more character
+    lowpassState += (input - lowpassState) * 0.05f;
+    
     return lowpassState;
 }
 
 float KarplusStrongEngine::highpassFilter(float input, float cutoff)
 {
-    // Simple one-pole highpass filter
-    const float alpha = cutoff;
+    // Enhanced one-pole highpass filter
+    const float alpha = jlimit(0.0f, 0.99f, cutoff);
     const float output = input - highpassState;
     highpassState = highpassState * (1.0f - alpha) + input * alpha;
-    return output;
+    
+    // Prevent DC buildup
+    return jlimit(-1.0f, 1.0f, output);
 }

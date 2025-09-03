@@ -46,9 +46,13 @@ ProjectManager::ProjectManager() : backgroundThread("Audio Recorder Thread")
         }
         
         sampleLibraryManager = std::make_unique<SynthesisLibraryManager>();
+        synthesisEngine = std::make_unique<SynthesisEngine>();
         
         frequencyManager = std::make_unique<FrequencyManager>();
         frequencyManager->setBaseAFrequency(432);
+        
+        // Initialize synthesis engine with frequency manager
+        synthesisEngine->initialize(44100.0, frequencyManager.get());
         
         // FIXED: Exception-safe processor initialization
         initializeProcessors();
@@ -3548,7 +3552,8 @@ void ProjectManager::LogFileWriter::processLog_ChordPlayer_Parameters()
                 String instString;
                 
                 // Map instrument types to synthesis-based instruments (no file system access needed)
-                Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp"};
+                // Use properly implemented synthesis instruments from SynthesisLibraryManager  
+                Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
                 
                 String instName = "Grand Piano"; // Default
                 if (instrumentType >= 0 && instrumentType < synthInstruments.size())
@@ -3817,7 +3822,8 @@ void ProjectManager::LogFileWriter::processLog_ChordScanner_Parameters()
         String instString;
         
         // Map instrument types to synthesis-based instruments (no file system access needed)
-        Array<String> synthInstruments = {"Grand Piano", "Electric Guitar", "Cello", "Flute", "Brass", "Harp"};
+        // Use properly implemented synthesis instruments from SynthesisLibraryManager  
+        Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth"};
         
         String instName = "Grand Piano"; // Default
         if (instrumentType >= 0 && instrumentType < synthInstruments.size())
@@ -5229,7 +5235,7 @@ void ProjectManager::initializeProcessors()
 {
     // FIXED: Exception-safe processor creation
     chordPlayerProcessor = std::make_unique<ChordPlayerProcessor>(
-        frequencyManager.get(), sampleLibraryManager.get(), this);
+        frequencyManager.get(), sampleLibraryManager.get(), synthesisEngine.get(), this);
     
     chordScannerProcessor = std::make_unique<ChordScannerProcessor>(
         frequencyManager.get(), sampleLibraryManager.get(), this);

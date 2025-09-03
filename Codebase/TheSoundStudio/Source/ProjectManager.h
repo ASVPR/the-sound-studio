@@ -20,6 +20,7 @@
 #include "LissajousCurveProcessor.h"
 #include "ChordManager.h"
 #include "SynthesisLibraryManager.h"
+#include "SynthesisEngine.h"
 #include "FrequencyManager.h"
 #include "ChordManager.h"
 #include "PluginAssignProcessor.h"
@@ -209,8 +210,10 @@ public:
     
     // FIXED: Smart pointer for memory safety
     std::unique_ptr<SynthesisLibraryManager> sampleLibraryManager;
+    std::unique_ptr<SynthesisEngine> synthesisEngine;
     
     SynthesisLibraryManager * getSampleLibraryManager() { return sampleLibraryManager.get(); }
+    SynthesisEngine * getSynthesisEngine() { return synthesisEngine.get(); }
     
     //===============================================================================
 #pragma mark Wavetable interface

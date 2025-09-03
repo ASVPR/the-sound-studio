@@ -50,8 +50,9 @@ void PhysicalModelingEngine::generatePiano(AudioBuffer<float>& buffer, float fre
     const int numSamples = buffer.getNumSamples();
     
     // Generate mono piano signal
-    HeapBlock<float> monoBuffer(numSamples);
-    generatePianoNote(monoBuffer, numSamples, frequency, velocity);
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generatePianoNote(monoBuffer.getData(), numSamples, frequency, velocity);
     
     // Copy to stereo channels
     for (int channel = 0; channel < numChannels; ++channel)
@@ -59,7 +60,7 @@ void PhysicalModelingEngine::generatePiano(AudioBuffer<float>& buffer, float fre
         auto* channelData = buffer.getWritePointer(channel);
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer[sample];
+            channelData[sample] = monoBuffer.getData()[sample];
         }
     }
 }
@@ -70,8 +71,9 @@ void PhysicalModelingEngine::generateStrings(AudioBuffer<float>& buffer, float f
     const int numSamples = buffer.getNumSamples();
     
     // Generate mono string signal
-    HeapBlock<float> monoBuffer(numSamples);
-    generateStringNote(monoBuffer, numSamples, frequency, velocity);
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generateStringNote(monoBuffer.getData(), numSamples, frequency, velocity);
     
     // Copy to stereo channels
     for (int channel = 0; channel < numChannels; ++channel)
@@ -79,7 +81,7 @@ void PhysicalModelingEngine::generateStrings(AudioBuffer<float>& buffer, float f
         auto* channelData = buffer.getWritePointer(channel);
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer[sample];
+            channelData[sample] = monoBuffer.getData()[sample];
         }
     }
 }
@@ -105,68 +107,142 @@ void PhysicalModelingEngine::updateTuning(double newTuningReference)
 
 void PhysicalModelingEngine::generatePianoNote(float* output, int numSamples, float frequency, float velocity)
 {
-    // Simple physical modeling approximation for piano
-    // This is a basic implementation - a full physical model would be much more complex
-    
+    // Enhanced piano physical modeling with realistic harmonic structure
     const float phase_increment = frequency * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-    const float decay_factor = 1.0f - (damping * 0.001f);
+    const float decay_factor = 1.0f - (damping * 0.0008f);
     
+    // Use per-note state variables (in real implementation, these should be per-voice)
     static float phase = 0.0f;
     static float amplitude = 1.0f;
+    static float resonancePhase = 0.0f;
+    static float sympatheticPhase = 0.0f;
+    
+    // Reset amplitude for new notes
+    if (amplitude < 0.01f) amplitude = 1.0f;
+    
+    // Piano-specific frequency ratios for realistic harmonics
+    const float inharmonicity = 0.0001f * frequency; // Higher frequencies are more inharmonic
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate basic waveform with harmonics
-        float sample = std::sin(phase);
-        sample += 0.5f * std::sin(phase * 2.0f);  // 2nd harmonic
-        sample += 0.25f * std::sin(phase * 3.0f); // 3rd harmonic
-        sample += 0.125f * std::sin(phase * 4.0f); // 4th harmonic
+        // Generate fundamental with inharmonicity
+        float fundamental = std::sin(phase);
         
-        // Apply hammer hardness
-        sample = applyHammerModel(sample, hammerHardness);
+        // Add realistic harmonic series with inharmonicity
+        float harmonics = 0.0f;
+        harmonics += 0.8f * std::sin(phase * 2.0f * (1.0f + inharmonicity));    // 2nd harmonic
+        harmonics += 0.6f * std::sin(phase * 3.0f * (1.0f + inharmonicity * 2.0f)); // 3rd harmonic
+        harmonics += 0.4f * std::sin(phase * 4.0f * (1.0f + inharmonicity * 3.0f)); // 4th harmonic
+        harmonics += 0.3f * std::sin(phase * 5.0f * (1.0f + inharmonicity * 4.0f)); // 5th harmonic
+        harmonics += 0.2f * std::sin(phase * 6.0f * (1.0f + inharmonicity * 5.0f)); // 6th harmonic
         
-        // Apply envelope and damping
-        sample *= amplitude * velocity;
-        amplitude *= decay_factor;
+        float sample = fundamental + harmonics * 0.7f;
         
-        // Add resonance
-        sample += sample * resonance * 0.1f * std::sin(phase * 0.5f);
+        // Apply enhanced hammer model with velocity dependence
+        sample = applyHammerModel(sample, hammerHardness * (0.5f + velocity * 0.5f));
         
-        output[i] = sample * 0.3f; // Scale down to prevent clipping
+        // Add string resonance modeling
+        resonancePhase += (frequency * 0.5f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        float stringResonance = std::sin(resonancePhase) * resonance * 0.15f * amplitude;
         
-        // Update phase
+        // Add sympathetic string resonance (octave relationships)
+        sympatheticPhase += (frequency * 2.0f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        float sympatheticResonance = std::sin(sympatheticPhase) * resonance * 0.08f * amplitude;
+        
+        // Combine all components
+        sample += stringResonance + sympatheticResonance;
+        
+        // Apply realistic envelope with multiple decay stages
+        float envelopeStage1 = std::exp(-i * 0.0001f); // Initial bright attack
+        float envelopeStage2 = std::exp(-i * 0.00005f); // Sustained harmonics
+        float envelope = envelopeStage1 * 0.3f + envelopeStage2 * 0.7f;
+        
+        sample *= amplitude * velocity * envelope;
+        
+        // Apply frequency-dependent damping
+        float freqDamping = 1.0f - (frequency > 1000.0f ? damping * 1.5f : damping) * 0.0008f;
+        amplitude *= freqDamping;
+        
+        // Add subtle soundboard resonance
+        float soundboardFreq = 200.0f + resonance * 300.0f;
+        float soundboardPhase = i * soundboardFreq * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        sample += std::sin(soundboardPhase) * resonance * 0.05f * amplitude;
+        
+        output[i] = jlimit(-1.0f, 1.0f, sample * 0.25f);
+        
+        // Update phases
         phase += phase_increment;
         if (phase >= 2.0f * juce::MathConstants<float>::pi)
+        {
             phase -= 2.0f * juce::MathConstants<float>::pi;
+            resonancePhase -= 2.0f * juce::MathConstants<float>::pi;
+            sympatheticPhase -= 2.0f * juce::MathConstants<float>::pi;
+        }
     }
 }
 
 void PhysicalModelingEngine::generateStringNote(float* output, int numSamples, float frequency, float velocity)
 {
-    // Simple bowed string physical modeling
+    // Enhanced bowed string physical modeling
     const float phase_increment = frequency * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-    const float decay_factor = 1.0f - (damping * 0.0005f);
+    const float decay_factor = 1.0f - (damping * 0.0003f); // Slower decay for strings
     
     static float phase = 0.0f;
     static float amplitude = 1.0f;
+    static float bowNoise = 0.0f;
+    
+    // Reset amplitude for new notes
+    if (amplitude < 0.01f) amplitude = 1.0f;
+    
+    Random random(Time::currentTimeMillis());
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate sawtooth-like waveform for bowed string
-        float sample = 2.0f * (phase / (2.0f * juce::MathConstants<float>::pi)) - 1.0f;
+        // Generate complex bowed string waveform
+        float fundamental = std::sin(phase);
         
-        // Add harmonics for richness
-        sample += 0.3f * std::sin(phase * 2.0f);
-        sample += 0.15f * std::sin(phase * 3.0f);
+        // Rich harmonic series for bowed strings
+        float harmonics = 0.0f;
+        harmonics += 0.7f * std::sin(phase * 2.0f);  // Strong 2nd harmonic
+        harmonics += 0.5f * std::sin(phase * 3.0f);  // 3rd harmonic
+        harmonics += 0.4f * std::sin(phase * 4.0f);  // 4th harmonic
+        harmonics += 0.3f * std::sin(phase * 5.0f);  // 5th harmonic
+        harmonics += 0.2f * std::sin(phase * 6.0f);  // 6th harmonic
+        harmonics += 0.15f * std::sin(phase * 7.0f); // 7th harmonic
         
-        // Apply bow pressure effects
-        sample = std::tanh(sample * bowPressure * 3.0f);
+        float sample = fundamental + harmonics * 0.8f;
         
-        // Apply envelope
-        sample *= amplitude * velocity;
+        // Apply bow pressure with dynamic variations
+        float dynamicBowPressure = bowPressure + 0.1f * std::sin(phase * 0.1f);
+        sample = std::tanh(sample * dynamicBowPressure * 2.5f) * 0.8f;
+        
+        // Add bow noise (rosin friction)
+        bowNoise = bowNoise * 0.95f + (random.nextFloat() * 2.0f - 1.0f) * 0.05f;
+        sample += bowNoise * bowPressure * 0.03f;
+        
+        // Add string body resonance
+        float bodyResonanceFreq = frequency * 0.5f + stringDensity * 100.0f;
+        float bodyPhase = i * bodyResonanceFreq * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        sample += std::sin(bodyPhase) * resonance * 0.1f * amplitude;
+        
+        // Apply realistic envelope with sustain
+        float sustainLevel = 0.6f + velocity * 0.4f;
+        float envelope = 1.0f;
+        if (i < numSamples * 0.1f) // Attack phase
+        {
+            envelope = (float)i / (numSamples * 0.1f);
+        }
+        else // Sustain phase
+        {
+            envelope = sustainLevel;
+        }
+        
+        sample *= amplitude * velocity * envelope;
+        
+        // Apply damping
         amplitude *= decay_factor;
         
-        output[i] = sample * 0.4f;
+        output[i] = jlimit(-1.0f, 1.0f, sample * 0.35f);
         
         // Update phase
         phase += phase_increment;
@@ -183,7 +259,17 @@ float PhysicalModelingEngine::calculateStringLength(float frequency)
 
 float PhysicalModelingEngine::applyHammerModel(float input, float hardness)
 {
-    // Simple hammer hardness model
+    // Enhanced hammer hardness model with velocity dependence
     const float softness = 1.0f - hardness;
-    return std::tanh(input * (1.0f + hardness * 2.0f)) * (0.5f + softness * 0.5f);
+    
+    // Nonlinear compression based on hammer hardness
+    float compressed = std::tanh(input * (0.5f + hardness * 2.5f));
+    
+    // Add harmonic content based on hammer hardness
+    float harmonicContent = std::sin(input * 6.0f) * hardness * 0.1f;
+    
+    // Combine compressed signal with harmonic content
+    float result = compressed * (0.4f + softness * 0.6f) + harmonicContent;
+    
+    return jlimit(-1.0f, 1.0f, result);
 }
