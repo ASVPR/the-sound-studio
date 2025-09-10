@@ -118,7 +118,8 @@ private:
     std::unique_ptr<ImageButton> button_Wavetable;    // wavetable
     
     std::unique_ptr<TextButton>   button_WavetableEditor;
-    std::unique_ptr<WaveTableOscViewComponent> wavetableEditorComponent;
+    // Owned by PopupFFTWindow via setContentOwned; keep a non-owning pointer here
+    WaveTableOscViewComponent* wavetableEditorComponent { nullptr };
     std::unique_ptr<PopupFFTWindow> popupWavetableWindow;
     
     //Chord Scan buttons

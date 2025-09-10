@@ -42,7 +42,16 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+    // Ensure safe teardown order to avoid use-after-free on close
+    // 1) Stop audio to prevent callbacks during destruction
     shutdownAudio();
+    // 2) Destroy UI (and its children) BEFORE destroying the ProjectManager,
+    //    because many UI components unregister from ProjectManager in their destructors.
+    if (mainViewComponent)
+        mainViewComponent.reset();
+    // 3) Now it is safe to destroy the ProjectManager
+    if (projectManager)
+        projectManager.reset();
 }
 
 //==============================================================================

@@ -482,10 +482,11 @@ FrequencyScannerComponent::FrequencyScannerComponent(ProjectManager * pm)
         updateChordScannerUIParameter(i);
     }
     
-    wavetableEditorComponent = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_FREQUENCY_SCANNER, -1);
+    wavetableEditorComponent = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_FREQUENCY_SCANNER, -1);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
-    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Scanner", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
+    // Hand ownership of the editor to the popup window to avoid double-deletion
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Scanner", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);

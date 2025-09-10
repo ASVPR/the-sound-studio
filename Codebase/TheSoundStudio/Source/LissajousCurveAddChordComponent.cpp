@@ -979,7 +979,16 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     
     // Use synthesis-based instrument list instead of file system scanning
     // Use properly implemented synthesis instruments from SynthesisLibraryManager
-    Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
+    Array<String> synthInstruments = {
+        "Grand Piano",      // Physical Modeling
+        "Acoustic Guitar",  // Karplus-Strong
+        "Harp",            // Karplus-Strong
+        "Strings",         // Physical Modeling
+        "Church Organ",    // Wavetable
+        "Lead Synth",      // Wavetable
+        "Pad Synth",       // Wavetable
+        "Bass Synth"       // Wavetable
+    };
     
     // Add synthesis instruments to combo box menu
     for (int i = 0; i < synthInstruments.size(); i++)

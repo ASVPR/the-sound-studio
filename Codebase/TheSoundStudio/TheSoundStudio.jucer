@@ -14,6 +14,8 @@
         <FILE id="PhysModelImpl" name="PhysicalModelingSynth.cpp" compile="1" resource="0" file="Source/PhysicalModelingSynth.cpp"/>
         <FILE id="KarplusStrong" name="KarplusStrongSynth.h" compile="0" resource="0" file="Source/KarplusStrongSynth.h"/>
         <FILE id="KarplusStrongImpl" name="KarplusStrongSynth.cpp" compile="1" resource="0" file="Source/KarplusStrongSynth.cpp"/>
+        <FILE id="WavetableSynth" name="WavetableSynth.h" compile="0" resource="0" file="Source/WavetableSynth.h"/>
+        <FILE id="WavetableSynthImpl" name="WavetableSynth.cpp" compile="1" resource="0" file="Source/WavetableSynth.cpp"/>
       </GROUP>
       <GROUP id="{E1A360F2-22BC-F2D7-367D-7F31BA2DFC2D}" name="Graphic Assets">
         <FILE id="JIQoVy" name="ButtonSettingsAudio" compile="0" resource="1"

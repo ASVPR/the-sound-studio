@@ -668,9 +668,20 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
     
-    // Use synthesis-based instrument list instead of file system scanning
-    // Use properly implemented synthesis instruments from SynthesisLibraryManager
-    Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
+    // Use synthesis-based instrument list with properly implemented synthesis engines
+    // Physical Modeling: Piano, Strings
+    // Karplus-Strong: Guitar, Harp
+    // Wavetable: Synthesizers, Organ
+    Array<String> synthInstruments = {
+        "Grand Piano",      // Physical Modeling
+        "Acoustic Guitar",  // Karplus-Strong
+        "Harp",            // Karplus-Strong
+        "Strings",         // Physical Modeling
+        "Church Organ",    // Wavetable
+        "Lead Synth",      // Wavetable
+        "Pad Synth",       // Wavetable
+        "Bass Synth"       // Wavetable
+    };
     
     // Add synthesis instruments to combo box menu
     for (int i = 0; i < synthInstruments.size(); i++)
@@ -876,10 +887,11 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent          = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
+    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
-    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Chord Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
+    // Hand ownership of the editor to the popup window to avoid double-deletion
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Chord Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);
@@ -892,24 +904,44 @@ ChordPlayerSettingsComponent::~ChordPlayerSettingsComponent()
     if (projectManager)
     {
         projectManager->removeUIListener(this);
+        projectManager = nullptr; // Clear the pointer
     }
     
-    // Close any popup windows before destruction
-    if (popupWavetableWindow && popupWavetableWindow->isVisible())
+    // Safely close popup window - use .get() to check raw pointer
+    if (popupWavetableWindow)
     {
-        popupWavetableWindow->setVisible(false);
+        if (popupWavetableWindow->isVisible())
+        {
+            popupWavetableWindow->setVisible(false);
+        }
+        popupWavetableWindow.reset(); // Explicitly reset the unique_ptr
     }
     
-    // Make sure all child components are properly hidden before destruction
-    if (addOnPopupComponent && addOnPopupComponent->isVisible())
+    // Safely hide child components
+    if (addOnPopupComponent)
     {
-        addOnPopupComponent->setVisible(false);
+        if (addOnPopupComponent->isVisible())
+        {
+            addOnPopupComponent->setVisible(false);
+        }
+        // Remove from parent before destruction
+        removeChildComponent(addOnPopupComponent.get());
+        addOnPopupComponent.reset(); // Explicitly reset the unique_ptr
     }
     
-    if (customChordPopupComponent && customChordPopupComponent->isVisible())
+    if (customChordPopupComponent)
     {
-        customChordPopupComponent->setVisible(false);
+        if (customChordPopupComponent->isVisible())
+        {
+            customChordPopupComponent->setVisible(false);
+        }
+        // Remove from parent before destruction
+        removeChildComponent(customChordPopupComponent.get());
+        customChordPopupComponent.reset(); // Explicitly reset the unique_ptr
     }
+    
+    // wavetableEditorComponent is owned by popupWavetableWindow (setContentOwned)
+    // and will be deleted when the window is destroyed.
 }
 
 

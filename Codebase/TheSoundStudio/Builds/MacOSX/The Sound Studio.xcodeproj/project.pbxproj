@@ -70,6 +70,7 @@
 		9BC96106E95805B7C5BC474B /* CustomRotarySlider.cpp */ = {isa = PBXBuildFile; fileRef = CD57BF5BDE908AB428F62FB9; };
 		9FD292F213AF6223632E4535 /* include_juce_gui_extra.mm */ = {isa = PBXBuildFile; fileRef = 0EBAD40A0E99D502DFACF381; };
 		A1343C4DFE0F90EA8286B804 /* include_juce_audio_processors.mm */ = {isa = PBXBuildFile; fileRef = A5F901AEBBFFBB9EBF17E095; };
+		A1AE5C0AF3E890E5ADCACAC8 /* WavetableSynth.cpp */ = {isa = PBXBuildFile; fileRef = 61F01AA5F1BA87B77EE925C6; };
 		A46EEE0FF1DC46F933F09150 /* include_audio_fft.mm */ = {isa = PBXBuildFile; fileRef = BEDE2A7BFBC27FACF2375C2D; };
 		A8E8BC6CA111F4FAF64AECCD /* Oscillators.cpp */ = {isa = PBXBuildFile; fileRef = B25822616EAC8F6AB8DD9B9D; };
 		A9A0458BCE9CFA407159F576 /* BinaryData.cpp */ = {isa = PBXBuildFile; fileRef = BF41E166BA6D1EA29D329CA7; };
@@ -263,6 +264,7 @@
 		5FCB89EA149CE973634FEBDE /* include_juce_graphics_Harfbuzz.cpp */ /* include_juce_graphics_Harfbuzz.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_graphics_Harfbuzz.cpp; path = ../../JuceLibraryCode/include_juce_graphics_Harfbuzz.cpp; sourceTree = SOURCE_ROOT; };
 		6064B1616F60C2DBDC4A8A42 /* LissajousAddChordButtonImage.png */ /* LissajousAddChordButtonImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LissajousAddChordButtonImage.png; path = ../../../../Assets/LissajousAddChordButtonImage.png; sourceTree = SOURCE_ROOT; };
 		60D71073039FC3E54D38AEBB /* SettingsComponent.cpp */ /* SettingsComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SettingsComponent.cpp; path = ../../Source/SettingsComponent.cpp; sourceTree = SOURCE_ROOT; };
+		61F01AA5F1BA87B77EE925C6 /* WavetableSynth.cpp */ /* WavetableSynth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WavetableSynth.cpp; path = ../../Source/WavetableSynth.cpp; sourceTree = SOURCE_ROOT; };
 		622779EAE273FBF7522CB3F0 /* LissajousCurveBackground2.png */ /* LissajousCurveBackground2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LissajousCurveBackground2.png; path = ../../../../Assets/LissajousCurveBackground2.png; sourceTree = SOURCE_ROOT; };
 		622965914CD17F95680C6118 /* settings@2x.png */ /* settings@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "settings@2x.png"; path = "../../../../Assets/settings@2x.png"; sourceTree = SOURCE_ROOT; };
 		62622A22AC7182507BF1BE7E /* AddButton@2x.png */ /* AddButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AddButton@2x.png"; path = "../../../../Assets/AddButton@2x.png"; sourceTree = SOURCE_ROOT; };
@@ -402,6 +404,7 @@
 		C32F9F720954A6D976767F58 /* ButtonScale50Selected */ /* ButtonScale50Selected */ = {isa = PBXFileReference; lastKnownFileType = file; name = ButtonScale50Selected; path = ../../../../Assets/ButtonScale50Selected; sourceTree = SOURCE_ROOT; };
 		C37A1B6D6915B2683BFA4B8B /* include_juce_opengl.mm */ /* include_juce_opengl.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_opengl.mm; path = ../../JuceLibraryCode/include_juce_opengl.mm; sourceTree = SOURCE_ROOT; };
 		C4D2EB5BDED830973EEB7003 /* Scales.cpp */ /* Scales.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Scales.cpp; path = ../../Source/Scales.cpp; sourceTree = SOURCE_ROOT; };
+		C5DF750B84E43F5EB8227FED /* WavetableSynth.h */ /* WavetableSynth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WavetableSynth.h; path = ../../Source/WavetableSynth.h; sourceTree = SOURCE_ROOT; };
 		C73BBD3857E2D3E47990652E /* SpectrogramComponent.cpp */ /* SpectrogramComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SpectrogramComponent.cpp; path = ../../Source/SpectrogramComponent.cpp; sourceTree = SOURCE_ROOT; };
 		C835A27A643300E26C5F34E3 /* ShortcutComponent.cpp */ /* ShortcutComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShortcutComponent.cpp; path = ../../Source/ShortcutComponent.cpp; sourceTree = SOURCE_ROOT; };
 		C91997CB014B43594BE5FD71 /* LissajousCurveBackground.png */ /* LissajousCurveBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LissajousCurveBackground.png; path = ../../../../Assets/LissajousCurveBackground.png; sourceTree = SOURCE_ROOT; };
@@ -898,6 +901,8 @@
 				79AE5D5C6261F7D84ECBEB7D,
 				51D30F5E50E8932F735ED1C5,
 				0F4C13F3D773BF064BDADC27,
+				C5DF750B84E43F5EB8227FED,
+				61F01AA5F1BA87B77EE925C6,
 			);
 			name = Synthesis;
 			sourceTree = "<group>";
@@ -1280,6 +1285,7 @@
 				1616DB196CEBCCF6AFF1F7C2,
 				27FE9DE75BF7FB10275AEEF9,
 				62FF3696390A9A9133379A65,
+				A1AE5C0AF3E890E5ADCACAC8,
 				0767F55FEDE4796991F72685,
 				E2C01413336E3076BA34FE21,
 				2C36BA1562684500C65E1160,

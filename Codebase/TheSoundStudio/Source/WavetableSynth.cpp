@@ -18,10 +18,6 @@ WavetableEngine::WavetableEngine()
     , filterCutoff(0.7f)
     , filterResonance(0.2f)
     , amplitude(0.8f)
-    , lowpassState1(0.0f)
-    , lowpassState2(0.0f)
-    , highpassState1(0.0f)
-    , highpassState2(0.0f)
 {
     initializeWavetables();
 }
@@ -51,18 +47,26 @@ void WavetableEngine::generateSynth(AudioBuffer<float>& buffer, float frequency,
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
     
+    // Get an available voice for this note
+    VoiceState* voice = getNextAvailableVoice();
+    if (voice == nullptr) return;
+    
+    voice->reset();
+    
     // Generate mono synth signal
     HeapBlock<float> monoBuffer;
     monoBuffer.allocate(numSamples, true);
     generateWavetableNote(monoBuffer.getData(), numSamples, sawWavetable, frequency, velocity);
     
-    // Copy to stereo channels
+    // Copy to stereo channels with slight stereo widening
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
+        float stereoPan = (channel == 0) ? 0.98f : 1.02f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer.getData()[sample];
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -72,18 +76,26 @@ void WavetableEngine::generateOrgan(AudioBuffer<float>& buffer, float frequency,
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
     
+    // Get an available voice for this note
+    VoiceState* voice = getNextAvailableVoice();
+    if (voice == nullptr) return;
+    
+    voice->reset();
+    
     // Generate mono organ signal
     HeapBlock<float> monoBuffer;
     monoBuffer.allocate(numSamples, true);
     generateOrganNote(monoBuffer.getData(), numSamples, frequency, velocity);
     
-    // Copy to stereo channels
+    // Copy to stereo channels with organ-style stereo spread
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
+        float stereoPan = (channel == 0) ? 0.95f : 1.05f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer.getData()[sample];
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -193,9 +205,12 @@ float WavetableEngine::interpolateWavetables(float phase, float position)
 void WavetableEngine::generateWavetableNote(float* output, int numSamples, const Array<float>& wavetable, 
                                            float frequency, float velocity)
 {
+    // Get current voice
+    VoiceState* voice = &voices[currentVoiceIndex];
+    if (!voice->isActive)
+        voice->reset();
+    
     const float phase_increment = frequency * 2.0f * MathConstants<float>::pi / (float)sampleRate;
-    static float phase = 0.0f;
-    static float envelope = 1.0f;
     
     // ADSR envelope parameters
     const int attackSamples = (int)(sampleRate * 0.01f);  // 10ms attack
@@ -205,42 +220,47 @@ void WavetableEngine::generateWavetableNote(float* output, int numSamples, const
     for (int i = 0; i < numSamples; ++i)
     {
         // Generate wavetable sample with morphing
-        float sample = interpolateWavetables(phase, wavetablePosition);
+        float sample = interpolateWavetables(voice->phase, wavetablePosition);
         
         // Apply ADSR envelope
-        if (i < attackSamples)
+        if (voice->sampleIndex < attackSamples)
         {
-            envelope = (float)i / attackSamples;
+            voice->envelope = (float)voice->sampleIndex / attackSamples;
         }
-        else if (i < attackSamples + decaySamples)
+        else if (voice->sampleIndex < attackSamples + decaySamples)
         {
-            float decayProgress = (float)(i - attackSamples) / decaySamples;
-            envelope = 1.0f - decayProgress * (1.0f - sustainLevel);
+            float decayProgress = (float)(voice->sampleIndex - attackSamples) / decaySamples;
+            voice->envelope = 1.0f - decayProgress * (1.0f - sustainLevel);
         }
         else
         {
-            envelope = sustainLevel;
+            voice->envelope = sustainLevel;
         }
         
-        sample *= envelope * velocity * amplitude;
+        sample *= voice->envelope * velocity * amplitude;
         
         // Apply filter
-        sample = lowpassFilter(sample, filterCutoff, lowpassState1, lowpassState2);
+        sample = lowpassFilter(sample, filterCutoff, voice->lowpassState1, voice->lowpassState2);
         
         output[i] = jlimit(-1.0f, 1.0f, sample * 0.6f);
         
         // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * MathConstants<float>::pi)
-            phase -= 2.0f * MathConstants<float>::pi;
+        voice->phase += phase_increment;
+        if (voice->phase >= 2.0f * MathConstants<float>::pi)
+            voice->phase -= 2.0f * MathConstants<float>::pi;
+        
+        voice->sampleIndex++;
     }
 }
 
 void WavetableEngine::generateOrganNote(float* output, int numSamples, float frequency, float velocity)
 {
+    // Get current voice
+    VoiceState* voice = &voices[currentVoiceIndex];
+    if (!voice->isActive)
+        voice->reset();
+    
     const float phase_increment = frequency * 2.0f * MathConstants<float>::pi / (float)sampleRate;
-    static float phase = 0.0f;
-    static float envelope = 1.0f;
     
     // Organ has quick attack and sustain
     const int attackSamples = (int)(sampleRate * 0.001f);  // 1ms attack
@@ -248,29 +268,31 @@ void WavetableEngine::generateOrganNote(float* output, int numSamples, float fre
     for (int i = 0; i < numSamples; ++i)
     {
         // Generate organ sample
-        float sample = getWavetableSample(organWavetable, phase);
+        float sample = getWavetableSample(organWavetable, voice->phase);
         
         // Quick attack envelope for organ
-        if (i < attackSamples)
+        if (voice->sampleIndex < attackSamples)
         {
-            envelope = (float)i / attackSamples;
+            voice->envelope = (float)voice->sampleIndex / attackSamples;
         }
         else
         {
-            envelope = 1.0f;
+            voice->envelope = 1.0f;
         }
         
-        sample *= envelope * velocity * amplitude;
+        sample *= voice->envelope * velocity * amplitude;
         
         // Light filtering for organ
-        sample = lowpassFilter(sample, 0.8f, lowpassState1, lowpassState2);
+        sample = lowpassFilter(sample, 0.8f, voice->lowpassState1, voice->lowpassState2);
         
         output[i] = jlimit(-1.0f, 1.0f, sample * 0.5f);
         
         // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * MathConstants<float>::pi)
-            phase -= 2.0f * MathConstants<float>::pi;
+        voice->phase += phase_increment;
+        if (voice->phase >= 2.0f * MathConstants<float>::pi)
+            voice->phase -= 2.0f * MathConstants<float>::pi;
+        
+        voice->sampleIndex++;
     }
 }
 
@@ -283,4 +305,21 @@ float WavetableEngine::lowpassFilter(float input, float cutoff, float& state1, f
     state2 = state2 * (1.0f - alpha) + state1 * alpha;
     
     return state2;
+}
+
+WavetableEngine::VoiceState* WavetableEngine::getNextAvailableVoice()
+{
+    // First, try to find an inactive voice
+    for (int i = 0; i < maxVoices; ++i)
+    {
+        if (!voices[i].isActive || voices[i].envelope < 0.001f)
+        {
+            currentVoiceIndex = i;
+            return &voices[i];
+        }
+    }
+    
+    // If all voices are active, use round-robin voice stealing
+    currentVoiceIndex = (currentVoiceIndex + 1) % maxVoices;
+    return &voices[currentVoiceIndex];
 }

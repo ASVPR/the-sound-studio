@@ -96,6 +96,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/SynthesisEngine_47ef4457.o \
   $(JUCE_OBJDIR)/PhysicalModelingSynth_bd23446d.o \
   $(JUCE_OBJDIR)/KarplusStrongSynth_56ce6198.o \
+  $(JUCE_OBJDIR)/WavetableSynth_ad09ffd0.o \
   $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o \
   $(JUCE_OBJDIR)/FeedbackInputOutputComponent_e9981f35.o \
   $(JUCE_OBJDIR)/FeedbackModuleComponent_33751fb8.o \
@@ -215,6 +216,11 @@ $(JUCE_OBJDIR)/PhysicalModelingSynth_bd23446d.o: ../../Source/PhysicalModelingSy
 $(JUCE_OBJDIR)/KarplusStrongSynth_56ce6198.o: ../../Source/KarplusStrongSynth.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling KarplusStrongSynth.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/WavetableSynth_ad09ffd0.o: ../../Source/WavetableSynth.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling WavetableSynth.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o: ../../Source/FundamentalFrequencyComponent.cpp

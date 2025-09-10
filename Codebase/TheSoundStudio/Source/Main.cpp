@@ -30,16 +30,22 @@ public:
     //==============================================================================
     void initialise (const String& commandLine) override
     {
-        // This method is where you should put your application's initialisation code..
+        // Setup error logging to file ("1_Add Error Log")
+        initialiseErrorLogging();
 
+        Logger::writeToLog("TSSApplication::initialise - starting main window");
         mainWindow = std::make_unique<MainWindow>(getApplicationName());
+        Logger::writeToLog("TSSApplication::initialise - main window created");
     }
 
     void shutdown() override
     {
-        // Add your application's shutdown code here..
-
+        Logger::writeToLog("TSSApplication::shutdown - destroying main window");
         mainWindow.reset(); // (deletes our window)
+
+        Logger::writeToLog("TSSApplication::shutdown - clearing logger");
+        Logger::setCurrentLogger(nullptr);
+        fileLogger.reset();
     }
 
     //==============================================================================
@@ -111,6 +117,7 @@ public:
 
         void closeButtonPressed() override
         {
+            Logger::writeToLog("MainWindow::closeButtonPressed - systemRequestedQuit");
             // This is called when the user tries to close this window. Here, we'll just
             // ask the app to quit when this happens, but you can change this to do
             // whatever you need.
@@ -130,6 +137,22 @@ public:
     };
 
 private:
+    std::unique_ptr<FileLogger> fileLogger;
+    
+    void initialiseErrorLogging()
+    {
+        // Create logs directory
+        const File logsDir("/Users/zivelovitch/Documents/TSS/Logs");
+        if (! logsDir.exists())
+            logsDir.createDirectory();
+
+        // Create a date-stamped error log file
+        // e.g. TSS_2025-09-10_Error.txt
+        fileLogger.reset(FileLogger::createDateStampedLogger(logsDir, "TSS", "_Error", 0));
+        if (fileLogger)
+            Logger::setCurrentLogger(fileLogger.get());
+    }
+    
     std::unique_ptr<MainWindow> mainWindow;
     
     

@@ -421,12 +421,13 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent          = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
+    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
     // need to update the contents of each editor for each shortcut.....
     
-    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
+    // Hand ownership of the editor to the popup window to avoid double-deletion
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);

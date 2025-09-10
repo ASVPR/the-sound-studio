@@ -42,6 +42,8 @@ void PhysicalModelingEngine::prepareToPlay(int newBlockSize)
 void PhysicalModelingEngine::releaseResources()
 {
     // Clean up any allocated resources
+    for (int i = 0; i < maxVoices; ++i)
+        voices[i].reset();
 }
 
 void PhysicalModelingEngine::generatePiano(AudioBuffer<float>& buffer, float frequency, float velocity)
@@ -49,18 +51,26 @@ void PhysicalModelingEngine::generatePiano(AudioBuffer<float>& buffer, float fre
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
     
+    // Get an available voice for this note
+    VoiceState* voice = getNextAvailableVoice();
+    if (voice == nullptr) return;
+    
+    voice->reset();
+    
     // Generate mono piano signal
     HeapBlock<float> monoBuffer;
     monoBuffer.allocate(numSamples, true);
     generatePianoNote(monoBuffer.getData(), numSamples, frequency, velocity);
     
-    // Copy to stereo channels
+    // Apply stereo widening for more realistic sound
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
+        float stereoPan = (channel == 0) ? 0.95f : 1.05f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer.getData()[sample];
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -70,18 +80,26 @@ void PhysicalModelingEngine::generateStrings(AudioBuffer<float>& buffer, float f
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
     
+    // Get an available voice for this note
+    VoiceState* voice = getNextAvailableVoice();
+    if (voice == nullptr) return;
+    
+    voice->reset();
+    
     // Generate mono string signal
     HeapBlock<float> monoBuffer;
     monoBuffer.allocate(numSamples, true);
     generateStringNote(monoBuffer.getData(), numSamples, frequency, velocity);
     
-    // Copy to stereo channels
+    // Apply stereo widening
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
+        float stereoPan = (channel == 0) ? 0.98f : 1.02f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer.getData()[sample];
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -107,123 +125,160 @@ void PhysicalModelingEngine::updateTuning(double newTuningReference)
 
 void PhysicalModelingEngine::generatePianoNote(float* output, int numSamples, float frequency, float velocity)
 {
+    // Get current voice state
+    VoiceState* voice = &voices[currentVoiceIndex];
+    
     // Enhanced piano physical modeling with realistic harmonic structure
     const float phase_increment = frequency * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
     const float decay_factor = 1.0f - (damping * 0.0008f);
     
-    // Use per-note state variables (in real implementation, these should be per-voice)
-    static float phase = 0.0f;
-    static float amplitude = 1.0f;
-    static float resonancePhase = 0.0f;
-    static float sympatheticPhase = 0.0f;
+    // Initialize voice if needed
+    if (!voice->isActive)
+    {
+        voice->reset();
+    }
     
-    // Reset amplitude for new notes
-    if (amplitude < 0.01f) amplitude = 1.0f;
-    
-    // Piano-specific frequency ratios for realistic harmonics
-    const float inharmonicity = 0.0001f * frequency; // Higher frequencies are more inharmonic
+    // Improved inharmonicity calculation based on string physics
+    // Higher strings (treble) have more inharmonicity than bass strings
+    const float B_coefficient = 0.0001f * std::pow(frequency / 261.63f, 1.8f); // C4 = 261.63 Hz reference
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate fundamental with inharmonicity
-        float fundamental = std::sin(phase);
+        // Generate fundamental
+        float fundamental = std::sin(voice->phase) * 0.9f;
         
-        // Add realistic harmonic series with inharmonicity
+        // Enhanced harmonic series with proper inharmonicity based on Railsback curve
         float harmonics = 0.0f;
-        harmonics += 0.8f * std::sin(phase * 2.0f * (1.0f + inharmonicity));    // 2nd harmonic
-        harmonics += 0.6f * std::sin(phase * 3.0f * (1.0f + inharmonicity * 2.0f)); // 3rd harmonic
-        harmonics += 0.4f * std::sin(phase * 4.0f * (1.0f + inharmonicity * 3.0f)); // 4th harmonic
-        harmonics += 0.3f * std::sin(phase * 5.0f * (1.0f + inharmonicity * 4.0f)); // 5th harmonic
-        harmonics += 0.2f * std::sin(phase * 6.0f * (1.0f + inharmonicity * 5.0f)); // 6th harmonic
+        for (int h = 2; h <= 12; ++h)
+        {
+            // Inharmonicity formula: f_h = h * f_0 * sqrt(1 + B * h^2)
+            float harmonic_ratio = (float)h * std::sqrt(1.0f + B_coefficient * h * h);
+            
+            // Realistic harmonic amplitudes that decay with harmonic number
+            float harmonic_amplitude = 1.0f / (float)h;
+            
+            // Add some randomness for more realistic timbre
+            harmonic_amplitude *= (0.9f + 0.2f * std::sin(voice->phase * 0.01f * h));
+            
+            harmonics += harmonic_amplitude * std::sin(voice->phase * harmonic_ratio);
+        }
+        harmonics *= 0.6f; // Scale harmonics relative to fundamental
         
-        float sample = fundamental + harmonics * 0.7f;
+        float sample = fundamental + harmonics;
         
-        // Apply enhanced hammer model with velocity dependence
-        sample = applyHammerModel(sample, hammerHardness * (0.5f + velocity * 0.5f));
+        // Apply enhanced hammer model with velocity-dependent hardness
+        float dynamic_hardness = hammerHardness + (1.0f - velocity) * 0.3f; // Softer hammers for quieter notes
+        sample = applyHammerModel(sample, dynamic_hardness);
         
-        // Add string resonance modeling
-        resonancePhase += (frequency * 0.5f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-        float stringResonance = std::sin(resonancePhase) * resonance * 0.15f * amplitude;
+        // Add duplex scaling (additional resonant frequencies)
+        voice->resonancePhase += (frequency * 0.618f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate; // Golden ratio
+        float duplexResonance = std::sin(voice->resonancePhase) * resonance * 0.12f * voice->amplitude;
         
-        // Add sympathetic string resonance (octave relationships)
-        sympatheticPhase += (frequency * 2.0f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-        float sympatheticResonance = std::sin(sympatheticPhase) * resonance * 0.08f * amplitude;
+        // Add sympathetic string resonance with octave and fifth relationships
+        voice->sympatheticPhase += (frequency * 2.0f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate; // Octave
+        float sympatheticOctave = std::sin(voice->sympatheticPhase) * resonance * 0.06f * voice->amplitude;
         
-        // Combine all components
-        sample += stringResonance + sympatheticResonance;
+        float sympatheticFifth = std::sin(voice->sympatheticPhase * 1.5f) * resonance * 0.04f * voice->amplitude; // Fifth
         
-        // Apply realistic envelope with multiple decay stages
-        float envelopeStage1 = std::exp(-i * 0.0001f); // Initial bright attack
-        float envelopeStage2 = std::exp(-i * 0.00005f); // Sustained harmonics
-        float envelope = envelopeStage1 * 0.3f + envelopeStage2 * 0.7f;
+        // Combine all resonances
+        sample += duplexResonance + sympatheticOctave + sympatheticFifth;
         
-        sample *= amplitude * velocity * envelope;
+        // Realistic ADSR envelope with exponential decay
+        float time_ratio = (float)i / (float)numSamples;
+        float envelope = 1.0f;
+        
+        if (time_ratio < 0.02f) // Attack: 2% of note length
+        {
+            envelope = time_ratio / 0.02f;
+        }
+        else // Exponential decay
+        {
+            float decay_time = time_ratio - 0.02f;
+            envelope = std::exp(-decay_time * (2.0f + frequency * 0.001f)); // Higher frequencies decay faster
+        }
+        
+        sample *= voice->amplitude * velocity * envelope;
         
         // Apply frequency-dependent damping
-        float freqDamping = 1.0f - (frequency > 1000.0f ? damping * 1.5f : damping) * 0.0008f;
-        amplitude *= freqDamping;
+        float frequency_damping_factor = frequency > 1000.0f ? 1.2f : 1.0f;
+        voice->amplitude *= (1.0f - damping * frequency_damping_factor * 0.0008f);
         
-        // Add subtle soundboard resonance
-        float soundboardFreq = 200.0f + resonance * 300.0f;
-        float soundboardPhase = i * soundboardFreq * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-        sample += std::sin(soundboardPhase) * resonance * 0.05f * amplitude;
+        // Enhanced soundboard resonance with multiple resonant modes
+        float soundboard_freq1 = 200.0f + resonance * 150.0f;  // Primary mode
+        float soundboard_freq2 = 400.0f + resonance * 200.0f;  // Secondary mode
+        
+        float soundboard_phase1 = i * soundboard_freq1 * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        float soundboard_phase2 = i * soundboard_freq2 * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        
+        float soundboard_resonance = (std::sin(soundboard_phase1) * 0.04f + std::sin(soundboard_phase2) * 0.02f) 
+                                    * resonance * voice->amplitude;
+        
+        sample += soundboard_resonance;
         
         output[i] = jlimit(-1.0f, 1.0f, sample * 0.25f);
         
         // Update phases
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
+        voice->phase += phase_increment;
+        if (voice->phase >= 2.0f * juce::MathConstants<float>::pi)
         {
-            phase -= 2.0f * juce::MathConstants<float>::pi;
-            resonancePhase -= 2.0f * juce::MathConstants<float>::pi;
-            sympatheticPhase -= 2.0f * juce::MathConstants<float>::pi;
+            voice->phase -= 2.0f * juce::MathConstants<float>::pi;
         }
+        
+        // Wrap other phases
+        if (voice->resonancePhase >= 2.0f * juce::MathConstants<float>::pi)
+            voice->resonancePhase -= 2.0f * juce::MathConstants<float>::pi;
+        if (voice->sympatheticPhase >= 2.0f * juce::MathConstants<float>::pi)
+            voice->sympatheticPhase -= 2.0f * juce::MathConstants<float>::pi;
     }
 }
 
 void PhysicalModelingEngine::generateStringNote(float* output, int numSamples, float frequency, float velocity)
 {
+    // Get current voice state
+    VoiceState* voice = &voices[currentVoiceIndex];
+    
     // Enhanced bowed string physical modeling
     const float phase_increment = frequency * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
     const float decay_factor = 1.0f - (damping * 0.0003f); // Slower decay for strings
     
-    static float phase = 0.0f;
-    static float amplitude = 1.0f;
-    static float bowNoise = 0.0f;
-    
-    // Reset amplitude for new notes
-    if (amplitude < 0.01f) amplitude = 1.0f;
+    // Initialize voice if needed
+    if (!voice->isActive)
+    {
+        voice->reset();
+    }
     
     Random random(Time::currentTimeMillis());
     
     for (int i = 0; i < numSamples; ++i)
     {
         // Generate complex bowed string waveform
-        float fundamental = std::sin(phase);
+        float fundamental = std::sin(voice->phase);
         
-        // Rich harmonic series for bowed strings
+        // Rich harmonic series for bowed strings with improved ratios
         float harmonics = 0.0f;
-        harmonics += 0.7f * std::sin(phase * 2.0f);  // Strong 2nd harmonic
-        harmonics += 0.5f * std::sin(phase * 3.0f);  // 3rd harmonic
-        harmonics += 0.4f * std::sin(phase * 4.0f);  // 4th harmonic
-        harmonics += 0.3f * std::sin(phase * 5.0f);  // 5th harmonic
-        harmonics += 0.2f * std::sin(phase * 6.0f);  // 6th harmonic
-        harmonics += 0.15f * std::sin(phase * 7.0f); // 7th harmonic
+        harmonics += 0.75f * std::sin(voice->phase * 2.0f);  // Strong 2nd harmonic
+        harmonics += 0.55f * std::sin(voice->phase * 3.0f);  // 3rd harmonic
+        harmonics += 0.42f * std::sin(voice->phase * 4.0f);  // 4th harmonic
+        harmonics += 0.32f * std::sin(voice->phase * 5.0f);  // 5th harmonic
+        harmonics += 0.24f * std::sin(voice->phase * 6.0f);  // 6th harmonic
+        harmonics += 0.18f * std::sin(voice->phase * 7.0f);  // 7th harmonic
+        harmonics += 0.14f * std::sin(voice->phase * 8.0f);  // 8th harmonic
+        harmonics += 0.10f * std::sin(voice->phase * 9.0f);  // 9th harmonic
         
         float sample = fundamental + harmonics * 0.8f;
         
         // Apply bow pressure with dynamic variations
-        float dynamicBowPressure = bowPressure + 0.1f * std::sin(phase * 0.1f);
+        float dynamicBowPressure = bowPressure + 0.1f * std::sin(voice->phase * 0.1f);
         sample = std::tanh(sample * dynamicBowPressure * 2.5f) * 0.8f;
         
         // Add bow noise (rosin friction)
-        bowNoise = bowNoise * 0.95f + (random.nextFloat() * 2.0f - 1.0f) * 0.05f;
-        sample += bowNoise * bowPressure * 0.03f;
+        voice->bowNoise = voice->bowNoise * 0.95f + (random.nextFloat() * 2.0f - 1.0f) * 0.05f;
+        sample += voice->bowNoise * bowPressure * 0.03f;
         
-        // Add string body resonance
+        // Add string body resonance with improved modeling
         float bodyResonanceFreq = frequency * 0.5f + stringDensity * 100.0f;
         float bodyPhase = i * bodyResonanceFreq * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-        sample += std::sin(bodyPhase) * resonance * 0.1f * amplitude;
+        sample += std::sin(bodyPhase) * resonance * 0.1f * voice->amplitude;
         
         // Apply realistic envelope with sustain
         float sustainLevel = 0.6f + velocity * 0.4f;
@@ -237,17 +292,17 @@ void PhysicalModelingEngine::generateStringNote(float* output, int numSamples, f
             envelope = sustainLevel;
         }
         
-        sample *= amplitude * velocity * envelope;
+        sample *= voice->amplitude * velocity * envelope;
         
         // Apply damping
-        amplitude *= decay_factor;
+        voice->amplitude *= decay_factor;
         
         output[i] = jlimit(-1.0f, 1.0f, sample * 0.35f);
         
         // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
-            phase -= 2.0f * juce::MathConstants<float>::pi;
+        voice->phase += phase_increment;
+        if (voice->phase >= 2.0f * juce::MathConstants<float>::pi)
+            voice->phase -= 2.0f * juce::MathConstants<float>::pi;
     }
 }
 
@@ -272,4 +327,21 @@ float PhysicalModelingEngine::applyHammerModel(float input, float hardness)
     float result = compressed * (0.4f + softness * 0.6f) + harmonicContent;
     
     return jlimit(-1.0f, 1.0f, result);
+}
+
+PhysicalModelingEngine::VoiceState* PhysicalModelingEngine::getNextAvailableVoice()
+{
+    // First, try to find an inactive voice
+    for (int i = 0; i < maxVoices; ++i)
+    {
+        if (!voices[i].isActive || voices[i].amplitude < 0.001f)
+        {
+            currentVoiceIndex = i;
+            return &voices[i];
+        }
+    }
+    
+    // If all voices are active, use round-robin voice stealing
+    currentVoiceIndex = (currentVoiceIndex + 1) % maxVoices;
+    return &voices[currentVoiceIndex];
 }

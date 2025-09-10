@@ -436,10 +436,12 @@ void ProjectManager::setMode(AUDIO_MODE newMode)
 {
     // FIXED: Use thread-safe atomic mode setting
     setAudioMode(newMode);
-    
+
+    Logger::writeToLog("ProjectManager::setMode -> " + String((int)newMode));
+
     // depending on mode we should resync all the params
     initGUISync(newMode);
-    
+
     uiListeners.call(&UIListener::updateAudioMode, newMode);
 }
 
@@ -3553,7 +3555,16 @@ void ProjectManager::LogFileWriter::processLog_ChordPlayer_Parameters()
                 
                 // Map instrument types to synthesis-based instruments (no file system access needed)
                 // Use properly implemented synthesis instruments from SynthesisLibraryManager  
-                Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
+                Array<String> synthInstruments = {
+                    "Grand Piano",      // Physical Modeling
+                    "Acoustic Guitar",  // Karplus-Strong
+                    "Harp",            // Karplus-Strong
+                    "Strings",         // Physical Modeling
+                    "Church Organ",    // Wavetable
+                    "Lead Synth",      // Wavetable
+                    "Pad Synth",       // Wavetable
+                    "Bass Synth"       // Wavetable
+                };
                 
                 String instName = "Grand Piano"; // Default
                 if (instrumentType >= 0 && instrumentType < synthInstruments.size())
@@ -3823,7 +3834,16 @@ void ProjectManager::LogFileWriter::processLog_ChordScanner_Parameters()
         
         // Map instrument types to synthesis-based instruments (no file system access needed)
         // Use properly implemented synthesis instruments from SynthesisLibraryManager  
-        Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth"};
+        Array<String> synthInstruments = {
+            "Grand Piano",      // Physical Modeling
+            "Acoustic Guitar",  // Karplus-Strong
+            "Harp",            // Karplus-Strong
+            "Strings",         // Physical Modeling
+            "Church Organ",    // Wavetable
+            "Lead Synth",      // Wavetable
+            "Pad Synth",       // Wavetable
+            "Bass Synth"       // Wavetable
+        };
         
         String instName = "Grand Piano"; // Default
         if (instrumentType >= 0 && instrumentType < synthInstruments.size())

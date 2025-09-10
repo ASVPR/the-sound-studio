@@ -1112,7 +1112,16 @@ String ChordPlayerProcessor::getCurrentInstrumentName(int shortcutRef)
     int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE);
     
     // Map to instrument names (same mapping as in ChordPlayerComponent.cpp)
-    Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
+    Array<String> synthInstruments = {
+        "Grand Piano",      // Physical Modeling
+        "Acoustic Guitar",  // Karplus-Strong
+        "Harp",            // Karplus-Strong
+        "Strings",         // Physical Modeling
+        "Church Organ",    // Wavetable
+        "Lead Synth",      // Wavetable
+        "Pad Synth",       // Wavetable
+        "Bass Synth"       // Wavetable
+    };
     
     if (instrumentType >= 0 && instrumentType < synthInstruments.size())
         return synthInstruments[instrumentType];
@@ -1123,18 +1132,20 @@ String ChordPlayerProcessor::getCurrentInstrumentName(int shortcutRef)
 SynthesisType ChordPlayerProcessor::getSynthesisTypeForInstrument(const String& instrumentName)
 {
     // Map instrument names to synthesis types (from SynthesisLibraryManager)
-    if (instrumentName == "Grand Piano" || instrumentName == "Electric Piano")
+    if (instrumentName == "Grand Piano")
         return SynthesisType::PHYSICAL_MODELING_PIANO;
-    else if (instrumentName == "Acoustic Guitar" || instrumentName == "Classical Guitar" || instrumentName == "Electric Guitar")
+    else if (instrumentName == "Acoustic Guitar")
         return SynthesisType::KARPLUS_STRONG_GUITAR;
-    else if (instrumentName == "Bell" || instrumentName == "Chimes")
+    else if (instrumentName == "Harp")
         return SynthesisType::KARPLUS_STRONG_HARP;
-    else if (instrumentName == "Church Organ" || instrumentName == "Pipe Organ")
+    else if (instrumentName == "Strings")
+        return SynthesisType::PHYSICAL_MODELING_STRINGS;
+    else if (instrumentName == "Church Organ")
         return SynthesisType::WAVETABLE_ELECTRONIC;
     else if (instrumentName == "Lead Synth" || instrumentName == "Pad Synth" || instrumentName == "Bass Synth")
         return SynthesisType::WAVETABLE_SYNTH;
     else
-        return SynthesisType::PHYSICAL_MODELING_STRINGS; // Default for Strings, Brass, Harp, Flute
+        return SynthesisType::PHYSICAL_MODELING_PIANO; // Default to piano
 }
 
 void ChordPlayerProcessor::generateSynthesisAudio(AudioBuffer<float>& buffer, int shortcutRef, SynthesisType synthType)

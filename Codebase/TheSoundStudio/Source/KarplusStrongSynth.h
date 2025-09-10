@@ -89,10 +89,14 @@ private:
     // Excitation functions
     void generateNoise(float* buffer, int numSamples, float amplitude);
     void generatePluck(float* buffer, int numSamples, float amplitude, float position);
+    void generateRealisticPluck(float* buffer, int numSamples, float velocity, float position, float frequency);
     
     // Filter functions
     float lowpassFilter(float input, float cutoff);
     float highpassFilter(float input, float cutoff);
+    float onePoleLP(float input, float cutoff);
+    float allPassFilter(float input, float delay);
+    float simulateGuitarBody(float input, float resonance, float frequency, int sampleIndex);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(KarplusStrongEngine)
 };

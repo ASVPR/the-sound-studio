@@ -43,9 +43,35 @@ private:
     float filterResonance;
     float amplitude;
     
-    // Filter state
-    float lowpassState1, lowpassState2;
-    float highpassState1, highpassState2;
+    // Per-voice state structure
+    struct VoiceState
+    {
+        float phase = 0.0f;
+        float envelope = 1.0f;
+        float lowpassState1 = 0.0f;
+        float lowpassState2 = 0.0f;
+        float highpassState1 = 0.0f;
+        float highpassState2 = 0.0f;
+        float previousSample = 0.0f;
+        bool isActive = false;
+        int sampleIndex = 0;
+        
+        void reset()
+        {
+            phase = 0.0f;
+            envelope = 1.0f;
+            lowpassState1 = lowpassState2 = 0.0f;
+            highpassState1 = highpassState2 = 0.0f;
+            previousSample = 0.0f;
+            sampleIndex = 0;
+            isActive = true;
+        }
+    };
+    
+    // Voice management
+    static constexpr int maxVoices = 32;
+    VoiceState voices[maxVoices];
+    int currentVoiceIndex = 0;
     
     // Wavetables
     Array<float> sineWavetable;
@@ -65,6 +91,9 @@ private:
     
     // Filter methods
     float lowpassFilter(float input, float cutoff, float& state1, float& state2);
+    
+    // Voice management
+    VoiceState* getNextAvailableVoice();
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WavetableEngine)
 };

@@ -39,6 +39,19 @@
 - ✅ **REPLACED: Sample Library with Synthesis** - Eliminated 5.4GB sample dependency in favor of synthesis-based instruments  
 - ✅ **ENHANCED: Playing Instruments** - Chord Player and Chord Scanner now use synthesis: Grand Piano, Electric Guitar, Cello, Flute, Brass, Harp, Strings, Woodwinds
 - ✅ **FIXED: Application Launch Issues** - Resolved code signing problems, application now launches and runs successfully
+ - ✅ 2025-09-10 — Stability on Quit (Crash Fix): prevented EXC_BAD_ACCESS on close by destroying UI before ProjectManager
+
+### Build & Validation — 2025-09-10
+- ✅ Build: Release with zero errors via `xcodebuild` (macOS, Apple Silicon)
+- ✅ Deploy: Placed compiled app at `tss/The Sound Studio.app`
+- ✅ Run/Close: Launched and exited cleanly; no crash on quit
+- ✅ Logs Verified: New files in `/Users/zivelovitch/Documents/TSS/Logs` (e.g., `10.9.2025-14-57-Settings.txt`)
+- ✅ Crash Fix Details: Eliminated double-ownership of Wavetable Editor by making popup window the sole owner (no more EXC_BAD_ACCESS on teardown)
+
+### Feature Gatekeeping — New Features/Continue
+- ✅ 1_FFT Improvements: Implemented (zoom, delay, color spectrum; Octave/Colour views updated)
+- ✅ 4_Lissajous Improvements: Implemented (Z-axis, per-axis phase, chord/frequency selection, popup editors)
+- ⏳ 6_Add More Axis To Lissajous: Engine for up to 6 axes is implemented; UI controls (+/− to add/remove axes) pending
 - ✅ **ORGANIZED: Feature Development Roadmap** - Complete categorization of 128 potential features from ASVPR legacy
 - ✅ **MAJOR: Advanced Synthesis Engine Implementation** - Complete rewrite of synthesis algorithms with realistic sound generation
 - ✅ **ENHANCED: Physical Modeling Piano** - Realistic piano synthesis with inharmonic partials, hammer modeling, and soundboard resonance
@@ -134,6 +147,59 @@
 🔄 **Sample Library**: 2,794 WAV files → Mathematical synthesis algorithms  
 🔄 **Static Samples**: Fixed recordings → Dynamic, expressive synthesis  
 🔄 **Memory Usage**: Large RAM footprint → Efficient algorithmic generation  
+
+## Synthesis Methods Implemented (September 2025)
+
+### 1. Physical Modeling Synthesis
+- **Piano**: Enhanced algorithm with inharmonic partials, hammer modeling, and soundboard resonance
+  - Per-voice state management for polyphonic playback
+  - Frequency-dependent damping for realistic decay
+  - Sympathetic string resonance simulation
+- **Strings**: Bowed string physical modeling with dynamic bow pressure
+  - Rich harmonic series (up to 9th harmonic)
+  - Body resonance modeling
+  - Rosin friction noise simulation
+
+### 2. Karplus-Strong Algorithm (Enhanced)
+- **Acoustic Guitar**: Advanced plucked string synthesis
+  - Fractional delay for precise tuning
+  - Dynamic feedback control
+  - Realistic pluck excitation with position modeling
+- **Harp**: Modified Karplus-Strong with reduced damping
+  - Increased resonance for characteristic harp sound
+  - Extended sustain parameters
+
+### 3. Wavetable Synthesis
+- **Church Organ**: Hammond organ-inspired drawbar synthesis
+  - Multiple harmonic drawbar ratios (16', 8', 5⅓', 4', 2⅔', 2')
+  - Band-limited wavetables to prevent aliasing
+- **Synthesizers**: Lead, Pad, and Bass synth presets
+  - Morphing between sine, saw, and square wavetables
+  - Dynamic filter cutoff and resonance
+  - ADSR envelope implementation
+
+### Key Improvements Made (September 2025 - Latest Updates)
+
+#### Advanced Piano Synthesis
+1. **Railsback Curve Implementation**: Proper inharmonicity modeling based on actual piano tuning curves
+2. **Multi-Modal Resonance**: Duplex scaling, sympathetic strings, and soundboard resonance with multiple modes
+3. **Dynamic Hammer Modeling**: Velocity-dependent hardness and nonlinear compression
+4. **Frequency-Dependent Decay**: Higher frequencies naturally decay faster, matching real piano behavior
+5. **Enhanced Harmonic Series**: Up to 12 harmonics with proper inharmonicity formula: f_h = h * f_0 * sqrt(1 + B * h^2)
+
+#### Enhanced Karplus-Strong Guitar Synthesis  
+1. **All-Pass Fractional Delay**: Superior tuning accuracy with interpolation algorithms
+2. **Multi-Stage Loop Filtering**: Frequency-dependent damping, string stiffness, and nonlinear processing
+3. **Realistic Pluck Excitation**: Bandwidth-limited impulse with velocity-dependent sharpness
+4. **Guitar Body Simulation**: Multiple resonant modes (100Hz, 200Hz, 400Hz) with frequency-dependent response  
+5. **Sympathetic Resonance**: Octave and fifth relationships for richer harmonic content
+6. **Dynamic Feedback Control**: Amplitude and frequency-dependent feedback for natural decay
+
+#### Technical Research Integration
+- **OpenPiano algorithms**: Inharmonicity and soundboard modeling techniques
+- **Enhanced Karplus-Strong**: All-pass filters, body resonance, and realistic pluck modeling
+- **STK (Synthesis Toolkit)**: Filter design patterns and voice management
+- **Academic Research**: Railsback curve data and piano physics modeling
 
 ## Implementation Phases
 
@@ -382,3 +448,16 @@ This project represents a significant advancement in real-time synthesis technol
 ---
 
 **The Sound Studio**: Where mathematical precision meets musical expression, delivering the full power of ASVPR in a fraction of the size.
+### Build & Run (macOS)
+
+- Prerequisites: Xcode 15+, JUCE modules at `~/Documents/Git/JUCE`
+- Build Release (no code signing):
+  - `cd Codebase/TheSoundStudio/Builds/MacOSX`
+  - `xcodebuild -scheme "The Sound Studio - App" -configuration Release CODE_SIGNING_ALLOWED=NO`
+- The built app is at:
+  - `Codebase/TheSoundStudio/Builds/MacOSX/build/Release/The Sound Studio.app`
+- For convenience, the latest build is also placed at the repo root: `tss/The Sound Studio.app`
+
+### Logs
+- Runtime logs: `~/Documents/TSS/Logs` (module-specific files like Chord-Player.txt, Settings.txt)
+- Verify on exit that new logs contain no errors; the previous close-crash has been addressed.

@@ -441,7 +441,16 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
             
             // Map instrument types to synthesis-based instruments (no file system access needed)
             // Use properly implemented synthesis instruments from SynthesisLibraryManager
-            Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
+            Array<String> synthInstruments = {
+                "Grand Piano",      // Physical Modeling
+                "Acoustic Guitar",  // Karplus-Strong
+                "Harp",            // Karplus-Strong
+                "Strings",         // Physical Modeling
+                "Church Organ",    // Wavetable
+                "Lead Synth",      // Wavetable
+                "Pad Synth",       // Wavetable
+                "Bass Synth"       // Wavetable
+            };
             
             String instName = "Grand Piano"; // Default
             if (instrumentType >= 0 && instrumentType < synthInstruments.size())
