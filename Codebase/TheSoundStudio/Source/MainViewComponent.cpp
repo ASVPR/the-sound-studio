@@ -17,7 +17,8 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     projectManager = pm;
 
     // Image Cache
-    imageLogoButton = ImageCache::getFromMemory(BinaryData::Logo3D_png, BinaryData::Logo3D_pngSize);
+    // Use the correct application icon asset (replacing old Logo3D)
+    imageLogoButton = ImageCache::getFromMemory(BinaryData::icon_128_png, BinaryData::icon_128_pngSize);
     imageMenuButtonNormal = ImageCache::getFromMemory(BinaryData::Sidebar_Button_Normal_png, BinaryData::Sidebar_Button_Normal_pngSize);
     imageMenuButtonSelected = ImageCache::getFromMemory(BinaryData::Sidebar_ButtonHighlighted_png, BinaryData::Sidebar_ButtonHighlighted_pngSize);
     imageSidebar = ImageCache::getFromMemory(BinaryData::SidebarNew_png, BinaryData::SidebarNew_pngSize);

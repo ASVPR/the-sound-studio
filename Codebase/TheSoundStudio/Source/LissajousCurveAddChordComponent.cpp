@@ -1187,10 +1187,10 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
+    wavetableEditorComponent = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
-    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Chord Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Chord Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);
@@ -1203,7 +1203,39 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
 
 LissajousChordPlayerSettingsComponent::~LissajousChordPlayerSettingsComponent()
 {
-    
+    // Ensure children don't reference a destroyed LookAndFeel
+    if (slider_Amplitude) slider_Amplitude->setLookAndFeel(nullptr);
+    if (slider_Attack)    slider_Attack->setLookAndFeel(nullptr);
+    if (slider_Decay)     slider_Decay->setLookAndFeel(nullptr);
+    if (slider_Sustain)   slider_Sustain->setLookAndFeel(nullptr);
+    if (slider_Release)   slider_Release->setLookAndFeel(nullptr);
+
+    if (textEditorRepeat)        textEditorRepeat->setLookAndFeel(nullptr);
+    if (textEditorPause)         textEditorPause->setLookAndFeel(nullptr);
+    if (textEditorLength)        textEditorLength->setLookAndFeel(nullptr);
+    if (textEditorInsertFreq)    textEditorInsertFreq->setLookAndFeel(nullptr);
+    if (textEditorMultiplication)textEditorMultiplication->setLookAndFeel(nullptr);
+    if (textEditorDivision)      textEditorDivision->setLookAndFeel(nullptr);
+    if (textEditor_Octave)       textEditor_Octave->setLookAndFeel(nullptr);
+
+    if (comboBoxKeynote)         comboBoxKeynote->setLookAndFeel(nullptr);
+    if (comboBoxChordtype)       comboBoxChordtype->setLookAndFeel(nullptr);
+    if (comboBoxPlayingInstrument) {
+        comboBoxPlayingInstrument->setLookAndFeel(nullptr);
+        if (auto* menu = comboBoxPlayingInstrument->getRootMenu())
+            menu->setLookAndFeel(nullptr);
+    }
+    if (comboBox_Scales)
+    {
+        if (auto* menu = comboBox_Scales->getRootMenu())
+            menu->setLookAndFeel(nullptr);
+    }
+    if (comboBox_Scales)         comboBox_Scales->setLookAndFeel(nullptr);
+    if (button_WavetableEditor)  button_WavetableEditor->setLookAndFeel(nullptr);
+
+    // Detach from project manager to avoid callbacks during teardown
+    if (projectManager != nullptr)
+        projectManager->removeUIListener(this);
 }
 
 
@@ -2256,12 +2288,12 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
         updateMinMaxSettings(i);
     }
     
-    wavetableEditorComponent = std::make_unique<WaveTableOscViewComponent>(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
+    wavetableEditorComponent = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
     wavetableEditorComponent->setBounds(0, 0, 600, 400);
     
     // need to update the contents of each editor for each shortcut.....
     
-    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent.get(), Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
     popupWavetableWindow ->centreWithSize(600, 400);
     popupWavetableWindow ->setVisible(false);
     popupWavetableWindow ->setResizable(true, true);
@@ -2272,7 +2304,28 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
 
 }
 
-LissajousFrequencyPlayerSettingsComponent::~LissajousFrequencyPlayerSettingsComponent() { }
+LissajousFrequencyPlayerSettingsComponent::~LissajousFrequencyPlayerSettingsComponent() {
+    // Ensure children don't reference a destroyed LookAndFeel
+    if (slider_Amplitude) slider_Amplitude->setLookAndFeel(nullptr);
+    if (slider_Attack)    slider_Attack->setLookAndFeel(nullptr);
+    if (slider_Decay)     slider_Decay->setLookAndFeel(nullptr);
+    if (slider_Sustain)   slider_Sustain->setLookAndFeel(nullptr);
+    if (slider_Release)   slider_Release->setLookAndFeel(nullptr);
+
+    if (textEditorRepeat)        textEditorRepeat->setLookAndFeel(nullptr);
+    if (textEditorPause)         textEditorPause->setLookAndFeel(nullptr);
+    if (textEditorLength)        textEditorLength->setLookAndFeel(nullptr);
+    if (textEditorInsertFreq)    textEditorInsertFreq->setLookAndFeel(nullptr);
+    if (textEditorFreqFrom)      textEditorFreqFrom->setLookAndFeel(nullptr);
+    if (textEditorFreqTo)        textEditorFreqTo->setLookAndFeel(nullptr);
+    if (textEditorRangeLength)   textEditorRangeLength->setLookAndFeel(nullptr);
+    if (textEditorMultiplication)textEditorMultiplication->setLookAndFeel(nullptr);
+    if (textEditorDivision)      textEditorDivision->setLookAndFeel(nullptr);
+    if (button_WavetableEditor)  button_WavetableEditor->setLookAndFeel(nullptr);
+
+    // Destroy the popup (and its owned content) early in the sequence
+    popupWavetableWindow.reset();
+}
 
 
 void LissajousFrequencyPlayerSettingsComponent::resized()

@@ -305,8 +305,23 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
 
 LissajousCurveComponent::~LissajousCurveComponent()
 {
-    
-    
+    // Ensure children don't reference a destroyed LookAndFeel
+    if (button_PlayInLoop) button_PlayInLoop->setLookAndFeel(nullptr);
+    if (slider_X)          slider_X->setLookAndFeel(nullptr);
+    if (slider_Y)          slider_Y->setLookAndFeel(nullptr);
+    if (slider_Z)          slider_Z->setLookAndFeel(nullptr);
+    if (slider_PhaseX)     slider_PhaseX->setLookAndFeel(nullptr);
+    if (slider_PhaseY)     slider_PhaseY->setLookAndFeel(nullptr);
+    if (slider_PhaseZ)     slider_PhaseZ->setLookAndFeel(nullptr);
+    if (textEditor_SliderX)       textEditor_SliderX->setLookAndFeel(nullptr);
+    if (textEditor_SliderY)       textEditor_SliderY->setLookAndFeel(nullptr);
+    if (textEditor_SliderZ)       textEditor_SliderZ->setLookAndFeel(nullptr);
+    if (textEditor_SliderPhaseX)  textEditor_SliderPhaseX->setLookAndFeel(nullptr);
+    if (textEditor_SliderPhaseY)  textEditor_SliderPhaseY->setLookAndFeel(nullptr);
+    if (textEditor_SliderPhaseZ)  textEditor_SliderPhaseZ->setLookAndFeel(nullptr);
+
+    if (projectManager != nullptr)
+        projectManager->removeUIListener(this);
 }
 
 void LissajousCurveComponent::paint (Graphics& g)

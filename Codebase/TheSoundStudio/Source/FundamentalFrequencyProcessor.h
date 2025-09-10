@@ -15,6 +15,8 @@
 #include "VotanSynthProcessor.h"
 #include "SamplerProcessor.h"
 #include "WavetableSynthProcessor.h"
+// Convolution / IR support
+#include <juce_dsp/juce_dsp.h>
 
 class ProjectManager;
 
@@ -96,6 +98,13 @@ public:
     }
     
     Analyser& getAnalyser() { return analyser; }
+
+    //======================== Convolution / IR (WAV only) ========================
+    // Enable/disable IR processing and set wet mix (0..1)
+    void setIREnabled(bool shouldEnable) { irEnabled.store(shouldEnable, std::memory_order_release); }
+    void setIRWet(float wet) { irWet.store(jlimit(0.0f, 1.0f, wet)); }
+    // Load IR from WAV file; returns ok or error with message
+    juce::Result loadIRFromWav(const juce::File& wavFile);
 
     enum class Parameter
     {
@@ -336,6 +345,12 @@ private:
     FrequencyManager& frequencyManager;
 
     Analyser analyser;
+
+    // Convolution / IR state
+    juce::dsp::Convolution irConvolution;
+    std::atomic<bool> irEnabled { false };
+    std::atomic<float> irWet { 1.0f }; // wet mix (0..1)
+    bool irPrepared = false;
 
     std::atomic<bool> playing { false };
 };

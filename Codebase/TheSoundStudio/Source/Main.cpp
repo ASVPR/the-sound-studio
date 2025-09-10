@@ -146,11 +146,12 @@ private:
         if (! logsDir.exists())
             logsDir.createDirectory();
 
-        // Create a date-stamped error log file
-        // e.g. TSS_2025-09-10_Error.txt
-        fileLogger.reset(FileLogger::createDateStampedLogger(logsDir, "TSS", "_Error", 0));
-        if (fileLogger)
-            Logger::setCurrentLogger(fileLogger.get());
+        // Create a date-stamped error log file in the specified directory
+        // Example: /Users/zivelovitch/Documents/TSS/Logs/TSS_2025-09-10_15-14-25_Error.txt
+        const auto dateStamp = Time::getCurrentTime().formatted("%Y-%m-%d_%H-%M-%S");
+        const File logFile = logsDir.getChildFile("TSS_" + dateStamp + "_Error.txt");
+        fileLogger = std::make_unique<FileLogger>(logFile, String());
+        Logger::setCurrentLogger(fileLogger.get());
     }
     
     std::unique_ptr<MainWindow> mainWindow;

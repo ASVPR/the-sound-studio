@@ -111,6 +111,14 @@ void FundamentalFrequencyProcessor::prepareToPlay (double sampleRate, int maximu
     auto inputChannels = static_cast<int>(projectManager.deviceManager->getCurrentAudioDevice()->getActiveInputChannels().toInt64());
 
     analyser.setupAnalyser(static_cast<float>(sampleRate), inputChannels);
+
+    // Prepare IR convolution for current stream format
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = (juce::uint32) maximumExpectedSamplesPerBlock;
+    spec.numChannels = 1; // analysis path uses a single selected input channel
+    irConvolution.prepare(spec);
+    irPrepared = true;
 }
 
 void FundamentalFrequencyProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
@@ -126,12 +134,58 @@ void FundamentalFrequencyProcessor::processBlock (AudioBuffer<float>& buffer, Mi
 
         if (inputChannel < buffer.getNumChannels())
         {
-            analyser.addAudioData(buffer, inputChannel, 1);
+            // Optionally pass a convolved (IR) version of the selected input channel into the analyser
+            if (irEnabled.load(std::memory_order_acquire) && irPrepared)
+            {
+                // Make a mono copy of selected channel
+                juce::AudioBuffer<float> mono(1, buffer.getNumSamples());
+                mono.copyFrom(0, 0, buffer, (int) inputChannel, 0, buffer.getNumSamples());
+
+                juce::dsp::AudioBlock<float> blk(mono);
+                juce::dsp::ProcessContextReplacing<float> ctx(blk);
+                irConvolution.process(ctx);
+
+                // Wet/dry mix for analysis
+                const float wet = irWet.load();
+                if (wet < 1.0f)
+                {
+                    // mix dry input into mono
+                    mono.applyGain(wet);
+                    mono.addFrom(0, 0, buffer, (int) inputChannel, 0, buffer.getNumSamples(), 1.0f - wet);
+                }
+
+                analyser.addAudioData(mono, 0, 1);
+            }
+            else
+            {
+                analyser.addAudioData(buffer, inputChannel, 1);
+            }
         }
     }
 
     buffer.clear();
 
+}
+
+juce::Result FundamentalFrequencyProcessor::loadIRFromWav(const juce::File& wavFile)
+{
+    if (! wavFile.existsAsFile())
+        return juce::Result::fail("IR file not found: " + wavFile.getFullPathName());
+
+    // JUCE dsp::Convolution handles WAV files via loadImpulseResponse
+    try
+    {
+        irConvolution.loadImpulseResponse(wavFile,
+                                          juce::dsp::Convolution::Stereo::no,
+                                          juce::dsp::Convolution::Trim::yes,
+                                          0);
+    }
+    catch (const std::exception& e)
+    {
+        return juce::Result::fail("Failed to load IR: " + juce::String(e.what()));
+    }
+
+    return juce::Result::ok();
 }
 
 AudioProcessorEditor * FundamentalFrequencyProcessor::createEditor()

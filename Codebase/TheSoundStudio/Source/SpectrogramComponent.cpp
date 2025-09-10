@@ -717,6 +717,58 @@ void SpectrogramComponent::drawLayersNew(Graphics &g)
     
     drawDBLinesNew(g);  // Optimsation.. put into bitmap to reduce calculations
     drawFreqLinesNew(g); // as above // only redraw upon cnage of view size, and then only when the size has settled.. otherwise it should stretch..
+
+    // Option A: Overlay gauge showing current peak frequency
+    // Read peak/moving-average from active analyser and draw a marker + label
+    {
+        const int fftRef = (int)visualiserSource - 1;
+        double peakFreq = 0.0, peakDb = 0.0, movingAvg = 0.0;
+        projectManager->getMovingAveragePeakData(fftRef, peakFreq, peakDb, movingAvg);
+
+        if (peakFreq > 0.0)
+        {
+            // Convert frequency to x position depending on current view (popup vs embedded)
+            auto freqToX = [this](double f) -> float
+            {
+                if (isPopup)
+                {
+                    const double octaves = (log2(zoomRange_FreqHigh) - log2(zoomRange_FreqLow));
+                    if (octaves <= 0.0) return 0.0f;
+                    const double pos = (log2(f / zoomRange_FreqLow)) / octaves;
+                    return (float) jlimit(0.0, 1.0, pos) * (float) getWidth();
+                }
+                else
+                {
+                    const double sr = projectManager->getSampleRate();
+                    const double nyquist = jmax(1.0, sr / 2.0);
+                    const double octaves = (log2(nyquist) - log2(kDefaultMinHertz));
+                    if (octaves <= 0.0) return 0.0f;
+                    const double pos = (log2(f / kDefaultMinHertz)) / octaves;
+                    return (float) jlimit(0.0, 1.0, pos) * (float) getWidth();
+                }
+            };
+
+            const float x = freqToX(peakFreq);
+
+            // Draw marker
+            g.setColour(Colours::orange.withAlpha(0.9f));
+            g.drawLine(x, 0.0f, x, (float) getHeight(), 1.5f * scaleFactor);
+
+            // Draw label at top-right
+            const float labelW = 160.0f * scaleFactor;
+            const float labelH = 22.0f * scaleFactor;
+            const float pad = 6.0f * scaleFactor;
+            const Rectangle<float> box((float) getWidth() - labelW - pad, pad, labelW, labelH);
+            g.setColour(Colours::black.withAlpha(0.6f));
+            g.fillRoundedRectangle(box, 4.0f * scaleFactor);
+            g.setColour(Colours::white);
+            g.setFont(14.0f * scaleFactor);
+
+            String txt;
+            txt << "Peak: " << String(peakFreq, 1, false) << " Hz";
+            g.drawText(txt, box.toNearestInt(), Justification::centredRight, false);
+        }
+    }
     
     if (displayData)
         drawDataDisplay(g);

@@ -39,14 +39,54 @@
 - ✅ **REPLACED: Sample Library with Synthesis** - Eliminated 5.4GB sample dependency in favor of synthesis-based instruments  
 - ✅ **ENHANCED: Playing Instruments** - Chord Player and Chord Scanner now use synthesis: Grand Piano, Electric Guitar, Cello, Flute, Brass, Harp, Strings, Woodwinds
 - ✅ **FIXED: Application Launch Issues** - Resolved code signing problems, application now launches and runs successfully
- - ✅ 2025-09-10 — Stability on Quit (Crash Fix): prevented EXC_BAD_ACCESS on close by destroying UI before ProjectManager
+ - ✅ 2025-09-10 — Stability on Quit (Crash Fix): fixed EXC_BAD_ACCESS on close by removing double-ownership of wavetable editor and cleaning up listeners; additionally ensured safe LookAndFeel teardown for components using custom LnF (nulling LnF on children during destructors to prevent dangling references)
+ - ✅ UI Polish: Replaced sidebar logo with correct app icon (`icon_128.png`)
 
 ### Build & Validation — 2025-09-10
 - ✅ Build: Release with zero errors via `xcodebuild` (macOS, Apple Silicon)
 - ✅ Deploy: Placed compiled app at `tss/The Sound Studio.app`
 - ✅ Run/Close: Launched and exited cleanly; no crash on quit
-- ✅ Logs Verified: New files in `/Users/zivelovitch/Documents/TSS/Logs` (e.g., `10.9.2025-14-57-Settings.txt`)
-- ✅ Crash Fix Details: Eliminated double-ownership of Wavetable Editor by making popup window the sole owner (no more EXC_BAD_ACCESS on teardown)
+- ✅ Logs Verified: New files in `/Users/zivelovitch/Documents/TSS/Logs` (e.g., `10.9.2025-15-53-Settings.txt`, `TSS_2025-09-10_15-53-52_Error.txt`)
+- ✅ Error Console: No runtime errors observed; startup and mode switches logged
+ - ✅ Crash Fix Details: Eliminated double-ownership of Wavetable Editor by making `PopupFFTWindow` the sole owner via `setContentOwned`. Components keep a non‑owning pointer; `LissajousCurveComponent` now removes itself from `ProjectManager` listeners on teardown. Also addressed potential teardown hazards by nulling custom LookAndFeel on child controls in destructors (Lissajous Frequency/Chord Settings, Lissajous Curve), preventing JUCE components from accessing a dead LnF during destruction.
+
+### Planning
+- Added `TO_DO_LIST.txt` at repo root with prioritized action plan:
+  1) Lissajous to 4 axes
+  2) Spectrogram Compare popup (synced zoom/pan)
+  3) Convolution/IR UI + Settings
+  4) Instrument realism (algorithmic synthesis), instrument list curation, 432 Hz retuning
+  5) App icon verification across bundle/UI
+
+### New Feature: Frequency Gauge (Option A)
+- Spectrogram now overlays a real‑time peak frequency gauge (vertical marker + readout) using the active analyser buffer.
+- Implementation: in `SpectrogramComponent::paint`, reads moving‑average peak from `ProjectManager::getMovingAveragePeakData(...)` and renders a marker at the corresponding frequency with a top‑right label.
+- Files: `Codebase/TheSoundStudio/Source/SpectrogramComponent.cpp:714`
+
+### Convolution / FFT IR (WAV only)
+- Scope: Fundamental Frequency module path gets optional IR convolution using `juce::dsp::Convolution`.
+- Status: Implemented in processing chain (disabled by default; mix and enable flags available; WAV-only loader).
+- Behavior: When enabled, the selected input channel is convolved and fed into the estimation chain; wet/dry mix supported.
+- Files: 
+  - `Codebase/TheSoundStudio/Source/FundamentalFrequencyProcessor.h` (IR members + API)
+  - `Codebase/TheSoundStudio/Source/FundamentalFrequencyProcessor.cpp` (prepare/process + WAV loader)
+- Next: Add UI controls on Fundamental module panel and defaults in Settings (enable, wet/dry, file chooser), per the spec.
+
+### Roadmap Notes (based on New folder analysis)
+- More Lissajous Axes: target is 4 axes. Full support requires extending `Parameters.h` with UNIT_4_* ranges and `ProjectManager` accessors. Current UI internals prepared; recommend parameter enum and storage expansion before enabling axis #4.
+- Compare Spectrogram Plots (Option B): design a popup that instantiates two spectrograms with shared zoom/pan state; can reuse `SpectrogramComponent` with a small sync mediator.
+- Convolution / FFT IR (94/95): add `juce::dsp::Convolution` in Fundamental module, with WAV loader + enable/toggle + wet/dry. Suggest placing controls on module panels and defaults in Settings. Will wire analysed input through IR when enabled.
+
+### How To Build Locally (unsigned app for dev)
+- From `tss/Codebase/TheSoundStudio/Builds/MacOSX` build the app:
+  - `xcodebuild -project 'The Sound Studio.xcodeproj' -scheme 'The Sound Studio - App' -configuration Release CODE_SIGNING_ALLOWED=NO`
+- The app will be at: `tss/Codebase/TheSoundStudio/Builds/MacOSX/build/Release/The Sound Studio.app`
+- A copy is placed at: `tss/The Sound Studio.app`
+
+### Logging
+- Error log: created on startup at `/Users/zivelovitch/Documents/TSS/Logs/TSS_YYYY-MM-DD_HH-MM-SS_Error.txt`.
+- Settings log: written by `ProjectManager::LogFileWriter` to `/Users/zivelovitch/Documents/TSS/Logs` whenever settings are applied.
+- Module logs: Realtime Analysis, Chord/Frequency Player/Scanner, Frequency‑to‑Light all log via `LogFileWriter`.
 
 ### Feature Gatekeeping — New Features/Continue
 - ✅ 1_FFT Improvements: Implemented (zoom, delay, color spectrum; Octave/Colour views updated)
