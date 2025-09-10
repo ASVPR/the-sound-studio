@@ -391,15 +391,12 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
     
-    // Use synthesis-based instrument list instead of file system scanning
-    // Use properly implemented synthesis instruments from SynthesisLibraryManager
-    Array<String> synthInstruments = {"Grand Piano", "Electric Piano", "Acoustic Guitar", "Classical Guitar", "Electric Guitar", "Bell", "Strings", "Brass", "Harp", "Flute", "Lead Synth", "Pad Synth", "Bass Synth"};
-    
-    // Add synthesis instruments to combo box menu
-    for (int i = 0; i < synthInstruments.size(); i++)
-    {
-        comboBoxMenu->addItem(i+1, synthInstruments[i]);
-    }
+    // Only include instruments that are implemented; IDs match INSTRUMENTS enum
+    comboBoxMenu->addItem(1, "Grand Piano");     // PIANO
+    comboBoxMenu->addItem(4, "Acoustic Guitar"); // GUITAR
+    comboBoxMenu->addItem(5, "Harp");            // HARP
+    comboBoxMenu->addItem(7, "Strings");         // STRINGS
+    comboBoxMenu->addItem(3, "Flute");           // FLUTE
 
     comboBoxPlayingInstrument->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->getRootMenu()->setLookAndFeel(&lookAndFeel);

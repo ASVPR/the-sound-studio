@@ -664,6 +664,30 @@ public:
         
         didSwipe(wheel.deltaX, wheel.deltaY, event.position);
     }
+
+    // Expose view range factors for sync/compare use-cases
+    void setViewRangeFactors(float xMin, float xMax, float yMin, float yMax)
+    {
+        range_X_Min_Factor = jlimit(0.0f, 0.9f, xMin);
+        range_X_Max_Factor = jlimit(0.1f, 1.0f, xMax);
+        range_Y_Min_Factor = jlimit(0.0f, 0.9f, yMin);
+        range_Y_Max_Factor = jlimit(0.1f, 1.0f, yMax);
+
+        zoomRange_FreqLow       = getFrequencyForPosition(range_X_Min_Factor);
+        zoomRange_FreqHigh      = getFrequencyForPosition(range_X_Max_Factor);
+        zoomRange_AmplitudeLow  = getDBForY(range_Y_Min_Factor, 1.f, 0.f);
+        zoomRange_AmplitudeHigh = getDBForY(range_Y_Max_Factor, 1.f, 0.f);
+
+        viewRangeDidChange();
+    }
+
+    void getViewRangeFactors(float& xMin, float& xMax, float& yMin, float& yMax) const
+    {
+        xMin = range_X_Min_Factor;
+        xMax = range_X_Max_Factor;
+        yMin = range_Y_Min_Factor;
+        yMax = range_Y_Max_Factor;
+    }
     
     float range_X_Min_Factor = 0.f;
     float range_X_Max_Factor = 1.f;

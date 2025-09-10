@@ -433,29 +433,17 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
         int waveformType = projectManager->getChordPlayerParameter(shortcutRef, WAVEFORM_TYPE).operator int();
         if (waveformType == 0) // playing instrument
         {
-            // PLAYING_INSTRUMENT
-            int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE).operator int() - 1;
-            
-            // Use synthesis-based instrument library instead of samples
-            String instString;
-            
-            // Map instrument types to synthesis-based instruments (no file system access needed)
-            // Use properly implemented synthesis instruments from SynthesisLibraryManager
-            Array<String> synthInstruments = {
-                "Grand Piano",      // Physical Modeling
-                "Acoustic Guitar",  // Karplus-Strong
-                "Harp",            // Karplus-Strong
-                "Strings",         // Physical Modeling
-                "Church Organ",    // Wavetable
-                "Lead Synth",      // Wavetable
-                "Pad Synth",       // Wavetable
-                "Bass Synth"       // Wavetable
-            };
-            
-            String instName = "Grand Piano"; // Default
-            if (instrumentType >= 0 && instrumentType < synthInstruments.size())
+            // Map enum INSTRUMENTS directly to names
+            const int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE).operator int();
+            String instName = "Grand Piano"; // default
+            switch (instrumentType)
             {
-                instName = synthInstruments[instrumentType];
+                case 1: instName = "Grand Piano"; break;      // PIANO
+                case 4: instName = "Acoustic Guitar"; break;  // GUITAR
+                case 5: instName = "Harp"; break;             // HARP
+                case 7: instName = "Strings"; break;          // STRINGS
+                case 3: instName = "Flute"; break;            // FLUTE
+                default: break;
             }
             
             stringLabel         = "Instrument :";

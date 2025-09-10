@@ -94,6 +94,36 @@ frequencyProcessor(pm.fundamentalFrequencyProcessor ? *pm.fundamentalFrequencyPr
     prepare_process_and_synth();
     prepare_harmonics_and_results();
 
+    // IR Controls (in Process container)
+    toggleIREnable = std::make_unique<ToggleButton>("Enable IR");
+    toggleIREnable->onClick = [this]()
+    {
+        frequencyProcessor.setIREnabled(toggleIREnable->getToggleState());
+    };
+    containers.getContainer(3).addAndMakeVisible(*toggleIREnable);
+
+    sliderIRWet = std::make_unique<Slider>(Slider::LinearHorizontal, Slider::TextBoxRight);
+    sliderIRWet->setRange(0.0, 1.0, 0.01);
+    sliderIRWet->onValueChange = [this]()
+    {
+        frequencyProcessor.setIRWet((float) sliderIRWet->getValue());
+    };
+    containers.getContainer(3).addAndMakeVisible(*sliderIRWet);
+
+    buttonIRLoad = std::make_unique<TextButton>("Load IR (WAV)");
+    buttonIRLoad->onClick = [this]()
+    {
+        FileChooser chooser("Select Impulse Response (WAV)", File{}, "*.wav");
+        if (chooser.browseForFileToOpen())
+        {
+            auto file = chooser.getResult();
+            auto res = frequencyProcessor.loadIRFromWav(file);
+            if (!res.wasOk())
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "IR Load Failed", res.getErrorMessage());
+        }
+    };
+    containers.getContainer(3).addAndMakeVisible(*buttonIRLoad);
+
 
     labelFrequency = std::make_unique<Label>();
     labelFrequency->setText("0.0 hz", dontSendNotification);
@@ -166,13 +196,22 @@ void FundamentalFrequencyComponent::resized()
     y = setContainerBounds(3, juce::Rectangle<int>(x,
                                                    y,
                                                    width,
-                                                   70)) + gap;
+                                                   110)) + gap;
 
     y = setContainerBounds(4, juce::Rectangle<int>(x, y, width, 100)) + gap;
 
     buttonStart->setBounds(localBounds.getCentreX() - 10, 645, 90, 25);
     buttonStop->setBounds(localBounds.getCentreX() - 95, 645, 60, 25);
     noiseButton->setBounds(localBounds.getCentreX() + 300, 640, 75, 75);
+
+    // Layout IR controls inside Process container (index 3)
+    auto& processCont = containers.getContainer(3);
+    auto pb = processCont.getLocalBounds().reduced(10, 8);
+    auto row = pb.removeFromTop(28);
+    toggleIREnable->setBounds(row.removeFromLeft(120));
+    buttonIRLoad->setBounds(row.removeFromLeft(160));
+    row = pb.removeFromTop(28);
+    sliderIRWet->setBounds(row.removeFromLeft(280));
 }
 
 void FundamentalFrequencyComponent::paint(Graphics&g)

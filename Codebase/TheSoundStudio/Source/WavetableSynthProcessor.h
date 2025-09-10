@@ -112,6 +112,10 @@ private:
     
     // Instrument selection
     int instrumentType; // Based on INSTRUMENTS enum
+
+    // Per-voice synthesis state (avoid static shared state)
+    float phase { 0.0f };
+    float harpDecay { 1.0f };
     
 };
 

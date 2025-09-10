@@ -70,6 +70,11 @@ public:
                                  imageButtonWindows, 0.75, Colour (0x00000000));
         button_Popup->addListener(this);
         addAndMakeVisible(button_Popup.get());
+
+        // Compare button to open dual spectrogram popup
+        button_Compare = std::make_unique<TextButton>("Compare");
+        button_Compare->addListener(this);
+        addAndMakeVisible(button_Compare.get());
         
         buttonShouldProcess = new ToggleButton("On / Off");
         buttonShouldProcess->setLookAndFeel(&lookAndFeel);
@@ -168,6 +173,7 @@ public:
         comboBoxSourceSelector  ->setBounds(comboBoxSourceL, 0, comboBoxW, comboBoxH);
 //        labelVisualiserType     ->setBounds(labelL, 0, labelW, topSectionH);
         button_Popup            ->setBounds(buttonL, 0, topSectionH, topSectionH);
+        button_Compare          ->setBounds(buttonL - (110 * scaleFactor), 4 * scaleFactor, 100 * scaleFactor, (topSectionH - 8 * scaleFactor));
         buttonShouldProcess     ->setBounds(labelL, 0, labelW, topSectionH);
         
         Rectangle<float> spectrumRect(getWidth(), getHeight() - topSectionH);
@@ -335,6 +341,65 @@ public:
                     
                     comp->setShouldUpdate(true);
                 } break;
+            }
+        }
+        else if (button == button_Compare.get())
+        {
+            if (visualiserType == SPECTROGRAM)
+            {
+                if(popupFFTWindow != nullptr) delete popupFFTWindow; popupFFTWindow = nullptr;
+
+                // Build a simple compare view inline to avoid new translation units
+                class SpectrogramCompareView : public Component, public Timer {
+                public:
+                    SpectrogramCompareView(ProjectManager* pm, float scale, VISUALISER_SOURCE src)
+                    {
+                        Rectangle<float> dummy(800, 400);
+                        left = std::make_unique<SpectrogramComponent>(pm, dummy, true);
+                        right = std::make_unique<SpectrogramComponent>(pm, dummy, true);
+                        left->visualiserSource = src;
+                        right->visualiserSource = src;
+                        left->setScale(scale);
+                        right->setScale(scale);
+                        addAndMakeVisible(*left);
+                        addAndMakeVisible(*right);
+
+                        syncToggle.setButtonText("Sync");
+                        syncToggle.setToggleState(true, dontSendNotification);
+                        addAndMakeVisible(syncToggle);
+
+                        left->setShouldUpdate(true);
+                        right->setShouldUpdate(true);
+                        startTimerHz(20);
+                    }
+                    void resized() override
+                    {
+                        auto area = getLocalBounds();
+                        auto top = area.removeFromTop(28);
+                        syncToggle.setBounds(top.removeFromRight(80));
+                        auto w = area.getWidth() / 2;
+                        left->setBounds(area.removeFromLeft(w));
+                        right->setBounds(area);
+                    }
+                    void timerCallback() override
+                    {
+                        if (!syncToggle.getToggleState()) return;
+                        float xMin, xMax, yMin, yMax;
+                        left->getViewRangeFactors(xMin, xMax, yMin, yMax);
+                        right->setViewRangeFactors(xMin, xMax, yMin, yMax);
+                    }
+                private:
+                    std::unique_ptr<SpectrogramComponent> left;
+                    std::unique_ptr<SpectrogramComponent> right;
+                    ToggleButton syncToggle;
+                };
+
+                auto* comp = new SpectrogramCompareView(projectManager, scaleFactor, visualiserSource);
+                comp->setBounds(0,0, getWidth(), getHeight());
+                popupFFTWindow = new PopupFFTWindow("Compare Spectrograms", comp, Colours::black, DocumentWindow::allButtons, true);
+                popupFFTWindow ->centreWithSize(jmax(800, (int)getWidth()), jmax(400, (int)getHeight()));
+                popupFFTWindow ->setResizable(true, true);
+                popupFFTWindow ->setVisible(true);
             }
         }
         else if (button == buttonShouldProcess)
@@ -553,6 +618,7 @@ private:
     
     Image imageButtonWindows;
     std::unique_ptr<ImageButton> button_Popup;
+    std::unique_ptr<TextButton> button_Compare;
     
     ToggleButton * buttonShouldProcess;
     

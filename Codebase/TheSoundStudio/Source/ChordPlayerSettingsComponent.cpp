@@ -668,26 +668,14 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     // generate
     PopupMenu * comboBoxMenu =  comboBoxPlayingInstrument->getRootMenu();
     
-    // Use synthesis-based instrument list with properly implemented synthesis engines
-    // Physical Modeling: Piano, Strings
-    // Karplus-Strong: Guitar, Harp
-    // Wavetable: Synthesizers, Organ
-    Array<String> synthInstruments = {
-        "Grand Piano",      // Physical Modeling
-        "Acoustic Guitar",  // Karplus-Strong
-        "Harp",            // Karplus-Strong
-        "Strings",         // Physical Modeling
-        "Church Organ",    // Wavetable
-        "Lead Synth",      // Wavetable
-        "Pad Synth",       // Wavetable
-        "Bass Synth"       // Wavetable
-    };
-    
-    // Add synthesis instruments to combo box menu
-    for (int i = 0; i < synthInstruments.size(); i++)
-    {
-        comboBoxMenu->addItem(i+1, synthInstruments[i]);
-    }
+    // Only include instruments that are actually implemented in synthesis code
+    // IDs must match INSTRUMENTS enum in Parameters.h
+    // PIANO=1, FLUTE=3, GUITAR=4, HARP=5, STRINGS=7
+    comboBoxMenu->addItem(1, "Grand Piano");     // PIANO
+    comboBoxMenu->addItem(4, "Acoustic Guitar"); // GUITAR
+    comboBoxMenu->addItem(5, "Harp");            // HARP
+    comboBoxMenu->addItem(7, "Strings");         // STRINGS
+    comboBoxMenu->addItem(3, "Flute");           // FLUTE
 
     comboBoxPlayingInstrument->setLookAndFeel(&lookAndFeel);
     comboBoxPlayingInstrument->getRootMenu()->setLookAndFeel(&lookAndFeel);

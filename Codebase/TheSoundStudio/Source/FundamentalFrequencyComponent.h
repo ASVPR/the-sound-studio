@@ -142,6 +142,11 @@ private:
     std::unique_ptr<juce::TextEditor> textEditorIteration;
     /* ************** */
 
+    // IR Convolution Controls (WAV only)
+    std::unique_ptr<ToggleButton> toggleIREnable;
+    std::unique_ptr<Slider>       sliderIRWet;
+    std::unique_ptr<TextButton>   buttonIRLoad;
+
     std::unique_ptr<Label> labelFrequency;
     std::unique_ptr<Label> labelChord;
 

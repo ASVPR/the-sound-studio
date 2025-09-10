@@ -64,6 +64,9 @@ void WavetableSynthVoice::startNote (int midiNoteNumber, float velocity, Synthes
 //        oscillator->triggerNote();
 //    }
     
+    // reset per-voice synthesis state
+    phase = 0.0f;
+    harpDecay = 1.0f;
     for (int i = 0; i < 1; i++) env[i]->gate(1);
 }
 
@@ -1239,190 +1242,150 @@ void FrequencyScannerWavetableSynthProcessor::noteOn (const int midiChannel, con
 
 void WavetableSynthVoice::synthesizePiano(float* bufferLeft, float* bufferRight, int numSamples)
 {
-    // Piano synthesis using additive synthesis with harmonic content
-    const float phase_increment = currentFrequency * 2.0f * juce::MathConstants<float>::pi / (float)sample_rate;
-    static float phase = 0.0f;
+    // Physically-inspired modal synthesis with mild inharmonicity
+    const float twoPi = 2.0f * juce::MathConstants<float>::pi;
+    const float phaseIncrement = currentFrequency * twoPi / (float)sample_rate;
+    // Railsback-like inharmonicity coefficient (frequency dependent)
+    const float B = 0.0001f * std::pow(std::max(1.0f, currentFrequency / 261.63f), 1.8f);
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate piano-like sound with multiple harmonics
         float sample = 0.0f;
         
-        // Fundamental frequency
-        sample += 0.8f * std::sin(phase);
+        // Fundamental
+        sample += 0.9f * std::sin(phase);
         
-        // Second harmonic (softer for piano)
-        sample += 0.4f * std::sin(phase * 2.0f);
+        // Inharmonic partials (2..10)
+        for (int h = 2; h <= 10; ++h)
+        {
+            const float ratio = h * std::sqrt(1.0f + B * h * h);
+            const float amp = (1.0f / (float)h) * (0.85f + 0.15f * std::sin(0.01f * phase * h));
+            sample += amp * std::sin(phase * ratio);
+        }
         
-        // Third harmonic 
-        sample += 0.2f * std::sin(phase * 3.0f);
+        // Duplex scaling and sympathetic resonances (subtle)
+        const float duplex = 0.06f * std::sin(phase * 0.618f);
+        const float octave = 0.03f * std::sin(phase * 2.0f);
+        const float fifth  = 0.02f * std::sin(phase * 1.5f);
+        sample += duplex + octave + fifth;
         
-        // Fourth harmonic 
-        sample += 0.1f * std::sin(phase * 4.0f);
+        // Simple tone shaping
+        const float brightness = juce::jlimit(0.2f, 0.9f, amplitude * 0.8f + 0.2f);
+        sample = std::tanh(sample * (1.5f + 2.0f * brightness));
         
-        // Fifth harmonic (slight)
-        sample += 0.05f * std::sin(phase * 5.0f);
+        // Level
+        const float out = sample * amplitude * osc_volume[0] * 0.25f;
+        bufferLeft[i]  = out;
+        bufferRight[i] = out;
         
-        // Add slight inharmonic content for realism
-        sample += 0.02f * std::sin(phase * 2.1f);
-        sample += 0.01f * std::sin(phase * 3.1f);
-        
-        // Apply amplitude and volume
-        sample *= amplitude * osc_volume[0] * 0.3f; // Scale down to prevent clipping
-        
-        bufferLeft[i] = sample;
-        bufferRight[i] = sample;
-        
-        // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
-            phase -= 2.0f * juce::MathConstants<float>::pi;
+        // Advance phase
+        phase += phaseIncrement;
+        if (phase >= twoPi) phase -= twoPi;
     }
 }
 
 void WavetableSynthVoice::synthesizeFlute(float* bufferLeft, float* bufferRight, int numSamples)
 {
-    // Flute synthesis using filtered noise and sine waves
-    const float phase_increment = currentFrequency * 2.0f * juce::MathConstants<float>::pi / (float)sample_rate;
-    static float phase = 0.0f;
+    // Flute: strong fundamental, weak overtones, gentle breath noise
+    const float twoPi = 2.0f * juce::MathConstants<float>::pi;
+    const float phaseIncrement = currentFrequency * twoPi / (float)sample_rate;
+    Random rng;
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate flute-like sound (mostly fundamental with some breath noise)
-        float sample = 0.0f;
+        float sample = 0.9f * std::sin(phase)
+                     + 0.12f * std::sin(phase * 2.0f)
+                     + 0.05f * std::sin(phase * 3.0f);
+        const float noise = (rng.nextFloat() * 2.0f - 1.0f) * 0.02f;
+        sample += noise;
         
-        // Strong fundamental
-        sample += 0.9f * std::sin(phase);
+        const float out = sample * amplitude * osc_volume[0] * 0.35f;
+        bufferLeft[i] = out;
+        bufferRight[i] = out;
         
-        // Weak second harmonic
-        sample += 0.1f * std::sin(phase * 2.0f);
-        
-        // Very weak third harmonic
-        sample += 0.05f * std::sin(phase * 3.0f);
-        
-        // Add breath noise (random component)
-        float noise = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
-        sample += noise * 0.02f;
-        
-        // Apply amplitude and volume
-        sample *= amplitude * osc_volume[0] * 0.4f;
-        
-        bufferLeft[i] = sample;
-        bufferRight[i] = sample;
-        
-        // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
-            phase -= 2.0f * juce::MathConstants<float>::pi;
+        phase += phaseIncrement;
+        if (phase >= twoPi) phase -= twoPi;
     }
 }
 
 void WavetableSynthVoice::synthesizeGuitar(float* bufferLeft, float* bufferRight, int numSamples)
 {
-    // Guitar synthesis using Karplus-Strong-like plucked string model
-    const float phase_increment = currentFrequency * 2.0f * juce::MathConstants<float>::pi / (float)sample_rate;
-    static float phase = 0.0f;
+    // Simple plucked string timbre via rich harmonics + soft nonlinearity
+    const float twoPi = 2.0f * juce::MathConstants<float>::pi;
+    const float phaseIncrement = currentFrequency * twoPi / (float)sample_rate;
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate guitar-like plucked sound
         float sample = 0.0f;
+        sample += 0.65f * std::sin(phase);
+        sample += 0.35f * std::sin(phase * 2.0f);
+        sample += 0.20f * std::sin(phase * 3.0f);
+        sample += 0.12f * std::sin(phase * 4.0f);
+        sample += 0.08f * std::sin(phase * 5.0f);
         
-        // Generate sawtooth-like waveform (rich in harmonics)
-        float sawWave = 2.0f * (phase / (2.0f * juce::MathConstants<float>::pi)) - 1.0f;
-        if (sawWave > 1.0f) sawWave = 2.0f - sawWave;
-        if (sawWave < -1.0f) sawWave = -2.0f - sawWave;
+        // Gentle saturation
+        sample = std::tanh(sample * 1.4f);
+        const float out = sample * amplitude * osc_volume[0] * 0.3f;
+        bufferLeft[i]  = out;
+        bufferRight[i] = out;
         
-        sample += 0.7f * sawWave;
-        
-        // Add some harmonics for brightness
-        sample += 0.3f * std::sin(phase * 2.0f);
-        sample += 0.15f * std::sin(phase * 3.0f);
-        sample += 0.08f * std::sin(phase * 4.0f);
-        
-        // Apply amplitude and volume
-        sample *= amplitude * osc_volume[0] * 0.35f;
-        
-        bufferLeft[i] = sample;
-        bufferRight[i] = sample;
-        
-        // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
-            phase -= 2.0f * juce::MathConstants<float>::pi;
+        phase += phaseIncrement;
+        if (phase >= twoPi) phase -= twoPi;
     }
 }
 
 void WavetableSynthVoice::synthesizeStrings(float* bufferLeft, float* bufferRight, int numSamples)
 {
-    // String synthesis using additive synthesis with rich harmonics
-    const float phase_increment = currentFrequency * 2.0f * juce::MathConstants<float>::pi / (float)sample_rate;
-    static float phase = 0.0f;
+    // Rich bowed-string-like harmonic stack
+    const float twoPi = 2.0f * juce::MathConstants<float>::pi;
+    const float phaseIncrement = currentFrequency * twoPi / (float)sample_rate;
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate string-like sound with many harmonics
         float sample = 0.0f;
+        sample += 0.55f * std::sin(phase);
+        sample += 0.40f * std::sin(phase * 2.0f);
+        sample += 0.30f * std::sin(phase * 3.0f);
+        sample += 0.22f * std::sin(phase * 4.0f);
+        sample += 0.16f * std::sin(phase * 5.0f);
+        sample += 0.12f * std::sin(phase * 6.0f);
+        sample += 0.09f * std::sin(phase * 7.0f);
+        sample += 0.07f * std::sin(phase * 8.0f);
         
-        // Fundamental
-        sample += 0.6f * std::sin(phase);
+        const float out = sample * amplitude * osc_volume[0] * 0.25f;
+        bufferLeft[i]  = out;
+        bufferRight[i] = out;
         
-        // Strong harmonics for string character
-        sample += 0.4f * std::sin(phase * 2.0f);
-        sample += 0.3f * std::sin(phase * 3.0f);
-        sample += 0.2f * std::sin(phase * 4.0f);
-        sample += 0.15f * std::sin(phase * 5.0f);
-        sample += 0.1f * std::sin(phase * 6.0f);
-        sample += 0.08f * std::sin(phase * 7.0f);
-        sample += 0.06f * std::sin(phase * 8.0f);
-        
-        // Apply amplitude and volume
-        sample *= amplitude * osc_volume[0] * 0.25f; // Scale down due to many harmonics
-        
-        bufferLeft[i] = sample;
-        bufferRight[i] = sample;
-        
-        // Update phase
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
-            phase -= 2.0f * juce::MathConstants<float>::pi;
+        phase += phaseIncrement;
+        if (phase >= twoPi) phase -= twoPi;
     }
 }
 
 void WavetableSynthVoice::synthesizeHarp(float* bufferLeft, float* bufferRight, int numSamples)
 {
-    // Harp synthesis using decaying harmonics
-    const float phase_increment = currentFrequency * 2.0f * juce::MathConstants<float>::pi / (float)sample_rate;
-    static float phase = 0.0f;
-    static float decay = 1.0f;
+    // Plucked harp-like tone with per-voice decay
+    const float twoPi = 2.0f * juce::MathConstants<float>::pi;
+    const float phaseIncrement = currentFrequency * twoPi / (float)sample_rate;
     
     for (int i = 0; i < numSamples; ++i)
     {
-        // Generate harp-like plucked sound with quick decay
         float sample = 0.0f;
+        sample += 0.80f * std::sin(phase)       * harpDecay;
+        sample += 0.35f * std::sin(phase * 2.0f) * harpDecay;
+        sample += 0.18f * std::sin(phase * 3.0f) * harpDecay;
+        sample += 0.10f * std::sin(phase * 4.0f) * harpDecay;
+        // Slight metallic overtones
+        sample += 0.08f * std::sin(phase * 2.4f) * harpDecay;
+        sample += 0.04f * std::sin(phase * 3.2f) * harpDecay;
         
-        // Fundamental with harmonics
-        sample += 0.8f * std::sin(phase) * decay;
-        sample += 0.4f * std::sin(phase * 2.0f) * decay;
-        sample += 0.2f * std::sin(phase * 3.0f) * decay;
-        sample += 0.1f * std::sin(phase * 4.0f) * decay;
+        const float out = sample * amplitude * osc_volume[0] * 0.35f;
+        bufferLeft[i]  = out;
+        bufferRight[i] = out;
         
-        // Add bell-like metallic harmonics
-        sample += 0.1f * std::sin(phase * 2.4f) * decay;
-        sample += 0.05f * std::sin(phase * 3.2f) * decay;
+        phase += phaseIncrement;
+        if (phase >= twoPi) phase -= twoPi;
         
-        // Apply amplitude and volume
-        sample *= amplitude * osc_volume[0] * 0.4f;
-        
-        bufferLeft[i] = sample;
-        bufferRight[i] = sample;
-        
-        // Update phase and decay
-        phase += phase_increment;
-        if (phase >= 2.0f * juce::MathConstants<float>::pi)
-            phase -= 2.0f * juce::MathConstants<float>::pi;
-            
-        // Slow decay for harp-like envelope
-        decay *= 0.9999f;
+        // Exponential decay
+        harpDecay *= 0.9996f;
     }
 }

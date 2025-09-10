@@ -277,37 +277,18 @@ void ChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
             
             if (output[s] != AUDIO_OUTPUTS::NO_OUTPUT)
             {
-                // NEW: Use high-quality SynthesisEngine instead of old processors
-                bool usedSynthesisEngine = false;
-                
+                // Use per-voice processors for continuity and realism
                 if (waveformType[s] == SAMPLER)
                 {
-                    // SAMPLER mode now uses realistic instrument synthesis
-                    String currentInstrument = getCurrentInstrumentName(s);
-                    SynthesisType synthType = getSynthesisTypeForInstrument(currentInstrument);
-                    
-                    if (synthesisEngine && synthType != SynthesisType::PHYSICAL_MODELING_PIANO) // temporary fallback check
-                    {
-                        generateSynthesisAudio(outputBuffer, s, synthType);
-                        usedSynthesisEngine = true;
-                    }
+                    wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
                 }
-                
-                // Fallback to old processors if synthesis engine not used
-                if (!usedSynthesisEngine)
+                else if (waveformType[s] == WAVETABLE)
                 {
-                    if (waveformType[s] == SAMPLER)
-                    {
-                        wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
-                    }
-                    else if (waveformType[s] == WAVETABLE)
-                    {
-                        wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
-                    }
-                    else
-                    {
-                        synth[s]->processBlock(outputBuffer, midiMessages);
-                    }
+                    wavetableSynth[s]->processBlock(outputBuffer, midiMessages);
+                }
+                else
+                {
+                    synth[s]->processBlock(outputBuffer, midiMessages);
                 }
                 
                 if      (output[s] == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
@@ -1108,30 +1089,22 @@ void ChordPlayerProcessor::PlayRepeater::processSimultaneousShortcuts(int firstS
 // NEW: Helper methods for high-quality synthesis engine integration
 String ChordPlayerProcessor::getCurrentInstrumentName(int shortcutRef)
 {
-    // Get current instrument type from project manager parameters
+    // Get current instrument type from project manager parameters (INSTRUMENTS enum)
     int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE);
-    
-    // Map to instrument names (same mapping as in ChordPlayerComponent.cpp)
-    Array<String> synthInstruments = {
-        "Grand Piano",      // Physical Modeling
-        "Acoustic Guitar",  // Karplus-Strong
-        "Harp",            // Karplus-Strong
-        "Strings",         // Physical Modeling
-        "Church Organ",    // Wavetable
-        "Lead Synth",      // Wavetable
-        "Pad Synth",       // Wavetable
-        "Bass Synth"       // Wavetable
-    };
-    
-    if (instrumentType >= 0 && instrumentType < synthInstruments.size())
-        return synthInstruments[instrumentType];
-    
-    return "Grand Piano"; // Default
+    switch (instrumentType)
+    {
+        case 1: return "Grand Piano";      // PIANO
+        case 4: return "Acoustic Guitar";  // GUITAR
+        case 5: return "Harp";             // HARP
+        case 7: return "Strings";          // STRINGS
+        case 3: return "Flute";            // FLUTE
+        default: return "Grand Piano";
+    }
 }
 
 SynthesisType ChordPlayerProcessor::getSynthesisTypeForInstrument(const String& instrumentName)
 {
-    // Map instrument names to synthesis types (from SynthesisLibraryManager)
+    // Map supported instruments to synthesis types
     if (instrumentName == "Grand Piano")
         return SynthesisType::PHYSICAL_MODELING_PIANO;
     else if (instrumentName == "Acoustic Guitar")
@@ -1140,12 +1113,10 @@ SynthesisType ChordPlayerProcessor::getSynthesisTypeForInstrument(const String& 
         return SynthesisType::KARPLUS_STRONG_HARP;
     else if (instrumentName == "Strings")
         return SynthesisType::PHYSICAL_MODELING_STRINGS;
-    else if (instrumentName == "Church Organ")
-        return SynthesisType::WAVETABLE_ELECTRONIC;
-    else if (instrumentName == "Lead Synth" || instrumentName == "Pad Synth" || instrumentName == "Bass Synth")
-        return SynthesisType::WAVETABLE_SYNTH;
+    else if (instrumentName == "Flute")
+        return SynthesisType::WAVETABLE_SYNTH; // simple wavetable flute
     else
-        return SynthesisType::PHYSICAL_MODELING_PIANO; // Default to piano
+        return SynthesisType::PHYSICAL_MODELING_PIANO;
 }
 
 void ChordPlayerProcessor::generateSynthesisAudio(AudioBuffer<float>& buffer, int shortcutRef, SynthesisType synthType)

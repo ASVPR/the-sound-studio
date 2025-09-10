@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**The Sound Studio** is a synthesis-powered evolution of the ASVPR Labs audio platform. While maintaining all the core functionality of ASVPR (frequency analysis, chord playing, real-time visualization), TSS replaces the 5.4GB sample library with advanced real-time synthesis algorithms, reducing the total footprint to under 500MB while maintaining superior sound quality and tuning flexibility.
+**The Sound Studio** is a synthesis‑powered audio platform for frequency analysis, chord playing, and real‑time visualization. TSS replaces a large multi‑gigabyte sample library with advanced real‑time synthesis algorithms, reducing the total footprint to under 500MB while maintaining superior sound quality and tuning flexibility.
 
 ## ✅ Current Status
 
@@ -37,7 +37,11 @@
 - ✅ **SUCCESS: Perfect compilation** - Project builds successfully with 0 errors (only warnings for deprecated Font constructors)
 - ✅ **DEPLOYED: Application placement** - Standalone app correctly placed in main TSS directory
 - ✅ **REPLACED: Sample Library with Synthesis** - Eliminated 5.4GB sample dependency in favor of synthesis-based instruments  
-- ✅ **ENHANCED: Playing Instruments** - Chord Player and Chord Scanner now use synthesis: Grand Piano, Electric Guitar, Cello, Flute, Brass, Harp, Strings, Woodwinds
+- ✅ **ENHANCED: Playing Instruments**
+  - Curated the instrument list to only include implemented, playable synthesis instruments
+  - Chord Player / Scanner instrument list now: Grand Piano, Acoustic Guitar, Harp, Strings, Flute
+  - Fixed instrument-ID mapping to match `INSTRUMENTS` enum (eliminates mismatches)
+  - Improved timbre realism with per‑voice synthesis (no shared static phase)
 - ✅ **FIXED: Application Launch Issues** - Resolved code signing problems, application now launches and runs successfully
  - ✅ 2025-09-10 — Stability on Quit (Crash Fix): fixed EXC_BAD_ACCESS on close by removing double-ownership of wavetable editor and cleaning up listeners; additionally ensured safe LookAndFeel teardown for components using custom LnF (nulling LnF on children during destructors to prevent dangling references)
  - ✅ UI Polish: Replaced sidebar logo with correct app icon (`icon_128.png`)
@@ -49,6 +53,34 @@
 - ✅ Logs Verified: New files in `/Users/zivelovitch/Documents/TSS/Logs` (e.g., `10.9.2025-15-53-Settings.txt`, `TSS_2025-09-10_15-53-52_Error.txt`)
 - ✅ Error Console: No runtime errors observed; startup and mode switches logged
  - ✅ Crash Fix Details: Eliminated double-ownership of Wavetable Editor by making `PopupFFTWindow` the sole owner via `setContentOwned`. Components keep a non‑owning pointer; `LissajousCurveComponent` now removes itself from `ProjectManager` listeners on teardown. Also addressed potential teardown hazards by nulling custom LookAndFeel on child controls in destructors (Lissajous Frequency/Chord Settings, Lissajous Curve), preventing JUCE components from accessing a dead LnF during destruction.
+
+## Instrument Realism & Tuning (September 2025)
+
+- Playing instruments now use per‑voice, continuous synthesis for realistic sustain and envelopes (no per‑block retriggering).
+- Fixed instrument mapping bugs that caused wrong timbres (e.g., Harp showing as Flute, Strings as Guitar).
+- Improved synthesis models in `WavetableSynthVoice`:
+  - Piano: modal/additive model with inharmonic partials (Railsback‑style B coefficient), duplex/sympathetic resonances, gentle saturation.
+  - Guitar: richer harmonic stack with soft nonlinearity for a plucked tone.
+  - Harp: plucked spectrum with per‑voice exponential decay and metallic overtones.
+  - Strings: dense harmonic stack for bowed‑string character.
+  - Flute: strong fundamental + weak harmonics with a subtle breath component.
+- Removed shared static oscillators; each voice maintains its own phase/decay state, preventing detune/strident artifacts.
+- A4 tuning (e.g., 432/440 Hz) propagates to synthesis engines via Project Settings; changing A4 updates the `FrequencyManager` and `SynthesisEngine` reference.
+
+### Available Playing Instruments (UI)
+- Grand Piano (PIANO=1)
+- Acoustic Guitar (GUITAR=4)
+- Harp (HARP=5)
+- Strings (STRINGS=7)
+- Flute (FLUTE=3)
+
+### Synthetic Techniques Used / Tried
+- Additive/modal synthesis with inharmonic partials (Piano)
+- Harmonic stacks with soft saturation (Guitar/Strings)
+- Plucked‑string envelope shaping with metallic overtones (Harp)
+- Fundamental+breath noise blend (Flute)
+- Wavetable oscillators for default fallback timbres
+- Karplus‑Strong (standalone engine available in codebase for future per‑voice integration)
 
 ### Planning
 - Added `TO_DO_LIST.txt` at repo root with prioritized action plan:
@@ -71,11 +103,19 @@
   - `Codebase/TheSoundStudio/Source/FundamentalFrequencyProcessor.h` (IR members + API)
   - `Codebase/TheSoundStudio/Source/FundamentalFrequencyProcessor.cpp` (prepare/process + WAV loader)
 - Next: Add UI controls on Fundamental module panel and defaults in Settings (enable, wet/dry, file chooser), per the spec.
+ - UI: Added IR Enable/Wet/Load controls to the Fundamental module panel (WAV-only loader). See `FundamentalFrequencyComponent.*`.
 
-### Roadmap Notes (based on New folder analysis)
-- More Lissajous Axes: target is 4 axes. Full support requires extending `Parameters.h` with UNIT_4_* ranges and `ProjectManager` accessors. Current UI internals prepared; recommend parameter enum and storage expansion before enabling axis #4.
-- Compare Spectrogram Plots (Option B): design a popup that instantiates two spectrograms with shared zoom/pan state; can reuse `SpectrogramComponent` with a small sync mediator.
-- Convolution / FFT IR (94/95): add `juce::dsp::Convolution` in Fundamental module, with WAV loader + enable/toggle + wet/dry. Suggest placing controls on module panels and defaults in Settings. Will wire analysed input through IR when enabled.
+### Compare Spectrograms (Option B)
+- Added a Compare popup from the Visualiser toolbar that opens two spectrograms side‑by‑side with synced zoom/pan.
+- Implementation: inline `SpectrogramCompareView` launched via `VisualiserSelectorComponent` Compare button; synchronization uses public view‑range accessors in `SpectrogramComponent`.
+- Files:
+  - `Source/VisualiserContainerComponent.h` (Compare button + popup)
+  - `Source/SpectrogramComponent.h` (get/set view range factors)
+
+### Roadmap Notes
+- More Lissajous Axes: target is 4 axes. Full support requires extending `Parameters.h` with UNIT_4_* ranges and `ProjectManager` accessors. UI currently supports 3 axes; parameter enum + storage expansion is the next step before enabling axis #4.
+- Compare Spectrogram Plots (Option B): implemented via toolbar Compare button with synced zoom/pan.
+- Convolution / FFT IR (94/95): implemented in the Fundamental module using `juce::dsp::Convolution` with WAV loader + enable toggle + wet/dry controls.
 
 ### How To Build Locally (unsigned app for dev)
 - From `tss/Codebase/TheSoundStudio/Builds/MacOSX` build the app:
@@ -92,7 +132,7 @@
 - ✅ 1_FFT Improvements: Implemented (zoom, delay, color spectrum; Octave/Colour views updated)
 - ✅ 4_Lissajous Improvements: Implemented (Z-axis, per-axis phase, chord/frequency selection, popup editors)
 - ⏳ 6_Add More Axis To Lissajous: Engine for up to 6 axes is implemented; UI controls (+/− to add/remove axes) pending
-- ✅ **ORGANIZED: Feature Development Roadmap** - Complete categorization of 128 potential features from ASVPR legacy
+- ✅ **ORGANIZED: Feature Development Roadmap** - Complete categorization of 128 potential features from legacy sources
 - ✅ **MAJOR: Advanced Synthesis Engine Implementation** - Complete rewrite of synthesis algorithms with realistic sound generation
 - ✅ **ENHANCED: Physical Modeling Piano** - Realistic piano synthesis with inharmonic partials, hammer modeling, and soundboard resonance
 - ✅ **IMPROVED: Karplus-Strong Guitar** - Enhanced plucked string synthesis with fractional delay, body resonance, and dynamic damping
@@ -148,7 +188,7 @@
 - **Spectral Processing**: Harmonic enhancement and modification
 - **Convolution**: Impulse response-based acoustic modeling
 
-### Core Systems Carried Forward from ASVPR
+### Core Systems
 
 #### Frequency Management System
 - **ScalesManager**: Mathematical scale generation and frequency calculation
@@ -167,7 +207,7 @@
 - **Settings Management**: Scale selection and tuning preferences
 - **Plugin Integration**: VST/AU plugin hosting capabilities
 
-## Migration from ASVPR
+## Migration
 
 ### What's Preserved
 ✅ **Complete UI/UX**: All interfaces and workflows remain identical  
@@ -245,7 +285,7 @@
 
 ### Phase 1: Foundation ✅ COMPLETED
 - [x] Project structure creation
-- [x] ASVPR codebase migration
+- [x] Legacy codebase migration
 - [x] Core synthesis framework setup
 - [x] Complete build system fixes
 - [x] Standalone application deployment
@@ -324,7 +364,7 @@
 4. **Remaining Acoustic Instruments** (Case-by-case analysis)
 
 ### Quality Assurance
-- **A/B Testing**: Direct comparison with original ASVPR samples
+- **A/B Testing**: Direct comparison with an original sample set
 - **User Feedback Integration**: Iterative refinement based on usage
 - **Performance Profiling**: Continuous optimization monitoring
 - **Cross-platform Testing**: Consistent behavior across systems
@@ -381,7 +421,7 @@ tss/
 ```
 
 ### Size Comparison
-- **ASVPR Original**: ~5.4GB (2,794 WAV sample files)
+- **Legacy Sample Library**: ~5.4GB (2,794 WAV sample files)
 - **TSS Synthesis**: ~15MB (pure algorithmic generation)
 - **Reduction**: 99.7% smaller while maintaining full functionality
 
@@ -432,7 +472,7 @@ tss/
 
 ## Feature Development Roadmap
 
-### 📁 Organized Feature Categories (128 Total Features from ASVPR Legacy)
+### 📁 Organized Feature Categories (128 Total Features from Legacy Sources)
 
 #### ✅ **Done** (11 features) - `/New Features/Done/`
 Core functionality already implemented in TSS:
@@ -487,7 +527,7 @@ This project represents a significant advancement in real-time synthesis technol
 
 ---
 
-**The Sound Studio**: Where mathematical precision meets musical expression, delivering the full power of ASVPR in a fraction of the size.
+**The Sound Studio**: Where mathematical precision meets musical expression, delivering a compact, modern audio toolkit.
 ### Build & Run (macOS)
 
 - Prerequisites: Xcode 15+, JUCE modules at `~/Documents/Git/JUCE`

@@ -850,6 +850,9 @@ void ProjectManager::setProjectSettingsParameter(int index, double newVal)
             
             // set to ChordManager
             frequencyManager->setBaseAFrequency(baseAFrequency);
+            // Update synthesis engines to reflect new concert A (A4) reference
+            if (synthesisEngine)
+                synthesisEngine->updateTuningReference(baseAFrequency);
             
             uiListeners.call(&::ProjectManager::UIListener::updateSettingsUIParameter, DEFAULT_SCALE);
         }
