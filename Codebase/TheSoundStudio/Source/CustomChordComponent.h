@@ -79,6 +79,10 @@ private:
     std::unique_ptr<Label> label_OctaveValue;
     std::unique_ptr<Label> label_FrequencyLabel;
     
+    // Amplitude control
+    std::unique_ptr<Slider> slider_Amplitude;
+    std::unique_ptr<Label> label_Amplitude;
+    
     Image imageBackgroundActive;
     Image imageBackgroundInactive;
     Image imageDetailsBackground;

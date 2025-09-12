@@ -33,16 +33,31 @@ public:
     void paint (Graphics& g) override;
     void resized() override
     {
-        mainViewComponent->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+        // Use responsive layout for proper scaling
+        auto bounds = getLocalBounds();
+        
+        // Calculate responsive scale factor based on window size
+        float widthScale = bounds.getWidth() / (float)mainWidth;
+        float heightScale = bounds.getHeight() / (float)mainHeight;
+        scaleFactor = jmin(widthScale, heightScale);
+        scaleFactor = jlimit(0.3f, 2.0f, scaleFactor); // Limit scale between 0.3x and 2x
+        
+        if (mainViewComponent)
+        {
+            mainViewComponent->setBounds(bounds);
+            mainViewComponent->setScale(scaleFactor);
+        }
     }
     
-    float scaleFactor = 0.5;
+    float scaleFactor = 1.0f;
     void setScale(float factor)
     {
         scaleFactor = factor;
         
-        mainViewComponent->setScale(scaleFactor);
+        if (mainViewComponent)
+            mainViewComponent->setScale(scaleFactor);
         
+        // Set window size based on scale factor
         setSize(mainWidth * scaleFactor, mainHeight * scaleFactor);
     }
     

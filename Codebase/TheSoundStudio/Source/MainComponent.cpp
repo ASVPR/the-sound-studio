@@ -33,8 +33,12 @@ MainComponent::MainComponent()
 
     projectManager->setMainComponent(this);
     
-    scaleFactor = 0.5;
-
+    // Set initial scale factor based on screen size
+    auto screenBounds = Desktop::getInstance().getDisplays().getPrimaryDisplay()->userArea;
+    float screenScale = jmin(screenBounds.getWidth() / (float)mainWidth, 
+                             screenBounds.getHeight() / (float)mainHeight);
+    scaleFactor = jlimit(0.3f, 1.0f, screenScale * 0.8f); // Start at 80% of screen size
+    
     setScale(scaleFactor);
     
     projectManager->initGUISync();

@@ -44,6 +44,12 @@ ScalesManager::ScalesManager()
     central_frequency   = 432.0;
     currentScale        = SCALES::DIATONIC_PYTHAGOREAN;
     changeMainScaleTo(currentScale);
+    changeLissajousScaleTo(currentScale);  // Initialize lissajousScale to prevent null pointer
+    
+    // Initialize chordPlayerShortcutScale array
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++) {
+        changeChordPlayerScaleTo(i, currentScale);
+    }
 }
 
 ScalesManager::~ScalesManager(){
@@ -203,46 +209,53 @@ void ScalesManager::getComboBoxPopupMenuForChords(PopupMenu & chordsPopupMenu, S
     
     if (unit == MAIN_SCALE)
     {
-        for (int num = 0; num < mainScale->getAvailableChordTypes().size(); num++)
+        if (mainScale != nullptr)  // Add null check
         {
-            for (int i = 1; i < NUM_CHORD_TYPES; i++)
+            for (int num = 0; num < mainScale->getAvailableChordTypes().size(); num++)
             {
-                if ((CHORD_TYPES)i == mainScale->getAvailableChordTypes().getReference(num))
+                for (int i = 1; i < NUM_CHORD_TYPES; i++)
                 {
-                    chordsPopupMenu.addItem(i, ProjectStrings::getChordTypeArray().getReference(i-1));
+                    if ((CHORD_TYPES)i == mainScale->getAvailableChordTypes().getReference(num))
+                    {
+                        chordsPopupMenu.addItem(i, ProjectStrings::getChordTypeArray().getReference(i-1));
+                    }
                 }
             }
         }
     }
     else if (unit == LISSAJOUS_SCALE)
     {
-        for (int num = 0; num < lissajousScale->getAvailableChordTypes().size(); num++)
+        if (lissajousScale != nullptr)  // Add null check
         {
-            for (int i = 1; i < NUM_CHORD_TYPES; i++)
+            for (int num = 0; num < lissajousScale->getAvailableChordTypes().size(); num++)
             {
-                if ((CHORD_TYPES)i == lissajousScale->getAvailableChordTypes().getReference(num))
+                for (int i = 1; i < NUM_CHORD_TYPES; i++)
                 {
-                    chordsPopupMenu.addItem(i, ProjectStrings::getChordTypeArray().getReference(i-1));
+                    if ((CHORD_TYPES)i == lissajousScale->getAvailableChordTypes().getReference(num))
+                    {
+                        chordsPopupMenu.addItem(i, ProjectStrings::getChordTypeArray().getReference(i-1));
+                    }
                 }
             }
         }
-
     }
     else
     {
         int shortcutUnit = (int)unit;
         
-        for (int num = 0; num < chordPlayerShortcutScale[shortcutUnit]->getAvailableChordTypes().size(); num++)
+        if (shortcutUnit >= 0 && shortcutUnit < NUM_SHORTCUT_SYNTHS && chordPlayerShortcutScale[shortcutUnit] != nullptr)  // Add bounds and null check
         {
-            for (int i = 1; i < NUM_CHORD_TYPES; i++)
+            for (int num = 0; num < chordPlayerShortcutScale[shortcutUnit]->getAvailableChordTypes().size(); num++)
             {
-                if ((CHORD_TYPES)i == chordPlayerShortcutScale[shortcutUnit]->getAvailableChordTypes().getReference(num))
+                for (int i = 1; i < NUM_CHORD_TYPES; i++)
+                {
+                    if ((CHORD_TYPES)i == chordPlayerShortcutScale[shortcutUnit]->getAvailableChordTypes().getReference(num))
                 {
                     chordsPopupMenu.addItem(i, ProjectStrings::getChordTypeArray().getReference(i-1));
                 }
             }
         }
-
+        }
     }
 }
 
@@ -252,26 +265,32 @@ void ScalesManager::getComboBoxPopupMenuForKeynotes(PopupMenu & keynotesPopupMen
     
     if (unit == MAIN_SCALE)
     {
-        for (int num = 0; num < mainScale->getAvailableKeynotes().size(); num++)
+        if (mainScale != nullptr)  // Add null check
         {
-            for (int i = 1; i < TOTAL_NUM_KEYNOTES; i++)
+            for (int num = 0; num < mainScale->getAvailableKeynotes().size(); num++)
             {
-                if ((KEYNOTES)i == mainScale->getAvailableKeynotes().getReference(num))
+                for (int i = 1; i < TOTAL_NUM_KEYNOTES; i++)
                 {
-                    keynotesPopupMenu.addItem(i, ProjectStrings::getKeynoteArray().getReference(i-1));
+                    if ((KEYNOTES)i == mainScale->getAvailableKeynotes().getReference(num))
+                    {
+                        keynotesPopupMenu.addItem(i, ProjectStrings::getKeynoteArray().getReference(i-1));
+                    }
                 }
             }
         }
     }
     else if (unit == LISSAJOUS_SCALE)
     {
-        for (int num = 0; num < lissajousScale->getAvailableKeynotes().size(); num++)
+        if (lissajousScale != nullptr)  // Add null check
         {
-            for (int i = 1; i < TOTAL_NUM_KEYNOTES; i++)
+            for (int num = 0; num < lissajousScale->getAvailableKeynotes().size(); num++)
             {
-                if ((KEYNOTES)i == lissajousScale->getAvailableKeynotes().getReference(num))
+                for (int i = 1; i < TOTAL_NUM_KEYNOTES; i++)
                 {
-                    keynotesPopupMenu.addItem(i, ProjectStrings::getKeynoteArray().getReference(i-1));
+                    if ((KEYNOTES)i == lissajousScale->getAvailableKeynotes().getReference(num))
+                    {
+                        keynotesPopupMenu.addItem(i, ProjectStrings::getKeynoteArray().getReference(i-1));
+                    }
                 }
             }
         }
@@ -280,15 +299,18 @@ void ScalesManager::getComboBoxPopupMenuForKeynotes(PopupMenu & keynotesPopupMen
     {
         int shortcutUnit = (int)unit;
         
-        for (int num = 0; num < chordPlayerShortcutScale[shortcutUnit]->getAvailableKeynotes().size(); num++)
+        if (shortcutUnit >= 0 && shortcutUnit < NUM_SHORTCUT_SYNTHS && chordPlayerShortcutScale[shortcutUnit] != nullptr)  // Add bounds and null check
         {
-            for (int i = 1; i < TOTAL_NUM_KEYNOTES; i++)
+            for (int num = 0; num < chordPlayerShortcutScale[shortcutUnit]->getAvailableKeynotes().size(); num++)
             {
-                if ((KEYNOTES)i == chordPlayerShortcutScale[shortcutUnit]->getAvailableKeynotes().getReference(num))
+                for (int i = 1; i < TOTAL_NUM_KEYNOTES; i++)
+                {
+                    if ((KEYNOTES)i == chordPlayerShortcutScale[shortcutUnit]->getAvailableKeynotes().getReference(num))
                 {
                     keynotesPopupMenu.addItem(i, ProjectStrings::getKeynoteArray().getReference(i-1));
                 }
             }
+        }
         }
     }
 }
