@@ -475,6 +475,10 @@ enum CHORD_PLAYER_SHORTCUT_PARAMS
     CHORDPLAYER_SCALE, // normally default but can be changed
     
     CHORD_PLAYER_OUTPUT_SELECTION, // MAX 8 mono, 4 stereo
+    
+    // Play Configuration parameters
+    CHORD_PLAYER_NUM_REPEATS,      // Number of times to repeat each chord (default: 1)
+    CHORD_PLAYER_NUM_PAUSE,         // Pause in milliseconds between chords (default: 0)
 
     TOTAL_NUM_CHORD_PLAYER_SHORTCUT_PARAMS
 };

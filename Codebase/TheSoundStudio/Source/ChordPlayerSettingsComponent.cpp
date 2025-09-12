@@ -799,7 +799,6 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     textEditor_Octave->applyColourToAllText(Colours::lightgrey);
     addAndMakeVisible(textEditor_Octave.get());
     
-    
     button_AddCustomChord = std::make_unique<TextButton>("Add Custom Chord");
     button_AddCustomChord->addListener(this);
     button_AddCustomChord->setLookAndFeel(&lookAndFeel);
@@ -1193,7 +1192,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         String newVal(value); editor.setText(newVal);
         
         // send to projectManager
-        projectManager->setChordPlayerParameter(shortcutRef, NUM_PAUSE, value);
+        projectManager->setChordPlayerParameter(shortcutRef, CHORD_PLAYER_NUM_PAUSE, value);
     }
     else if (&editor == textEditorRepeat.get())
     {
@@ -1206,7 +1205,7 @@ void ChordPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor
         String newVal(value); editor.setText(newVal);
         
         // send to projectManager
-        projectManager->setChordPlayerParameter(shortcutRef, NUM_REPEATS, value);
+        projectManager->setChordPlayerParameter(shortcutRef, CHORD_PLAYER_NUM_REPEATS, value);
     }
     else if (&editor == textEditorLength.get())
     {
@@ -1418,7 +1417,7 @@ void ChordPlayerSettingsComponent::syncUI()
    
     //NUM_REPEATS
     
-    int pause = projectManager->getChordPlayerParameter(shortcutRef, NUM_PAUSE).operator int();
+    int pause = projectManager->getChordPlayerParameter(shortcutRef, CHORD_PLAYER_NUM_PAUSE).operator int();
     
     bool manipulateFreq = projectManager->getChordPlayerParameter(shortcutRef, MANIPULATE_CHOSEN_FREQUENCY).operator bool();
     button_ManipulateFreq->setToggleState(manipulateFreq, dontSendNotification); //MANIPULATE_CHOSEN_FREQUENCY,
@@ -1448,7 +1447,7 @@ void ChordPlayerSettingsComponent::syncUI()
     String divString(divVal);
     textEditorDivision->setText(divString);
     
-    int pauseVal = projectManager->getChordPlayerParameter(shortcutRef, NUM_PAUSE).operator int();
+    int pauseVal = projectManager->getChordPlayerParameter(shortcutRef, CHORD_PLAYER_NUM_PAUSE).operator int();
     String pauseString(pauseVal);
     pauseString.append("ms", 2);
     textEditorPause->setText(pauseString);
@@ -1458,7 +1457,7 @@ void ChordPlayerSettingsComponent::syncUI()
     lengthString.append("ms", 2);
     textEditorLength->setText(lengthString);
     
-    int numRepeats = projectManager->getChordPlayerParameter(shortcutRef, NUM_REPEATS).operator int();
+    int numRepeats = projectManager->getChordPlayerParameter(shortcutRef, CHORD_PLAYER_NUM_REPEATS).operator int();
     String repeatsString(numRepeats);
     textEditorRepeat->setText(repeatsString);
     

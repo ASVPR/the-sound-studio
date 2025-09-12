@@ -111,6 +111,24 @@ CustomChordNoteComponent::CustomChordNoteComponent(int ref, ProjectManager * pm)
 //    containerView_Details->addAndMakeVisible(label_FrequencyLabel.get());
     addAndMakeVisible(label_FrequencyLabel.get());
     
+    // Amplitude controls
+    label_Amplitude = std::make_unique<Label>("", "100%");
+    label_Amplitude->setFont(fontLight);
+    label_Amplitude->setJustificationType(Justification::centred);
+    label_Amplitude->setEditable(true);
+    label_Amplitude->onTextChange = [this]() {
+        String text = label_Amplitude->getText();
+        // Remove % sign if present
+        text = text.trimCharactersAtEnd("%");
+        float amplitude = text.getFloatValue();
+        // Clamp between 0 and 100
+        amplitude = jmin(100.0f, jmax(0.0f, amplitude));
+        // Update the parameter
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_AMPLITUDE_1 + noteRef, amplitude);
+        // Update the label with % sign
+        label_Amplitude->setText(String(amplitude, 1) + "%", dontSendNotification);
+    };
+    containerView_Details->addAndMakeVisible(label_Amplitude.get());
     
     // active buttons
     button_Settings = std::make_unique<ImageButton>();
@@ -168,6 +186,7 @@ void CustomChordNoteComponent::resized()
     label_NoteValue         ->setBounds(xx * scaleFactor, 36 * scaleFactor, 76 * scaleFactor, 26 * scaleFactor);
     label_OctaveValue       ->setBounds(xx * scaleFactor, 80 * scaleFactor, 76 * scaleFactor, 26 * scaleFactor);
     label_FrequencyLabel    ->setBounds((xx - 30) * scaleFactor, 126 * scaleFactor, 106 * scaleFactor, 26 * scaleFactor);
+    label_Amplitude         ->setBounds((xx - 30) * scaleFactor, 160 * scaleFactor, 106 * scaleFactor, 26 * scaleFactor);
     
     button_Settings         ->setBounds(26 * scaleFactor, 224 * scaleFactor, 31 * scaleFactor, 31 * scaleFactor);
     button_Delete           ->setBounds(0, 0, 34 * scaleFactor, 34 * scaleFactor);
@@ -211,6 +230,7 @@ void CustomChordNoteComponent::buttonClicked (Button*button)
         projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_ACTIVE_1 + noteRef, 2);
         projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef, chosenNote);
         projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_OCTAVE_1 + noteRef, chosenOctave);
+        projectManager->setChordPlayerParameter(shortcutRef, CUSTOM_CHORD_AMPLITUDE_1 + noteRef, 100.0f); // Default amplitude 100%
         
         int noteVal = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_NOTE_1 + noteRef).operator int();
         
@@ -289,6 +309,11 @@ void CustomChordNoteComponent::syncGUI()
         int midiNote = noteVal + ((octaveVal - 1) * 12) - 1;
         float freqVal = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef) * 2.f;
         label_FrequencyLabel->setText(String(freqVal, 3, false), dontSendNotification);
+        
+        // Load amplitude value
+        float amplitude = projectManager->getChordPlayerParameter(shortcutRef, CUSTOM_CHORD_AMPLITUDE_1 + noteRef);
+        if (amplitude <= 0) amplitude = 100.0f; // Default to 100% if not set
+        label_Amplitude->setText(String(amplitude, 1) + "%", dontSendNotification);
     }
     else
     {
@@ -297,6 +322,7 @@ void CustomChordNoteComponent::syncGUI()
         // reset
         label_NoteValue         ->setText("", dontSendNotification);
         label_OctaveValue       ->setText("", dontSendNotification);
+        label_Amplitude         ->setText("100%", dontSendNotification);
         label_FrequencyLabel    ->setText("", dontSendNotification);
 //        comboBox_Note           ->setSelectedId(0);
 //        comboBox_Octave         ->setSelectedId(0);

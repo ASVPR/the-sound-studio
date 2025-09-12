@@ -61,11 +61,15 @@ public:
         {
             scaleFactor = factor;
             
-            chordPlayerSettingsComponent    ->setScale(scaleFactor);
-            containerView_Shortcut          ->setScale(scaleFactor);
-            visualiserContainerComponent    ->setScale(scaleFactor);
+            if (chordPlayerSettingsComponent)
+                chordPlayerSettingsComponent->setScale(scaleFactor);
+            if (containerView_Shortcut)
+                containerView_Shortcut->setScale(scaleFactor);
+            if (visualiserContainerComponent)
+                visualiserContainerComponent->setScale(scaleFactor);
             
             lookAndFeel.setScale(scaleFactor);
+            resized(); // Trigger re-layout with new scale
         }
         
         // Compute a human-readable list of note names and frequencies

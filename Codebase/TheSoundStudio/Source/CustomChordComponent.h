@@ -45,6 +45,7 @@ public:
         label_NoteValue->setFont(28 * scaleFactor);
         label_OctaveValue->setFont(28 * scaleFactor);
         label_FrequencyLabel->setFont(28 * scaleFactor);
+        label_Amplitude->setFont(28 * scaleFactor);
     }
 
 private:

@@ -18,6 +18,8 @@
 #include "SpectrogramComponent.h"
 //#include "OscilloscopeVisualiserComponent.h"
 #include "LissajousCurveComponent.h"
+#include "SpectraHarmonicsChart.h"
+#include "FrequencyColorSpectrogram.h"
 #include <memory>
 
 // SVP 190
@@ -37,6 +39,10 @@ public:
         OSCILLOSCOPE,
         LISSAJOUS,
         FREQ_DATA,
+        HARMONICS_CHART,
+        FREQ_COLOR_SPECTRUM,
+        STANDING_WAVE,
+        CEPSTRUM,
         TOTAL_NUM_TYPES
     }visualiserType;
     
@@ -90,12 +96,16 @@ public:
         {
             switch (i)
             {
-                case SPECTROGRAM:   comboBoxTypeSelector->addItem("Spectrogram", i); break;
-                case COLOUR:        comboBoxTypeSelector->addItem("Colour", i); break;
-                case OCTAVE:        comboBoxTypeSelector->addItem("Octave", i); break;
-                case OSCILLOSCOPE:  comboBoxTypeSelector->addItem("Oscilloscope", i); break;
-                case LISSAJOUS:     comboBoxTypeSelector->addItem("Lissajous", i); break;
-                case FREQ_DATA:     comboBoxTypeSelector->addItem("Data", i); break;
+                case SPECTROGRAM:       comboBoxTypeSelector->addItem("Spectrogram", i); break;
+                case COLOUR:            comboBoxTypeSelector->addItem("Colour", i); break;
+                case OCTAVE:            comboBoxTypeSelector->addItem("Octave", i); break;
+                case OSCILLOSCOPE:      comboBoxTypeSelector->addItem("Oscilloscope", i); break;
+                case LISSAJOUS:         comboBoxTypeSelector->addItem("Lissajous", i); break;
+                case FREQ_DATA:         comboBoxTypeSelector->addItem("Data", i); break;
+                case HARMONICS_CHART:   comboBoxTypeSelector->addItem("Harmonics", i); break;
+                case FREQ_COLOR_SPECTRUM: comboBoxTypeSelector->addItem("Freq-Color", i); break;
+                case STANDING_WAVE:     comboBoxTypeSelector->addItem("Standing Wave", i); break;
+                case CEPSTRUM:          comboBoxTypeSelector->addItem("Cepstrum", i); break;
             }
         }
         comboBoxTypeSelector->setSelectedId((int)initialType, dontSendNotification);
@@ -457,6 +467,8 @@ public:
             case OSCILLOSCOPE:  if (oscilloscopeComponent != nullptr) delete oscilloscopeComponent; oscilloscopeComponent = nullptr; break;
             case LISSAJOUS:     if (lissajousComponent != nullptr) delete lissajousComponent; lissajousComponent = nullptr; break;
             case FREQ_DATA:     if (frequencyDataComponent != nullptr) delete frequencyDataComponent; frequencyDataComponent = nullptr; break;
+            case HARMONICS_CHART: if (harmonicsChartComponent != nullptr) delete harmonicsChartComponent; harmonicsChartComponent = nullptr; break;
+            case FREQ_COLOR_SPECTRUM: if (freqColorSpectrumComponent != nullptr) delete freqColorSpectrumComponent; freqColorSpectrumComponent = nullptr; break;
         }
         
     
@@ -540,6 +552,24 @@ public:
                 frequencyDataComponent->setScale(scaleFactor);
             }
                 break;
+            case HARMONICS_CHART:
+            {
+                harmonicsChartComponent = new SpectraHarmonicsChart(projectManager);
+                harmonicsChartComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                addAndMakeVisible(harmonicsChartComponent);
+                
+                harmonicsChartComponent->setScale(scaleFactor);
+            }
+                break;
+            case FREQ_COLOR_SPECTRUM:
+            {
+                freqColorSpectrumComponent = new FrequencyColorSpectrogram(projectManager);
+                freqColorSpectrumComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                addAndMakeVisible(freqColorSpectrumComponent);
+                
+                freqColorSpectrumComponent->setScale(scaleFactor);
+            }
+                break;
         }
         
         shouldUpdate = true;
@@ -611,6 +641,8 @@ private:
     FrequencyDataComponent*             frequencyDataComponent = nullptr;
     OscilloscopeComponent*              oscilloscopeComponent = nullptr;
     LissajousCurveViewerComponent*      lissajousComponent = nullptr;
+    SpectraHarmonicsChart*              harmonicsChartComponent = nullptr;
+    FrequencyColorSpectrogram*          freqColorSpectrumComponent = nullptr;
     
     bool popupsAreVisible = false;
     PopupFFTWindow * popupFFTWindow = nullptr; // reinitialise whenever called..

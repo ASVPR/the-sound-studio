@@ -408,6 +408,14 @@
                   file="Source/SpectrogramComponent.cpp"/>
             <FILE id="V8rasz" name="SpectrogramComponent.h" compile="0" resource="0"
                   file="Source/SpectrogramComponent.h"/>
+            <FILE id="SHA001" name="SpectraHarmonicsChart.cpp" compile="1" resource="0"
+                  file="Source/SpectraHarmonicsChart.cpp"/>
+            <FILE id="SHA002" name="SpectraHarmonicsChart.h" compile="0" resource="0"
+                  file="Source/SpectraHarmonicsChart.h"/>
+            <FILE id="FCS001" name="FrequencyColorSpectrogram.cpp" compile="1" resource="0"
+                  file="Source/FrequencyColorSpectrogram.cpp"/>
+            <FILE id="FCS002" name="FrequencyColorSpectrogram.h" compile="0" resource="0"
+                  file="Source/FrequencyColorSpectrogram.h"/>
             <FILE id="moVPpR" name="ColourSpectrumVisualiserComponent.cpp" compile="1"
                   resource="0" file="Source/ColourSpectrumVisualiserComponent.cpp"/>
             <FILE id="El3Ai7" name="ColourSpectrumVisualiserComponent.h" compile="0"
@@ -605,6 +613,10 @@
             file="Source/ProjectManager.cpp"/>
       <FILE id="KWk1MV" name="ProjectManager.h" compile="0" resource="0"
             file="Source/ProjectManager.h"/>
+      <FILE id="PM0001" name="ProfileManager.cpp" compile="1" resource="0"
+            file="Source/ProfileManager.cpp"/>
+      <FILE id="PM0002" name="ProfileManager.h" compile="0" resource="0"
+            file="Source/ProfileManager.h"/>
       <FILE id="IB94AT" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="YIgPkB" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>

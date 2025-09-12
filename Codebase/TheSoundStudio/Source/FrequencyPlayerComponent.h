@@ -58,11 +58,21 @@ public:
     float scaleFactor = 0.5;
     void setScale(float factor) override
     {
-        scaleFactor = factor;
-        lookAndFeel.setScale(scaleFactor);
-        frequencyPlayerSettingsComponent->setScale(scaleFactor);
-        containerView_Shortcut->setScale(scaleFactor);
-        visualiserContainerComponent    ->setScale(scaleFactor);
+        if (scaleFactor != factor)
+        {
+            scaleFactor = factor;
+            lookAndFeel.setScale(scaleFactor);
+            
+            if (frequencyPlayerSettingsComponent)
+                frequencyPlayerSettingsComponent->setScale(scaleFactor);
+            if (containerView_Shortcut)
+                containerView_Shortcut->setScale(scaleFactor);
+            if (visualiserContainerComponent)
+                visualiserContainerComponent->setScale(scaleFactor);
+            
+            resized(); // Trigger re-layout
+            repaint();
+        }
     }
     
 private:

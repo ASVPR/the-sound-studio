@@ -78,10 +78,19 @@ public:
     float scaleFactor = 0.5;
     void setScale(float factor) override
     {
-        scaleFactor = factor;
-        
-        lookAndFeel.setScale(scaleFactor);
-        visualiserContainerComponent->setScale(scaleFactor);
+        if (scaleFactor != factor)
+        {
+            scaleFactor = factor;
+            
+            // Update all components with new scale
+            lookAndFeel.setScale(scaleFactor);
+            if (visualiserContainerComponent)
+                visualiserContainerComponent->setScale(scaleFactor);
+            
+            // Trigger re-layout with new scale
+            resized();
+            repaint();
+        }
     }
     
     

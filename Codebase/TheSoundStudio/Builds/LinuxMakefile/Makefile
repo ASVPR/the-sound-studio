@@ -125,6 +125,8 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/OctaveVisualiserComponent_84174ab7.o \
   $(JUCE_OBJDIR)/FrequencyDataComponent_c4c47080.o \
   $(JUCE_OBJDIR)/SpectrogramComponent_d8406099.o \
+  $(JUCE_OBJDIR)/SpectraHarmonicsChart_69620521.o \
+  $(JUCE_OBJDIR)/FrequencyColorSpectrogram_801a23e7.o \
   $(JUCE_OBJDIR)/ColourSpectrumVisualiserComponent_5b6c2c0a.o \
   $(JUCE_OBJDIR)/VisualiserContainerComponent_a3c84b7c.o \
   $(JUCE_OBJDIR)/HighQualityMeter_1dbf9115.o \
@@ -164,6 +166,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/CustomLookAndFeel_ab3d772e.o \
   $(JUCE_OBJDIR)/LogFileWriter_3b6b2154.o \
   $(JUCE_OBJDIR)/ProjectManager_ec121fdd.o \
+  $(JUCE_OBJDIR)/ProfileManager_fb4e274d.o \
   $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o \
   $(JUCE_OBJDIR)/Main_90ebc5c2.o \
   $(JUCE_OBJDIR)/BinaryData_ce4232d4.o \
@@ -363,6 +366,16 @@ $(JUCE_OBJDIR)/SpectrogramComponent_d8406099.o: ../../Source/SpectrogramComponen
 	@echo "Compiling SpectrogramComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
+$(JUCE_OBJDIR)/SpectraHarmonicsChart_69620521.o: ../../Source/SpectraHarmonicsChart.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling SpectraHarmonicsChart.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FrequencyColorSpectrogram_801a23e7.o: ../../Source/FrequencyColorSpectrogram.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FrequencyColorSpectrogram.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
 $(JUCE_OBJDIR)/ColourSpectrumVisualiserComponent_5b6c2c0a.o: ../../Source/ColourSpectrumVisualiserComponent.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ColourSpectrumVisualiserComponent.cpp"
@@ -556,6 +569,11 @@ $(JUCE_OBJDIR)/LogFileWriter_3b6b2154.o: ../../Source/LogFileWriter.cpp
 $(JUCE_OBJDIR)/ProjectManager_ec121fdd.o: ../../Source/ProjectManager.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ProjectManager.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/ProfileManager_fb4e274d.o: ../../Source/ProfileManager.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling ProfileManager.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/MainComponent_a6ffb4a5.o: ../../Source/MainComponent.cpp
