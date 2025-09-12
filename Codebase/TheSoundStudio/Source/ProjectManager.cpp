@@ -54,6 +54,11 @@ ProjectManager::ProjectManager() : backgroundThread("Audio Recorder Thread")
         // Initialize synthesis engine with frequency manager
         synthesisEngine->initialize(44100.0, frequencyManager.get());
         
+        // Ensure project settings exist before any processors that query them
+        // (e.g., FundamentalFrequencyProcessor uses FUNDAMENTAL_FREQUENCY_ALGORITHM on construct)
+        projectSettings = std::make_unique<ValueTree>("ProjectSettings");
+        initDefaultProjectSettings();
+
         // FIXED: Exception-safe processor initialization
         initializeProcessors();
         
@@ -74,10 +79,7 @@ ProjectManager::ProjectManager() : backgroundThread("Audio Recorder Thread")
     
     formatManager.registerBasicFormats();
     
-    // FIXED: Initialize ValueTree parameters with smart pointers
-    projectSettings = std::make_unique<ValueTree>("ProjectSettings");
-    
-    initDefaultProjectSettings();
+    // projectSettings is already created and initialized above
     
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
@@ -1211,7 +1213,14 @@ void ProjectManager::setProjectSettingsParameter(int index, double newVal)
 
 double ProjectManager::getProjectSettingsParameter(int index)
 {
-    return projectSettings->getProperty(getIdentifierForSettingIndex(index)).operator double();
+    if (projectSettings == nullptr)
+    {
+        // Fallback: return sane default if accessed too early
+        return 0.0;
+    }
+    const auto key = getIdentifierForSettingIndex(index);
+    // If the property is missing, juce::var -> double yields 0.0
+    return projectSettings->getProperty(key).operator double();
 }
 
 void ProjectManager::setDirectoryFileForSettingParameter(int index, File newDirectory)

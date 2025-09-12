@@ -57,16 +57,20 @@ public:
     }
     
     float scaleFactor = 0.5;
-    void setScale(float factor) override
-    {
-        scaleFactor = factor;
+        void setScale(float factor) override
+        {
+            scaleFactor = factor;
+            
+            chordPlayerSettingsComponent    ->setScale(scaleFactor);
+            containerView_Shortcut          ->setScale(scaleFactor);
+            visualiserContainerComponent    ->setScale(scaleFactor);
+            
+            lookAndFeel.setScale(scaleFactor);
+        }
         
-        chordPlayerSettingsComponent    ->setScale(scaleFactor);
-        containerView_Shortcut          ->setScale(scaleFactor);
-        visualiserContainerComponent    ->setScale(scaleFactor);
-        
-        lookAndFeel.setScale(scaleFactor);
-    }
+        // Compute a human-readable list of note names and frequencies
+        // for the specified shortcut's current chord using the active scale.
+        juce::String computeNoteFrequenciesStringForShortcut(int shortcutRef);
     
 private:
     
@@ -98,6 +102,9 @@ private:
     
     // needs custom progress bar
     std::unique_ptr<CustomProgressBar> progressBar;
+
+    // Displays the per-note frequencies for the last-updated shortcut
+    std::unique_ptr<Label> label_NoteFrequencies;
     
     
     // Image Cache
@@ -170,6 +177,12 @@ private:
     int progressTopMargin   = 856;
     int progressWidth       = 1128;
     int progressHeight      = 53;
+
+    // Frequency list label position (below Playing label)
+    int noteFreqLeftMargin  = 219;
+    int noteFreqTopMargin   = 835;
+    int noteFreqWidth       = 1128;
+    int noteFreqHeight      = 33;
     
     CustomLookAndFeel lookAndFeel;
     

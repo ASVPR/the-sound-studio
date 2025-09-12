@@ -99,6 +99,14 @@ analyser(frequencyManager)
     apvts.addParameterListener(get_parameter_name(Parameter::max_interval), this);
     apvts.addParameterListener(get_parameter_name(Parameter::min_frequency), this);
     apvts.addParameterListener(get_parameter_name(Parameter::max_frequency), this);
+
+    // Initialise default algorithm from Project Settings if available
+    {
+        int defaultAlg = static_cast<int>(projectManager.getProjectSettingsParameter(TSS_SETTINGS::FUNDAMENTAL_FREQUENCY_ALGORITHM));
+        if (defaultAlg < 0) defaultAlg = 0;
+        if (defaultAlg > 2) defaultAlg = 2;
+        apvts.getParameterAsValue(get_parameter_name(Parameter::algorithm)).setValue(defaultAlg);
+    }
 }
 
 auto * FundamentalFrequencyProcessor::getCurrentEditor()
@@ -238,6 +246,9 @@ void FundamentalFrequencyProcessor::parameterChanged(const juce::String& paramet
     else if (parameterID == get_parameter_name(Parameter::algorithm))
     {
         analyser.setAlgorithm(static_cast<Analyser::Algorithm>(static_cast<int>(newValue)));
+        // Persist selection as the default in Project Settings
+        projectManager.setProjectSettingsParameter(TSS_SETTINGS::FUNDAMENTAL_FREQUENCY_ALGORITHM,
+                                                  static_cast<double>(newValue));
     }
 
     if (parameterID == get_parameter_name(Parameter::harmonics))

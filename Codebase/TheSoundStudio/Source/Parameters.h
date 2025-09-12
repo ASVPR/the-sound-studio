@@ -286,8 +286,14 @@ enum AUDIO_OUTPUTS
     MONO_2,
     MONO_3,
     MONO_4,
+    MONO_5,
+    MONO_6,
+    MONO_7,
+    MONO_8,
     STEREO_1_2,
     STEREO_3_4,
+    STEREO_5_6,
+    STEREO_7_8,
     
     TOTAL_OUTPUT_TYPES
 };

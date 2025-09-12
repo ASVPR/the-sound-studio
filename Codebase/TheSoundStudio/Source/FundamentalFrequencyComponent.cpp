@@ -196,7 +196,7 @@ void FundamentalFrequencyComponent::resized()
     y = setContainerBounds(3, juce::Rectangle<int>(x,
                                                    y,
                                                    width,
-                                                   110)) + gap;
+                                                   150)) + gap;
 
     y = setContainerBounds(4, juce::Rectangle<int>(x, y, width, 100)) + gap;
 
@@ -204,14 +204,20 @@ void FundamentalFrequencyComponent::resized()
     buttonStop->setBounds(localBounds.getCentreX() - 95, 645, 60, 25);
     noiseButton->setBounds(localBounds.getCentreX() + 300, 640, 75, 75);
 
-    // Layout IR controls inside Process container (index 3)
+    // Layout controls inside Process container (index 3)
     auto& processCont = containers.getContainer(3);
     auto pb = processCont.getLocalBounds().reduced(10, 8);
-    auto row = pb.removeFromTop(28);
-    toggleIREnable->setBounds(row.removeFromLeft(120));
-    buttonIRLoad->setBounds(row.removeFromLeft(160));
-    row = pb.removeFromTop(28);
-    sliderIRWet->setBounds(row.removeFromLeft(280));
+
+    // Position range preset buttons under Iteration length input
+    buttonRangeFull ->setBounds(450, 70, 60, 24);
+    buttonRangeLow  ->setBounds(515, 70, 60, 24);
+    buttonRangeVocal->setBounds(580, 70, 70, 24);
+
+    // Place IR controls at the bottom of the Process container
+    auto bottomRow = pb.removeFromBottom(28);
+    toggleIREnable->setBounds(bottomRow.removeFromLeft(120));
+    buttonIRLoad->setBounds(bottomRow.removeFromLeft(180));
+    sliderIRWet->setBounds(pb.removeFromBottom(28).removeFromLeft(300));
 }
 
 void FundamentalFrequencyComponent::paint(Graphics&g)
@@ -701,6 +707,51 @@ void FundamentalFrequencyComponent::prepare_process_and_synth()
 
     containers.getContainer(3).addAndMakeVisible(*textEditorLength);
 
+    // Range preset selector (under Iteration length)
+    buttonRangeFull = std::make_unique<TextButton>("Full");
+    buttonRangeFull->onClick = [this]()
+    {
+        frequencyProcessor.enable_custom_range(true);
+        frequencyProcessor.setCustomRangeMinHz(20);
+        frequencyProcessor.setCustomRangeMaxHz(20000);
+        textEditorMinFrequency->setText("20", juce::dontSendNotification);
+        textEditorMaxFrequency->setText("20000", juce::dontSendNotification);
+    };
+    containers.getContainer(3).addAndMakeVisible(*buttonRangeFull);
+
+    buttonRangeLow = std::make_unique<TextButton>("Low");
+    buttonRangeLow->onClick = [this]()
+    {
+        frequencyProcessor.enable_custom_range(true);
+        frequencyProcessor.setCustomRangeMinHz(20);
+        frequencyProcessor.setCustomRangeMaxHz(500);
+        textEditorMinFrequency->setText("20", juce::dontSendNotification);
+        textEditorMaxFrequency->setText("500", juce::dontSendNotification);
+    };
+    containers.getContainer(3).addAndMakeVisible(*buttonRangeLow);
+
+    buttonRangeVocal = std::make_unique<TextButton>("Vocal");
+    buttonRangeVocal->onClick = [this]()
+    {
+        frequencyProcessor.enable_custom_range(true);
+        frequencyProcessor.setCustomRangeMinHz(80);
+        frequencyProcessor.setCustomRangeMaxHz(1000);
+        textEditorMinFrequency->setText("80", juce::dontSendNotification);
+        textEditorMaxFrequency->setText("1000", juce::dontSendNotification);
+    };
+    containers.getContainer(3).addAndMakeVisible(*buttonRangeVocal);
+
+    // Auto A toggle (set A4 from input)
+    toggleAutoA = std::make_unique<ToggleButton>("Auto A (A4 from input)");
+    toggleAutoA->onClick = [this]()
+    {
+        autoAEnabled = toggleAutoA->getToggleState();
+        autoAConsistencyCount = 0;
+        autoALastKeynote = -1;
+    };
+    containers.getContainer(3).addAndMakeVisible(*toggleAutoA);
+    toggleAutoA->setBounds(700, 35, 220, 24);
+
     containers.getContainer(3).paintInBackground = [this] (juce::Graphics& g, const juce::Rectangle<int>& bounds)
     {
         g.setColour(juce::Colours::white);
@@ -714,6 +765,14 @@ void FundamentalFrequencyComponent::prepare_process_and_synth()
 
         g.drawFittedText("Iteration length (ms)",
                          juce::Rectangle<int>(450, 23, 200, 50),
+                         juce::Justification::centredLeft, 1);
+        
+        g.drawFittedText("Tuning",
+                         juce::Rectangle<int>(700, 23, 200, 50),
+                         juce::Justification::centredLeft, 1);
+
+        g.drawFittedText("Range presets",
+                         juce::Rectangle<int>(450, 60, 200, 40),
                          juce::Justification::centredLeft, 1);
     };
 

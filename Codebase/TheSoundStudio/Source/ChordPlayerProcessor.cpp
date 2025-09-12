@@ -305,6 +305,20 @@ void ChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
                     buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples());
                     buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples());
                 }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_5 && buffer.getNumChannels() > 4) { buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_6 && buffer.getNumChannels() > 5) { buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_7 && buffer.getNumChannels() > 6) { buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_8 && buffer.getNumChannels() > 7) { buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_5_6 && buffer.getNumChannels() > 5)
+                {
+                    buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_7_8 && buffer.getNumChannels() > 7)
+                {
+                    buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
             }
         }
     }

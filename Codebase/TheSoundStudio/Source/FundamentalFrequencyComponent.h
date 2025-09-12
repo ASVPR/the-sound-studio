@@ -69,6 +69,46 @@ public:
             
             updateFrequencyOutput();
         }
+
+        // Auto A logic: if enabled, infer A4 from current input
+        if (autoAEnabled)
+        {
+            const double f = frequencyProcessor.getCurrentFrequency();
+            if (f >= autoASetMinHz && f <= autoASetMaxHz)
+            {
+                int midiNote = -1;
+                int keynote = -1;
+                int octave = -1;
+                float freqDiff = 0.0f;
+                projectManager.frequencyManager->getMIDINoteForFrequency((float) f, midiNote, keynote, octave, freqDiff);
+
+                // Expect keynote 9 to correspond to 'A'
+                if (keynote == 9)
+                {
+                    if (autoALastKeynote == 9)
+                        ++autoAConsistencyCount;
+                    else
+                        autoAConsistencyCount = 1;
+
+                    autoALastKeynote = 9;
+
+                    if (autoAConsistencyCount >= autoARequiredCount)
+                    {
+                        projectManager.setProjectSettingsParameter(BASE_FREQUENCY_A, f);
+                        autoAConsistencyCount = 0;
+                    }
+                }
+                else
+                {
+                    autoALastKeynote = keynote;
+                    autoAConsistencyCount = 0;
+                }
+            }
+            else
+            {
+                autoAConsistencyCount = 0;
+            }
+        }
     }
     
     float scaleFactor = 0.5;
@@ -141,6 +181,20 @@ private:
     std::unique_ptr<juce::TextEditor> textEditorLength;
     std::unique_ptr<juce::TextEditor> textEditorIteration;
     /* ************** */
+
+    // Auto A (set A4 from input) toggle and helpers
+    std::unique_ptr<ToggleButton> toggleAutoA;
+    bool autoAEnabled { false };
+    int  autoAConsistencyCount { 0 };
+    int  autoARequiredCount { 6 }; // require consecutive confirmations
+    int  autoALastKeynote { -1 };
+    double autoASetMinHz { 380.0 };
+    double autoASetMaxHz { 500.0 };
+
+    // Range preset buttons
+    std::unique_ptr<TextButton> buttonRangeFull;
+    std::unique_ptr<TextButton> buttonRangeLow;
+    std::unique_ptr<TextButton> buttonRangeVocal;
 
     // IR Convolution Controls (WAV only)
     std::unique_ptr<ToggleButton> toggleIREnable;

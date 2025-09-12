@@ -81,6 +81,14 @@ ChordPlayerComponent::ChordPlayerComponent(ProjectManager * pm)
     fontNormal.setHeight(33);
     label_Playing->setFont(fontNormal);
     containerView_Main->addAndMakeVisible(label_Playing.get());
+
+    // Per-note frequencies label (computed on chord updates)
+    label_NoteFrequencies = std::make_unique<Label>();
+    label_NoteFrequencies->setText("", dontSendNotification);
+    label_NoteFrequencies->setJustificationType(Justification::left);
+    label_NoteFrequencies->setFont(fontNormal);
+    label_NoteFrequencies->setMinimumHorizontalScale(0.7f);
+    containerView_Main->addAndMakeVisible(label_NoteFrequencies.get());
     
     
     button_Record = std::make_unique<ImageButton>();
@@ -198,6 +206,7 @@ void ChordPlayerComponent::resized()
     imageComp->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight());
     
     label_Playing->setBounds(playingLeftMargin * scaleFactor, playingTopMargin * scaleFactor, 300 * scaleFactor, 40 * scaleFactor);
+    label_NoteFrequencies->setBounds(noteFreqLeftMargin * scaleFactor, noteFreqTopMargin * scaleFactor, noteFreqWidth * scaleFactor, noteFreqHeight * scaleFactor);
     
     label_Playing->setFont(33 * scaleFactor);
     button_Record->setBounds(recordLeftMargin * scaleFactor, recordTopMargin * scaleFactor, recordWidth * scaleFactor, recordHeight * scaleFactor);
@@ -368,6 +377,8 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
 
         float baseFreq = projectManager->frequencyManager->getFrequencyForMIDINote(midiNote);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setFrequency(baseFreq);
+        // Refresh frequency list
+        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
     }
     else if (paramIndex == OCTAVE)
     {
@@ -384,6 +395,8 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
 
         float baseFreq = projectManager->frequencyManager->getFrequencyForMIDINote(midiNote);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setFrequency(baseFreq);
+        // Refresh frequency list
+        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
         
 //        // get chord type and octave
 //        int chordRef            = projectManager->getChordPlayerParameter(shortcutRef, CHORD_TYPE).operator int();
@@ -401,6 +414,9 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
         String chordString      = ProjectStrings::getChordTypeArray().getReference(chordRef-1);
         String comboString(""); comboString.append(chordString, 20);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setChordTypeString(comboString);
+
+        // Update per-note frequency list for this shortcut
+        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
     }
     else if (paramIndex == CHORDPLAYER_SCALE)
     {
@@ -423,6 +439,8 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
         }
         
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setScaleString(scaleString);
+        // Scale change affects frequencies; refresh list
+        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
     }
     else if (paramIndex == INSTRUMENT_TYPE || paramIndex == WAVEFORM_TYPE)
     {
@@ -456,6 +474,7 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
         else if (waveformType == 5) { stringWaveform = "Custom";    stringLabel = "Type :"; }
 
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setInstrumentString(stringWaveform, stringLabel);
+        // Instrument change doesn't affect note frequencies; skip recompute
     }
     else if (paramIndex == CUSTOM_CHORD)
     {
@@ -480,9 +499,47 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
             ChordPlayerComponent::updateChordPlayerUIParameter(shortcutRef,CHORD_TYPE);
             ChordPlayerComponent::updateChordPlayerUIParameter(shortcutRef,KEYNOTE);
         }
+        // Custom chord toggle can change notes; refresh list
+        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
     }
     
     chordPlayerSettingsComponent->syncUI();
+}
+
+juce::String ChordPlayerComponent::computeNoteFrequenciesStringForShortcut(int shortcutRef)
+{
+    if (!projectManager || !projectManager->chordPlayerProcessor || !projectManager->frequencyManager || !projectManager->frequencyManager->scalesManager)
+        return {};
+
+    // Pull MIDI notes for the shortcut's chord
+    auto cmgr = projectManager->chordPlayerProcessor->chordManager[shortcutRef];
+    if (!cmgr) return {};
+
+    juce::Array<int> notes = cmgr->getMIDIKeysForChord();
+    if (notes.isEmpty()) return {};
+
+    juce::String result;
+    result << "Notes (Hz): ";
+
+    bool first = true;
+    for (int i = 0; i < notes.size(); ++i)
+    {
+        const int midiNote = notes.getReference(i);
+        if (midiNote < 0 || midiNote > 127) continue;
+
+        const double freq = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef);
+        if (freq <= 0.0) continue; // Skip unavailable notes in current scale
+
+        const int key = midiNote % 12;
+        const int oct = (midiNote / 12) - 1;
+        juce::String noteName = ProjectStrings::getKeynoteArray().getReference(key);
+
+        if (!first) result << ", ";
+        first = false;
+        result << noteName << oct << " " << juce::String(freq, 3, false) << "Hz";
+    }
+
+    return result;
 }
 
 void ChordPlayerComponent::updateSettingsUIParameter(int settingIndex)

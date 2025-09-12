@@ -17,8 +17,8 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     projectManager = pm;
 
     // Image Cache
-    // Use the correct application icon asset (replacing old Logo3D)
-    imageLogoButton = ImageCache::getFromMemory(BinaryData::icon_128_png, BinaryData::icon_128_pngSize);
+    // Use a wide rectangular brand mark for the sidebar header
+    imageLogoButton = ImageCache::getFromMemory(BinaryData::LogoButton_Normal_png, BinaryData::LogoButton_Normal_pngSize);
     imageMenuButtonNormal = ImageCache::getFromMemory(BinaryData::Sidebar_Button_Normal_png, BinaryData::Sidebar_Button_Normal_pngSize);
     imageMenuButtonSelected = ImageCache::getFromMemory(BinaryData::Sidebar_ButtonHighlighted_png, BinaryData::Sidebar_ButtonHighlighted_pngSize);
     imageSidebar = ImageCache::getFromMemory(BinaryData::SidebarNew_png, BinaryData::SidebarNew_pngSize);
@@ -223,9 +223,11 @@ void MainViewComponent::switchMenuView()
 
 void MainViewComponent::setScale(float factor)
 {
-    scaleFactor = factor;
+    // Override auto-calculated scale if needed
+    scaleFactor = jlimit(0.5f, 2.0f, factor);
     for (auto& view : menuViews) {
         view->setScale(scaleFactor);
     }
     lookAndFeel.setScale(scaleFactor);
+    resized();  // Re-layout with new scale
 }

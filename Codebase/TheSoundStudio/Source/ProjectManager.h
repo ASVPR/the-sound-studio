@@ -658,8 +658,14 @@ public:
         outputMenu.addItem(AUDIO_OUTPUTS::MONO_2, "MONO 2");
         outputMenu.addItem(AUDIO_OUTPUTS::MONO_3, "MONO 3");
         outputMenu.addItem(AUDIO_OUTPUTS::MONO_4, "MONO 4");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_5, "MONO 5");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_6, "MONO 6");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_7, "MONO 7");
+        outputMenu.addItem(AUDIO_OUTPUTS::MONO_8, "MONO 8");
         outputMenu.addItem(AUDIO_OUTPUTS::STEREO_1_2, "STEREO 1 & 2");
         outputMenu.addItem(AUDIO_OUTPUTS::STEREO_3_4, "STEREO 3 & 4");
+        outputMenu.addItem(AUDIO_OUTPUTS::STEREO_5_6, "STEREO 5 & 6");
+        outputMenu.addItem(AUDIO_OUTPUTS::STEREO_7_8, "STEREO 7 & 8");
     }
     
 private:

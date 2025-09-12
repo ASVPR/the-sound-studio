@@ -17,37 +17,258 @@
 #include "MenuViewInterface.h"
 #include <memory>
 
-class AudioMixerComponent : public Component, public Slider::Listener, public Button::Listener
+class AudioMixerComponent : public Component, public Slider::Listener, public Button::Listener, public Timer, public ComboBox::Listener
 {
 public:
     AudioMixerComponent(ProjectManager * pm)
     {
         projectManager = pm;
         
+        setLookAndFeel(&lookAndFeel);
+        
+        // Start timer for meter animations
+        startTimer(30); // Faster refresh for smoother animations
+        
+        // Initialize preset system
+        initializePresets();
+
+        // Preset selector
+        presetComboBox = std::make_unique<ComboBox>("Mixer Presets");
+        presetComboBox->addItem("Default", 1);
+        presetComboBox->addItem("Recording", 2);
+        presetComboBox->addItem("Mixing", 3);
+        presetComboBox->addItem("Mastering", 4);
+        presetComboBox->addItem("Live", 5);
+        presetComboBox->addItem("Custom 1", 6);
+        presetComboBox->addItem("Custom 2", 7);
+        presetComboBox->setSelectedId(1);
+        presetComboBox->addListener(this);
+        addAndMakeVisible(presetComboBox.get());
+        
+        // Save/Load preset buttons
+        savePresetButton = std::make_unique<TextButton>("Save");
+        savePresetButton->addListener(this);
+        savePresetButton->setColour(TextButton::buttonColourId, Colour(0xFF5E81AC));
+        savePresetButton->setColour(TextButton::textColourOffId, Colour(0xFFECEFF4));
+        addAndMakeVisible(savePresetButton.get());
+        
+        loadPresetButton = std::make_unique<TextButton>("Load");
+        loadPresetButton->addListener(this);
+        loadPresetButton->setColour(TextButton::buttonColourId, Colour(0xFF5E81AC));
+        loadPresetButton->setColour(TextButton::textColourOffId, Colour(0xFFECEFF4));
+        addAndMakeVisible(loadPresetButton.get());
+        
+        // Master section controls
+        masterGainSlider = std::make_unique<Slider>();
+        masterGainSlider->setRange(-60, 12, 0.1);
+        masterGainSlider->setSliderStyle(Slider::LinearVertical);
+        masterGainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
+        masterGainSlider->setColour(Slider::trackColourId, Colour(0xFF5E81AC));
+        masterGainSlider->setColour(Slider::backgroundColourId, Colour(0xFF1A1E24));
+        masterGainSlider->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+        masterGainSlider->setColour(Slider::textBoxTextColourId, Colour(0xFFD8DEE9));
+        masterGainSlider->setColour(Slider::textBoxBackgroundColourId, Colour(0xFF2E3440));
+        masterGainSlider->addListener(this);
+        masterGainSlider->setValue(0.0);
+        masterGainSlider->setTextValueSuffix(" dB");
+        addAndMakeVisible(masterGainSlider.get());
+        
+        masterLabel = std::make_unique<Label>("", "MASTER");
+        masterLabel->setJustificationType(Justification::centred);
+        masterLabel->setFont(Font(16.0f, Font::bold));
+        masterLabel->setColour(Label::textColourId, Colour(0xFFECEFF4));
+        addAndMakeVisible(masterLabel.get());
+        
+        masterMeter = std::make_unique<HighQualityMeter>(2); // Stereo meter
+        addAndMakeVisible(masterMeter.get());
+
         for (int i = 0 ; i < 4; i++)
         {
             sliderInputChannel[i]           = std::make_unique<Slider>();
-            sliderInputChannel[i]           ->setRange (0, 1.0, 0);
+            sliderInputChannel[i]           ->setRange (-60, 12, 0.1);
             sliderInputChannel[i]           ->setSliderStyle (Slider::LinearVertical);
+            sliderInputChannel[i]           ->setTextBoxStyle(Slider::TextBoxBelow, false, 50, 18);
+            sliderInputChannel[i]           ->setColour(Slider::trackColourId, Colour(0xFF88C0D0));
+            sliderInputChannel[i]           ->setColour(Slider::backgroundColourId, Colour(0xFF1A1E24));
+            sliderInputChannel[i]           ->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+            sliderInputChannel[i]           ->setColour(Slider::textBoxTextColourId, Colour(0xFF88C0D0));
+            sliderInputChannel[i]           ->setColour(Slider::textBoxBackgroundColourId, Colour(0xFF2E3440));
             sliderInputChannel[i]           ->addListener (this);
+            sliderInputChannel[i]           ->setValue(0.0);
+            sliderInputChannel[i]           ->setTextValueSuffix(" dB");
+            sliderInputChannel[i]           ->setDoubleClickReturnValue(true, 0.0);
             addAndMakeVisible(sliderInputChannel[i].get());
             
             
             sliderOutputChannel[i]          = std::make_unique<Slider>();
-            sliderOutputChannel[i]          ->setRange (0, 1.0, 0);
+            sliderOutputChannel[i]          ->setRange (-60, 12, 0.1);
             sliderOutputChannel[i]          ->setSliderStyle (Slider::LinearVertical);
+            sliderOutputChannel[i]          ->setTextBoxStyle(Slider::TextBoxBelow, false, 50, 18);
+            sliderOutputChannel[i]          ->setColour(Slider::trackColourId, Colour(0xFFBF616A));
+            sliderOutputChannel[i]          ->setColour(Slider::backgroundColourId, Colour(0xFF1A1E24));
+            sliderOutputChannel[i]          ->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+            sliderOutputChannel[i]          ->setColour(Slider::textBoxTextColourId, Colour(0xFFBF616A));
+            sliderOutputChannel[i]          ->setColour(Slider::textBoxBackgroundColourId, Colour(0xFF2E3440));
             sliderOutputChannel[i]          ->addListener (this);
+            sliderOutputChannel[i]          ->setValue(0.0);
+            sliderOutputChannel[i]          ->setTextValueSuffix(" dB");
+            sliderOutputChannel[i]          ->setDoubleClickReturnValue(true, 0.0);
             addAndMakeVisible(sliderOutputChannel[i].get());
             
-            buttonFFTInputChannel[i]        = std::make_unique<TextButton>("");
-            buttonFFTInputChannel[i]        ->setButtonText("FFT");
+            // EQ controls (3-band: Low, Mid, High)
+            for (int band = 0; band < 3; band++)
+            {
+                eqInputChannel[i][band] = std::make_unique<Slider>();
+                eqInputChannel[i][band]->setRange(-12, 12, 0.1);
+                eqInputChannel[i][band]->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+                eqInputChannel[i][band]->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+                eqInputChannel[i][band]->setColour(Slider::rotarySliderFillColourId, Colour(0xFF81A1C1));
+                eqInputChannel[i][band]->setColour(Slider::rotarySliderOutlineColourId, Colour(0xFF3B4252));
+                eqInputChannel[i][band]->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+                eqInputChannel[i][band]->addListener(this);
+                eqInputChannel[i][band]->setValue(0.0);
+                eqInputChannel[i][band]->setDoubleClickReturnValue(true, 0.0);
+                addAndMakeVisible(eqInputChannel[i][band].get());
+                
+                eqOutputChannel[i][band] = std::make_unique<Slider>();
+                eqOutputChannel[i][band]->setRange(-12, 12, 0.1);
+                eqOutputChannel[i][band]->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+                eqOutputChannel[i][band]->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+                eqOutputChannel[i][band]->setColour(Slider::rotarySliderFillColourId, Colour(0xFFD08770));
+                eqOutputChannel[i][band]->setColour(Slider::rotarySliderOutlineColourId, Colour(0xFF3B4252));
+                eqOutputChannel[i][band]->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+                eqOutputChannel[i][band]->addListener(this);
+                eqOutputChannel[i][band]->setValue(0.0);
+                eqOutputChannel[i][band]->setDoubleClickReturnValue(true, 0.0);
+                addAndMakeVisible(eqOutputChannel[i][band].get());
+            }
+            
+            // Pan controls
+            panInputChannel[i]              = std::make_unique<Slider>();
+            panInputChannel[i]              ->setRange(-100, 100, 1);
+            panInputChannel[i]              ->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+            panInputChannel[i]              ->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+            panInputChannel[i]              ->setColour(Slider::rotarySliderFillColourId, Colour(0xFF88C0D0));
+            panInputChannel[i]              ->setColour(Slider::rotarySliderOutlineColourId, Colour(0xFF2E3440));
+            panInputChannel[i]              ->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+            panInputChannel[i]              ->addListener(this);
+            panInputChannel[i]              ->setValue(0.0);
+            panInputChannel[i]              ->setDoubleClickReturnValue(true, 0.0);
+            addAndMakeVisible(panInputChannel[i].get());
+            
+            panOutputChannel[i]             = std::make_unique<Slider>();
+            panOutputChannel[i]             ->setRange(-100, 100, 1);
+            panOutputChannel[i]             ->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+            panOutputChannel[i]             ->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+            panOutputChannel[i]             ->setColour(Slider::rotarySliderFillColourId, Colour(0xFFBF616A));
+            panOutputChannel[i]             ->setColour(Slider::rotarySliderOutlineColourId, Colour(0xFF2E3440));
+            panOutputChannel[i]             ->setColour(Slider::thumbColourId, Colour(0xFFD8DEE9));
+            panOutputChannel[i]             ->addListener(this);
+            panOutputChannel[i]             ->setValue(0.0);
+            panOutputChannel[i]             ->setDoubleClickReturnValue(true, 0.0);
+            addAndMakeVisible(panOutputChannel[i].get());
+            
+            labelInput[i]                   = std::make_unique<Label>("","IN " + String(i + 1));
+            labelInput[i]                   ->setJustificationType(Justification::centred);
+            labelInput[i]                   ->setFont(Font(13.0f, Font::bold));
+            labelInput[i]                   ->setColour(Label::textColourId, Colour(0xFFECEFF4));
+            addAndMakeVisible(labelInput[i].get());
+            
+            // Add peak indicators
+            peakLabelInput[i]               = std::make_unique<Label>("", "PEAK");
+            peakLabelInput[i]               ->setJustificationType(Justification::centred);
+            peakLabelInput[i]               ->setFont(Font(9.0f));
+            peakLabelInput[i]               ->setColour(Label::textColourId, Colour(0xFF88C0D0).withAlpha(0.0f));
+            peakLabelInput[i]               ->setColour(Label::backgroundColourId, Colour(0xFFBF616A));
+            addAndMakeVisible(peakLabelInput[i].get());
+
+            labelOutput[i]                  = std::make_unique<Label>("","OUT " + String(i + 1));
+            labelOutput[i]                  ->setJustificationType(Justification::centred);
+            labelOutput[i]                  ->setFont(Font(13.0f, Font::bold));
+            labelOutput[i]                  ->setColour(Label::textColourId, Colour(0xFFECEFF4));
+            addAndMakeVisible(labelOutput[i].get());
+            
+            // Add peak indicators
+            peakLabelOutput[i]              = std::make_unique<Label>("", "PEAK");
+            peakLabelOutput[i]              ->setJustificationType(Justification::centred);
+            peakLabelOutput[i]              ->setFont(Font(9.0f));
+            peakLabelOutput[i]              ->setColour(Label::textColourId, Colour(0xFFBF616A).withAlpha(0.0f));
+            peakLabelOutput[i]              ->setColour(Label::backgroundColourId, Colour(0xFFBF616A));
+            addAndMakeVisible(peakLabelOutput[i].get());
+
+            meterInput[i]                   = std::make_unique<HighQualityMeter>(1);
+            meterInput[i]                   ->setColour(HighQualityMeter::level10dBColourId, Colour(0xFF88C0D0));
+            meterInput[i]                   ->setColour(HighQualityMeter::level6dBColourId, Colour(0xFF5E81AC));
+            meterInput[i]                   ->setColour(HighQualityMeter::level3dBColourId, Colour(0xFFEBCB8B));
+            meterInput[i]                   ->setColour(HighQualityMeter::level0dBColourId, Colour(0xFFD08770));
+            meterInput[i]                   ->setColour(HighQualityMeter::levelOverColourId, Colour(0xFFBF616A));
+            addAndMakeVisible(meterInput[i].get());
+
+            meterOutput[i]                  = std::make_unique<HighQualityMeter>(1);
+            meterOutput[i]                  ->setColour(HighQualityMeter::level10dBColourId, Colour(0xFFBF616A));
+            meterOutput[i]                  ->setColour(HighQualityMeter::level6dBColourId, Colour(0xFFD08770));
+            meterOutput[i]                  ->setColour(HighQualityMeter::level3dBColourId, Colour(0xFFEBCB8B));
+            meterOutput[i]                  ->setColour(HighQualityMeter::level0dBColourId, Colour(0xFFD08770));
+            meterOutput[i]                  ->setColour(HighQualityMeter::levelOverColourId, Colour(0xFFBF616A));
+            addAndMakeVisible(meterOutput[i].get());
+
+            buttonFFTInputChannel[i]        = std::make_unique<TextButton>("FFT");
             buttonFFTInputChannel[i]        ->addListener(this);
+            buttonFFTInputChannel[i]        ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            buttonFFTInputChannel[i]        ->setColour(TextButton::buttonOnColourId, Colour(0xFF88C0D0));
+            buttonFFTInputChannel[i]        ->setColour(TextButton::textColourOffId, Colour(0xFFD8DEE9));
+            buttonFFTInputChannel[i]        ->setColour(TextButton::textColourOnId, Colour(0xFF2E3440));
             addAndMakeVisible(buttonFFTInputChannel[i].get());
             
-            buttonFFTOutputChannel[i]       = std::make_unique<TextButton>("");
-            buttonFFTOutputChannel[i]       ->setButtonText("FFT");
+            buttonFFTOutputChannel[i]       = std::make_unique<TextButton>("FFT");
             buttonFFTOutputChannel[i]       ->addListener(this);
+            buttonFFTOutputChannel[i]       ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            buttonFFTOutputChannel[i]       ->setColour(TextButton::buttonOnColourId, Colour(0xFFBF616A));
+            buttonFFTOutputChannel[i]       ->setColour(TextButton::textColourOffId, Colour(0xFFD8DEE9));
+            buttonFFTOutputChannel[i]       ->setColour(TextButton::textColourOnId, Colour(0xFF2E3440));
             addAndMakeVisible(buttonFFTOutputChannel[i].get());
+            
+            // Solo and Mute buttons with better styling
+            soloInputChannel[i]             = std::make_unique<TextButton>("S");
+            soloInputChannel[i]             ->addListener(this);
+            soloInputChannel[i]             ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            soloInputChannel[i]             ->setColour(TextButton::buttonOnColourId, Colour(0xFFEBCB8B));
+            soloInputChannel[i]             ->setColour(TextButton::textColourOffId, Colour(0xFF81A1C1));
+            soloInputChannel[i]             ->setColour(TextButton::textColourOnId, Colour(0xFF2E3440));
+            addAndMakeVisible(soloInputChannel[i].get());
+            
+            muteInputChannel[i]             = std::make_unique<TextButton>("M");
+            muteInputChannel[i]             ->addListener(this);
+            muteInputChannel[i]             ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            muteInputChannel[i]             ->setColour(TextButton::buttonOnColourId, Colour(0xFFBF616A));
+            muteInputChannel[i]             ->setColour(TextButton::textColourOffId, Colour(0xFF81A1C1));
+            muteInputChannel[i]             ->setColour(TextButton::textColourOnId, Colour(0xFFECEFF4));
+            addAndMakeVisible(muteInputChannel[i].get());
+            
+            soloOutputChannel[i]            = std::make_unique<TextButton>("S");
+            soloOutputChannel[i]            ->addListener(this);
+            soloOutputChannel[i]            ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            soloOutputChannel[i]            ->setColour(TextButton::buttonOnColourId, Colour(0xFFEBCB8B));
+            soloOutputChannel[i]            ->setColour(TextButton::textColourOffId, Colour(0xFF81A1C1));
+            soloOutputChannel[i]            ->setColour(TextButton::textColourOnId, Colour(0xFF2E3440));
+            addAndMakeVisible(soloOutputChannel[i].get());
+            
+            muteOutputChannel[i]            = std::make_unique<TextButton>("M");
+            muteOutputChannel[i]            ->addListener(this);
+            muteOutputChannel[i]            ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            muteOutputChannel[i]            ->setColour(TextButton::buttonOnColourId, Colour(0xFFBF616A));
+            muteOutputChannel[i]            ->setColour(TextButton::textColourOffId, Colour(0xFF81A1C1));
+            muteOutputChannel[i]            ->setColour(TextButton::textColourOnId, Colour(0xFFECEFF4));
+            addAndMakeVisible(muteOutputChannel[i].get());
+            
+            // Record arm buttons
+            recInputChannel[i]              = std::make_unique<TextButton>("R");
+            recInputChannel[i]              ->addListener(this);
+            recInputChannel[i]              ->setColour(TextButton::buttonColourId, Colour(0xFF3B4252));
+            recInputChannel[i]              ->setColour(TextButton::buttonOnColourId, Colour(0xFFBF616A));
+            recInputChannel[i]              ->setColour(TextButton::textColourOffId, Colour(0xFF81A1C1));
+            recInputChannel[i]              ->setColour(TextButton::textColourOnId, Colour(0xFFECEFF4));
+            addAndMakeVisible(recInputChannel[i].get());
         }
         
         syncUI();
@@ -56,69 +277,376 @@ public:
     
     ~AudioMixerComponent()
     {
-        
+        stopTimer();
+        setLookAndFeel(nullptr);
     }
     
+    void timerCallback() override
+    {
+        // Animate meters with smooth decay and peak detection
+        for (int i = 0; i < 4; i++)
+        {
+            if (meterInput[i] != nullptr)
+            {
+                // Get current gain value
+                float linearGain = (float)projectManager->getProjectSettingsParameter(MIXER_INPUT_GAIN_1 + i);
+                float targetValue = jmap(linearGain, 0.0f, 2.0f, 0.0f, 1.0f);  // Map gain to meter range
+                
+                // Peak detection
+                if (targetValue > 0.95f) // Near 0dB
+                {
+                    peakLabelInput[i]->setColour(Label::textColourId, Colour(0xFFBF616A));
+                    peakLabelInput[i]->setAlpha(1.0f);
+                    peakHoldInput[i] = 60; // Hold for 2 seconds at 30fps
+                }
+                else if (peakHoldInput[i] > 0)
+                {
+                    peakHoldInput[i]--;
+                    if (peakHoldInput[i] == 0)
+                        peakLabelInput[i]->setAlpha(0.0f);
+                }
+                
+                meterInput[i]->setValue(0, targetValue);
+            }
+            
+            if (meterOutput[i] != nullptr)
+            {
+                // Get current gain value
+                float linearGain = (float)projectManager->getProjectSettingsParameter(MIXER_OUTPUT_GAIN_1 + i);
+                float targetValue = jmap(linearGain, 0.0f, 2.0f, 0.0f, 1.0f);  // Map gain to meter range
+                
+                // Peak detection
+                if (targetValue > 0.95f) // Near 0dB
+                {
+                    peakLabelOutput[i]->setColour(Label::textColourId, Colour(0xFFBF616A));
+                    peakLabelOutput[i]->setAlpha(1.0f);
+                    peakHoldOutput[i] = 60; // Hold for 2 seconds at 30fps
+                }
+                else if (peakHoldOutput[i] > 0)
+                {
+                    peakHoldOutput[i]--;
+                    if (peakHoldOutput[i] == 0)
+                        peakLabelOutput[i]->setAlpha(0.0f);
+                }
+                
+                meterOutput[i]->setValue(0, targetValue);
+            }
+        }
+        
+        // Update master meter
+        if (masterMeter != nullptr)
+        {
+            float masterDb = (float)masterGainSlider->getValue();
+            float masterValue = jmap(masterDb, -60.0f, 12.0f, 0.0f, 1.0f);
+            masterMeter->setValue(0, masterValue);
+            masterMeter->setValue(1, masterValue); // Stereo
+        }
+        
+        repaint();
+    }
+    
+    void paint(Graphics& g) override
+    {
+        // Modern dark background with subtle gradient
+        ColourGradient bgGradient(Colour(0xFF2E3440), 0, 0, 
+                                 Colour(0xFF1A1E24), getWidth(), getHeight(), false);
+        g.setGradientFill(bgGradient);
+        g.fillAll();
+        
+        auto area = getLocalBounds();
+        
+        // Reserve space for master section
+        auto masterArea = area.removeFromRight(120);
+        
+        auto channelsArea = area;
+        auto inputsArea = channelsArea.removeFromLeft(channelsArea.getWidth() / 2);
+        auto outputsArea = channelsArea;
+        
+        // Draw section headers with modern style
+        auto drawSectionHeader = [&g](juce::Rectangle<int> r, const String& title, Colour accent)
+        {
+            // Header background with gradient
+            ColourGradient headerGradient(Colour(0xFF3B4252), r.getX(), r.getY(),
+                                         Colour(0xFF434C5E), r.getRight(), r.getY(), false);
+            g.setGradientFill(headerGradient);
+            auto headerRect = r.removeFromTop(40);
+            g.fillRoundedRectangle(headerRect.toFloat(), 10.f);
+            
+            // Accent line with glow effect
+            g.setColour(accent.withAlpha(0.3f));
+            g.fillRect(headerRect.removeFromLeft(6).reduced(0, 8).toFloat());
+            g.setColour(accent);
+            g.fillRect(headerRect.removeFromLeft(4).reduced(0, 10).toFloat());
+            
+            // Title with shadow
+            g.setColour(Colours::black.withAlpha(0.5f));
+            g.setFont(Font(16.0f, Font::bold));
+            g.drawText(title, headerRect.reduced(13, 1), Justification::centredLeft);
+            
+            g.setColour(Colour(0xFFECEFF4));
+            g.drawText(title, headerRect.reduced(12, 0), Justification::centredLeft);
+        };
+        
+        drawSectionHeader(inputsArea.reduced(10), "INPUT CHANNELS", Colour(0xFF88C0D0));
+        drawSectionHeader(outputsArea.reduced(10), "OUTPUT CHANNELS", Colour(0xFFBF616A));
+        
+        // Draw master section header
+        auto masterHeaderArea = masterArea.reduced(10);
+        drawSectionHeader(masterHeaderArea, "MASTER", Colour(0xFF5E81AC));
+        
+        // Draw channel strips with enhanced styling
+        for (int i = 0; i < 4; i++)
+        {
+            const int stripWidth = inputsArea.getWidth() / 4;
+            
+            // Input channel strip with glass effect
+            auto inStripRect = juce::Rectangle<int>(inputsArea.getX() + stripWidth * i + 6, 
+                                                    50, stripWidth - 12, getHeight() - 60);
+            
+            // Drop shadow
+            g.setColour(Colours::black.withAlpha(0.3f));
+            g.fillRoundedRectangle(inStripRect.translated(2, 2).toFloat(), 8.f);
+            
+            // Glass background
+            ColourGradient stripGradient(Colour(0xFF2E3440).withAlpha(0.7f), 
+                                        inStripRect.getX(), inStripRect.getY(),
+                                        Colour(0xFF3B4252).withAlpha(0.5f), 
+                                        inStripRect.getX(), inStripRect.getBottom(), false);
+            g.setGradientFill(stripGradient);
+            g.fillRoundedRectangle(inStripRect.toFloat(), 8.f);
+            
+            // Border highlight
+            g.setColour(Colour(0xFF88C0D0).withAlpha(0.2f));
+            g.drawRoundedRectangle(inStripRect.toFloat(), 8.f, 1.0f);
+            
+            // Output channel strip with glass effect
+            auto outStripRect = juce::Rectangle<int>(outputsArea.getX() + stripWidth * i + 6,
+                                                     50, stripWidth - 12, getHeight() - 60);
+            
+            // Drop shadow
+            g.setColour(Colours::black.withAlpha(0.3f));
+            g.fillRoundedRectangle(outStripRect.translated(2, 2).toFloat(), 8.f);
+            
+            // Glass background
+            stripGradient = ColourGradient(Colour(0xFF2E3440).withAlpha(0.7f), 
+                                          outStripRect.getX(), outStripRect.getY(),
+                                          Colour(0xFF3B4252).withAlpha(0.5f), 
+                                          outStripRect.getX(), outStripRect.getBottom(), false);
+            g.setGradientFill(stripGradient);
+            g.fillRoundedRectangle(outStripRect.toFloat(), 8.f);
+            
+            // Border highlight
+            g.setColour(Colour(0xFFBF616A).withAlpha(0.2f));
+            g.drawRoundedRectangle(outStripRect.toFloat(), 8.f, 1.0f);
+        }
+        
+        // Draw master strip
+        auto masterStripRect = masterArea.reduced(10, 0);
+        masterStripRect.removeFromTop(50);
+        masterStripRect = masterStripRect.reduced(5, 10);
+        
+        // Drop shadow
+        g.setColour(Colours::black.withAlpha(0.4f));
+        g.fillRoundedRectangle(masterStripRect.translated(3, 3).toFloat(), 10.f);
+        
+        // Master strip gradient background
+        ColourGradient masterGradient(Colour(0xFF3B4252), 
+                                     masterStripRect.getX(), masterStripRect.getY(),
+                                     Colour(0xFF434C5E), 
+                                     masterStripRect.getX(), masterStripRect.getBottom(), false);
+        g.setGradientFill(masterGradient);
+        g.fillRoundedRectangle(masterStripRect.toFloat(), 10.f);
+        
+        // Master strip border
+        g.setColour(Colour(0xFF5E81AC).withAlpha(0.3f));
+        g.drawRoundedRectangle(masterStripRect.toFloat(), 10.f, 1.5f);
+        
+        // Draw dB scale markings
+        g.setColour(Colour(0xFF81A1C1).withAlpha(0.5f));
+        g.setFont(Font(9.0f));
+        
+        const float dbMarks[] = { 12, 6, 0, -6, -12, -24, -48 };
+        for (auto db : dbMarks)
+        {
+            String text = (db > 0 ? "+" : "") + String(int(db));
+            // Position calculation would go here based on fader positions
+        }
+    }
+
     void resized() override
     {
+        auto area = getLocalBounds();
+        
+        // Preset controls at top
+        auto presetArea = area.removeFromTop(40);
+        presetArea = presetArea.reduced(10, 5);
+        auto presetLabelWidth = 60;
+        presetArea.removeFromLeft(presetLabelWidth); // Space for "Presets:" label
+        presetComboBox->setBounds(presetArea.removeFromLeft(150));
+        presetArea.removeFromLeft(10);
+        savePresetButton->setBounds(presetArea.removeFromLeft(50));
+        presetArea.removeFromLeft(5);
+        loadPresetButton->setBounds(presetArea.removeFromLeft(50));
+        
+        // Reserve space for master section
+        auto masterArea = area.removeFromRight(120);
+        
+        auto channelsArea = area;
+        auto inputsArea = channelsArea.removeFromLeft(channelsArea.getWidth() / 2);
+        auto outputsArea = channelsArea;
+        
+        // Skip header area
+        inputsArea.removeFromTop(50);
+        outputsArea.removeFromTop(50);
+        masterArea.removeFromTop(50);
+        
+        // Master section layout
+        auto masterStrip = masterArea.reduced(15, 10);
+        masterLabel->setBounds(masterStrip.removeFromTop(20));
+        
+        // Master meter
+        auto masterMeterArea = masterStrip.removeFromTop(120);
+        masterMeter->setBounds(masterMeterArea.reduced(20, 0));
+        
+        // Master fader with text box
+        masterGainSlider->setBounds(masterStrip.reduced(15, 10));
+        
         for (int i = 0 ; i < 4; i++)
         {
-            float leftBorder    = 10.f;
-            float topBorder     = 10.f;
-            float buttonH       = 50.f;
-            float sliderH       = getHeight() - topBorder - buttonH;
-            float space         = (getWidth() - (leftBorder*2)) / 8;
+            const int stripWidth = inputsArea.getWidth() / 4;
+            const int stripPadding = 10;
+            const int channelWidth = stripWidth - stripPadding * 2;
             
+            // Input channel layout
+            auto inStrip = inputsArea.removeFromLeft(stripWidth).reduced(stripPadding);
             
-            sliderInputChannel[i]   ->setBounds(leftBorder + (space * i), topBorder, space, sliderH);
-            sliderOutputChannel[i]  ->setBounds(leftBorder + (space * (i + 4)), topBorder, space, sliderH);
+            labelInput[i]->setBounds(inStrip.removeFromTop(18));
+            peakLabelInput[i]->setBounds(inStrip.removeFromTop(14));
             
-            buttonFFTInputChannel[i] ->setBounds(leftBorder + (space * i), topBorder+sliderH, space, buttonH);
-            buttonFFTOutputChannel[i]->setBounds(leftBorder + (space * (i + 4)), topBorder+sliderH, space, buttonH);
+            // EQ controls (3-band)
+            auto eqArea = inStrip.removeFromTop(60);
+            auto eqKnobWidth = eqArea.getWidth() / 3;
+            for (int band = 0; band < 3; band++)
+            {
+                auto knobArea = eqArea.removeFromLeft(eqKnobWidth);
+                eqInputChannel[i][band]->setBounds(knobArea.reduced(5));
+            }
+            
+            // Pan control
+            auto panArea = inStrip.removeFromTop(40);
+            panInputChannel[i]->setBounds(panArea.reduced(channelWidth/4, 0));
+            
+            // Meter area
+            auto meterArea = inStrip.removeFromTop(100);
+            meterInput[i]->setBounds(meterArea.reduced(channelWidth/3, 0));
+            
+            // Solo/Mute/Rec buttons
+            auto buttonArea = inStrip.removeFromBottom(22);
+            auto thirdWidth = buttonArea.getWidth() / 3;
+            soloInputChannel[i]->setBounds(buttonArea.removeFromLeft(thirdWidth - 2));
+            muteInputChannel[i]->setBounds(buttonArea.removeFromLeft(thirdWidth));
+            recInputChannel[i]->setBounds(buttonArea.removeFromLeft(thirdWidth + 2));
+            
+            // FFT button
+            buttonFFTInputChannel[i]->setBounds(inStrip.removeFromBottom(20).reduced(6, 0));
+            
+            // Fader with text box
+            sliderInputChannel[i]->setBounds(inStrip.reduced(channelWidth/5, 5));
+            
+            // Output channel layout
+            auto outStrip = outputsArea.removeFromLeft(stripWidth).reduced(stripPadding);
+            
+            labelOutput[i]->setBounds(outStrip.removeFromTop(18));
+            peakLabelOutput[i]->setBounds(outStrip.removeFromTop(14));
+            
+            // EQ controls (3-band) for output
+            eqArea = outStrip.removeFromTop(60);
+            eqKnobWidth = eqArea.getWidth() / 3;
+            for (int band = 0; band < 3; band++)
+            {
+                auto knobArea = eqArea.removeFromLeft(eqKnobWidth);
+                eqOutputChannel[i][band]->setBounds(knobArea.reduced(5));
+            }
+            
+            // Pan control
+            panArea = outStrip.removeFromTop(40);
+            panOutputChannel[i]->setBounds(panArea.reduced(channelWidth/4, 0));
+            
+            // Meter area
+            meterArea = outStrip.removeFromTop(100);
+            meterOutput[i]->setBounds(meterArea.reduced(channelWidth/3, 0));
+            
+            // Solo/Mute buttons
+            buttonArea = outStrip.removeFromBottom(22);
+            auto halfWidth = buttonArea.getWidth() / 2;
+            soloOutputChannel[i]->setBounds(buttonArea.removeFromLeft(halfWidth - 2));
+            muteOutputChannel[i]->setBounds(buttonArea.removeFromLeft(halfWidth + 2));
+            
+            // FFT button
+            buttonFFTOutputChannel[i]->setBounds(outStrip.removeFromBottom(20).reduced(6, 0));
+            
+            // Fader with text box
+            sliderOutputChannel[i]->setBounds(outStrip.reduced(channelWidth/5, 5));
         }
     }
     
     void sliderValueChanged (Slider* slider) override
     {
-        if (slider == sliderInputChannel[0].get())
+        // Convert dB to linear gain for storage
+        for (int i = 0; i < 4; i++)
         {
-            projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_1, sliderInputChannel[0]->getValue());
+            if (slider == sliderInputChannel[i].get())
+            {
+                float dbValue = (float)sliderInputChannel[i]->getValue();
+                float linearGain = Decibels::decibelsToGain(dbValue);
+                projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_1 + i, linearGain);
+            }
+            else if (slider == sliderOutputChannel[i].get())
+            {
+                float dbValue = (float)sliderOutputChannel[i]->getValue();
+                float linearGain = Decibels::decibelsToGain(dbValue);
+                projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_1 + i, linearGain);
+            }
+            else if (slider == panInputChannel[i].get())
+            {
+                // Store pan value (-100 to 100)
+                // You may need to add PAN parameters to your project settings
+            }
+            else if (slider == panOutputChannel[i].get())
+            {
+                // Store pan value (-100 to 100)
+                // You may need to add PAN parameters to your project settings
+            }
         }
-        else if (slider == sliderInputChannel[1].get())
+        
+        if (slider == masterGainSlider.get())
         {
-            projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_2, sliderInputChannel[1]->getValue());
-        }
-        else if (slider == sliderInputChannel[2].get())
-        {
-            projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_3, sliderInputChannel[2]->getValue());
-        }
-        else if (slider == sliderInputChannel[3].get())
-        {
-            projectManager->setProjectSettingsParameter(MIXER_INPUT_GAIN_4, sliderInputChannel[3]->getValue());
-        }
-        else if (slider == sliderOutputChannel[0].get())
-        {
-            projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_1, sliderOutputChannel[0]->getValue());
-        }
-        else if (slider == sliderOutputChannel[1].get())
-        {
-            projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_2, sliderOutputChannel[1]->getValue());
-        }
-        else if (slider == sliderOutputChannel[2].get())
-        {
-            projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_3, sliderOutputChannel[2]->getValue());
-        }
-        else if (slider == sliderOutputChannel[3].get())
-        {
-            projectManager->setProjectSettingsParameter(MIXER_OUTPUT_GAIN_4, sliderOutputChannel[3]->getValue());
+            // Store master gain
+            // You may need to add MASTER_GAIN parameter to your project settings
         }
         
         syncUI();
     }
     
+    void comboBoxChanged(ComboBox* comboBox) override
+    {
+        if (comboBox == presetComboBox.get())
+        {
+            loadPreset(comboBox->getSelectedId());
+        }
+    }
+    
     void buttonClicked (Button*button) override
     {
-        if (button == buttonFFTInputChannel[0].get())
+        if (button == savePresetButton.get())
+        {
+            saveCurrentPreset();
+        }
+        else if (button == loadPresetButton.get())
+        {
+            loadPreset(presetComboBox->getSelectedId());
+        }
+        else if (button == buttonFFTInputChannel[0].get())
         {
             projectManager->setProjectSettingsParameter(MIXER_INPUT_FFT_1, !buttonFFTInputChannel[0]->getToggleState());
         }
@@ -158,11 +686,65 @@ public:
     {
         for (int i = 0 ; i < 4; i++)
         {
-            sliderInputChannel[i]   ->setValue(projectManager->getProjectSettingsParameter(MIXER_INPUT_GAIN_1 + i), dontSendNotification);
-            sliderOutputChannel[i]  ->setValue(projectManager->getProjectSettingsParameter(MIXER_OUTPUT_GAIN_1 + i), dontSendNotification);
+            // Convert linear gain to dB for display
+            float linearGainIn = (float)projectManager->getProjectSettingsParameter(MIXER_INPUT_GAIN_1 + i);
+            float dbValueIn = linearGainIn > 0.0f ? Decibels::gainToDecibels(linearGainIn) : -60.0f;
+            sliderInputChannel[i]->setValue(dbValueIn, dontSendNotification);
+            
+            float linearGainOut = (float)projectManager->getProjectSettingsParameter(MIXER_OUTPUT_GAIN_1 + i);
+            float dbValueOut = linearGainOut > 0.0f ? Decibels::gainToDecibels(linearGainOut) : -60.0f;
+            sliderOutputChannel[i]->setValue(dbValueOut, dontSendNotification);
             
             buttonFFTInputChannel[i] ->setToggleState((bool)projectManager->getProjectSettingsParameter(MIXER_INPUT_FFT_1 + i), dontSendNotification);
             buttonFFTOutputChannel[i]->setToggleState((bool)projectManager->getProjectSettingsParameter(MIXER_OUTPUT_FFT_1 + i), dontSendNotification);
+        }
+    }
+    
+    void initializePresets()
+    {
+        // Initialize default presets
+        // This would typically load from a file or database
+    }
+    
+    void saveCurrentPreset()
+    {
+        // Save current mixer state to selected preset slot
+        int presetId = presetComboBox->getSelectedId();
+        // Implementation would save all mixer parameters
+    }
+    
+    void loadPreset(int presetId)
+    {
+        // Load preset values based on ID
+        switch(presetId)
+        {
+            case 1: // Default
+                for (int i = 0; i < 4; i++)
+                {
+                    sliderInputChannel[i]->setValue(0.0);
+                    sliderOutputChannel[i]->setValue(0.0);
+                    panInputChannel[i]->setValue(0.0);
+                    panOutputChannel[i]->setValue(0.0);
+                    for (int band = 0; band < 3; band++)
+                    {
+                        eqInputChannel[i][band]->setValue(0.0);
+                        eqOutputChannel[i][band]->setValue(0.0);
+                    }
+                }
+                masterGainSlider->setValue(0.0);
+                break;
+            
+            case 2: // Recording
+                // Set recording-optimized levels
+                for (int i = 0; i < 4; i++)
+                {
+                    sliderInputChannel[i]->setValue(-12.0);
+                    sliderOutputChannel[i]->setValue(-6.0);
+                }
+                masterGainSlider->setValue(-3.0);
+                break;
+                
+            // Add more preset configurations as needed
         }
     }
     
@@ -170,11 +752,47 @@ public:
 private:
     ProjectManager * projectManager;
     
+    CustomLookAndFeel lookAndFeel;
+    
+    // Channel strips
     std::unique_ptr<Slider> sliderInputChannel[4];
     std::unique_ptr<Slider> sliderOutputChannel[4];
+    std::unique_ptr<Slider> panInputChannel[4];
+    std::unique_ptr<Slider> panOutputChannel[4];
+    
+    // EQ controls (3-band per channel)
+    std::unique_ptr<Slider> eqInputChannel[4][3];  // [channel][band]
+    std::unique_ptr<Slider> eqOutputChannel[4][3]; // [channel][band]
     
     std::unique_ptr<TextButton> buttonFFTInputChannel[4];
     std::unique_ptr<TextButton> buttonFFTOutputChannel[4];
+    std::unique_ptr<TextButton> soloInputChannel[4];
+    std::unique_ptr<TextButton> muteInputChannel[4];
+    std::unique_ptr<TextButton> soloOutputChannel[4];
+    std::unique_ptr<TextButton> muteOutputChannel[4];
+    std::unique_ptr<TextButton> recInputChannel[4];
+
+    std::unique_ptr<Label> labelInput[4];
+    std::unique_ptr<Label> labelOutput[4];
+    std::unique_ptr<Label> peakLabelInput[4];
+    std::unique_ptr<Label> peakLabelOutput[4];
+    
+    std::unique_ptr<HighQualityMeter> meterInput[4];
+    std::unique_ptr<HighQualityMeter> meterOutput[4];
+    
+    // Master section
+    std::unique_ptr<Slider> masterGainSlider;
+    std::unique_ptr<Label> masterLabel;
+    std::unique_ptr<HighQualityMeter> masterMeter;
+    
+    // Preset system
+    std::unique_ptr<ComboBox> presetComboBox;
+    std::unique_ptr<TextButton> savePresetButton;
+    std::unique_ptr<TextButton> loadPresetButton;
+    
+    // Peak hold counters
+    int peakHoldInput[4] = {0, 0, 0, 0};
+    int peakHoldOutput[4] = {0, 0, 0, 0};
 
 };
 

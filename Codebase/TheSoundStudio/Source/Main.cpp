@@ -34,8 +34,16 @@ public:
         initialiseErrorLogging();
 
         Logger::writeToLog("TSSApplication::initialise - starting main window");
-        mainWindow = std::make_unique<MainWindow>(getApplicationName());
-        Logger::writeToLog("TSSApplication::initialise - main window created");
+        try
+        {
+            mainWindow = std::make_unique<MainWindow>(getApplicationName());
+            Logger::writeToLog("TSSApplication::initialise - main window created");
+        }
+        catch (const std::exception& e)
+        {
+            Logger::writeToLog(String("TSSApplication::initialise - exception creating MainWindow: ") + e.what());
+            throw;
+        }
     }
 
     void shutdown() override
@@ -76,20 +84,31 @@ public:
                                                                           .findColour (ResizableWindow::backgroundColourId),
                                                     DocumentWindow::closeButton + DocumentWindow::minimiseButton + DocumentWindow::maximiseButton)
         {
+            Logger::writeToLog("MainWindow::ctor - begin");
             // Use native title bar for better macOS integration
             setUsingNativeTitleBar (true);
             
            #if JUCE_IOS || JUCE_ANDROID
             setFullScreen (true);
            #else
-            // Set a default window size first
+            // Set window to be resizable with constraints
             setResizable (true, true);
-            centreWithSize (1000, 800); // Set reasonable default size
+            setResizeLimits (800, 600, 3840, 2160); // Min: 800x600, Max: 4K
+            
+            // Set initial size based on screen size
+            auto& desktop = Desktop::getInstance();
+            auto screenBounds = desktop.getDisplays().getPrimaryDisplay()->userArea;
+            int initialWidth = jmin(1920, (int)(screenBounds.getWidth() * 0.8f));
+            int initialHeight = jmin(1080, (int)(screenBounds.getHeight() * 0.8f));
+            centreWithSize (initialWidth, initialHeight);
            #endif
 
             // Create main component AFTER window sizing is set
+            Logger::writeToLog("MainWindow::ctor - creating MainComponent");
             auto* mainComp = new MainComponent();
+            Logger::writeToLog("MainWindow::ctor - MainComponent created");
             setContentOwned (mainComp, true);
+            Logger::writeToLog("MainWindow::ctor - content set");
             
             // Adjust window size based on MainComponent's actual scaled dimensions
             int windowWidth = mainComp->mainWidth * mainComp->scaleFactor;
@@ -98,10 +117,12 @@ public:
            #if !JUCE_IOS && !JUCE_ANDROID
             // Update to proper size now that we have the component
             centreWithSize (windowWidth, windowHeight);
+            Logger::writeToLog("MainWindow::ctor - window sized");
            #endif
             
             // Attach OpenGL context AFTER content is set
             openGLContext.attachTo(*getTopLevelComponent());
+            Logger::writeToLog("MainWindow::ctor - OpenGL attached");
 
             // Ensure window appears on screen and is brought to front
             setVisible (true);
@@ -110,6 +131,7 @@ public:
             
             // Make sure window is fully displayed
             repaint();
+            Logger::writeToLog("MainWindow::ctor - end");
         }
         
         

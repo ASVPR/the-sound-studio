@@ -328,6 +328,19 @@ public:
         value.setValue(enable);
     }
 
+    // Convenience wrappers to set custom frequency range in Hz
+    void setCustomRangeMinHz(int hz)
+    {
+        apvts.getParameterAsValue(get_parameter_name(Parameter::min_frequency)).setValue(hz);
+        analyser.setCustomRangeMinFrequency(static_cast<double>(hz));
+    }
+
+    void setCustomRangeMaxHz(int hz)
+    {
+        apvts.getParameterAsValue(get_parameter_name(Parameter::max_frequency)).setValue(hz);
+        analyser.setCustomRangeMaxFrequency(static_cast<double>(hz));
+    }
+
     juce::StringArray getInputNames();
 
     juce::StringArray getOutputNames();

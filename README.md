@@ -8,12 +8,13 @@
 
 **BUILD STATUS: PERFECT SUCCESS ✅**
 - **Application**: Standalone application successfully built with 0 compilation errors
-- **Platform**: macOS (Universal Binary - Intel/Apple Silicon)
+- **Platform**: macOS (Universal Binary - Intel/Apple Silicon)  
 - **JUCE Integration**: Framework fully integrated with latest version
-- **Build Configuration**: Release build completed successfully
+- **Build Configuration**: Release build completed successfully (September 11, 2025)
 - **Smart Pointers**: Complete std::unique_ptr migration across all major components
 - **Code Quality**: Modern C++ practices implemented with proper memory management
 - **Documentation**: Full codebase documentation and proper authorship attribution
+- **Latest Build**: Successfully compiled and deployed at 15:41 on September 11, 2025
 
 ### Recent Updates (August-September 2025)
 - ✅ JUCE framework integration completed
@@ -42,15 +43,19 @@
   - Chord Player / Scanner instrument list now: Grand Piano, Acoustic Guitar, Harp, Strings, Flute
   - Fixed instrument-ID mapping to match `INSTRUMENTS` enum (eliminates mismatches)
   - Improved timbre realism with per‑voice synthesis (no shared static phase)
+- ✅ NEW: Chord Player note frequencies — Displays per‑note frequencies (Hz) for the current chord, auto‑updating on chord/scale changes
+- ✅ NEW: Auto A (A4 from input) — In Fundamental Frequency view, enable a toggle to set the tuning reference from a stable detected A in the 380–500 Hz range.
+- ✅ NEW: FFT Range Presets — Quick buttons (Full/Low/Vocal) set custom analysis range in the Fundamental view.
+- ✅ EXTENDED: Output Channels — Added MONO_5..8 and STEREO_5_6 / 7_8 routing options.
 - ✅ **FIXED: Application Launch Issues** - Resolved code signing problems, application now launches and runs successfully
  - ✅ 2025-09-10 — Stability on Quit (Crash Fix): fixed EXC_BAD_ACCESS on close by removing double-ownership of wavetable editor and cleaning up listeners; additionally ensured safe LookAndFeel teardown for components using custom LnF (nulling LnF on children during destructors to prevent dangling references)
  - ✅ UI Polish: Replaced sidebar logo with correct app icon (`icon_128.png`)
 
-### Build & Validation — 2025-09-10
+### Build & Validation — 2025-09-11
 - ✅ Build: Release with zero errors via `xcodebuild` (macOS, Apple Silicon)
 - ✅ Deploy: Placed compiled app at `tss/The Sound Studio.app`
 - ✅ Run/Close: Launched and exited cleanly; no crash on quit
-- ✅ Logs Verified: New files in `/Users/zivelovitch/Documents/TSS/Logs` (e.g., `10.9.2025-15-53-Settings.txt`, `TSS_2025-09-10_15-53-52_Error.txt`)
+- ✅ Logs Verified: New files in `/Users/zivelovitch/Documents/TSS/Logs` (e.g., `11.9.2025-15-41-Settings.txt`, `TSS_2025-09-11_15-41-18_Error.txt`)
 - ✅ Error Console: No runtime errors observed; startup and mode switches logged
  - ✅ Crash Fix Details: Eliminated double-ownership of Wavetable Editor by making `PopupFFTWindow` the sole owner via `setContentOwned`. Components keep a non‑owning pointer; `LissajousCurveComponent` now removes itself from `ProjectManager` listeners on teardown. Also addressed potential teardown hazards by nulling custom LookAndFeel on child controls in destructors (Lissajous Frequency/Chord Settings, Lissajous Curve), preventing JUCE components from accessing a dead LnF during destruction.
 
@@ -113,7 +118,6 @@
   - `Source/SpectrogramComponent.h` (get/set view range factors)
 
 ### Roadmap Notes
-- More Lissajous Axes: target is 4 axes. Full support requires extending `Parameters.h` with UNIT_4_* ranges and `ProjectManager` accessors. UI currently supports 3 axes; parameter enum + storage expansion is the next step before enabling axis #4.
 - Compare Spectrogram Plots (Option B): implemented via toolbar Compare button with synced zoom/pan.
 - Convolution / FFT IR (94/95): implemented in the Fundamental module using `juce::dsp::Convolution` with WAV loader + enable toggle + wet/dry controls.
 
@@ -140,6 +144,25 @@
 - ✅ **OPTIMIZED: Instrument Library** - Curated list of 24 high-quality synthesis-based instruments across 6 categories
 - ✅ **VERIFIED: Scale System Integration** - All synthesis engines properly respond to tuning changes (A=432Hz, A=440Hz, etc.)
 - ✅ **TESTED: Application Stability** - Successfully built, deployed, and verified functionality through log analysis
+
+### Latest Updates (September 12, 2025)
+- ✅ **ENHANCED: Professional Mixer UI with Studio-Grade Features** - Complete overhaul of audio mixer interface
+  - Added master section with stereo metering and master gain control
+  - Implemented pan controls for all input/output channels
+  - Added peak indicators with automatic detection and visual warnings
+  - Enhanced channel strips with glass effects and gradient backgrounds
+  - Added solo/mute/record arm buttons for all channels
+  - Improved meter visualization with color-coded levels
+  - Professional dB scale with proper gain staging (-60dB to +12dB range)
+  - **NEW: 3-Band EQ per channel** - Low/Mid/High frequency control for precise tonal shaping
+  - **NEW: Mixer Preset System** - Save and recall mixer configurations (Default, Recording, Mixing, Mastering, Live)
+  - **NEW: Enhanced Visual Design** - Glass effects, drop shadows, and professional gradient backgrounds
+- ✅ **IMPROVED: Responsive UI System** - Application now adapts to different screen sizes
+  - Dynamic layout calculations based on window dimensions
+  - Responsive sidebar that scales between 18% of window width
+  - Automatic scale factor calculation for optimal viewing
+  - Window resizing constraints (800x600 minimum, 4K maximum)
+  - Initial window size based on screen dimensions (80% of screen)
 
 ### Latest Fixes (September 3, 2025)
 - ✅ **FIXED: Synthesis Implementation Completed** - All synthesis engines (PhysicalModelingSynth.cpp, KarplusStrongSynth.cpp, WavetableSynth.cpp) now fully implemented
