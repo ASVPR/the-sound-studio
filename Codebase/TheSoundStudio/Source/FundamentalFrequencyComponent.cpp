@@ -159,65 +159,98 @@ FundamentalFrequencyComponent::~FundamentalFrequencyComponent()
 
 void FundamentalFrequencyComponent::resized()
 {
-    visualiserSelectorComponent->setBounds(48 * scaleFactor,
-                                           40 * scaleFactor,
-                                           1476 * scaleFactor,
-                                           340 * scaleFactor);
+    auto bounds = getLocalBounds();
 
-    auto localBounds = getLocalBounds();
+    // Calculate dynamic scale factor based on window size
+    float dynamicScale = jmin(bounds.getWidth() / 1600.0f, bounds.getHeight() / 900.0f);
+    dynamicScale = jlimit(0.5f, 2.0f, dynamicScale);
 
-    localBounds.removeFromTop(200);
+    // Visualizer takes up top portion, scaled properly
+    auto visualizerArea = bounds.removeFromTop(bounds.getHeight() * 0.45f);
+    visualizerArea = visualizerArea.reduced(bounds.getWidth() * 0.03f, bounds.getHeight() * 0.02f);
+    visualiserSelectorComponent->setBounds(visualizerArea);
 
-    localBounds.removeFromLeft(20);
+    // Main content area below visualizer
+    auto contentArea = bounds.reduced(20 * dynamicScale);
 
-    localBounds.removeFromRight(20);
-
-    auto x = localBounds.getX();
-    auto y = localBounds.getY();
-    auto width = localBounds.getWidth();
+    auto x = contentArea.getX();
+    auto y = contentArea.getY();
+    auto width = contentArea.getWidth();
 
     auto setContainerBounds = [this] (int index, const juce::Rectangle<int>& rec)
     {
         containers.setContainerBounds(index, rec);
-
         return containers.getContainer(index).getBottom();
     };
 
-    auto gap = 10;
+    auto gap = 10 * dynamicScale;
 
-    y = setContainerBounds(0, juce::Rectangle<int>(x, y, width, 90)) + gap;
+    // Container heights scaled dynamically
+    y = setContainerBounds(0, juce::Rectangle<int>(x, y, width, 90 * dynamicScale)) + gap;
 
-    y = std::max(setContainerBounds(1, juce::Rectangle<int>(x, y, width * 0.6f, 140)),
+    y = std::max(setContainerBounds(1, juce::Rectangle<int>(x, y, width * 0.6f, 140 * dynamicScale)),
                  setContainerBounds(2, juce::Rectangle<int>(x + width * 0.6f + gap,
                                                             y,
                                                             (width * 0.4f) - gap,
-                                                            140))) + gap;
+                                                            140 * dynamicScale))) + gap;
 
     y = setContainerBounds(3, juce::Rectangle<int>(x,
                                                    y,
                                                    width,
-                                                   150)) + gap;
+                                                   150 * dynamicScale)) + gap;
 
-    y = setContainerBounds(4, juce::Rectangle<int>(x, y, width, 100)) + gap;
+    y = setContainerBounds(4, juce::Rectangle<int>(x, y, width, 100 * dynamicScale)) + gap;
 
-    buttonStart->setBounds(localBounds.getCentreX() - 10, 645, 90, 25);
-    buttonStop->setBounds(localBounds.getCentreX() - 95, 645, 60, 25);
-    noiseButton->setBounds(localBounds.getCentreX() + 300, 640, 75, 75);
+    // Position buttons at bottom with dynamic positioning
+    auto buttonY = bounds.getBottom() - (80 * dynamicScale);
+    auto centerX = bounds.getCentreX();
+    buttonStart->setBounds(centerX - (45 * dynamicScale), buttonY, 90 * dynamicScale, 25 * dynamicScale);
+    buttonStop->setBounds(centerX - (140 * dynamicScale), buttonY, 60 * dynamicScale, 25 * dynamicScale);
+    noiseButton->setBounds(centerX + (250 * dynamicScale), buttonY - (5 * dynamicScale), 75 * dynamicScale, 75 * dynamicScale);
 
-    // Layout controls inside Process container (index 3)
+    // Layout controls inside Process container (index 3) with relative positioning
     auto& processCont = containers.getContainer(3);
-    auto pb = processCont.getLocalBounds().reduced(10, 8);
+    auto pb = processCont.getLocalBounds().reduced(10 * dynamicScale, 8 * dynamicScale);
 
-    // Position range preset buttons under Iteration length input
-    buttonRangeFull ->setBounds(450, 70, 60, 24);
-    buttonRangeLow  ->setBounds(515, 70, 60, 24);
-    buttonRangeVocal->setBounds(580, 70, 70, 24);
+    // Position range preset buttons relative to container
+    auto rangeButtonY = pb.getY() + (70 * dynamicScale);
+    auto rangeButtonX = pb.getX() + (450 * dynamicScale);
+    buttonRangeFull ->setBounds(rangeButtonX, rangeButtonY, 60 * dynamicScale, 24 * dynamicScale);
+    buttonRangeLow  ->setBounds(rangeButtonX + (65 * dynamicScale), rangeButtonY, 60 * dynamicScale, 24 * dynamicScale);
+    buttonRangeVocal->setBounds(rangeButtonX + (130 * dynamicScale), rangeButtonY, 70 * dynamicScale, 24 * dynamicScale);
 
     // Place IR controls at the bottom of the Process container
-    auto bottomRow = pb.removeFromBottom(28);
-    toggleIREnable->setBounds(bottomRow.removeFromLeft(120));
-    buttonIRLoad->setBounds(bottomRow.removeFromLeft(180));
-    sliderIRWet->setBounds(pb.removeFromBottom(28).removeFromLeft(300));
+    auto bottomRow = pb.removeFromBottom(28 * dynamicScale);
+    toggleIREnable->setBounds(bottomRow.removeFromLeft(120 * dynamicScale));
+    buttonIRLoad->setBounds(bottomRow.removeFromLeft(180 * dynamicScale));
+    auto wetRow = pb.removeFromBottom(28 * dynamicScale);
+    sliderIRWet->setBounds(wetRow.removeFromLeft(300 * dynamicScale));
+
+    // Reposition child components within their containers with relative positioning
+    // Container 0 components
+    auto cont0Bounds = containers.getContainer(0).getLocalBounds();
+    int boxWidth = (cont0Bounds.getWidth() - 50 * dynamicScale) / 5;
+    comboBoxFFTSize->setBounds(20 * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
+    comboBoxFFTWindow->setBounds((20 + boxWidth + 10) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
+    comboBoxInput->setBounds((20 + 2 * (boxWidth + 10)) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
+    comboBoxAlgorithm->setBounds((20 + 3 * (boxWidth + 10)) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
+    comboBoxNumHarmonics->setBounds((20 + 4 * (boxWidth + 10)) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
+
+    // Container 2 components (Frequency Range)
+    auto cont2Bounds = containers.getContainer(2).getLocalBounds();
+    buttonCustomFrequencyRange->setBounds(30 * dynamicScale, 60 * dynamicScale, 15 * dynamicScale, 15 * dynamicScale);
+    textEditorMinFrequency->setBounds(30 * dynamicScale, 110 * dynamicScale, 110 * dynamicScale, 20 * dynamicScale);
+    textEditorMaxFrequency->setBounds(150 * dynamicScale, 110 * dynamicScale, 110 * dynamicScale, 20 * dynamicScale);
+
+    // Container 3 components (Process)
+    buttonProcessFFT->setBounds(55 * dynamicScale, 40 * dynamicScale, 15 * dynamicScale, 15 * dynamicScale);
+    textEditorIteration->setBounds(300 * dynamicScale, 37 * dynamicScale, 80 * dynamicScale, 20 * dynamicScale);
+    textEditorLength->setBounds(600 * dynamicScale, 37 * dynamicScale, 80 * dynamicScale, 20 * dynamicScale);
+    toggleAutoA->setBounds(700 * dynamicScale, 35 * dynamicScale, 220 * dynamicScale, 24 * dynamicScale);
+
+    // Container 4 components (Results)
+    labelFrequency->setBounds(0, 15 * dynamicScale, 150 * dynamicScale, 40 * dynamicScale);
+    labelChord->setBounds(0, 50 * dynamicScale, 150 * dynamicScale, 40 * dynamicScale);
 }
 
 void FundamentalFrequencyComponent::paint(Graphics&g)

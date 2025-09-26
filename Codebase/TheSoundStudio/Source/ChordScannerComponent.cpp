@@ -558,34 +558,48 @@ ChordScannerComponent::~ChordScannerComponent() { }
 
 void ChordScannerComponent::resized()
 {
-    int knobY = 916 * scaleFactor;
-    int knobL = 374 * scaleFactor;
-    
-    int dif = 248 * scaleFactor;
-    
-    int fontSize = 30;
-    
-    slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
-    slider_Amplitude    ->setBounds(knobL, knobY, 130 * scaleFactor, 158 * scaleFactor);
-    
-    slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
-    slider_Attack       ->setBounds(knobL+(1 * dif), knobY, 130 * scaleFactor, 158 * scaleFactor);
-    
-    slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
-    slider_Sustain      ->setBounds(knobL+(2 * dif), knobY, 130 * scaleFactor, 158 * scaleFactor);
-    
-    slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
-    slider_Decay        ->setBounds(knobL+(3 * dif), knobY, 130 * scaleFactor, 158 * scaleFactor);
-    
-    slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
-    slider_Release      ->setBounds(knobL+(4 * dif), knobY, 130 * scaleFactor, 158 * scaleFactor);
-    
-    label_Playing->setBounds(playingLeftMargin * scaleFactor, playingTopMargin * scaleFactor, 300 * scaleFactor, 40 * scaleFactor);
-    label_Playing->setFont(fontSize * scaleFactor);
-    
-    button_Play->setBounds(playLeftMargin * scaleFactor, playTopMargin * scaleFactor, playWidth * scaleFactor, playHeight * scaleFactor);
-    button_Stop->setBounds(stopLeftMargin * scaleFactor, playTopMargin * scaleFactor, playWidth * scaleFactor, playHeight * scaleFactor);
-    button_Panic->setBounds(panicLeftMargin * scaleFactor, panicTopMargin * scaleFactor, panicWidth * scaleFactor, panicHeight * scaleFactor);
+    auto bounds = getLocalBounds();
+    float dynamicScale = jmin(bounds.getWidth() / 1600.0f, bounds.getHeight() / 1200.0f);
+    dynamicScale = jlimit(0.5f, 2.0f, dynamicScale) * scaleFactor;
+
+    int fontSize = 30; // Define fontSize for text editors
+
+    // Calculate positions relative to window size
+    int knobAreaY = bounds.getHeight() * 0.76f; // 76% down from top
+    int knobAreaLeft = bounds.getWidth() * 0.23f; // 23% from left
+    int knobSpacing = bounds.getWidth() * 0.155f; // 15.5% width spacing
+
+    int knobWidth = 130 * dynamicScale;
+    int knobHeight = 158 * dynamicScale;
+    int textBoxWidth = 78 * dynamicScale;
+    int textBoxHeight = 28 * dynamicScale;
+
+    // Position ADSR knobs proportionally
+    slider_Amplitude->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
+    slider_Amplitude->setBounds(knobAreaLeft, knobAreaY, knobWidth, knobHeight);
+
+    slider_Attack->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
+    slider_Attack->setBounds(knobAreaLeft + knobSpacing, knobAreaY, knobWidth, knobHeight);
+
+    slider_Sustain->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
+    slider_Sustain->setBounds(knobAreaLeft + (2 * knobSpacing), knobAreaY, knobWidth, knobHeight);
+
+    slider_Decay->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
+    slider_Decay->setBounds(knobAreaLeft + (3 * knobSpacing), knobAreaY, knobWidth, knobHeight);
+
+    slider_Release->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
+    slider_Release->setBounds(knobAreaLeft + (4 * knobSpacing), knobAreaY, knobWidth, knobHeight);
+
+    // Position labels and buttons proportionally
+    int playAreaY = bounds.getHeight() * 0.59f; // 59% down
+    int playAreaLeft = bounds.getWidth() * 0.07f; // 7% from left
+
+    label_Playing->setBounds(playAreaLeft, playAreaY - 40 * dynamicScale, 300 * dynamicScale, 40 * dynamicScale);
+    label_Playing->setFont(30 * dynamicScale);
+
+    button_Play->setBounds(playAreaLeft, playAreaY, playWidth * dynamicScale, playHeight * dynamicScale);
+    button_Stop->setBounds(playAreaLeft + 100 * dynamicScale, playAreaY, playWidth * dynamicScale, playHeight * dynamicScale);
+    button_Panic->setBounds(bounds.getWidth() * 0.85f, bounds.getHeight() * 0.75f, panicWidth * dynamicScale, panicHeight * dynamicScale);
     
     int shift = 90;
     button_WavetableEditor          ->setBounds((1465-shift) * scaleFactor, 760 * scaleFactor, 150 * scaleFactor, 43 * scaleFactor);

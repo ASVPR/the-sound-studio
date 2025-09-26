@@ -797,16 +797,18 @@ void SettingsComponent::buttonClicked (Button*button)
     else if (button == buttonMixer.get())
     {
         PopupFFTWindow * mixerPopup;
-        
+
         AudioMixerComponent * audioMixComponent = new AudioMixerComponent(projectManager);
-        audioMixComponent->setBounds(0, 0, 800, 400);
-        
-        
+        // Increased size for proper layout of all controls
+        audioMixComponent->setBounds(0, 0, 1200, 700);
+
+
         mixerPopup = new PopupFFTWindow("Audio Mixer", audioMixComponent, Colours::black, DocumentWindow::allButtons, true);
         mixerPopup ->centreWithSize(audioMixComponent->getWidth(), audioMixComponent->getHeight());
         mixerPopup ->setResizable(true, true);
+        mixerPopup ->setUsingNativeTitleBar(true);
         mixerPopup ->setVisible(true);
-        
+
     }
     else if (button == scanPluginsButton.get())
     {
@@ -1327,7 +1329,8 @@ void SettingsComponent::resized()
     label_LogFileLocation->setBounds(labelX * scaleFactor, 60 * scaleFactor, labelW * scaleFactor , 41 * scaleFactor);
     label_LogFileLocation->setFont(fontSize * scaleFactor);
     
-    label_RecordFileLocation->setBounds((labelX + 60) * scaleFactor, 125 * scaleFactor, labelW * scaleFactor, 41 * scaleFactor);
+    // Make the record file location label wider to accommodate long paths
+    label_RecordFileLocation->setBounds((labelX + 60) * scaleFactor, 125 * scaleFactor, (labelW + 200) * scaleFactor, 41 * scaleFactor);
     label_RecordFileLocation->setFont(fontSize * scaleFactor);
     
     float freqY = 296;

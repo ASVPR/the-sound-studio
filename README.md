@@ -332,7 +332,64 @@
   - Dynamic filter cutoff and resonance
   - ADSR envelope implementation
 
-### Key Improvements Made (September 2025 - Latest Updates)
+### Latest Updates (September 2025)
+
+#### Session Updates (September 26, 2025)
+- ✅ **FIXED: Mixer UI Layout Issues** - Increased mixer window size to 1200x700 for proper control visibility
+  - Improved spacing for master section, input/output channels, and EQ controls
+  - Enhanced dynamic scaling for all mixer components
+  - Fixed overlapping UI elements and cramped layouts
+- ✅ **FIXED: Fundamental Frequency Module Responsiveness** - Complete overhaul of responsive design
+  - Implemented dynamic scale factor based on window dimensions (0.5x to 2.0x)
+  - Converted fixed positions to percentage-based layouts
+  - Fixed child component positioning within containers
+  - Visualizer now properly scales with window size
+- ✅ **COMPLETED: Comprehensive Responsiveness Audit** - Identified and fixed critical scaling issues
+  - Fixed PluginBrowser_Component (no scaleFactor support)
+  - Updated ChordScannerComponent with proportional positioning
+  - Documented remaining components needing responsiveness improvements
+- ✅ **IMPROVED: Overall UI Responsiveness** - Application now properly adapts to different window sizes
+  - Components scale correctly from 0.3x to 2.0x zoom levels
+  - Fixed hardcoded pixel values across critical UI components
+  - Maintained aspect ratios for better visual consistency
+
+### Latest Updates (December 2025)
+
+#### New Visualizations Added
+1. **Frequency Color Spectrogram**: Revolutionary sound-to-light frequency conversion visualization
+   - Maps audio frequencies to visible light spectrum (40-octave shift)
+   - Phase speed selector for different mediums (vacuum, air, water, glass)
+   - Real-time wavelength calculation and color display
+
+2. **Spectra Harmonics Chart**: Advanced harmonic analysis visualization
+   - Real-time harmonic detection and tracking
+   - Multiple display modes (bars, lines, stem plot)
+   - Export capability for harmonic data
+   - Adjustable number of harmonics (1-32)
+
+#### UI/UX Enhancements
+1. **Responsive Design System**: Complete overhaul of UI scaling
+   - Dynamic scaling from 0.3x to 2.0x
+   - ResponsiveUIHelper class for consistent scaling
+   - Fixed scaling issues in ChordScanner and FrequencyPlayer
+   - Screen size breakpoints (Small/Medium/Large/XLarge)
+
+2. **Profile Management**: Complete save/load system for all modules
+   - XML-based profile storage
+   - Per-module preset management
+   - Profile directory: ~/Documents/TSS/Profiles/
+
+3. **Custom Chord Enhancements**:
+   - Per-note amplitude control (0-100%)
+   - Real-time frequency display for each note
+   - Automatic update when base frequency changes
+
+#### Known Issues (To Be Fixed)
+1. **Mixer UI**: Currently not functional, needs complete overhaul
+2. **Fundamental Frequency Module**: Responsiveness issues on resize
+3. **Some Visualizations**: Not yet connected to real FFT data sources
+
+### Key Improvements Made (September 2025 - Initial Release)
 
 #### Advanced Piano Synthesis
 1. **Railsback Curve Implementation**: Proper inharmonicity modeling based on actual piano tuning curves

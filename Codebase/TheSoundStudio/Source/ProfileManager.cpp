@@ -11,16 +11,10 @@
 */
 
 #include "ProfileManager.h"
+#include "ProjectManager.h"
 
 ProfileManager::ProfileManager(ProjectManager* pm) : projectManager(pm)
 {
-    // Create profile directory if it doesn't exist
-    profilesDirectory = File::getSpecialLocation(File::userDocumentsDirectory)
-                           .getChildFile("TSS")
-                           .getChildFile("Profiles");
-    
-    if (!profilesDirectory.exists())
-        profilesDirectory.createDirectory();
 }
 
 ProfileManager::~ProfileManager()
@@ -29,107 +23,52 @@ ProfileManager::~ProfileManager()
 
 bool ProfileManager::saveProfile(ProfileType type, int shortcutIndex, const String& profileName)
 {
-    if (profileName.isEmpty())
-        return false;
+    File profilesDir = getProfilesDirectory();
+    if (!profilesDir.exists())
+        profilesDir.createDirectory();
     
-    // Create subdirectory for profile type
-    File typeDir = profilesDirectory.getChildFile(getProfileTypeName(type));
+    File typeDir = getProfileTypeDirectory(type);
     if (!typeDir.exists())
         typeDir.createDirectory();
     
-    // Create profile file
-    File profileFile = typeDir.getChildFile(profileName + ".xml");
+    String fileName = profileName.isEmpty() ? createDefaultProfileName(type) : profileName;
+    File profileFile = typeDir.getChildFile(fileName + ".xml");
     
-    // Create XML structure
     std::unique_ptr<XmlElement> xml(new XmlElement("Profile"));
     xml->setAttribute("type", getProfileTypeName(type));
     xml->setAttribute("version", "1.0");
-    xml->setAttribute("timestamp", Time::getCurrentTime().toISO8601(true));
     
-    // Add parameters based on type
     XmlElement* params = xml->createNewChildElement("Parameters");
     
     switch (type)
     {
-        case CHORD_PLAYER:
-            saveChordPlayerProfile(params, shortcutIndex);
+        case CHORD_PLAYER_PROFILE:
+            saveChordPlayerProfile(shortcutIndex, params);
             break;
-            
-        case FREQUENCY_PLAYER:
-            saveFrequencyPlayerProfile(params, shortcutIndex);
-            break;
-            
-        case CHORD_SCANNER:
+        case CHORD_SCANNER_PROFILE:
             saveChordScannerProfile(params);
             break;
-            
-        case FREQUENCY_SCANNER:
+        case FREQUENCY_PLAYER_PROFILE:
+            saveFrequencyPlayerProfile(shortcutIndex, params);
+            break;
+        case FREQUENCY_SCANNER_PROFILE:
             saveFrequencyScannerProfile(params);
-            break;
-            
-        case REALTIME_ANALYSIS:
-            saveRealtimeAnalysisProfile(params);
-            break;
-            
-        case LISSAJOUS:
-            saveLissajousProfile(params);
             break;
     }
     
-    // Write to file
     return xml->writeTo(profileFile);
 }
 
-bool ProfileManager::loadProfile(ProfileType type, int shortcutIndex, const String& profileName)
+bool ProfileManager::loadProfile(ProfileType type, int shortcutIndex)
 {
-    File typeDir = profilesDirectory.getChildFile(getProfileTypeName(type));
-    File profileFile = typeDir.getChildFile(profileName + ".xml");
-    
-    if (!profileFile.exists())
-        return false;
-    
-    std::unique_ptr<XmlElement> xml(XmlDocument::parse(profileFile));
-    if (!xml || xml->getTagName() != "Profile")
-        return false;
-    
-    XmlElement* params = xml->getChildByName("Parameters");
-    if (!params)
-        return false;
-    
-    switch (type)
-    {
-        case CHORD_PLAYER:
-            loadChordPlayerProfile(params, shortcutIndex);
-            break;
-            
-        case FREQUENCY_PLAYER:
-            loadFrequencyPlayerProfile(params, shortcutIndex);
-            break;
-            
-        case CHORD_SCANNER:
-            loadChordScannerProfile(params);
-            break;
-            
-        case FREQUENCY_SCANNER:
-            loadFrequencyScannerProfile(params);
-            break;
-            
-        case REALTIME_ANALYSIS:
-            loadRealtimeAnalysisProfile(params);
-            break;
-            
-        case LISSAJOUS:
-            loadLissajousProfile(params);
-            break;
-    }
-    
-    return true;
+    // TODO: Implement file chooser and loading
+    return false;
 }
 
 StringArray ProfileManager::getAvailableProfiles(ProfileType type)
 {
     StringArray profiles;
-    File typeDir = profilesDirectory.getChildFile(getProfileTypeName(type));
+    File typeDir = getProfileTypeDirectory(type);
     
     if (typeDir.exists())
     {
@@ -145,7 +84,7 @@ StringArray ProfileManager::getAvailableProfiles(ProfileType type)
 
 bool ProfileManager::deleteProfile(ProfileType type, const String& profileName)
 {
-    File typeDir = profilesDirectory.getChildFile(getProfileTypeName(type));
+    File typeDir = getProfileTypeDirectory(type);
     File profileFile = typeDir.getChildFile(profileName + ".xml");
     
     if (profileFile.exists())
@@ -154,89 +93,82 @@ bool ProfileManager::deleteProfile(ProfileType type, const String& profileName)
     return false;
 }
 
-void ProfileManager::saveChordPlayerProfile(XmlElement* params, int shortcutIndex)
+File ProfileManager::getProfilesDirectory()
 {
-    // For now, just save basic parameters
-    // TODO: Complete implementation based on actual parameter mapping
-    params->setAttribute("shortcut", shortcutIndex);
-    params->setAttribute("saved", true);
+    return File::getSpecialLocation(File::userDocumentsDirectory)
+               .getChildFile("TSS")
+               .getChildFile("Profiles");
 }
 
-void ProfileManager::loadChordPlayerProfile(XmlElement* params, int shortcutIndex)
+String ProfileManager::createDefaultProfileName(ProfileType type)
 {
-    // TODO: Complete implementation based on actual parameter mapping
+    return getProfileTypeName(type) + "_" + Time::getCurrentTime().formatted("%Y%m%d_%H%M%S");
 }
 
-void ProfileManager::saveFrequencyPlayerProfile(XmlElement* params, int shortcutIndex)
+File ProfileManager::getProfileTypeDirectory(ProfileType type)
 {
-    // TODO: Complete implementation
-    params->setAttribute("shortcut", shortcutIndex);
-}
-
-void ProfileManager::loadFrequencyPlayerProfile(XmlElement* params, int shortcutIndex)
-{
-    // TODO: Complete implementation
-}
-
-void ProfileManager::saveChordScannerProfile(XmlElement* params)
-{
-    // Save chord scanner parameters
-    params->setAttribute("amplitude", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_AMPLITUDE));
-    params->setAttribute("attack", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_ATTACK));
-    params->setAttribute("decay", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_DECAY));
-    params->setAttribute("sustain", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_SUSTAIN));
-    params->setAttribute("release", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_RELEASE));
-}
-
-void ProfileManager::loadChordScannerProfile(XmlElement* params)
-{
-    projectManager->setChordScannerParameter(CHORD_SCANNER_AMPLITUDE, params->getDoubleAttribute("amplitude"));
-    projectManager->setChordScannerParameter(CHORD_SCANNER_ATTACK, params->getDoubleAttribute("attack"));
-    projectManager->setChordScannerParameter(CHORD_SCANNER_DECAY, params->getDoubleAttribute("decay"));
-    projectManager->setChordScannerParameter(CHORD_SCANNER_SUSTAIN, params->getDoubleAttribute("sustain"));
-    projectManager->setChordScannerParameter(CHORD_SCANNER_RELEASE, params->getDoubleAttribute("release"));
-}
-
-void ProfileManager::saveFrequencyScannerProfile(XmlElement* params)
-{
-    // TODO: Complete implementation
-}
-
-void ProfileManager::loadFrequencyScannerProfile(XmlElement* params)
-{
-    // TODO: Complete implementation
-}
-
-void ProfileManager::saveRealtimeAnalysisProfile(XmlElement* params)
-{
-    // TODO: Complete implementation
-}
-
-void ProfileManager::loadRealtimeAnalysisProfile(XmlElement* params)
-{
-    // TODO: Complete implementation
-}
-
-void ProfileManager::saveLissajousProfile(XmlElement* params)
-{
-    // TODO: Complete implementation
-}
-
-void ProfileManager::loadLissajousProfile(XmlElement* params)
-{
-    // TODO: Complete implementation
+    return getProfilesDirectory().getChildFile(getProfileTypeName(type));
 }
 
 String ProfileManager::getProfileTypeName(ProfileType type)
 {
     switch (type)
     {
-        case CHORD_PLAYER:      return "ChordPlayer";
-        case FREQUENCY_PLAYER:  return "FrequencyPlayer";
-        case CHORD_SCANNER:     return "ChordScanner";
-        case FREQUENCY_SCANNER: return "FrequencyScanner";
-        case REALTIME_ANALYSIS: return "RealtimeAnalysis";
-        case LISSAJOUS:         return "Lissajous";
-        default:                return "Unknown";
+        case CHORD_PLAYER_PROFILE:      return "ChordPlayer";
+        case CHORD_SCANNER_PROFILE:     return "ChordScanner";
+        case FREQUENCY_PLAYER_PROFILE:  return "FrequencyPlayer";
+        case FREQUENCY_SCANNER_PROFILE: return "FrequencyScanner";
+        default:                        return "Unknown";
     }
+}
+
+void ProfileManager::saveChordPlayerProfile(int shortcutIndex, XmlElement* xml)
+{
+    // TODO: Save actual chord player parameters
+    xml->setAttribute("shortcut", shortcutIndex);
+}
+
+void ProfileManager::loadChordPlayerProfile(int shortcutIndex, XmlElement* xml)
+{
+    // TODO: Load actual chord player parameters
+}
+
+void ProfileManager::saveChordScannerProfile(XmlElement* xml)
+{
+    // Save chord scanner ADSR parameters
+    xml->setAttribute("amplitude", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_ENV_AMPLITUDE));
+    xml->setAttribute("attack", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_ENV_ATTACK));
+    xml->setAttribute("decay", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_ENV_DECAY));
+    xml->setAttribute("sustain", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_ENV_SUSTAIN));
+    xml->setAttribute("release", (double)projectManager->getChordScannerParameter(CHORD_SCANNER_ENV_RELEASE));
+}
+
+void ProfileManager::loadChordScannerProfile(XmlElement* xml)
+{
+    projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_AMPLITUDE, xml->getDoubleAttribute("amplitude"));
+    projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_ATTACK, xml->getDoubleAttribute("attack"));
+    projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_DECAY, xml->getDoubleAttribute("decay"));
+    projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_SUSTAIN, xml->getDoubleAttribute("sustain"));
+    projectManager->setChordScannerParameter(CHORD_SCANNER_ENV_RELEASE, xml->getDoubleAttribute("release"));
+}
+
+void ProfileManager::saveFrequencyPlayerProfile(int shortcutIndex, XmlElement* xml)
+{
+    // TODO: Save frequency player parameters
+    xml->setAttribute("shortcut", shortcutIndex);
+}
+
+void ProfileManager::loadFrequencyPlayerProfile(int shortcutIndex, XmlElement* xml)
+{
+    // TODO: Load frequency player parameters
+}
+
+void ProfileManager::saveFrequencyScannerProfile(XmlElement* xml)
+{
+    // TODO: Save frequency scanner parameters
+}
+
+void ProfileManager::loadFrequencyScannerProfile(XmlElement* xml)
+{
+    // TODO: Load frequency scanner parameters
 }

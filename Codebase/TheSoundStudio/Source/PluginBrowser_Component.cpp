@@ -44,7 +44,8 @@ void PluginBrowser_Component::paint (Graphics& g)
 
 void PluginBrowser_Component::resized()
 {
-    listBox->setBounds (0, 0, 210, 600);
+    // Make the listbox fill the entire component with proper scaling
+    listBox->setBounds(getLocalBounds());
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }

@@ -347,11 +347,18 @@ public:
     
     void paint(Graphics& g) override
     {
-        // Modern dark background with subtle gradient
-        ColourGradient bgGradient(Colour(0xFF2E3440), 0, 0, 
-                                 Colour(0xFF1A1E24), getWidth(), getHeight(), false);
+        // Professional studio-style dark gradient background
+        ColourGradient bgGradient(Colour(0xFF1C1F26), 0, 0,
+                                 Colour(0xFF0D0E11), getWidth(), getHeight(), false);
         g.setGradientFill(bgGradient);
         g.fillAll();
+
+        // Add subtle texture overlay for depth
+        g.setColour(Colour(0xFF000000).withAlpha(0.1f));
+        for (int y = 0; y < getHeight(); y += 2)
+        {
+            g.drawHorizontalLine(y, 0, getWidth());
+        }
         
         auto area = getLocalBounds();
         
@@ -362,29 +369,33 @@ public:
         auto inputsArea = channelsArea.removeFromLeft(channelsArea.getWidth() / 2);
         auto outputsArea = channelsArea;
         
-        // Draw section headers with modern style
+        // Draw professional section headers
         auto drawSectionHeader = [&g](juce::Rectangle<int> r, const String& title, Colour accent)
         {
-            // Header background with gradient
-            ColourGradient headerGradient(Colour(0xFF3B4252), r.getX(), r.getY(),
-                                         Colour(0xFF434C5E), r.getRight(), r.getY(), false);
+            // Sleek header with metallic gradient
+            ColourGradient headerGradient(Colour(0xFF2A2E38), r.getX(), r.getY(),
+                                         Colour(0xFF1F2229), r.getRight(), r.getY(), false);
             g.setGradientFill(headerGradient);
-            auto headerRect = r.removeFromTop(40);
-            g.fillRoundedRectangle(headerRect.toFloat(), 10.f);
-            
-            // Accent line with glow effect
-            g.setColour(accent.withAlpha(0.3f));
-            g.fillRect(headerRect.removeFromLeft(6).reduced(0, 8).toFloat());
-            g.setColour(accent);
-            g.fillRect(headerRect.removeFromLeft(4).reduced(0, 10).toFloat());
-            
-            // Title with shadow
-            g.setColour(Colours::black.withAlpha(0.5f));
-            g.setFont(Font(16.0f, Font::bold));
-            g.drawText(title, headerRect.reduced(13, 1), Justification::centredLeft);
-            
-            g.setColour(Colour(0xFFECEFF4));
-            g.drawText(title, headerRect.reduced(12, 0), Justification::centredLeft);
+            auto headerRect = r.removeFromTop(45);
+            g.fillRoundedRectangle(headerRect.toFloat(), 8.f);
+
+            // Professional accent bar with glow
+            Path accentPath;
+            auto accentRect = headerRect.removeFromLeft(5).reduced(0, 10);
+            accentPath.addRoundedRectangle(accentRect.toFloat(), 2.f);
+            g.setColour(accent.withAlpha(0.2f));
+            g.fillPath(accentPath);
+            g.setColour(accent.withAlpha(0.8f));
+            g.strokePath(accentPath, PathStrokeType(2.0f));
+
+            // Title with better typography
+            g.setColour(Colours::black.withAlpha(0.8f));
+            g.setFont(Font("Helvetica Neue", 14.0f, Font::bold));
+            g.drawText(title, headerRect.reduced(15, 2), Justification::centredLeft);
+
+            g.setColour(Colour(0xFFE8EBF0));
+            g.setFont(Font("Helvetica Neue", 14.0f, Font::bold));
+            g.drawText(title, headerRect.reduced(14, 1), Justification::centredLeft);
         };
         
         drawSectionHeader(inputsArea.reduced(10), "INPUT CHANNELS", Colour(0xFF88C0D0));
@@ -394,30 +405,35 @@ public:
         auto masterHeaderArea = masterArea.reduced(10);
         drawSectionHeader(masterHeaderArea, "MASTER", Colour(0xFF5E81AC));
         
-        // Draw channel strips with enhanced styling
+        // Draw professional channel strips
         for (int i = 0; i < 4; i++)
         {
             const int stripWidth = inputsArea.getWidth() / 4;
-            
-            // Input channel strip with glass effect
-            auto inStripRect = juce::Rectangle<int>(inputsArea.getX() + stripWidth * i + 6, 
-                                                    50, stripWidth - 12, getHeight() - 60);
-            
-            // Drop shadow
-            g.setColour(Colours::black.withAlpha(0.3f));
-            g.fillRoundedRectangle(inStripRect.translated(2, 2).toFloat(), 8.f);
-            
-            // Glass background
-            ColourGradient stripGradient(Colour(0xFF2E3440).withAlpha(0.7f), 
+
+            // Input channel strip with professional console look
+            auto inStripRect = juce::Rectangle<int>(inputsArea.getX() + stripWidth * i + 8,
+                                                    55, stripWidth - 16, getHeight() - 70);
+
+            // Multi-layer shadow for depth
+            for (int s = 3; s > 0; s--)
+            {
+                g.setColour(Colours::black.withAlpha(0.15f / s));
+                g.fillRoundedRectangle(inStripRect.translated(s, s).toFloat(), 6.f);
+            }
+
+            // Professional channel strip background
+            ColourGradient stripGradient(Colour(0xFF252830),
                                         inStripRect.getX(), inStripRect.getY(),
-                                        Colour(0xFF3B4252).withAlpha(0.5f), 
+                                        Colour(0xFF1A1D23),
                                         inStripRect.getX(), inStripRect.getBottom(), false);
             g.setGradientFill(stripGradient);
-            g.fillRoundedRectangle(inStripRect.toFloat(), 8.f);
-            
-            // Border highlight
-            g.setColour(Colour(0xFF88C0D0).withAlpha(0.2f));
-            g.drawRoundedRectangle(inStripRect.toFloat(), 8.f, 1.0f);
+            g.fillRoundedRectangle(inStripRect.toFloat(), 6.f);
+
+            // Metallic border with inner glow
+            g.setColour(Colour(0xFF3A3F4A));
+            g.drawRoundedRectangle(inStripRect.toFloat(), 6.f, 1.5f);
+            g.setColour(Colour(0xFF88C0D0).withAlpha(0.15f));
+            g.drawRoundedRectangle(inStripRect.reduced(1).toFloat(), 6.f, 0.5f);
             
             // Output channel strip with glass effect
             auto outStripRect = juce::Rectangle<int>(outputsArea.getX() + stripWidth * i + 6,
@@ -476,40 +492,40 @@ public:
     void resized() override
     {
         auto area = getLocalBounds();
-        
+
         // Preset controls at top
-        auto presetArea = area.removeFromTop(40);
+        auto presetArea = area.removeFromTop(45);
         presetArea = presetArea.reduced(10, 5);
         auto presetLabelWidth = 60;
         presetArea.removeFromLeft(presetLabelWidth); // Space for "Presets:" label
-        presetComboBox->setBounds(presetArea.removeFromLeft(150));
+        presetComboBox->setBounds(presetArea.removeFromLeft(180));
         presetArea.removeFromLeft(10);
-        savePresetButton->setBounds(presetArea.removeFromLeft(50));
+        savePresetButton->setBounds(presetArea.removeFromLeft(60));
         presetArea.removeFromLeft(5);
-        loadPresetButton->setBounds(presetArea.removeFromLeft(50));
-        
-        // Reserve space for master section
-        auto masterArea = area.removeFromRight(120);
-        
+        loadPresetButton->setBounds(presetArea.removeFromLeft(60));
+
+        // Reserve space for master section (wider for better layout)
+        auto masterArea = area.removeFromRight(150);
+
         auto channelsArea = area;
         auto inputsArea = channelsArea.removeFromLeft(channelsArea.getWidth() / 2);
         auto outputsArea = channelsArea;
-        
+
         // Skip header area
-        inputsArea.removeFromTop(50);
-        outputsArea.removeFromTop(50);
-        masterArea.removeFromTop(50);
-        
+        inputsArea.removeFromTop(55);
+        outputsArea.removeFromTop(55);
+        masterArea.removeFromTop(55);
+
         // Master section layout
         auto masterStrip = masterArea.reduced(15, 10);
-        masterLabel->setBounds(masterStrip.removeFromTop(20));
-        
+        masterLabel->setBounds(masterStrip.removeFromTop(25));
+
         // Master meter
-        auto masterMeterArea = masterStrip.removeFromTop(120);
-        masterMeter->setBounds(masterMeterArea.reduced(20, 0));
-        
+        auto masterMeterArea = masterStrip.removeFromTop(140);
+        masterMeter->setBounds(masterMeterArea.reduced(25, 0));
+
         // Master fader with text box
-        masterGainSlider->setBounds(masterStrip.reduced(15, 10));
+        masterGainSlider->setBounds(masterStrip.reduced(20, 10));
         
         for (int i = 0 ; i < 4; i++)
         {
@@ -524,20 +540,20 @@ public:
             peakLabelInput[i]->setBounds(inStrip.removeFromTop(14));
             
             // EQ controls (3-band)
-            auto eqArea = inStrip.removeFromTop(60);
+            auto eqArea = inStrip.removeFromTop(75);
             auto eqKnobWidth = eqArea.getWidth() / 3;
             for (int band = 0; band < 3; band++)
             {
                 auto knobArea = eqArea.removeFromLeft(eqKnobWidth);
-                eqInputChannel[i][band]->setBounds(knobArea.reduced(5));
+                eqInputChannel[i][band]->setBounds(knobArea.reduced(3));
             }
-            
+
             // Pan control
-            auto panArea = inStrip.removeFromTop(40);
-            panInputChannel[i]->setBounds(panArea.reduced(channelWidth/4, 0));
-            
+            auto panArea = inStrip.removeFromTop(50);
+            panInputChannel[i]->setBounds(panArea.reduced(channelWidth/4, 5));
+
             // Meter area
-            auto meterArea = inStrip.removeFromTop(100);
+            auto meterArea = inStrip.removeFromTop(120);
             meterInput[i]->setBounds(meterArea.reduced(channelWidth/3, 0));
             
             // Solo/Mute/Rec buttons
@@ -560,20 +576,20 @@ public:
             peakLabelOutput[i]->setBounds(outStrip.removeFromTop(14));
             
             // EQ controls (3-band) for output
-            eqArea = outStrip.removeFromTop(60);
+            eqArea = outStrip.removeFromTop(75);
             eqKnobWidth = eqArea.getWidth() / 3;
             for (int band = 0; band < 3; band++)
             {
                 auto knobArea = eqArea.removeFromLeft(eqKnobWidth);
-                eqOutputChannel[i][band]->setBounds(knobArea.reduced(5));
+                eqOutputChannel[i][band]->setBounds(knobArea.reduced(3));
             }
-            
+
             // Pan control
-            panArea = outStrip.removeFromTop(40);
-            panOutputChannel[i]->setBounds(panArea.reduced(channelWidth/4, 0));
-            
+            panArea = outStrip.removeFromTop(50);
+            panOutputChannel[i]->setBounds(panArea.reduced(channelWidth/4, 5));
+
             // Meter area
-            meterArea = outStrip.removeFromTop(100);
+            meterArea = outStrip.removeFromTop(120);
             meterOutput[i]->setBounds(meterArea.reduced(channelWidth/3, 0));
             
             // Solo/Mute buttons

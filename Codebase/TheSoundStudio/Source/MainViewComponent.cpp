@@ -17,25 +17,26 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     projectManager = pm;
 
     // Image Cache
-    // Use a wide rectangular brand mark for the sidebar header
-    imageLogoButton = ImageCache::getFromMemory(BinaryData::LogoButton_Normal_png, BinaryData::LogoButton_Normal_pngSize);
+    // Use the TSS icon for the application logo
+    Image tssLogo = ImageCache::getFromMemory(BinaryData::icon_128_png, BinaryData::icon_128_pngSize);
+    imageLogoButton = tssLogo; // Use TSS icon instead of LogoButton_Normal
     imageMenuButtonNormal = ImageCache::getFromMemory(BinaryData::Sidebar_Button_Normal_png, BinaryData::Sidebar_Button_Normal_pngSize);
     imageMenuButtonSelected = ImageCache::getFromMemory(BinaryData::Sidebar_ButtonHighlighted_png, BinaryData::Sidebar_ButtonHighlighted_pngSize);
     imageSidebar = ImageCache::getFromMemory(BinaryData::SidebarNew_png, BinaryData::SidebarNew_pngSize);
-    
-    
+
+
     // sidebar component
     imageComponent_Sidebar = std::make_unique<ImageComponent>();
     imageComponent_Sidebar->setImage(imageSidebar);
     addAndMakeVisible(*imageComponent_Sidebar);
-    
-    // Buttons
+
+    // Buttons - Use TSS logo for the main application button
     menuButton_ASVPRTool = std::make_unique<ImageButton>();
     menuButton_ASVPRTool->setTriggeredOnMouseDown(true);
     menuButton_ASVPRTool->setImages (false, true, true,
-                            imageMenuButtonNormal, 0.999f, Colour (0x00000000),
+                            tssLogo, 0.999f, Colour (0x00000000),
                             Image(), 1.000f, Colour (0x00000000),
-                            imageMenuButtonNormal, 1.000f, Colour (0x00000000));
+                            tssLogo, 1.000f, Colour (0x00000000));
     menuButton_ASVPRTool->addListener(this);
     addAndMakeVisible(*menuButton_ASVPRTool);
     
