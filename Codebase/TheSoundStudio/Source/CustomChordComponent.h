@@ -2,8 +2,9 @@
   ==============================================================================
 
     CustomChordComponent.h
-    Created: 16 Mar 2019 7:53:22pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

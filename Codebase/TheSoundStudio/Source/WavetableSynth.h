@@ -2,10 +2,9 @@
   ==============================================================================
 
     WavetableSynth.h
-    Created: 31 Aug 2025
-    Author:  The Sound Studio Team
 
-    Wavetable synthesis engine for electronic and organ sounds.
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -79,6 +78,10 @@ private:
     Array<float> squareWavetable;
     Array<float> organWavetable;
     
+    // Pre-allocated mono buffer for audio-thread safety (no heap allocation in processBlock)
+    juce::HeapBlock<float> preallocatedMonoBuffer;
+    int preallocatedMonoBufferSize = 0;
+
     // Wavetable methods
     void initializeWavetables();
     float getWavetableSample(const Array<float>& wavetable, float phase);

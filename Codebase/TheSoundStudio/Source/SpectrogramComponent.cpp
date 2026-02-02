@@ -2,8 +2,9 @@
   ==============================================================================
 
     SpectrogramComponent.cpp
-    Created: 29 May 2019 4:12:00pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

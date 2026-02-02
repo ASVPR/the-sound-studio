@@ -2,10 +2,9 @@
   ==============================================================================
 
     ImprovedPluginManager.h
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
-    
-    Enhanced plugin hosting system with proper AU/VST support and modern JUCE practices.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

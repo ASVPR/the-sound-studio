@@ -2,8 +2,9 @@
   ==============================================================================
 
     EnhancedLissajousEngine.cpp
-    Created: 3 Sep 2025 7:45:00pm
-    Author:  The Sound Studio Team
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

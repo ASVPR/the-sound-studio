@@ -2,11 +2,9 @@
   ==============================================================================
 
     ChordScannerComponent.cpp
-    Created: 13 Mar 2019 9:55:10pm
-    Author:  Ziv Elovitch - The Sound Studio Team
-    
-    ChordScannerComponent provides chord scanning and analysis functionality.
-    Uses modern C++ smart pointer management for UI component lifecycle.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -356,7 +354,7 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     // Progress bar
     // Initialize progress bar component
     progressBar = std::make_unique<CustomProgressBar>();
-    progressBar->setBounds(292, 372, 1226, 42);
+    progressBar->setBounds(292, 420, 1226, 42);
     addAndMakeVisible(progressBar.get());
     
     
@@ -637,9 +635,9 @@ void ChordScannerComponent::resized()
     
 //    setBounds(350, 28, 1146, 320);
     visualiserContainerComponent->setBounds(350 * scaleFactor, 28 * scaleFactor, 1150 * scaleFactor, 324 * scaleFactor);
-    
-    
-    progressBar->setBounds(292 * scaleFactor, 372 * scaleFactor, 1226 * scaleFactor, 42 * scaleFactor);
+
+
+    progressBar->setBounds(292 * scaleFactor, 420 * scaleFactor, 1226 * scaleFactor, 42 * scaleFactor);
     
     button_Load->setBounds(1440 * scaleFactor, 1160 * scaleFactor, 100 * scaleFactor, 40 * scaleFactor);
     button_Save->setBounds(1330 * scaleFactor, 1160 * scaleFactor, 100 * scaleFactor, 40 * scaleFactor);

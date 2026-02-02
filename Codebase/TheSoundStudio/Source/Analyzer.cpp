@@ -2,15 +2,9 @@
   ==============================================================================
 
     Analyzer.cpp
-    Created: 4 Aug 2020 11:23:54am
-    Author:  Gary Jones
-    
-    OPTIMIZATION NOTES (2025):
-    - Fixed critical 100% CPU spinning loop in clearAlgorithm() using sleep_for()
-    - Replaced dangerous detached threads with safe synchronous calls
-    - Added integer overflow protection for safe calculations
-    - Replaced Variable Length Arrays (VLAs) with std::vector for safety
-    - Modernized to C++17 with atomic operations and constexpr
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

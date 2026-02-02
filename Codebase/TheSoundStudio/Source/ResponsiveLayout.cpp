@@ -2,10 +2,9 @@
   ==============================================================================
 
     ResponsiveLayout.cpp
-    Created: 12 Sep 2024
-    Author:  The Sound Studio Team
-    
-    Implementation of comprehensive responsive layout system.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

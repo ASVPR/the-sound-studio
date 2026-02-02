@@ -2,8 +2,9 @@
   ==============================================================================
 
     ADSR2.cpp
-    Created: 30 Jun 2019 7:14:43pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

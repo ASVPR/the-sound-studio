@@ -2,8 +2,9 @@
   ==============================================================================
 
     RealtimeAnalysisComponent.h
-    Created: 13 Mar 2019 9:56:11pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -19,7 +20,6 @@
 
 class RealtimeAnalysisComponent :
     public MenuViewInterface,
-    /*public Timer,*/
     public Button::Listener,
     public ProjectManager::UIListener
 {
@@ -73,9 +73,9 @@ public:
                                   imageRecordButton, 0.6, Colour (0x00000000));
         button_Record->addListener(this);
         addAndMakeVisible(button_Record.get());
-        
-        
-//        startTimer(TIMER_UPDATE_RATE);
+
+
+        // Note: Real-time visualizations update automatically - no timer needed
     }
     
     ~RealtimeAnalysisComponent()
@@ -112,72 +112,50 @@ public:
         visualiserContainerComponent->setPopupsAreVisible(false);
     }
     
-//    void timerCallback() override
-//    {
-//        if (projectManager->mode == AUDIO_MODE::MODE_REALTIME_ANALYSIS)
-//        {
-//            // visualiser
-//            if (shouldPlayAnalysis && !shouldFreeze)
-//            {
-//                visualiserContainerComponent->pushUpdate();
-//            }
-//        }
-//    }
-    
     void buttonClicked (Button*button)override
     {
         if (button == button_Play.get())
         {
-            if (shouldPlayAnalysis && shouldFreeze == false)
+            // Toggle play/pause state
+            // Note: Realtime Analysis visualizations update automatically
+            // The play/pause just controls logging
+            if (!shouldPlayAnalysis)
             {
-                shouldFreeze = true;
-                
-
-            }
-            else if (shouldPlayAnalysis && shouldFreeze == true)
-            {
-                shouldFreeze = false;
-            }
-            else
-            {
-                shouldFreeze = false;
-                
                 shouldPlayAnalysis = true;
-                
+                shouldFreeze = false;
+
                 projectManager->logFileWriter->createNewFileForRealtimeAnalysisLogging();
                 projectManager->logFileWriter->startRecordingLog();
             }
-            
-
-            
+            else
+            {
+                // Toggle freeze
+                shouldFreeze = !shouldFreeze;
+            }
         }
         else if (button == button_Stop.get())
         {
             shouldPlayAnalysis = false;
-            
+            shouldFreeze = false;
+
             projectManager->logFileWriter->stopRecordingLog();
         }
         else if (button == button_Export.get())
         {
-            
+            // Export functionality can be added here
         }
         else if (button == button_Record.get())
         {
             isRecording = !isRecording;
-            
+
             if (!isRecording)
             {
-                // if its stopping recording, offer user to export data, or delete
-                
                 projectManager->stopRecording();
-//                projectManager->logFileWriter->stopRecordingLog();
             }
             else
             {
                 projectManager->createNewFileForRecordingRealtimeAnalysis();
-                
                 projectManager->startRecording();
-                
             }
         }
     }

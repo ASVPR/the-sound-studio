@@ -2,8 +2,9 @@
   ==============================================================================
 
     ProjectManager.h
-    Created: 13 Mar 2019 9:58:53pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -22,13 +23,14 @@
 #include "SynthesisLibraryManager.h"
 #include "SynthesisEngine.h"
 #include "FrequencyManager.h"
-#include "ChordManager.h"
 #include "PluginAssignProcessor.h"
 #include "RingBuffer.h"
 #include "NoiseOscillator.h"
 #include "FundamentalFrequencyProcessor.h"
 #include "FeedbackModuleProcessor.h"
-#include "AnalyzerNew.h"
+#include "AnalyzerPool.h"
+#include "RecordingManager.h"
+#include "LogFileWriter.h"
 #include <memory>
 #include <atomic>
 #include <mutex>
@@ -41,12 +43,9 @@ class MainComponent;
 class ProjectManager : public ChangeListener
 {
 public:
-    // FIXED: Thread-safe atomic mode management
+    // Thread-safe atomic mode management (deprecated non-atomic `mode` removed)
     std::atomic<AUDIO_MODE> currentMode { AUDIO_MODE::MODE_CHORD_PLAYER };
     mutable std::mutex stateMutex;  // For thread safety
-    
-    // Deprecated - use currentMode instead
-    enum AUDIO_MODE mode;
     
     ProjectManager();
     
@@ -459,9 +458,7 @@ public:
     // new  FFT threader
     //=====================================================================================
     
-    AnalyserNew<float> outputAnalyser;
-    
-    AnalyserNew<float> analyser[8]; 
+    AnalyzerPool analyzerPool;
 
     
     void createAnalyserPlot (Path& p, const Rectangle<int> bounds, float minFreq, float maxFreq, bool input);
@@ -524,115 +521,25 @@ public:
     
     
     //=====================================================================================
-    // Recorder
+    // Recorder (delegated to RecordingManager)
     //=====================================================================================
-    
+
     #pragma mark Record Functions
 
-    bool shouldRecord = false;
-    File temporaryRecordingFile;                                    // delete and recreate it.. keep it in hidden temp dir
-    TimeSliceThread backgroundThread; // the thread that will write our audio data to disk
-    std::unique_ptr<AudioFormatWriter::ThreadedWriter> threadedWriter; // the FIFO used to buffer the incoming data
-    int64 nextSampleNum;
-    uint64 recordCounterInSamples;
-    uint64 recordCounterInMilliseconds;
-    
-    CriticalSection writerLock;
-    AudioFormatWriter::ThreadedWriter* volatile activeWriter;
+    RecordingManager recordingManager;
 
-    uint64 getRecordCounterInMilliseconds();
-
-    void recordLoopToFile(const File & file);
-    
     void createNewFileForRecordingRealtimeAnalysis();
     void createNewFileForRecordingChordPlayer();
     void createNewFileForRecordingFrequencyPlayer();
 
-    void setupRecording (const File& file);
-
-    void startRecording ();
-
+    void startRecording();
     void stopRecording();
-
     bool isRecording() const;
+    uint64 getRecordCounterInMilliseconds();
     
     //==============================================================================
-    // Log File Writer
+    // Log File Writer (extracted to LogFileWriter.h)
     //==============================================================================
-    class LogFileWriter
-    {
-    public:
-        
-        AUDIO_MODE logAudioMode;
-        
-        LogFileWriter(ProjectManager * pm)
-        {
-            projectManager      = pm;
-            logFileDirectory    = &projectManager->logFileDirectory;
-            frequencyManager    = projectManager->frequencyManager.get();
-            logAudioMode        = AUDIO_MODE::MODE_CHORD_PLAYER;
-        }
-
-        ~LogFileWriter() { }
-        
-        void createNewFileForRealtimeAnalysisLogging();
-
-        void setupLogRecording (const File& file);
-        
-        void processLog(double peakFrequency, double peakDB, Array<float> upperHarmonics, Array<float> intervals, int keynote, int octave, double ema);
-        
-        void startRecordingLog();
-        void stopRecordingLog();
-        bool isRecordingLog();
-        
-        // When audioMode changes, create a new log file timestamped...
-        void initNewLogFileForAudioMode(AUDIO_MODE newMode);
-
-        void processLog_ChordPlayer_Parameters();
-        void processLog_ChordPlayer_Sequencer(int shortcutRef, const Array<String>& noteStrings, const Array<float>& noteFreqs);
-
-        void processLog_ChordScanner_Parameters();
-        void processLog_ChordScanner_Sequencer(bool isAllChords, Array<int> notes, Array<float> noteFreqs);
-        
-        void processLog_FrequencyPlayer_Parameters();
-        void processLog_FrequencyPlayer_Sequencer(int shortcutRef, float freq);
-
-        void processLog_FrequencyScanner_Parameters();
-        void processLog_FrequencyScanner_Sequencer(float freq);
-        
-        void processLog_FundamentalFrequency_Sequencer(const String& fundamental, const String& chord, const Array<String>& harmonics);
-        
-        void processLog_FrequencyToLight(String conversionType, String base, String wavelength, String rgbHex, StringArray manipulationStrings);
-            
-        void processLog_PanicButtonPressed(int noise_type);
-        
-        void initNewSettingsLogFile();
-        void processLog_Settings_Parameters();
-        
-        void checkForOldLoggingFile();
-        
-        String getDateAndTimeString();
-        String getScaleString(int scaleRef);
-        
-    private:
-        
-        bool shouldRecordLog = false;
-        
-        String logString;               // String where logs are set, to be written to file later
-        uint64 recordLogSamples;        // number of samples taken thus far
-        uint64 loggingSampleRate;       // grabs log sample every x samples
-        uint64 loggingCounter;          // counts samples to trigger log
-        
-        File currentLogFile_RealtimeAnalysis;            //
-        File logFile[AUDIO_MODE::NUM_MODES];
-        File logFileSettings;
-        
-        ProjectManager *    projectManager;
-        FrequencyManager *  frequencyManager;
-        File *              logFileDirectory;
-    };
-    
-    // FIXED: Smart pointer for memory safety
     std::unique_ptr<LogFileWriter> logFileWriter;
     
     String getProjectVersionString()

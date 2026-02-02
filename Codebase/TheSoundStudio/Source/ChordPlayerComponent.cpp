@@ -2,14 +2,16 @@
   ==============================================================================
 
     ChordPlayerComponent.cpp
-    Created: 13 Mar 2019 9:54:54pm
-    Author:  Ziv Elovitch - The Sound Studio Team
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ChordPlayerComponent.h"
+#include "TSSConstants.h"
 
 //==============================================================================
 
@@ -467,11 +469,7 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
             stringLabel         = "Instrument :";
             stringWaveform      = instName;
         }
-        else if (waveformType == 1) { stringWaveform = "Sinewave";  stringLabel = "Type :"; }
-        else if (waveformType == 2) { stringWaveform = "Triangle";  stringLabel = "Type :"; }
-        else if (waveformType == 3) { stringWaveform = "Square";    stringLabel = "Type :"; }
-        else if (waveformType == 4) { stringWaveform = "Sawtooth";  stringLabel = "Type :"; }
-        else if (waveformType == 5) { stringWaveform = "Custom";    stringLabel = "Type :"; }
+        else { stringWaveform = TSS::Waveforms::getName(waveformType);  stringLabel = "Type :"; }
 
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setInstrumentString(stringWaveform, stringLabel);
         // Instrument change doesn't affect note frequencies; skip recompute

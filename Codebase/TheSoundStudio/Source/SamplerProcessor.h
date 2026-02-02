@@ -2,8 +2,9 @@
   ==============================================================================
 
     SamplerProcessor.h
-    Created: 29 Mar 2019 12:58:59pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

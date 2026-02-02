@@ -2,14 +2,9 @@
   ==============================================================================
 
     EnhancedSpectrogramComponent.h
-    Created: 3 Sep 2025 7:25:00pm
-    Author:  The Sound Studio Team
 
-    Enhanced Spectrogram Component demonstrating the 4 FFT improvements:
-    - Uses shared EnhancedFFTEngine
-    - Displays high-resolution frequency data
-    - Shows real-time peak detection
-    - Renders color spectrum visualization
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

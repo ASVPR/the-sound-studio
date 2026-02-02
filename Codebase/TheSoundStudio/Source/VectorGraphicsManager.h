@@ -2,11 +2,9 @@
   ==============================================================================
 
     VectorGraphicsManager.h
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
-    
-    Vector-based graphics system for scalable, responsive UI elements.
-    Replaces bitmap-based UI with resolution-independent vector graphics.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

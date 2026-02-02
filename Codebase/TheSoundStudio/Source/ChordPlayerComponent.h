@@ -2,8 +2,9 @@
   ==============================================================================
 
     ChordPlayerComponent.h
-    Created: 13 Mar 2019 9:54:54pm
-    Author:  Ziv Elovitch - The Sound Studio Team
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

@@ -2,11 +2,9 @@
   ==============================================================================
 
     2DVisualisers.h
-    Created: 28 Nov 2019 8:41:05am
-    Author:  Ziv Elovitch - The Sound Studio Team
-    
-    2D visualization components for audio analysis and rendering.
-    Uses modern C++ smart pointer management and OpenGL for efficient graphics.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

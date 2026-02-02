@@ -100,13 +100,7 @@ inline bool normalizeBuffer(double* pInputBuffer, unsigned uBufferSize)
 //#define min(a,b)            (((a) < (b)) ? (a) : (b))
 //#endif
 
-#ifndef itoa
-#define itoa(value,string,radix)  sprintf(string, "%d", value)
-#endif
-
-#ifndef ltoa
-#define ltoa(value,string,radix)  sprintf(string, "%u", value)
-#endif
+// Legacy C macros removed — use snprintf-based versions from pluginconstants.h if needed
 
 // MAINTAINABILITY IMPROVEMENT: Audio-specific constants to replace magic numbers
 // These named constants improve code readability and make it easier to change values

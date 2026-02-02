@@ -2,8 +2,9 @@
   ==============================================================================
 
     ComboBox.h
-    Created: 3 Dec 2021 2:15:39am
-    Author:  Javier Andoni Aizpuru Rodríguez
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

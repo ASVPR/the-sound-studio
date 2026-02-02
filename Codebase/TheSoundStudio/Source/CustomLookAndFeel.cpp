@@ -2,20 +2,22 @@
   ==============================================================================
 
     CustomLookAndFeel.cpp
-    Created: 16 Mar 2019 9:24:45am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
 #include "CustomLookAndFeel.h"
 #include "utility_components/ComboBox.h"
+#include "TSSConstants.h"
 
 CustomLookAndFeel::CustomLookAndFeel()
 {
 //    setColour(TextEditor::textColourId, Colours::darkgrey);
     setColour(Slider::textBoxTextColourId, Colours::lightgrey);
-    setColour(Slider::textBoxBackgroundColourId, juce::Colour(98, 103, 114));
+    setColour(Slider::textBoxBackgroundColourId, juce::Colour(TSS::UI::Colors::kSliderBackground));
     setColour(PopupMenu::textColourId, Colours::darkgrey);
     setColour(PopupMenu::highlightedBackgroundColourId, Colours::darkgrey);
     setColour(ComboBox::textColourId, Colours::darkgrey);
@@ -24,7 +26,7 @@ CustomLookAndFeel::CustomLookAndFeel()
     setColour(juce::Label::textWhenEditingColourId, Colours::darkgrey);
     
     Typeface::Ptr AssistantLight   = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
-    fontLight = new Font(AssistantLight);
+    fontLight = std::make_unique<Font>(AssistantLight);
     
 }
 
@@ -172,7 +174,7 @@ void CustomLookAndFeel::drawComboBox (Graphics&g, int width, int height, bool is
         }
     }
 
-    Colour c(Colour::fromRGB(249, 250, 250));
+    Colour c(TSS::UI::Colors::kComboBoxBackground);
 
     g.setColour (c);
     g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
@@ -247,7 +249,7 @@ Font CustomLookAndFeel::getPopupMenuFont()
 /** Fills the background of a popup menu component. */
 void CustomLookAndFeel::drawPopupMenuBackground (Graphics&g, int width, int height)
 {
-    g.fillAll (Colour::fromRGB(183, 183, 183));
+    g.fillAll (Colour(TSS::UI::Colors::kPopupMenuBackground));
     ignoreUnused (width, height);
 }
 
@@ -348,8 +350,8 @@ void CustomLookAndFeel::drawPopupMenuItem (Graphics&g, const Rectangle<int>& are
                            float sliderPos, float rotaryStartAngle,
                            float rotaryEndAngle, Slider& slider)
 {
-    auto outline = juce::Colour(42, 48, 60);
-    auto fill = juce::Colour(0, 122, 205);
+    auto outline = juce::Colour(TSS::UI::Colors::kSliderOutline);
+    auto fill    = juce::Colour(TSS::UI::Colors::kSliderFill);
 
     auto bounds = Rectangle<int> (x, y, width, height).toFloat().reduced (10);
 
@@ -391,7 +393,7 @@ void CustomLookAndFeel::drawPopupMenuItem (Graphics&g, const Rectangle<int>& are
     Point<float> thumbPoint (bounds.getCentreX() + arcRadius * std::cos (toAngle - MathConstants<float>::halfPi),
                              bounds.getCentreY() + arcRadius * std::sin (toAngle - MathConstants<float>::halfPi));
 
-    g.setColour (juce::Colour(0, 122, 205));
+    g.setColour (juce::Colour(TSS::UI::Colors::kSliderFill));
     g.fillEllipse (Rectangle<float> (thumbWidth, thumbWidth).withCentre (thumbPoint));
 }
 
@@ -433,7 +435,7 @@ void CustomLookAndFeel::drawTooltip (Graphics&g, const String& text, int width, 
 void CustomLookAndFeel::fillTextEditorBackground (Graphics& g, int width, int height, TextEditor& editor)
 
 {
-    g.setColour(juce::Colour(98, 103, 114));
+    g.setColour(juce::Colour(TSS::UI::Colors::kTextEditorBackground));
     g.fillRoundedRectangle(editor.getLocalBounds().toFloat(), 5);
 }
 void CustomLookAndFeel::drawTextEditorOutline (Graphics&, int width, int height, TextEditor&)

@@ -2,15 +2,9 @@
   ==============================================================================
 
     Oscillators.h
-    Created: 29 Mar 2019 8:17:14pm
-    Author:  Gary Jones
-    
-    OPTIMIZATION NOTES (2025):
-    - Added buffer overflow protection with bounds checking in doBLEP()
-    - Replaced pow() with std::exp2() for better performance in pitch calculations
-    - Modernized to C++17: constexpr constants, enum class, auto, noexcept
-    - Removed 300+ lines of obsolete commented code for cleaner maintenance
-    - Replaced macros with type-safe constexpr constants
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

@@ -2,8 +2,9 @@
   ==============================================================================
 
     2DVisualisers.cpp
-    Created: 28 Nov 2019 8:41:05am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

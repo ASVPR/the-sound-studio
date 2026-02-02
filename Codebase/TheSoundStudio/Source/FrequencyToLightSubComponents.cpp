@@ -2,8 +2,9 @@
   ==============================================================================
 
     FrequencyToLightSubComponents.cpp
-    Created: 17 Oct 2019 11:42:22am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

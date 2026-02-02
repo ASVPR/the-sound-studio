@@ -2,8 +2,9 @@
   ==============================================================================
 
     ChordManager.cpp
-    Created: 27 Mar 2019 6:19:55pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

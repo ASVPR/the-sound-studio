@@ -2,8 +2,9 @@
   ==============================================================================
 
     VisualiserContainerComponent.h
-    Created: 23 Feb 2020 10:39:48am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -20,6 +21,8 @@
 #include "LissajousCurveComponent.h"
 #include "SpectraHarmonicsChart.h"
 #include "FrequencyColorSpectrogram.h"
+#include "StandingWaveSpectrogram.h"
+// #include "HarmonicsSurface3D.h"  // Temporarily disabled - needs OpenGL fixes
 #include <memory>
 
 // SVP 190
@@ -43,6 +46,9 @@ public:
         FREQ_COLOR_SPECTRUM,
         STANDING_WAVE,
         CEPSTRUM,
+        HARMONICS_3D,
+        SURFACE_3D,
+        LISSAJOUS_3D,
         TOTAL_NUM_TYPES
     }visualiserType;
     
@@ -106,6 +112,9 @@ public:
                 case FREQ_COLOR_SPECTRUM: comboBoxTypeSelector->addItem("Freq-Color", i); break;
                 case STANDING_WAVE:     comboBoxTypeSelector->addItem("Standing Wave", i); break;
                 case CEPSTRUM:          comboBoxTypeSelector->addItem("Cepstrum", i); break;
+                case HARMONICS_3D:      comboBoxTypeSelector->addItem("3D Harmonics", i); break;
+                case SURFACE_3D:        comboBoxTypeSelector->addItem("3D Surface", i); break;
+                case LISSAJOUS_3D:      comboBoxTypeSelector->addItem("3D Lissajous", i); break;
             }
         }
         comboBoxTypeSelector->setSelectedId((int)initialType, dontSendNotification);
@@ -469,6 +478,8 @@ public:
             case FREQ_DATA:     if (frequencyDataComponent != nullptr) delete frequencyDataComponent; frequencyDataComponent = nullptr; break;
             case HARMONICS_CHART: if (harmonicsChartComponent != nullptr) delete harmonicsChartComponent; harmonicsChartComponent = nullptr; break;
             case FREQ_COLOR_SPECTRUM: if (freqColorSpectrumComponent != nullptr) delete freqColorSpectrumComponent; freqColorSpectrumComponent = nullptr; break;
+            case STANDING_WAVE: if (standingWaveComponent != nullptr) delete standingWaveComponent; standingWaveComponent = nullptr; break;
+            // case HARMONICS_3D: if (harmonics3DComponent != nullptr) delete harmonics3DComponent; harmonics3DComponent = nullptr; break;  // Temporarily disabled
         }
         
     
@@ -566,10 +577,28 @@ public:
                 freqColorSpectrumComponent = new FrequencyColorSpectrogram(projectManager);
                 freqColorSpectrumComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(freqColorSpectrumComponent);
-                
+
                 freqColorSpectrumComponent->setScale(scaleFactor);
             }
                 break;
+            case STANDING_WAVE:
+            {
+                standingWaveComponent = new StandingWaveSpectrogram(projectManager);
+                standingWaveComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                addAndMakeVisible(standingWaveComponent);
+
+                standingWaveComponent->setScale(scaleFactor);
+            }
+                break;
+            // case HARMONICS_3D:  // Temporarily disabled - needs OpenGL fixes
+            // {
+            //     harmonics3DComponent = new HarmonicsSurface3D(projectManager);
+            //     harmonics3DComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+            //     addAndMakeVisible(harmonics3DComponent);
+            //
+            //     harmonics3DComponent->setScale(scaleFactor);
+            // }
+            //     break;
         }
         
         shouldUpdate = true;
@@ -643,7 +672,9 @@ private:
     LissajousCurveViewerComponent*      lissajousComponent = nullptr;
     SpectraHarmonicsChart*              harmonicsChartComponent = nullptr;
     FrequencyColorSpectrogram*          freqColorSpectrumComponent = nullptr;
-    
+    StandingWaveSpectrogram*            standingWaveComponent = nullptr;
+    // HarmonicsSurface3D*                 harmonics3DComponent = nullptr;  // Temporarily disabled
+
     bool popupsAreVisible = false;
     PopupFFTWindow * popupFFTWindow = nullptr; // reinitialise whenever called..
     

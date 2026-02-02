@@ -2,10 +2,9 @@
   ==============================================================================
 
     EnhancedFFTEngine.cpp
-    Created: 3 Sep 2025 7:20:00pm
-    Author:  The Sound Studio Team
 
-    Implementation of Enhanced FFT Engine with 4 key improvements
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

@@ -2,8 +2,9 @@
   ==============================================================================
 
     FeedbackModuleComponent.cpp
-    Created: 21 Feb 2022 9:21:42am
-    Author:  Akash Murthy
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

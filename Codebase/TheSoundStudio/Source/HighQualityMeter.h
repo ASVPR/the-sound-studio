@@ -1,5 +1,18 @@
+/*
+  ==============================================================================
+
+    HighQualityMeter.h
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+
+  ==============================================================================
+*/
 
 
+
+
+#pragma once
 #ifndef __JUCETICE_HIGHQUALITYMETER_HEADER__
 #define __JUCETICE_HIGHQUALITYMETER_HEADER__
 

@@ -2,8 +2,9 @@
   ==============================================================================
 
     SettingsComponent.cpp
-    Created: 13 Mar 2019 9:56:56pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -12,6 +13,7 @@
 #include "SettingsComponent.h"
 #include "PluginWindow.h"
 #include "PopupFFTWindow.h"
+#include "UI/PluginMenuBuilder.h"
 
 
 //==============================================================================
@@ -467,38 +469,8 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
         comboBoxPluginSelector[i]->setLookAndFeel(&lookAndFeel);
         comboBoxPluginSelector[i]->addListener(this);
         
-        PopupMenu * pluginMenu =  comboBoxPluginSelector[i]->getRootMenu();
-        
-        PopupMenu auMenu;   auMenu.setLookAndFeel(&lookAndFeel);
-        PopupMenu vstMenu;  vstMenu.setLookAndFeel(&lookAndFeel);
-        PopupMenu vst3Menu;  vst3Menu.setLookAndFeel(&lookAndFeel);
-            
-        // do search for plugins and add to au/vst menu
-        for (int i = 0; i < projectManager->knownPluginList->getNumTypes(); i++)
-        {
-            PluginDescription * desc = projectManager->knownPluginList->getType(i);
-                
-            if (!desc->isInstrument)
-            {
-                if (desc->pluginFormatName == "AudioUnit")
-                {
-                    auMenu.addItem(i+1, desc->name);
-                }
-                else if (desc->pluginFormatName =="VST")
-                {
-                    vstMenu.addItem(i+1, desc->name);
-                }
-                else if (desc->pluginFormatName =="VST3")
-                {
-                    vst3Menu.addItem(i+1, desc->name);
-                }
-            }
-        }
-            
-        pluginMenu->addSubMenu("AU", auMenu);
-        pluginMenu->addSubMenu("VST", vstMenu);
-        pluginMenu->addSubMenu("VST3", vstMenu);
-        
+        TSS::UI::populatePluginMenu(*comboBoxPluginSelector[i]->getRootMenu(),
+                                    *projectManager->knownPluginList, &lookAndFeel);
         addAndMakeVisible(comboBoxPluginSelector[i]);
     }
     
@@ -816,40 +788,8 @@ void SettingsComponent::buttonClicked (Button*button)
         
         for (int i = 0; i < NUM_PLUGIN_SLOTS; i++)
         {
-            // when finished it should update the plugin List of the combobox..
-            PopupMenu * pluginMenu =  comboBoxPluginSelector[i]->getRootMenu();
-            
-            pluginMenu->clear();
-            
-            PopupMenu auMenu;   auMenu.setLookAndFeel(&lookAndFeel);
-            PopupMenu vstMenu;  vstMenu.setLookAndFeel(&lookAndFeel);
-            PopupMenu vst3Menu;  vst3Menu.setLookAndFeel(&lookAndFeel);
-                
-            // do search for plugins and add to au/vst menu
-            for (int i = 0; i < projectManager->knownPluginList->getNumTypes(); i++)
-            {
-                PluginDescription * desc = projectManager->knownPluginList->getType(i);
-                    
-                if (!desc->isInstrument)
-                {
-                    if (desc->pluginFormatName == "AudioUnit")
-                    {
-                        auMenu.addItem(i+1, desc->name);
-                    }
-                    else if (desc->pluginFormatName =="VST")
-                    {
-                        vstMenu.addItem(i+1, desc->name);
-                    }
-                    else if (desc->pluginFormatName =="VST3")
-                    {
-                        vst3Menu.addItem(i+1, desc->name);
-                    }
-                }
-            }
-                
-            pluginMenu->addSubMenu("AU", auMenu);
-            pluginMenu->addSubMenu("VST", vstMenu);
-            pluginMenu->addSubMenu("VST3", vstMenu);
+            TSS::UI::populatePluginMenu(*comboBoxPluginSelector[i]->getRootMenu(),
+                                        *projectManager->knownPluginList, &lookAndFeel);
         }
         
     }

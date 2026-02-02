@@ -2,11 +2,9 @@
   ==============================================================================
 
     ResponsiveLayoutManager.h
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
-    
-    Responsive layout system that adapts UI elements to different screen sizes
-    and orientations, replacing fixed-size layouts with fluid, scalable designs.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

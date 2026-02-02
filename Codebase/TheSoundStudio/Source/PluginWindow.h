@@ -2,12 +2,15 @@
   ==============================================================================
 
     PluginWindow.h
-    Created: 27 Aug 2015 1:00:39pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
+
+#pragma once
 #ifndef PLUGINWINDOW_H_INCLUDED
 #define PLUGINWINDOW_H_INCLUDED
 

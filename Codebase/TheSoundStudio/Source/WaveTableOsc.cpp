@@ -2,14 +2,9 @@
   ==============================================================================
 
     WaveTableOsc.cpp
-    Created: 13 Mar 2020 11:26:45pm
-    Author:  Gary Jones
-    
-    OPTIMIZATION NOTES (2025):
-    - Fixed critical memory leaks in fillTables() and waveOsc() methods
-    - Added proper cleanup for dynamically allocated FFT arrays 'ar' and 'ai'
-    - Memory leak fixes prevent crashes during repeated oscillator creation
-    - Enhanced memory safety with proper RAII-style cleanup
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

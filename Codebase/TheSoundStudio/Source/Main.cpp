@@ -2,19 +2,16 @@
   ==============================================================================
 
     Main.cpp
-    Author: Ziv Elovitch
 
-    The Sound Studio - Main application entry point.
-    
-    This file contains the JUCE application startup code and main window setup.
-    Handles window initialization, sizing, and visibility management to ensure
-    proper application launch and user interface display.
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
+#include "TSSPaths.h"
 
 //==============================================================================
 class TSSApplication  : public JUCEApplication
@@ -163,13 +160,10 @@ private:
     
     void initialiseErrorLogging()
     {
-        // Create logs directory
-        const File logsDir("/Users/zivelovitch/Documents/TSS/Logs");
-        if (! logsDir.exists())
-            logsDir.createDirectory();
+        // Create logs directory via centralized path management
+        const File logsDir = TSS::TSSPaths::getLogsDirectory();
 
-        // Create a date-stamped error log file in the specified directory
-        // Example: /Users/zivelovitch/Documents/TSS/Logs/TSS_2025-09-10_15-14-25_Error.txt
+        // Create a date-stamped error log file
         const auto dateStamp = Time::getCurrentTime().formatted("%Y-%m-%d_%H-%M-%S");
         const File logFile = logsDir.getChildFile("TSS_" + dateStamp + "_Error.txt");
         fileLogger = std::make_unique<FileLogger>(logFile, String());

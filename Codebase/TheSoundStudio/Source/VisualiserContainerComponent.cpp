@@ -2,8 +2,9 @@
   ==============================================================================
 
     VisualiserContainerComponent.cpp
-    Created: 23 Feb 2020 10:39:48am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

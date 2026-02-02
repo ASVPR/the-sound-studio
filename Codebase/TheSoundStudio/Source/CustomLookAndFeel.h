@@ -2,8 +2,9 @@
   ==============================================================================
 
     CustomLookAndFeel.h
-    Created: 16 Mar 2019 9:24:45am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -109,8 +110,8 @@ public:
     }
     
 private:
-    
-    Font * fontLight;
+
+    std::unique_ptr<Font> fontLight;
     
     
 };

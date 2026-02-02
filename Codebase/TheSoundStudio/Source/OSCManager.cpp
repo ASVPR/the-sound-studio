@@ -2,8 +2,9 @@
   ==============================================================================
 
     OSCManager.cpp
-    Created: 25 Apr 2015 3:51:46pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

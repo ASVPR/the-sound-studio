@@ -2,8 +2,9 @@
   ==============================================================================
 
     PluginAssignProcessor.cpp
-    Created: 25 Aug 2015 9:57:39pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

@@ -2,14 +2,9 @@
   ==============================================================================
 
     EnhancedLissajousComponent.h
-    Created: 3 Sep 2025 8:00:00pm
-    Author:  The Sound Studio Team
 
-    Enhanced Lissajous Component with support for:
-    - 2D to 6D Lissajous curves
-    - Real-time parameter control
-    - Multiple visualization modes
-    - Interactive axis configuration
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

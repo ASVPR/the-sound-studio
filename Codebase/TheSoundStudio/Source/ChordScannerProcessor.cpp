@@ -2,14 +2,16 @@
   ==============================================================================
 
     ChordScannerProcessor.cpp
-    Created: 30 May 2019 2:46:40pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
 #include "ChordScannerProcessor.h"
 #include "ProjectManager.h"
+#include "AudioRouting.h"
 
 ChordScannerProcessor::ChordScannerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, ProjectManager * pm)
 {
@@ -234,34 +236,7 @@ void ChordScannerProcessor::processBlock (AudioBuffer<float>& buffer,
             synth->processBlock(outputBuffer, midiMessages);
         }
         
-        if      (output == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_2 && buffer.getNumChannels() > 1) { buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_3 && buffer.getNumChannels() > 2) { buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_4 && buffer.getNumChannels() > 3) { buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::STEREO_1_2 && buffer.getNumChannels() > 1)
-        {
-            buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-            buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-        }
-        else if (output == AUDIO_OUTPUTS::STEREO_3_4 && buffer.getNumChannels() > 2)
-        {
-            buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-            buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-        }
-        else if (output == AUDIO_OUTPUTS::MONO_5 && buffer.getNumChannels() > 4) { buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_6 && buffer.getNumChannels() > 5) { buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_7 && buffer.getNumChannels() > 6) { buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_8 && buffer.getNumChannels() > 7) { buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::STEREO_5_6 && buffer.getNumChannels() > 5)
-        {
-            buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-            buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-        }
-        else if (output == AUDIO_OUTPUTS::STEREO_7_8 && buffer.getNumChannels() > 7)
-        {
-            buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-            buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-        }
+        TSS::Audio::routeToOutput(buffer, outputBuffer, output);
     }
     
 
@@ -940,26 +915,6 @@ void ChordScannerProcessor::PlayRepeater::process_MainChords(int sampleRef)
         {
             numRepeatIterator++;
         }
-        
-//        chordTypeIterator++;
-//
-//        if (chordTypeIterator >= (NUM_CHORD_TYPES))
-//        {
-//            chordTypeIterator = Major;
-//            keynoteIterator++;
-//        }
-//
-//        if (keynoteIterator >= (TOTAL_NUM_KEYNOTES))
-//        {
-//            keynoteIterator = KEY_C;
-//            octaveIterator++;
-//        }
-//
-//
-//        if (octaveIterator > maxOctaves)
-//        {
-//            stop();
-//        }
     }
 }
 
@@ -1073,58 +1028,6 @@ void ChordScannerProcessor::PlayRepeater::process_AllChords(int sampleRef)
         {
             numRepeatIterator++;
         }
-        
-
-//        for (int i = 1; i < 12; i++)
-//        {
-//            if (i == (numNotesIterator - 1))
-//            {
-//                if (keynoteIteratorAllChords[i] < (keynoteIteratorAllChords[0] + 10))
-//                {
-//                    keynoteIteratorAllChords[i]++;
-//                }
-//                else
-//                {
-//                    if (numNotesIterator < (MaxNumNotes))
-//                    {
-//                        numNotesIterator++;
-//
-//                        keynoteIteratorAllChords[i]     = keynoteIteratorAllChords[i - 1] + 1;
-//                        keynoteIteratorAllChords[i+1]   = keynoteIteratorAllChords[i];
-//                    }
-//                    else
-//                    {
-//                        numNotesIterator = MinNumNotes;
-//
-//                        keynoteIteratorAllChords[0]++;
-//
-//                        if (keynoteIteratorAllChords[0] > 11)
-//                        {
-//                            octaveIterator++;
-//
-//                            keynoteIteratorAllChords[0]     = 0;
-//                            keynoteIteratorAllChords[1]     = 1;
-//                            keynoteIteratorAllChords[2]     = 2;
-//                            keynoteIteratorAllChords[3]     = 3;
-//                            keynoteIteratorAllChords[4]     = 4;
-//                            keynoteIteratorAllChords[5]     = 5;
-//                            keynoteIteratorAllChords[6]     = 6;
-//                            keynoteIteratorAllChords[7]     = 7;
-//                            keynoteIteratorAllChords[8]     = 8;
-//                            keynoteIteratorAllChords[9]     = 9;
-//                            keynoteIteratorAllChords[10]    = 10;
-//                            keynoteIteratorAllChords[11]    = 11;
-//
-//                            if (octaveIterator > octaveTo || octaveIterator > maxOctaves)
-//                            {
-//                                stop();
-//                            }
-//
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 }
 

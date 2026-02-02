@@ -1,9 +1,10 @@
 /*
   ==============================================================================
 
-    ScalesManager.h
-    Created: 17 Dec 2019 8:36:56pm
-    Author:  Gary Jones
+    Scales.h
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

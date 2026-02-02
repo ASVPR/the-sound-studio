@@ -2,8 +2,9 @@
   ==============================================================================
 
     ChordPlayerSettingsComponent.cpp
-    Created: 14 Mar 2019 9:01:08pm
-    Author:  Ziv Elovitch - The Sound Studio Team
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

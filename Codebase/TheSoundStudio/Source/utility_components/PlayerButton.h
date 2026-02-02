@@ -2,8 +2,9 @@
   ==============================================================================
 
     PlayerButton.h
-    Created: 2 Dec 2021 11:01:22pm
-    Author:  Javier Andoni Aizpuru Rodríguez
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

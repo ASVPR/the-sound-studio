@@ -1,9 +1,12 @@
 /*
-  ============================================================================
-    VAOscillator.
-    Created: 2 Jul 2019 9:16:3
-    Author:  Gary Jon
-  ============================================================================
+  ==============================================================================
+
+    VAOscillator.cpp
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+
+  ==============================================================================
 */
 #include "VAOscillator.h"
 
@@ -23,9 +26,9 @@ QOscillator::QOscillator(void)
 	m_dPulseWidthControl = OSC_PULSEWIDTH_DEFAULT; // GUI
 	m_dFo = OSC_FO_DEFAULT;
     
-	// --- seed the random number generator
-	srand((int)time(NULL));
-	m_uPNRegister = rand();
+	// --- deterministic per-instance PRNG (replaces non-thread-safe srand/rand)
+	m_rng.seed(42);
+	m_uPNRegister = m_rngDist(m_rng);
     
 	// --- continue inits
 	m_nRSHCounter = -1; // flag for reset condition
@@ -70,9 +73,9 @@ void QOscillator::reset()
 	// --- flush DPW registers
 	m_dDPW_z1 = 0.0;
     
-	// --- for random stuff
-	srand((int)time(NULL));
-	m_uPNRegister = rand();
+	// --- deterministic per-instance PRNG (replaces non-thread-safe srand/rand)
+	m_rng.seed(42);
+	m_uPNRegister = m_rngDist(m_rng);
 	m_nRSHCounter = -1; // flag for reset condition
 	m_dRSHValue = 0.0;
     

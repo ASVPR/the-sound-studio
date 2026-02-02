@@ -2,10 +2,9 @@
   ==============================================================================
 
     SpectraHarmonicsChart.h
-    Created: 12 Sep 2025
-    Author:  The Sound Studio Team
-    
-    Spectra Harmonics Chart - displays harmonic frequencies as bars
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

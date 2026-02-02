@@ -2,8 +2,9 @@
   ==============================================================================
 
     VectorGraphicsManager.cpp
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

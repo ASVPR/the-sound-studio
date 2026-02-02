@@ -2,22 +2,24 @@
   ==============================================================================
 
     KarplusStrongSynth.cpp
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
 #include "KarplusStrongSynth.h"
+#include "TSSConstants.h"
 
 KarplusStrongEngine::KarplusStrongEngine()
-    : sampleRate(44100.0)
-    , tuningReference(432.0)
-    , blockSize(512)
-    , bodyResonance(0.7f)
-    , stringDamping(0.3f)
+    : sampleRate(TSS::Audio::kDefaultSampleRate)
+    , tuningReference(TSS::Audio::kDefaultA4Frequency)
+    , blockSize(0)
+    , bodyResonance(TSS::Synthesis::kDefaultResonance)
+    , stringDamping(TSS::Synthesis::kDefaultStringDamping)
     , pluckPosition(0.5f)
-    , feedback(0.95f)
+    , feedback(TSS::Synthesis::kDefaultFeedback)
     , lowpassState(0.0f)
     , highpassState(0.0f)
 {
@@ -36,6 +38,14 @@ void KarplusStrongEngine::initialize(double newSampleRate, double newTuningRefer
 void KarplusStrongEngine::prepareToPlay(int newBlockSize)
 {
     blockSize = newBlockSize;
+
+    // Pre-allocate mono buffer to avoid heap allocation in audio callbacks
+    preallocatedMonoBufferSize = newBlockSize;
+    preallocatedMonoBuffer.allocate(preallocatedMonoBufferSize, true);
+
+    // Pre-allocate excitation buffer (max delay length = sampleRate / minFreq ~= sampleRate / 20)
+    preallocatedExcitationSize = static_cast<int>(sampleRate / 20.0) + 2;
+    preallocatedExcitation.allocate(preallocatedExcitationSize, true);
 }
 
 void KarplusStrongEngine::releaseResources()
@@ -48,20 +58,21 @@ void KarplusStrongEngine::generateGuitar(AudioBuffer<float>& buffer, float frequ
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
     
-    // Generate mono guitar signal with guitar-specific parameters
-    HeapBlock<float> monoBuffer;
-    monoBuffer.allocate(numSamples, true);
-    generateKSNote(monoBuffer.getData(), numSamples, frequency, velocity, stringDamping, bodyResonance);
-    
+    // Use pre-allocated buffer — no heap allocation on audio thread
+    jassert(numSamples <= preallocatedMonoBufferSize);
+    juce::FloatVectorOperations::clear(preallocatedMonoBuffer.getData(), numSamples);
+    generateKSNote(preallocatedMonoBuffer.getData(), numSamples, frequency, velocity, stringDamping, bodyResonance);
+
     // Copy to stereo channels with slight variations for width
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-        const float pan = (channel == 0) ? 0.9f : 1.1f; // Slight stereo width
-        
+        const float pan = (channel == 0) ? 0.9f : 1.1f;
+        const float* monoData = preallocatedMonoBuffer.getData();
+
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer.getData()[sample] * pan;
+            channelData[sample] = monoData[sample] * pan;
         }
     }
 }
@@ -71,21 +82,23 @@ void KarplusStrongEngine::generateHarp(AudioBuffer<float>& buffer, float frequen
     const int numChannels = buffer.getNumChannels();
     const int numSamples = buffer.getNumSamples();
     
-    // Generate mono harp signal with harp-specific parameters
-    HeapBlock<float> monoBuffer;
-    monoBuffer.allocate(numSamples, true);
-    const float harpDamping = stringDamping * 0.5f; // Less damping for harp
-    const float harpResonance = bodyResonance * 1.2f; // More resonance for harp
-    
-    generateKSNote(monoBuffer.getData(), numSamples, frequency, velocity, harpDamping, harpResonance);
-    
+    // Use pre-allocated buffer — no heap allocation on audio thread
+    jassert(numSamples <= preallocatedMonoBufferSize);
+    juce::FloatVectorOperations::clear(preallocatedMonoBuffer.getData(), numSamples);
+    const float harpDamping = stringDamping * 0.5f;
+    const float harpResonance = bodyResonance * 1.2f;
+
+    generateKSNote(preallocatedMonoBuffer.getData(), numSamples, frequency, velocity, harpDamping, harpResonance);
+
     // Copy to stereo channels
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
+        const float* monoData = preallocatedMonoBuffer.getData();
+
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoBuffer.getData()[sample];
+            channelData[sample] = monoData[sample];
         }
     }
 }
@@ -120,15 +133,16 @@ void KarplusStrongEngine::generateKSNote(float* output, int numSamples, float fr
     {
         delayLine.resize(delayLength + 1); // +1 for fractional delay interpolation
         
-        // Initialize with enhanced pluck excitation based on velocity
-        HeapBlock<float> excitation;
-        excitation.allocate(delayLength, true);
-        generateRealisticPluck(excitation.getData(), delayLength, velocity, pluckPosition, frequency);
-        
+        // Use pre-allocated excitation buffer — no heap allocation on audio thread
+        jassert(delayLength <= preallocatedExcitationSize);
+        juce::FloatVectorOperations::clear(preallocatedExcitation.getData(), delayLength);
+        generateRealisticPluck(preallocatedExcitation.getData(), delayLength, velocity, pluckPosition, frequency);
+
         // Fill delay line with excitation
+        const float* excitationData = preallocatedExcitation.getData();
         for (int i = 0; i < delayLength; ++i)
         {
-            delayLine.write(excitation.getData()[i]);
+            delayLine.write(excitationData[i]);
         }
     }
     
@@ -293,25 +307,22 @@ void KarplusStrongEngine::generateRealisticPluck(float* buffer, int numSamples, 
 
 float KarplusStrongEngine::onePoleLP(float input, float cutoff)
 {
-    // Simple one-pole low-pass filter
-    static float state = 0.0f;
-    state = state * (1.0f - cutoff) + input * cutoff;
-    return state;
+    // Per-instance state (was static — caused polyphonic corruption)
+    onePoleState = onePoleState * (1.0f - cutoff) + input * cutoff;
+    return onePoleState;
 }
 
 float KarplusStrongEngine::allPassFilter(float input, float delay)
 {
-    // Simple all-pass filter for fractional delay
-    static float state = 0.0f;
-    float output = -input + state;
-    state = input + delay * output;
+    // Per-instance state (was static — caused polyphonic corruption)
+    float output = -input + allPassState;
+    allPassState = input + delay * output;
     return output;
 }
 
 float KarplusStrongEngine::simulateGuitarBody(float input, float resonance, float frequency, int sampleIndex)
 {
-    // Simulate guitar body resonance with multiple resonant modes
-    static float bodyState1 = 0.0f, bodyState2 = 0.0f, bodyState3 = 0.0f;
+    // Per-instance state (was static — caused polyphonic corruption)
     
     // Primary resonant frequencies of a typical guitar body
     float freq1 = 100.0f + resonance * 50.0f;   // Main air resonance

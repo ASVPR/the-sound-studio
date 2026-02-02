@@ -2,10 +2,9 @@
   ==============================================================================
 
     FrequencyColorSpectrogram.h
-    Created: 12 Sep 2025
-    Author:  The Sound Studio Team
-    
-    Frequency Color Spectrogram - converts audio frequencies to visible light colors
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

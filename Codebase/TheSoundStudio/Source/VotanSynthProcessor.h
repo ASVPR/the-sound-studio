@@ -2,12 +2,15 @@
   ==============================================================================
 
     VotanSynthProcessor.h
-    Created: 16 Aug 2017 2:16:44pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
+
+#pragma once
 #ifndef VOTANSYNTHPROCESSOR_H_INCLUDED
 #define VOTANSYNTHPROCESSOR_H_INCLUDED
 

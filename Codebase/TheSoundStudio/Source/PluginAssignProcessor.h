@@ -2,22 +2,15 @@
   ==============================================================================
 
     PluginAssignProcessor.h
-    Created: 25 Aug 2015 9:57:39pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
-/*
- ==============================================================================
- 
- PluginAssignProcessor.h
- Created: 21 Jan 2014 4:53:52pm
- Author:  Gary Jones
- 
- ==============================================================================
- */
 
+#pragma once
 #ifndef PluginAssignProcessor_H_INCLUDED
 #define PluginAssignProcessor_H_INCLUDED
 

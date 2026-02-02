@@ -2,8 +2,9 @@
   ==============================================================================
 
     FundamentalFrequencyComponent.cpp
-    Created: 17 Mar 2021 9:47:28pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

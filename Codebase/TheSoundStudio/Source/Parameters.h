@@ -2,8 +2,9 @@
   ==============================================================================
 
     Parameters.h
-    Created: 27 Mar 2019 6:09:05pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -12,7 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#define DEFAULT_SAMPLER_FILEPATH   "/Users/garyjones/Documents/TSS/SampleLibrary/Instruments/Ethnic/Steel Drum/Steel Drum - Island Drum 060.wav"
+#define DEFAULT_SAMPLER_FILEPATH   ""
 #define NUM_SHORTCUT_SYNTHS 20
 #define NUM_PLUGIN_SLOTS 4
 #define TIMER_UPDATE_RATE 20

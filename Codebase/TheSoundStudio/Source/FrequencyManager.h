@@ -2,8 +2,9 @@
   ==============================================================================
 
     FrequencyManager.h
-    Created: 17 Dec 2019 8:36:48pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -12,6 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Parameters.h"
 #include "Scales.h"
+#include "TSSConstants.h"
 
 
 class ScalesManager
@@ -143,10 +145,11 @@ public:
         scalesManager->setLissajousScale(newScale);
     }
     
-    ScalesManager * scalesManager;
-    
+    ScalesManager* scalesManager;  // Non-owning pointer (owned by ownedScalesManager)
+
 private:
-    double central_frequency = 432.0;
+    std::unique_ptr<ScalesManager> ownedScalesManager;
+    double central_frequency = TSS::Audio::kDefaultA4Frequency;
 
 };
 

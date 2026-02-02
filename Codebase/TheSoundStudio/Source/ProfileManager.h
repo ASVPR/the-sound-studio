@@ -2,10 +2,9 @@
   ==============================================================================
 
     ProfileManager.h
-    Created: 12 Sep 2025
-    Author:  The Sound Studio Team
-    
-    Handles saving and loading of module presets/profiles
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

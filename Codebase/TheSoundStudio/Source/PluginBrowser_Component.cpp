@@ -2,8 +2,9 @@
   ==============================================================================
 
     PluginBrowser_Component.cpp
-    Created: 26 Aug 2015 1:46:44am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

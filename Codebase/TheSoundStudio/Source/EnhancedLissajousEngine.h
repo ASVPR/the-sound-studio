@@ -2,14 +2,9 @@
   ==============================================================================
 
     EnhancedLissajousEngine.h
-    Created: 3 Sep 2025 7:45:00pm
-    Author:  The Sound Studio Team
 
-    Enhanced Lissajous Engine implementing improvements:
-    - Support for multiple axes (3D, 4D, 5D, 6D curves)
-    - Real-time parameter control
-    - Advanced curve generation algorithms
-    - Color coding for multi-dimensional curves
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

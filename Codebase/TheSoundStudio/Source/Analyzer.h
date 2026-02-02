@@ -2,8 +2,9 @@
   ==============================================================================
 
     Analyzer.h
-    Created: 27 May 2020 11:09:07am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

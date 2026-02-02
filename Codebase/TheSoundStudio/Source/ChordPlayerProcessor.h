@@ -1,9 +1,10 @@
 /*
   ==============================================================================
 
-    MainProcessor.h
-    Created: 29 Mar 2019 12:59:11pm
-    Author:  Gary Jones
+    ChordPlayerProcessor.h
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -15,6 +16,7 @@
 #include "SynthesisLibraryManager.h"
 #include "SynthesisEngine.h"
 #include "WavetableSynthProcessor.h"
+#include "PlayRepeaterBase.h"
 
 class ProjectManager;
 
@@ -106,83 +108,22 @@ private:
     // Play Repeater
     //=============================================================
 public:
-    class PlayRepeater {
-        
+    class PlayRepeater : public PlayRepeaterBase
+    {
     public:
-        PlayRepeater(ChordPlayerProcessor * cp, double sr);
-        ~PlayRepeater();
-        
-        void prepareToPlay(double newSampleRate);
-        void tickBuffer(int numSamples);
-        void play();
-        void stop();
-        
+        PlayRepeater(ChordPlayerProcessor* cp, double sr)
+            : PlayRepeaterBase(sr), proc(cp) {}
+        ~PlayRepeater() override = default;
+
+        void triggerOnEvent(int shortcutRef) override  { proc->triggerNoteOn(shortcutRef); }
+        void triggerOffEvent(int shortcutRef) override { proc->triggerNoteOff(shortcutRef); }
+        void allNotesOff() override                    { proc->panic(); }
+        bool isShortcutMuted(int shortcutRef) const override { return proc->shouldMute[shortcutRef]; }
+        PLAY_STATE& getPlayState() override            { return proc->playState; }
+
     private:
-        void calculatePlaybackTimers();
-        
-        void processShortcut(int shortcutRef, int sampleRef);
-        void processSimultaneousShortcuts(int firstShortcutRef, int sampleRef);
-        
-        void triggerOnEvent(int shortcutRef);
-        void triggerOffEvent(int shortcutRef);
-        void allNotesOff();
-        void clearOpenRepeats();
-        void resetTick();
-        
-        void prepareNextShortcut();
-        
-    public:
-        void setIsActive(int shortcutRef, bool should);
-        void calculateLengths(int shortcutRef);
-        void setNumRepeats(int shortcutRef, int num);
-        void setPauseMS(int shortcutRef, int ms);
-        void setLengthMS(int shortcutRef, int ms);
-        void setPlayMode(PLAY_MODE mode);
-        void setPlaySimultaneous(bool should);
-        
-        int getTotalMSOfLoop();
-        int getCurrentMSInLoop();
-        float getProgressBarValue();
-        String getTimeRemainingInSecondsString();
-        
-    private:
-        
-        ChordPlayerProcessor * proc;
-        
-        PLAY_MODE playMode;
-        PLAY_STATE playState;
-        
-        bool playSimultaneous;
-        
-        int currentPlayingShortcut = 0;
-        int sampleCounter;
-        int numSamplesPerMS;
-        double sampleRate;
-        
-        bool shouldProcess;
-        
-        // params
-        bool isActive[NUM_SHORTCUT_SYNTHS];
-        int numRepeats[NUM_SHORTCUT_SYNTHS];
-        int lengthMS[NUM_SHORTCUT_SYNTHS];
-        int lengthInSamples[NUM_SHORTCUT_SYNTHS];
-        int pauseMS[NUM_SHORTCUT_SYNTHS];
-        int pauseInSamples[NUM_SHORTCUT_SYNTHS];
-        int totalNumMsOfLoop[NUM_SHORTCUT_SYNTHS];
-        int totalMSOfLoop;
-        uint64 totalNumSamplesOfLoop;
-        int currentMS;
-        
-        
-        void processSecondsClock();
-        
-        // events
-        int nextNoteOnEvent[NUM_SHORTCUT_SYNTHS];  // sampleRef for next note on
-        int nextNoteOffEvent[NUM_SHORTCUT_SYNTHS]; // sampleRef for next note off
-        
-        int currentRepeat[NUM_SHORTCUT_SYNTHS];    // current playing repeat, increments for each
-        bool isPaused[NUM_SHORTCUT_SYNTHS];
-    } ;
+        ChordPlayerProcessor* proc;
+    };
     
     PlayRepeater * repeater;
     

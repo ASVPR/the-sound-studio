@@ -1,15 +1,10 @@
 /*
   ==============================================================================
 
-    ProjectManagerFixed.cpp - CRITICAL BUG FIXES APPLIED
-    Created: 14 Aug 2025 (Fixed version of ProjectManager.cpp)
-    Author:  The Sound Studio Team
+    ProjectManagerFixed.cpp
 
-    CRITICAL FIXES APPLIED:
-    1. Thread-safe mode management with atomic operations
-    2. Smart pointer conversion for memory safety
-    3. Exception-safe constructor implementation
-    4. Proper resource cleanup in destructor
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

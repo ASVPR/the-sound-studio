@@ -2,14 +2,9 @@
   ==============================================================================
 
     EnhancedFFTEngine.h
-    Created: 3 Sep 2025 7:20:00pm
-    Author:  The Sound Studio Team
 
-    Enhanced FFT Engine implementing the 4 key improvements:
-    1. Single shared FFT object between all modules
-    2. Higher resolution bins with octave scaling  
-    3. Peak amplitude readout
-    4. Color spectrum visualization
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

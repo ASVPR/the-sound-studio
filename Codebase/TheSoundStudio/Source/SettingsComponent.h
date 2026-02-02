@@ -2,8 +2,9 @@
   ==============================================================================
 
     SettingsComponent.h
-    Created: 13 Mar 2019 9:56:56pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

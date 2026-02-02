@@ -2,12 +2,15 @@
   ==============================================================================
 
     OSCManager.h
-    Created: 25 Apr 2015 3:51:46pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
+
+#pragma once
 #ifndef OSCMANAGER_H_INCLUDED
 #define OSCMANAGER_H_INCLUDED
 #include "VAOscillator.h"

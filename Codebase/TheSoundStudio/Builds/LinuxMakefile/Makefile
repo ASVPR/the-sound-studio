@@ -97,6 +97,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/PhysicalModelingSynth_bd23446d.o \
   $(JUCE_OBJDIR)/KarplusStrongSynth_56ce6198.o \
   $(JUCE_OBJDIR)/WavetableSynth_ad09ffd0.o \
+  $(JUCE_OBJDIR)/DesignSystem_b6d4ddc9.o \
   $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o \
   $(JUCE_OBJDIR)/FeedbackInputOutputComponent_e9981f35.o \
   $(JUCE_OBJDIR)/FeedbackModuleComponent_33751fb8.o \
@@ -127,6 +128,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/SpectrogramComponent_d8406099.o \
   $(JUCE_OBJDIR)/SpectraHarmonicsChart_69620521.o \
   $(JUCE_OBJDIR)/FrequencyColorSpectrogram_801a23e7.o \
+  $(JUCE_OBJDIR)/StandingWaveSpectrogram_58605929.o \
   $(JUCE_OBJDIR)/ColourSpectrumVisualiserComponent_5b6c2c0a.o \
   $(JUCE_OBJDIR)/VisualiserContainerComponent_a3c84b7c.o \
   $(JUCE_OBJDIR)/HighQualityMeter_1dbf9115.o \
@@ -224,6 +226,11 @@ $(JUCE_OBJDIR)/KarplusStrongSynth_56ce6198.o: ../../Source/KarplusStrongSynth.cp
 $(JUCE_OBJDIR)/WavetableSynth_ad09ffd0.o: ../../Source/WavetableSynth.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling WavetableSynth.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DesignSystem_b6d4ddc9.o: ../../Source/UI/DesignSystem.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling DesignSystem.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o: ../../Source/FundamentalFrequencyComponent.cpp
@@ -374,6 +381,11 @@ $(JUCE_OBJDIR)/SpectraHarmonicsChart_69620521.o: ../../Source/SpectraHarmonicsCh
 $(JUCE_OBJDIR)/FrequencyColorSpectrogram_801a23e7.o: ../../Source/FrequencyColorSpectrogram.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling FrequencyColorSpectrogram.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/StandingWaveSpectrogram_58605929.o: ../../Source/StandingWaveSpectrogram.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling StandingWaveSpectrogram.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/ColourSpectrumVisualiserComponent_5b6c2c0a.o: ../../Source/ColourSpectrumVisualiserComponent.cpp

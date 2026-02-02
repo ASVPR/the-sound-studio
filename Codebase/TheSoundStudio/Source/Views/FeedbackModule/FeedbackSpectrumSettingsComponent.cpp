@@ -1,3 +1,14 @@
+/*
+  ==============================================================================
+
+    FeedbackSpectrumSettingsComponent.cpp
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+
+  ==============================================================================
+*/
+
 #include "FeedbackSpectrumSettingsComponent.h"
 
 FeedbackSpectrumSettingsComponent::FeedbackSpectrumSettingsComponent(ProjectManager &pm, FundamentalFrequencyProcessor& ffp) :

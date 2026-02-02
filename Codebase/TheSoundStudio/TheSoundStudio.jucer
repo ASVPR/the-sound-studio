@@ -6,7 +6,6 @@
               headerPath="../../Source/Views/Interface/&#10;../../Source/Views/FeedbackModule/&#10;../../Source/">
   <MAINGROUP id="hjLDaa" name="The Sound Studio">
     <GROUP id="{23453521-7FF0-2AFB-D26F-A48F5AD9BCE8}" name="Source">
-      <FILE id="nsjiCU" name="notes.h" compile="0" resource="0" file="Source/notes.h"/>
       <GROUP id="{77BB7B11-A842-0FD3-9591-F461C16D9E72}" name="Synthesis">
         <FILE id="SynthEngine" name="SynthesisEngine.h" compile="0" resource="0" file="Source/SynthesisEngine.h"/>
         <FILE id="SynthEngineImpl" name="SynthesisEngine.cpp" compile="1" resource="0" file="Source/SynthesisEngine.cpp"/>
@@ -258,6 +257,22 @@
           <FILE id="YeQHT0" name="MenuViewInterface.h" compile="0" resource="0"
                 file="Source/Views/Interface/MenuViewInterface.h"/>
         </GROUP>
+        <GROUP id="{UI000001-PROF-FRAM-EWOR-K00000000001}" name="Professional UI Framework">
+          <FILE id="UIDS001" name="DesignSystem.cpp" compile="1" resource="0"
+                file="Source/UI/DesignSystem.cpp"/>
+          <FILE id="UIDS002" name="DesignSystem.h" compile="0" resource="0"
+                file="Source/UI/DesignSystem.h"/>
+          <FILE id="UIRL001" name="ResponsiveLayout.h" compile="0" resource="0"
+                file="Source/UI/ResponsiveLayout.h"/>
+          <FILE id="UIMB001" name="ModernButton.h" compile="0" resource="0"
+                file="Source/UI/ModernButton.h"/>
+          <FILE id="UIKS001" name="KeyboardShortcuts.h" compile="0" resource="0"
+                file="Source/UI/KeyboardShortcuts.h"/>
+          <FILE id="UIET001" name="EnhancedTooltip.h" compile="0" resource="0"
+                file="Source/UI/EnhancedTooltip.h"/>
+          <FILE id="UIUR001" name="UndoRedoManager.h" compile="0" resource="0"
+                file="Source/UI/UndoRedoManager.h"/>
+        </GROUP>
         <GROUP id="{07BDC490-1711-EBED-A3C1-0FB8B05DB91F}" name="Fundamental Frequency">
           <FILE id="zUE9Wr" name="FundamentalFrequencyComponent.cpp" compile="1"
                 resource="0" file="Source/FundamentalFrequencyComponent.cpp"/>
@@ -416,6 +431,10 @@
                   file="Source/FrequencyColorSpectrogram.cpp"/>
             <FILE id="FCS002" name="FrequencyColorSpectrogram.h" compile="0" resource="0"
                   file="Source/FrequencyColorSpectrogram.h"/>
+            <FILE id="SWS001" name="StandingWaveSpectrogram.cpp" compile="1" resource="0"
+                  file="Source/StandingWaveSpectrogram.cpp"/>
+            <FILE id="SWS002" name="StandingWaveSpectrogram.h" compile="0" resource="0"
+                  file="Source/StandingWaveSpectrogram.h"/>
             <FILE id="moVPpR" name="ColourSpectrumVisualiserComponent.cpp" compile="1"
                   resource="0" file="Source/ColourSpectrumVisualiserComponent.cpp"/>
             <FILE id="El3Ai7" name="ColourSpectrumVisualiserComponent.h" compile="0"

@@ -2,14 +2,16 @@
   ==============================================================================
 
     FrequencyScannerProcessor.cpp
-    Created: 1 Oct 2019 9:06:35am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
 
 #include "FrequencyScannerProcessor.h"
 #include "ProjectManager.h"
+#include "AudioRouting.h"
 
 FrequencyScannerProcessor::FrequencyScannerProcessor(FrequencyManager * fm, ProjectManager * pm)
 {
@@ -164,20 +166,7 @@ void FrequencyScannerProcessor::processBlock (AudioBuffer<float>& buffer,
             synth->processBlock(outputBuffer, midiMessages);
         }
         
-        if      (output == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_2 && buffer.getNumChannels() > 1) { buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_3 && buffer.getNumChannels() > 2) { buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::MONO_4 && buffer.getNumChannels() > 3) { buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
-        else if (output == AUDIO_OUTPUTS::STEREO_1_2 && buffer.getNumChannels() > 1)
-        {
-            buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-            buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-        }
-        else if (output == AUDIO_OUTPUTS::STEREO_3_4 && buffer.getNumChannels() > 2)
-        {
-            buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-            buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples());
-        }
+        TSS::Audio::routeToOutput(buffer, outputBuffer, output);
     }
 
 }

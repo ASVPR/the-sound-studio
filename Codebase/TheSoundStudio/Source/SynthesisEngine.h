@@ -2,11 +2,9 @@
   ==============================================================================
 
     SynthesisEngine.h
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
 
-    Central synthesis engine for The Sound Studio - coordinates all synthesis
-    algorithms and provides instrument generation capabilities.
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

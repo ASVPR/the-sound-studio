@@ -2,11 +2,9 @@
   ==============================================================================
 
     PopupFFTWindow.h
-    Created: 13 Feb 2020 4:06:40pm
-    Author:  Ziv Elovitch
 
-    Popup window for FFT visualization and spectrum analysis.
-    Provides a separate window for detailed frequency domain display.
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

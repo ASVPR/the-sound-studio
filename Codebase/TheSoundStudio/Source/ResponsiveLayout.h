@@ -2,12 +2,9 @@
   ==============================================================================
 
     ResponsiveLayout.h
-    Created: 12 Sep 2024
-    Author:  The Sound Studio Team
-    
-    Comprehensive responsive layout system for adaptive UI components.
-    Provides static utility methods, breakpoint management, and a base
-    component class for automatic responsive behavior.
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

@@ -2,8 +2,9 @@
   ==============================================================================
 
     AnalyzerNew.h
-    Created: 3 Feb 2022 11:16:36pm
-    Author:  Javier Andoni Aizpuru Rodríguez
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -792,6 +793,16 @@ private:
         }
     }
 public:
+    const float* getFFTData() const
+    {
+        return averager.getReadPointer(0);
+    }
+
+    int getFFTDataSize() const
+    {
+        return averager.getNumSamples();
+    }
+
     void getMovingAveragePeakData(double & _peakFreq, double & _peakDB, double & _movingAvgFreq)
     {
         _peakFreq       = peakFreq;

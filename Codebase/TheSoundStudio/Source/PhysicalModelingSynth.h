@@ -2,10 +2,9 @@
   ==============================================================================
 
     PhysicalModelingSynth.h
-    Created: 14 Aug 2025
-    Author:  The Sound Studio Team
 
-    Physical modeling synthesis algorithms for acoustic instrument simulation.
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
@@ -78,7 +77,11 @@ private:
     static constexpr int maxVoices = 32;
     VoiceState voices[maxVoices];
     int currentVoiceIndex = 0;
-    
+
+    // Pre-allocated mono buffer for audio-thread safety (no heap allocation in processBlock)
+    juce::HeapBlock<float> preallocatedMonoBuffer;
+    int preallocatedMonoBufferSize = 0;
+
     // Simple physical modeling implementation
     void generatePianoNote(float* output, int numSamples, float frequency, float velocity);
     void generateStringNote(float* output, int numSamples, float frequency, float velocity);

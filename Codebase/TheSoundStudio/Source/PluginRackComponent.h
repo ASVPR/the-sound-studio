@@ -2,8 +2,9 @@
   ==============================================================================
 
     PluginRackComponent.h
-    Created: 14 Feb 2020 9:06:04am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

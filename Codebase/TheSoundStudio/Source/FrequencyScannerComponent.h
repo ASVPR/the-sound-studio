@@ -2,8 +2,9 @@
   ==============================================================================
 
     FrequencyScannerComponent.h
-    Created: 29 Sep 2019 10:38:05am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

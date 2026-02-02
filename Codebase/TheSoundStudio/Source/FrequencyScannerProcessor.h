@@ -2,8 +2,9 @@
   ==============================================================================
 
     FrequencyScannerProcessor.h
-    Created: 1 Oct 2019 9:06:35am
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */
