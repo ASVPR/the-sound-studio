@@ -34,7 +34,6 @@ SynthesisProcessorVoice2::~SynthesisProcessorVoice2()
 
 //void SynthesisProcessorVoice::setCurrentPlaybackSampleRate (double newRate)
 //{
-//    printf("voice cplaybacksample rate called");
 //
 //    SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
 //
@@ -122,13 +121,10 @@ void SynthesisProcessorVoice2::stopNote (float velocity, bool allowTailOff)
 void SynthesisProcessorVoice2::debugParameters()
 {
 //    if (isVoiceActive()) {
-//        printf("\n voice %i is active", voiceRef);
-//        //            printf("\n frequency = %f", osc->getFrequency());
 //    }
 //
 //    if (envelope->isActive())
 //    {
-//        printf("\n voice %i ENV is active", voiceRef);
 //    }
 }
 
@@ -319,8 +315,7 @@ SynthesisProcessorVoice::~SynthesisProcessorVoice()
 
 //void SynthesisProcessorVoice::setCurrentPlaybackSampleRate (double newRate)
 //{
-//    printf("voice cplaybacksample rate called");
-//    
+//
 //    SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
 //    
 //    envelope    ->setSampleRate(newRate);
@@ -408,7 +403,6 @@ void SynthesisProcessorVoice::debugParameters()
 {
     if (isVoiceActive()) {
         printf("\n voice %i is active", voiceRef);
-        //            printf("\n frequency = %f", osc->getFrequency());
     }
     
     if (envelope->isActive())

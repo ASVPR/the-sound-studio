@@ -142,7 +142,6 @@ private:
     std::unique_ptr<ComboBox> comboBoxKeynote;
     std::unique_ptr<ComboBox> comboBoxChordtype;
     
-    Image imageMainBackground;
     Image imageStopButton;
     Image imageStartButton;
     Image imageBlueButtonNormal;

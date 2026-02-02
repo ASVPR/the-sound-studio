@@ -2,8 +2,9 @@
   ==============================================================================
 
     LUTs.h
-    Created: 31 Mar 2019 6:02:11pm
-    Author:  Gary Jones
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
 
   ==============================================================================
 */

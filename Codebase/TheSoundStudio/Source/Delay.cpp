@@ -9,14 +9,6 @@
   ==============================================================================
 */
 
-//
-//  Delay.cpp
-//  AudioVitamins
-//
-//  Created by Gary Jones on 28/12/2015.
-//
-//
-
 #include "Delay.h"
 #include <algorithm>
 #include <utility>

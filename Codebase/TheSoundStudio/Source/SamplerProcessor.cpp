@@ -89,7 +89,7 @@ AudioBuffer<float>* SynthSamplerSound::getAudioData() const noexcept
 //==============================================================================
 bool SynthSamplerSound::appliesToNote (int midiNoteNumber)
 {
-    // should prob hack it here and run checks on frequency.
+    // TODO: Add frequency range validation
     return true;
 }
 

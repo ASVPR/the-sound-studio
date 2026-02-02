@@ -424,7 +424,6 @@ public:
     
 private:
     ProjectManager * projectManager;
-    Image backgroundImage;
     Image imageBlueCheckButtonNormal;
     Image imageBlueCheckButtonSelected;
     std::unique_ptr<ImageButton> addonButton[NUM_ADDONS];
@@ -566,9 +565,8 @@ private:
     
     Label labelClosestChordValue;
     Label labelEstimatedOctaveValue;
-    
+
     // Images
-    Image mainBackgroundImage;
     Image sectionTopLeftBackground;
     Image section;
     
@@ -687,7 +685,6 @@ private:
     std::unique_ptr<TextEditor> textEditorDivision;
 
     // Images
-    Image mainBackgroundImage;
     Image sectionTopLeftBackground;
     Image section;
     

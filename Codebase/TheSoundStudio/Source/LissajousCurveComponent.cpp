@@ -30,76 +30,31 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     fontLight.setHeight(33);
     
     
-    background                          = ImageCache::getFromMemory(BinaryData::LissajousCurveBackground2_png, BinaryData::LissajousCurveBackground2_pngSize);
-    imagePanicButton                    = ImageCache::getFromMemory(BinaryData::ButtonNoisePanic, BinaryData::ButtonNoisePanicSize);
-    imagePlayButton                     = ImageCache::getFromMemory(BinaryData::playPause2x_png, BinaryData::playPause2x_pngSize);
-    imageStopButton                     = ImageCache::getFromMemory(BinaryData::stop2x_png, BinaryData::stop2x_pngSize);
-    imageAddChordButton                 = ImageCache::getFromMemory(BinaryData::LissajousAddChordButtonImage_png, BinaryData::LissajousAddChordButtonImage_pngSize);
-    imageAddWavefileButton              = ImageCache::getFromMemory(BinaryData::LissajousAddFileButtonImage_png, BinaryData::LissajousAddFileButtonImage_pngSize);
     imageSettingsIcon                   = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
     imageMuteIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutMute2x_png, BinaryData::ShortcutMute2x_pngSize);
-    imageDelete                         = ImageCache::getFromMemory(BinaryData::ShortcutClose2x_png, BinaryData::ShortcutClose2x_pngSize);
     imageBlueButtonNormal               = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected             = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
-    
+
     imageChordFreqButtonNormal              = ImageCache::getFromMemory(BinaryData::ButtonChordFrequencyNormal, BinaryData::ButtonChordFrequencyNormalSize);
     imageChordFreqButtonSelected             = ImageCache::getFromMemory(BinaryData::ButtonChordFrequencySelected, BinaryData::ButtonChordFrequencySelectedSize);
-    
-    imageSourceActive = ImageCache::getFromMemory(BinaryData::LissajousAddButtonActive_png, BinaryData::LissajousAddButtonActive_pngSize);
-    imageSourceInActive = ImageCache::getFromMemory(BinaryData::LissajousAddButtonInactive_png, BinaryData::LissajousAddButtonInactive_pngSize);
-    
-    
-    int stopLeftMargin      = 875 + 249 + 24;
-    int playLeftMargin      = 875;
-    int playTopMargin       = 1330;
-    int playWidth           = 249;
-    int playHeight          = 61;
-    int panicLeftMargin     = 200;
-    int panicTopMargin      = 1264;
-    int panicWidth          = 180;
-    int panicHeight         = panicWidth;
-    
-    
-    button_Play = std::make_unique<ImageButton>();
-    button_Play->setTriggeredOnMouseDown(true);
-    button_Play->setImages (false, true, true,
-                            imagePlayButton, 0.999f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000),
-                            imagePlayButton, 0.6, Colour (0x00000000));
-    button_Play->addListener(this);
-    button_Play->setBounds(playLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Play.get());
-    
-    button_Stop = std::make_unique<ImageButton>();
-    button_Stop->setTriggeredOnMouseDown(true);
-    button_Stop->setImages (false, true, true,
-                            imageStopButton, 0.999f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000),
-                            imageStopButton, 0.6, Colour (0x00000000));
-    button_Stop->addListener(this);
-    button_Stop->setBounds(stopLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Stop.get());
-    
-    button_Panic = std::make_unique<ImageButton>();
-    button_Panic->setTriggeredOnMouseDown(true);
-    button_Panic->setImages (false, true, true,
-                             imagePanicButton, 0.999f, Colour (0x00000000),
-                             Image(), 1.000f, Colour (0x00000000),
-                             imagePanicButton, 0.6, Colour (0x00000000));
-    button_Panic->addListener(this);
-    addAndMakeVisible(button_Panic.get());
-    
-    // Play In Loop Button
-    button_PlayInLoop = std::make_unique<ToggleButton>("Play in Loop");
-    button_PlayInLoop->setBounds(1173, 1137, 300, 80);
-    button_PlayInLoop->setLookAndFeel(&lookAndFeel);
-    button_PlayInLoop->addListener(this);
-    addAndMakeVisible(button_PlayInLoop.get());
+
+    // Transport toolbar with Play/Stop/Panic/Loop
+    TransportToolbarComponent::ButtonVisibility toolbarVis;
+    toolbarVis.play = true;
+    toolbarVis.stop = true;
+    toolbarVis.record = false;
+    toolbarVis.panic = true;
+    toolbarVis.progress = false;
+    toolbarVis.loop = true;
+    toolbarVis.simultaneous = false;
+    toolbarVis.save = false;
+    toolbarVis.load = false;
+    toolbarVis.playingLabel = false;
+    transportToolbar = std::make_unique<TransportToolbarComponent>(toolbarVis);
+    transportToolbar->addTransportListener(this);
+    addAndMakeVisible(transportToolbar.get());
     
     
-    
-    int knobL = 136;
-    int knobY = 1054;
     
     slider_X    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_X    ->setRange (0, 100.0, 0);
@@ -107,31 +62,26 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     slider_X    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
     slider_X    ->addListener (this);
     slider_X    ->setTextValueSuffix("%");
-    slider_X    ->setBounds(knobL, knobY, 130, 158);
     slider_X    ->setNumDecimalPlacesToDisplay(1);
     slider_X    ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_X.get());
-    
-    
+
     slider_Y    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Y    ->setRange (0, 100.0, 0);
     slider_Y    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Y    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
     slider_Y    ->addListener (this);
     slider_Y    ->setTextValueSuffix("%");
-    slider_Y    ->setBounds(knobL + 260, knobY, 130, 158);
     slider_Y    ->setNumDecimalPlacesToDisplay(1);
     slider_Y    ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_Y.get());
-    
-    
+
     slider_Z    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Z    ->setRange (0, 100.0, 0);
     slider_Z    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Z    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
     slider_Z    ->addListener (this);
     slider_Z    ->setTextValueSuffix("%");
-    slider_Z    ->setBounds(knobL + 524, knobY, 130, 158);
     slider_Z    ->setNumDecimalPlacesToDisplay(1);
     slider_Z    ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_Z.get());
@@ -283,7 +233,6 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     
     
     viewerComponent = std::make_unique<LissajousCurveViewerComponent>(projectManager, true);
-    viewerComponent->setBounds(38, 48, 1482, 884);
     addAndMakeVisible(viewerComponent.get());
     
     // popups
@@ -292,12 +241,10 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
     {
         settingsChordComponent[i] = std::make_unique<LissajousChordPlayerSettingsComponent>(projectManager, i);
         addAndMakeVisible(settingsChordComponent[i].get());
-        settingsChordComponent[i]->setBounds(0, 0, 1566, 1440);
         settingsChordComponent[i]->setVisible(false);
-        
+
         settingsFrequencyComponent[i] = std::make_unique<LissajousFrequencyPlayerSettingsComponent>(projectManager, i);
         addAndMakeVisible(settingsFrequencyComponent[i].get());
-        settingsFrequencyComponent[i]->setBounds(0, 0, 1566, 1440);
         settingsFrequencyComponent[i]->setVisible(false);
     }
 
@@ -307,7 +254,6 @@ LissajousCurveComponent::LissajousCurveComponent(ProjectManager * pm)
 LissajousCurveComponent::~LissajousCurveComponent()
 {
     // Ensure children don't reference a destroyed LookAndFeel
-    if (button_PlayInLoop) button_PlayInLoop->setLookAndFeel(nullptr);
     if (slider_X)          slider_X->setLookAndFeel(nullptr);
     if (slider_Y)          slider_Y->setLookAndFeel(nullptr);
     if (slider_Z)          slider_Z->setLookAndFeel(nullptr);
@@ -327,139 +273,102 @@ LissajousCurveComponent::~LissajousCurveComponent()
 
 void LissajousCurveComponent::paint (Graphics& g)
 {
-    g.drawImage(background, 0, 0, 1562*scaleFactor, 1440*scaleFactor, 0, 0, 1562, 1440);
+    g.fillAll(juce::Colour(45, 44, 44));
 }
 
 void LissajousCurveComponent::resized()
 {
-    int stopLeftMargin      = 875 + 249 + 24;
-    int playLeftMargin      = 875;
-    int playTopMargin       = 1346;
-    int playWidth           = 249;
-    int playHeight          = 61;
-    int panicLeftMargin     = 20;
-    int panicTopMargin      = 1320;
-    int panicWidth          = 110;
-    int panicHeight         = panicWidth;
-    
-    button_Play->setBounds(playLeftMargin * scaleFactor, playTopMargin * scaleFactor, playWidth * scaleFactor, playHeight * scaleFactor);
-    button_Stop->setBounds(stopLeftMargin * scaleFactor, playTopMargin * scaleFactor, playWidth * scaleFactor, playHeight * scaleFactor);
-    button_Panic->setBounds(panicLeftMargin * scaleFactor, panicTopMargin * scaleFactor, panicWidth * scaleFactor, panicHeight * scaleFactor);
-    button_PlayInLoop->setBounds(1220 * scaleFactor, 884 * scaleFactor, 300 * scaleFactor, 80 * scaleFactor);
-    
-    
-    
-//    textEditor_Frequency->applyFontToAllText(33  * scaleFactor);
-//    textEditor_Frequency->setBounds(190 * scaleFactor, 1334 * scaleFactor, 188 * scaleFactor, 40 * scaleFactor);
-    
-    float knobL = 300;
-    float knobY_xaxis = 956;
-    float knobY_yaxis = 1076;
-    float knobY_zaxis = 1200;
-    float boxW = 60;
-    float boxH = 26;
-    float knobW = 126;
-    float knobH = 126;
-    
-    slider_X    ->setBounds(knobL * scaleFactor, knobY_xaxis * scaleFactor, knobW * scaleFactor, knobH * scaleFactor);
-    slider_X    ->setTextBoxStyle (Slider::NoTextBox, false, boxW * scaleFactor, boxH * scaleFactor);
-    
-    slider_Y    ->setBounds(knobL * scaleFactor, knobY_yaxis * scaleFactor, knobW * scaleFactor, knobH * scaleFactor);
-    slider_Y    ->setTextBoxStyle (Slider::NoTextBox, false, boxW * scaleFactor, boxH * scaleFactor);
-    
-    slider_Z    ->setTextBoxStyle (Slider::NoTextBox, false, boxW * scaleFactor, boxH * scaleFactor);
-    slider_Z    ->setBounds(knobL * scaleFactor, knobY_zaxis * scaleFactor, knobW * scaleFactor, knobH * scaleFactor);
-    
-    float phaseL = 1117;
-    float phaseSliderW = 333;
-    float phaseSliderH = 50;
-    
-    float phaseY_xaxis = 983;
-    float phaseY_yaxis = 1108;
-    float phaseY_zaxis = 1230;
+    using Layout = TSS::Design::Layout;
+    auto bounds = getLocalBounds();
+    const int w = bounds.getWidth();
+    const int h = bounds.getHeight();
+    const float s = w / Layout::kRefContentWidth;
 
-    slider_PhaseX    ->setBounds(phaseL * scaleFactor, phaseY_xaxis * scaleFactor, phaseSliderW  * scaleFactor, phaseSliderH * scaleFactor);
-    slider_PhaseY    ->setBounds(phaseL * scaleFactor, phaseY_yaxis * scaleFactor, phaseSliderW  * scaleFactor, phaseSliderH * scaleFactor);
-    slider_PhaseZ    ->setBounds(phaseL * scaleFactor, phaseY_zaxis * scaleFactor, phaseSliderW  * scaleFactor, phaseSliderH * scaleFactor);
-    
-    float textEdL = 210;
-    float textEditorW = 70;
-    float textEditorH = 58;
-    float yDif = 24;
-    textEditor_SliderX  ->setBounds(textEdL * scaleFactor, (phaseY_xaxis + yDif + 3) * scaleFactor, textEditorW  * scaleFactor, textEditorH * scaleFactor);
-    textEditor_SliderY  ->setBounds(textEdL * scaleFactor, (phaseY_yaxis + yDif) * scaleFactor, textEditorW  * scaleFactor, textEditorH * scaleFactor);
-    textEditor_SliderZ  ->setBounds(textEdL * scaleFactor, (phaseY_zaxis + yDif) * scaleFactor, textEditorW  * scaleFactor, textEditorH * scaleFactor);
-    
-    float textEditorPhaseL = 1440;
-    yDif = 9;
-    textEditor_SliderPhaseX ->setBounds(textEditorPhaseL * scaleFactor, (phaseY_xaxis + yDif) * scaleFactor, textEditorW  * scaleFactor, textEditorH * scaleFactor);
-    textEditor_SliderPhaseY ->setBounds(textEditorPhaseL * scaleFactor, (phaseY_yaxis + yDif) * scaleFactor, textEditorW  * scaleFactor, textEditorH * scaleFactor);
-    textEditor_SliderPhaseZ ->setBounds(textEditorPhaseL * scaleFactor, (phaseY_zaxis + yDif) * scaleFactor, textEditorW  * scaleFactor, textEditorH * scaleFactor);
-    
+    // Toolbar at bottom
+    int toolbarH = (int)(h * Layout::kToolbarHeightRatio * 0.7f);
+    transportToolbar->setBounds(bounds.removeFromBottom(toolbarH));
 
-    float buttonW = 38;
-    float buttonL = 930;
+    // Lissajous viewer at top (~61% of remaining height)
+    int viewerH = (int)(h * 0.614f);
+    viewerComponent->setBounds((int)(38 * s), (int)(20 * s), (int)(1482 * s), viewerH);
+
+    // Knobs area
+    float knobL = 300 * s;
+    float knobW = 126 * s;
+    float knobH = 126 * s;
+    float boxW = 60 * s;
+    float boxH = 26 * s;
+
+    float knobY_x = h * 0.664f;
+    float knobY_y = h * 0.747f;
+    float knobY_z = h * 0.833f;
+
+    slider_X->setBounds((int)knobL, (int)knobY_x, (int)knobW, (int)knobH);
+    slider_X->setTextBoxStyle(Slider::NoTextBox, false, (int)boxW, (int)boxH);
+    slider_Y->setBounds((int)knobL, (int)knobY_y, (int)knobW, (int)knobH);
+    slider_Y->setTextBoxStyle(Slider::NoTextBox, false, (int)boxW, (int)boxH);
+    slider_Z->setBounds((int)knobL, (int)knobY_z, (int)knobW, (int)knobH);
+    slider_Z->setTextBoxStyle(Slider::NoTextBox, false, (int)boxW, (int)boxH);
+
+    // Phase sliders
+    float phaseL = 1117 * s;
+    float phaseW = 333 * s;
+    float phaseH = 50 * s;
+    float phaseY_x = h * 0.683f;
+    float phaseY_y = h * 0.770f;
+    float phaseY_z = h * 0.854f;
+
+    slider_PhaseX->setBounds((int)phaseL, (int)phaseY_x, (int)phaseW, (int)phaseH);
+    slider_PhaseY->setBounds((int)phaseL, (int)phaseY_y, (int)phaseW, (int)phaseH);
+    slider_PhaseZ->setBounds((int)phaseL, (int)phaseY_z, (int)phaseW, (int)phaseH);
+
+    // Text editors for sliders
+    float textEdL = 210 * s;
+    float textEdW = 70 * s;
+    float textEdH = 58 * s;
+    float yDif = 24 * s;
+    textEditor_SliderX->setBounds((int)textEdL, (int)(phaseY_x + yDif + 3 * s), (int)textEdW, (int)textEdH);
+    textEditor_SliderY->setBounds((int)textEdL, (int)(phaseY_y + yDif), (int)textEdW, (int)textEdH);
+    textEditor_SliderZ->setBounds((int)textEdL, (int)(phaseY_z + yDif), (int)textEdW, (int)textEdH);
+
+    float phaseTextL = 1440 * s;
+    float phaseYDif = 9 * s;
+    textEditor_SliderPhaseX->setBounds((int)phaseTextL, (int)(phaseY_x + phaseYDif), (int)textEdW, (int)textEdH);
+    textEditor_SliderPhaseY->setBounds((int)phaseTextL, (int)(phaseY_y + phaseYDif), (int)textEdW, (int)textEdH);
+    textEditor_SliderPhaseZ->setBounds((int)phaseTextL, (int)(phaseY_z + phaseYDif), (int)textEdW, (int)textEdH);
+
+    // Per-axis buttons and labels
+    float btnW = 38 * s;
+    float iconW = 26 * s;
+    float settingsL = 600 * s;
+    float labelL = 460 * s;
+    float labelW = 100 * s;
+    float buttonL = 930 * s;
     float buttonY[3];
-    
-    float iconW = 26;
-    float settingsL = 600;
-    float labelL = 460;
-    float labelW = 100;
-    buttonY[0] = 978; buttonY[1] = 1100; buttonY[2] = 1224;
-    
+    buttonY[0] = h * 0.679f;
+    buttonY[1] = h * 0.764f;
+    buttonY[2] = h * 0.850f;
+
     for (int i = 0; i < 3; i++)
     {
-        buttonChordOrFrequency[i]  ->setBounds(586 * scaleFactor, buttonY[i] * scaleFactor, 224 * scaleFactor, 32 * scaleFactor);
-        buttonFreeFlow[i]   ->setBounds(buttonL * scaleFactor, buttonY[i] * scaleFactor, buttonW * scaleFactor, buttonW * scaleFactor);
+        buttonChordOrFrequency[i]->setBounds((int)(586 * s), (int)buttonY[i], (int)(224 * s), (int)(32 * s));
+        buttonFreeFlow[i]->setBounds((int)buttonL, (int)buttonY[i], (int)btnW, (int)btnW);
+        buttonSequencer[i]->setBounds((int)buttonL, (int)(buttonY[i] + 40 * s), (int)btnW, (int)btnW);
 
-        buttonSequencer[i]  ->setBounds(buttonL * scaleFactor, (buttonY[i] + 40) * scaleFactor, buttonW * scaleFactor, buttonW * scaleFactor);
-        
-        settingsChordComponent[i]       ->setBounds(0, 0, 1566 * scaleFactor, 1440 * scaleFactor);
-        
-        settingsFrequencyComponent[i]   ->setBounds(0, 0, 1566 * scaleFactor, 1440 * scaleFactor);
-        
-//        buttonMute[i]                   ->setBounds(muteL * scaleFactor, (buttonY[i] + 40) * scaleFactor, iconW * scaleFactor, iconW * scaleFactor);
-        
-        buttonOpenSettings[i]           ->setBounds(settingsL * scaleFactor, (buttonY[i] + 44) * scaleFactor, iconW * scaleFactor, iconW * scaleFactor);
-        
-        labelFrequency[i]  ->setBounds(labelL * scaleFactor, (buttonY[i] + 44) * scaleFactor, labelW * scaleFactor, iconW * scaleFactor);
-        labelFrequency[i]->setFont(24 * scaleFactor);
+        settingsChordComponent[i]->setBounds(0, 0, (int)(1566 * s), (int)(1440 * s));
+        settingsFrequencyComponent[i]->setBounds(0, 0, (int)(1566 * s), (int)(1440 * s));
+
+        buttonOpenSettings[i]->setBounds((int)settingsL, (int)(buttonY[i] + 44 * s), (int)iconW, (int)iconW);
+        labelFrequency[i]->setBounds((int)labelL, (int)(buttonY[i] + 44 * s), (int)labelW, (int)iconW);
+        labelFrequency[i]->setFont(24 * s);
     }
-    
-    viewerComponent->setBounds(38 * scaleFactor, 20 * scaleFactor, 1482 * scaleFactor, 884 * scaleFactor);
-    
-
 }
 
 
 void LissajousCurveComponent::buttonClicked (Button*button)
 {
 
-    if (button == button_Play.get())
-    {
-        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
-    }
-    else if (button == button_Stop.get())
-    {
-        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
-    }
-    else if (button == button_Panic.get())
-    {
-        projectManager->setPanicButton();
-    }
-    else if (button == button_PlayInLoop.get())
-    {
-        if (button_PlayInLoop->getToggleState())
-        {
-            projectManager->setPlayerPlayMode(PLAY_MODE::LOOP);
-        }
-        else
-        {
-            projectManager->setPlayerPlayMode(PLAY_MODE::NORMAL); // might be trigger for shortcuts..
-        }
-    }
-    
-    else if (button == buttonFreeFlow[0].get())
+    if (button == buttonFreeFlow[0].get())
     {
         projectManager->setLissajousParameter(UNIT_1_FREE_FLOW, 0);
     }
@@ -509,9 +418,32 @@ void LissajousCurveComponent::buttonClicked (Button*button)
     {
         openSettingsView(2);
     }
-    
-    
-    
+
+
+
+}
+
+void LissajousCurveComponent::transportPlayClicked()
+{
+    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
+}
+
+void LissajousCurveComponent::transportStopClicked()
+{
+    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
+}
+
+void LissajousCurveComponent::transportPanicClicked()
+{
+    projectManager->setPanicButton();
+}
+
+void LissajousCurveComponent::transportLoopToggled(bool isOn)
+{
+    if (isOn)
+        projectManager->setPlayerPlayMode(PLAY_MODE::LOOP);
+    else
+        projectManager->setPlayerPlayMode(PLAY_MODE::NORMAL);
 }
 
 
@@ -756,7 +688,7 @@ void LissajousCurveComponent::updateSettingsUIParameter(int settingIndex)
 {
     if (settingIndex == PLAYER_PLAY_IN_LOOP)
     {
-        button_PlayInLoop->setToggleState(projectManager->getProjectSettingsParameter(settingIndex), dontSendNotification);
+        transportToolbar->setLoopState(projectManager->getProjectSettingsParameter(settingIndex));
     }
     else if (settingIndex == DEFAULT_SCALE)
     {

@@ -658,8 +658,6 @@ public:
     void mouseUp (const MouseEvent& event) override;
     void mouseWheelMove (const MouseEvent&event, const MouseWheelDetails&wheel)override
     {
-//        printf("delta x = %f", wheel.deltaX);
-
         // when called, simply update delta to new position.
         // timer update callback will request the min/max fft as required
         
@@ -957,8 +955,6 @@ public:
         zoomRange_FreqHigh      = getFrequencyForPosition(range_X_Max_Factor);
 
         
-//        printf ("\n YMin = %f , yMax = %f", range_Y_Min_Factor, range_Y_Max_Factor);
-
         viewRangeDidChange();
     }
 

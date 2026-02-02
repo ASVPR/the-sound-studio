@@ -115,7 +115,6 @@ private:
     std::unique_ptr<TextEditor> textEditorDivision;
 
     // Images
-    Image mainBackgroundImage;
     Image sectionTopLeftBackground;
     Image section;
     

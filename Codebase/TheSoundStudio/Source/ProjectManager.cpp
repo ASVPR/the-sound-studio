@@ -139,8 +139,6 @@ void ProjectManager::prepareToPlay (int samplesPerBlockExpected, double sampleRa
     frequencyPlayerProcessor    ->prepareToPlay(sampleRate, samplesPerBlockExpected);
     frequencyScannerProcessor   ->prepareToPlay(sampleRate, samplesPerBlockExpected);
     lissajousProcessor          ->prepareToPlay(sampleRate, samplesPerBlockExpected);
-    feedbackModuleProcessor     ->prepareToPlay(sampleRate, samplesPerBlockExpected);
-    
     for (int i = 0; i < NUM_PLUGIN_SLOTS; i++)
     {
         pluginAssignProcessor[i]       ->prepareToPlay(sampleRate, samplesPerBlockExpected);
@@ -217,11 +215,6 @@ void ProjectManager::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFi
             case MODE_FUNDAMENTAL_FREQUENCY:
             {
                 processFundamentalFrequency(*bufferToFill.buffer);
-            }
-                break;
-            case MODE_FEEDBACK_MODULE:
-            {
-                processFeedbackModule(*bufferToFill.buffer);
             }
                 break;
             case MODE_FREQUENCY_PLAYER:
@@ -373,12 +366,6 @@ void ProjectManager::processFundamentalFrequency(AudioBuffer<float>& buffer)
     fundamentalFrequencyProcessor->processBlock(buffer, tempMidiBuffer);
 }
 
-void ProjectManager::processFeedbackModule(AudioBuffer<float>& buffer)
-{
-    MidiBuffer tempMidiBuffer;
-    feedbackModuleProcessor->processBlock(buffer, tempMidiBuffer);
-}
-
 void ProjectManager::releaseResources()
 {
 }
@@ -449,15 +436,6 @@ void ProjectManager::initGUISync()
     {
         // needs to call ui fuction
         uiListeners.call(&UIListener::updateFundamentalFrequencyUIParameter, index);
-    }
-    
-    //----------------------------------------------------------------
-    // feedback Module
-    //----------------------------------------------------------------
-    for (int index = 0; index < TOTAL_NUM_FUNDAMENTAL_FEEDBACK_PARAMS; index++)
-    {
-        // needs to call ui fuction
-        uiListeners.call(&UIListener::updateFundamentalFeedbackUIParameter, index);
     }
     
     //----------------------------------------------------------------
@@ -570,13 +548,6 @@ void ProjectManager::initGUISync(AUDIO_MODE mode)
         {
             // needs to call ui fuction
             uiListeners.call(&UIListener::updateFundamentalFrequencyUIParameter, index);
-        }
-    }
-    else if (mode == AUDIO_MODE::MODE_FEEDBACK_MODULE || mode == AUDIO_MODE::MODE_FEEDBACK_MODULE_HARDWARE)
-    {
-        for (int index = 0; index < TOTAL_NUM_FUNDAMENTAL_FEEDBACK_PARAMS; index++)
-        {
-            uiListeners.call(&UIListener::updateFundamentalFeedbackUIParameter, index);
         }
     }
     else if (mode == AUDIO_MODE::MODE_FREQUENCY_TO_LIGHT)
@@ -2380,7 +2351,7 @@ void ProjectManager::initDefaultChordScannerParameters()
 // called from UI to change individual parameters
 void ProjectManager::setChordScannerParameter(int index, var newValue)
 {
-    // extended hack
+    // Extended octave range override
     if (index == CHORD_SCANNER_OCTAVE_EXTENDED)
     {
         bool ex = newValue.operator bool();
@@ -3004,8 +2975,6 @@ void ProjectManager::saveProfileForMode(AUDIO_MODE mode)
                    
                }
                
-               // DBG(maintree.toXmlString()); // Debug check
-               
                maintree.writeToStream(fileOutputStream);
                
            }
@@ -3476,11 +3445,6 @@ void ProjectManager::initializeAnalysisProcessors()
         fundamentalFrequencyProcessor = std::make_unique<FundamentalFrequencyProcessor>(*this, *frequencyManager);
         if (!fundamentalFrequencyProcessor) {
             throw std::runtime_error("Failed to create FundamentalFrequencyProcessor");
-        }
-        
-        feedbackModuleProcessor = std::make_unique<FeedbackModuleProcessor>(*this, *frequencyManager);
-        if (!feedbackModuleProcessor) {
-            throw std::runtime_error("Failed to create FeedbackModuleProcessor");
         }
         
         DBG("Analysis processors initialized successfully");

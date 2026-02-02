@@ -1,10 +1,13 @@
-//
-//  vConstants.h
-//  vPi
-//
-//  Created by Gary Jones on 22/10/2012.
-//  Copyright (c) 2012 VotanFX. All rights reserved.
-//
+/*
+  ==============================================================================
+
+    vConstants.h
+
+    Part of: The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+
+  ==============================================================================
+*/
 
 #ifndef vPi_vConstants_h
 #define vPi_vConstants_h

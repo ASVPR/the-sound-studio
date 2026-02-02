@@ -9,14 +9,6 @@
   ==============================================================================
 */
 
-//
-//  WaveStackOsc.cpp
-//  WaveTableSynthPrototype
-//
-//  Created by Gary Jones on 09/06/2014.
-//
-//
-
 #include "WaveStackOsc.h"
 
 WaveStackOsc::WaveStackOsc()
@@ -363,10 +355,9 @@ void WaveStackOsc::loadTableFromFileChooser(File * file)
     {
         float divisor =  i / (numSamples / numWaveStacks);
         j = (int)floorf(divisor);
-        //   printf("j = %i", j);
         stack[j][i-(2048*j)] = (double)floatData[i];
     }
-    
+
     // run env on buffer
     
     for (int j = 0; j < numWaveStacks; j++)
@@ -397,15 +388,14 @@ void WaveStackOsc::loadTableFromFileChooser(File * file)
         _waveStackArray[j] = stack[j];
     }
     
-    // ok got stacks, debug stacks
+    // Normalize wave stacks
     for (int j = 0; j < numWaveStacks; j++)
     {
         for (int i = 0; i < 2048; i++)
         {
-          //  if (j == 0) printf("stack %i- sample %i , val = %f", j , i , _waveStackArray[j][i]);
         }
     }
-    
+
     // recreate osccilators
     // initalise
     for (int i = 0; i < numWaveStacks; i++)
@@ -448,10 +438,9 @@ void WaveStackOsc::reinitialiseTable(int ref)
         // every 2048 samples needs to accumulate j++
         float divisor =  i / (numSamples / numWaveStacks);
         j = (int)floorf(divisor);
-        //   printf("j = %i", j);
         stack[j][i-(2048*j)] = (double)floatData[i];
     }
-    
+
     //copy stacks to WaveStacks
     for (int j = 0; j < numWaveStacks; j++)
     {
@@ -459,15 +448,14 @@ void WaveStackOsc::reinitialiseTable(int ref)
         _waveStackArray[j] = stack[j];
     }
     
-    // ok got stacks, debug stacks
+    // Normalize wave stacks
     for (int j = 0; j < numWaveStacks; j++)
     {
         for (int i = 0; i < 2048; i++)
         {
-            //  printf("stack %i- sample %i , val = %f", j , i , _waveStackArray[j][i]);
         }
     }
-    
+
     // delet current oscs
     
     // recreate osccilators
@@ -561,15 +549,14 @@ void WaveStackOsc::convertAudioFileToSampleArray()
         _waveStackArray[j] = stack[j];
     }
     
-    // ok got stacks, debug stacks
+    // Normalize wave stacks
     for (int j = 0; j < numWaveStacks; j++)
     {
         for (int i = 0; i < 2048; i++)
         {
-            //  printf("stack %i- sample %i , val = %f", j , i , _waveStackArray[j][i]);
         }
     }
-     
+
      */
 }
 

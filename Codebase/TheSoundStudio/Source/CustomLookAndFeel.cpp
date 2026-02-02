@@ -421,9 +421,6 @@ void CustomLookAndFeel::drawTooltip (Graphics&g, const String& text, int width, 
     tl.createLayoutWithBalancedLineLengths (s, (float) maxToolTipWidth);
     
     tl.draw (g, { static_cast<float> (width), static_cast<float> (height) });
-    
-    // hacked it back into life !
-    
 //        LookAndFeelHelpers::layoutTooltipText (text, findColour (TooltipWindow::textColourId))
 //        .draw (g, { static_cast<float> (width), static_cast<float> (height) });
     

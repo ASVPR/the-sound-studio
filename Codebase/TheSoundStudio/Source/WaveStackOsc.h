@@ -11,14 +11,6 @@
 
 
 #pragma once
-//
-//  WaveStackOsc.h
-//  WaveTableSynthPrototype
-//
-//  Created by Gary Jones on 09/06/2014.
-//
-//
-
 #ifndef __WaveTableSynthPrototype__WaveStackOsc__
 #define __WaveTableSynthPrototype__WaveStackOsc__
 

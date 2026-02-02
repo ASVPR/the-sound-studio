@@ -1,5 +1,7 @@
 # The Sound Studio
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 A professional audio synthesis and analysis platform built with the [JUCE](https://juce.com/) framework. The Sound Studio replaces traditional sample-based audio with real-time synthesis algorithms, delivering a lightweight application with rich sound design capabilities.
 
 ## Features
@@ -23,6 +25,12 @@ A professional audio synthesis and analysis platform built with the [JUCE](https
 - Audio recording and export
 - MIDI input support
 - Configurable synthesis parameters (ADSR, filters, modulation)
+
+## Screenshots
+
+| Chord Scanner | Settings |
+|:---:|:---:|
+| ![Chord Scanner](example/Chord%20Scanner.png) | ![Settings](example/Settings.png) |
 
 ## Building
 
@@ -70,6 +78,24 @@ tss/
 └── README.md
 ```
 
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m 'Add my feature'`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Open a Pull Request
+
+## Acknowledgments
+
+- [JUCE](https://juce.com/) — Cross-platform C++ audio framework
+- [HIIR](https://github.com/music-dsp-collection/hiir) — Halfband IIR filter library by Laurent de Soras
+- [readerwriterqueue](https://github.com/cameron314/readerwriterqueue) — Lock-free single-producer, single-consumer queue
+
 ## License
 
-Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+This project is licensed under the GNU General Public License v3.0 — see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2026 Ziv Elovitch.

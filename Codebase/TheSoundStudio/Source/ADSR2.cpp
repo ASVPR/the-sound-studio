@@ -97,21 +97,18 @@ void ADSR2::setAttackRate(float rate) {
     attackRate = rate * sample_rate / 1000;
     attackCoef = calcCoef(rate, targetRatioA);
     attackBase = (1.0 + targetRatioA) * (1.0 - attackCoef);
-   // printf("Attack = %f", attackRate);
 }
 // only change targetratio D or R .***
 void ADSR2::setDecayRate(float rate) {
     decayRate = rate * sample_rate / 1000;
     decayCoef = calcCoef(rate, targetRatioDR);
     decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
-   // printf("Decay = %f", decayRate);
 }
 
 void ADSR2::setReleaseRate(float rate) {
     releaseRate = rate;
     releaseCoef = calcCoef(rate, targetRatioDR);
     releaseBase = -targetRatioDR * (1.0 - releaseCoef);
-   // printf("Release = %f", releaseRate);
 }
 
 float ADSR2::calcCoef(float rate, float targetRatio) {
@@ -122,7 +119,6 @@ void ADSR2::setSustainLevel(float level) {
     sustainLevel = level;
    // decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
     decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
-  //  printf("sustain = %f", sustainLevel);
 }
 
 void ADSR2::setTargetRatioA(float targetRatio) {

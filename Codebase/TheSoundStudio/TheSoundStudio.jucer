@@ -3,7 +3,7 @@
 <JUCERPROJECT id="TssStd" name="The Sound Studio" projectType="guiapp" reportAppUsage="0"
               jucerFormatVersion="1" version="1.0.0.0" cppLanguageStandard="17"
               displaySplashScreen="1" defines="JUCE_DISPLAY_SPLASH_SCREEN=0&#10;TSS_SYNTHESIS_ENGINE=1"
-              headerPath="../../Source/Views/Interface/&#10;../../Source/Views/FeedbackModule/&#10;../../Source/">
+              headerPath="../../Source/Views/Interface/&#10;../../Source/">
   <MAINGROUP id="hjLDaa" name="The Sound Studio">
     <GROUP id="{23453521-7FF0-2AFB-D26F-A48F5AD9BCE8}" name="Source">
       <GROUP id="{77BB7B11-A842-0FD3-9591-F461C16D9E72}" name="Synthesis">
@@ -279,34 +279,6 @@
           <FILE id="o4lfPl" name="FundamentalFrequencyComponent.h" compile="0"
                 resource="0" file="Source/FundamentalFrequencyComponent.h"/>
         </GROUP>
-        <GROUP id="{944FBE6A-7AD0-F067-E955-79CC62DADB1B}" name="FeedbackModule">
-          <GROUP id="{0CFA038B-7B1D-8224-C892-415716E37D70}" name="Support">
-            <FILE id="bOHzX8" name="ChannelHeader.h" compile="0" resource="0" file="Source/Views/FeedbackModule/Support/ChannelHeader.h"/>
-            <FILE id="jPL8qF" name="FoldableContainer.h" compile="0" resource="0"
-                  file="Source/Views/FeedbackModule/Support/FoldableContainer.h"/>
-            <FILE id="oRH2Nm" name="Holder.h" compile="0" resource="0" file="Source/Views/FeedbackModule/Support/Holder.h"/>
-            <FILE id="unAIAv" name="InputChannelBody.h" compile="0" resource="0"
-                  file="Source/Views/FeedbackModule/Support/InputChannelBody.h"/>
-            <FILE id="bcjXkp" name="OutputChannelBody.h" compile="0" resource="0"
-                  file="Source/Views/FeedbackModule/Support/OutputChannelBody.h"/>
-          </GROUP>
-          <FILE id="FRAQyg" name="FeedbackInputOutputComponent.cpp" compile="1"
-                resource="0" file="Source/Views/FeedbackModule/FeedbackInputOutputComponent.cpp"/>
-          <FILE id="Y6QaHc" name="FeedbackInputOutputComponent.h" compile="0"
-                resource="0" file="Source/Views/FeedbackModule/FeedbackInputOutputComponent.h"/>
-          <FILE id="H8CcB6" name="FeedbackModuleComponent.cpp" compile="1" resource="0"
-                file="Source/Views/FeedbackModule/FeedbackModuleComponent.cpp"/>
-          <FILE id="gsYJ3s" name="FeedbackModuleComponent.h" compile="0" resource="0"
-                file="Source/Views/FeedbackModule/FeedbackModuleComponent.h"/>
-          <FILE id="LsfYmD" name="FeedbackModuleParameterSettingsComponent.cpp"
-                compile="1" resource="0" file="Source/Views/FeedbackModule/FeedbackModuleParameterSettingsComponent.cpp"/>
-          <FILE id="GLhigO" name="FeedbackModuleParameterSettingsComponent.h"
-                compile="0" resource="0" file="Source/Views/FeedbackModule/FeedbackModuleParameterSettingsComponent.h"/>
-          <FILE id="YTQuXl" name="FeedbackSpectrumSettingsComponent.cpp" compile="1"
-                resource="0" file="Source/Views/FeedbackModule/FeedbackSpectrumSettingsComponent.cpp"/>
-          <FILE id="hW67hy" name="FeedbackSpectrumSettingsComponent.h" compile="0"
-                resource="0" file="Source/Views/FeedbackModule/FeedbackSpectrumSettingsComponent.h"/>
-        </GROUP>
         <GROUP id="{EACD2FEA-F130-0419-DA43-08FFEEAC8A00}" name="ChordPlayer">
           <FILE id="eHwyTs" name="ChordPlayerComponent.cpp" compile="1" resource="0"
                 file="Source/ChordPlayerComponent.cpp"/>
@@ -473,10 +445,6 @@
               resource="0" file="Source/FundamentalFrequencyProcessor.cpp"/>
         <FILE id="JZp3zG" name="FundamentalFrequencyProcessor.h" compile="0"
               resource="0" file="Source/FundamentalFrequencyProcessor.h"/>
-        <FILE id="WwEX9t" name="FeedbackModuleProcessor.cpp" compile="1" resource="0"
-              file="Source/FeedbackModuleProcessor.cpp"/>
-        <FILE id="yfL0Jb" name="FeedbackModuleProcessor.h" compile="0" resource="0"
-              file="Source/FeedbackModuleProcessor.h"/>
         <FILE id="fimMC3" name="AnalyzerNew.h" compile="0" resource="0" file="Source/AnalyzerNew.h"/>
         <FILE id="a2MIOv" name="Analyzer.cpp" compile="1" resource="0" file="Source/Analyzer.cpp"/>
         <FILE id="metXfq" name="Analyzer.h" compile="0" resource="0" file="Source/Analyzer.h"/>
@@ -625,6 +593,10 @@
             file="Source/CustomLookAndFeel.cpp"/>
       <FILE id="fT8xNQ" name="CustomLookAndFeel.h" compile="0" resource="0"
             file="Source/CustomLookAndFeel.h"/>
+      <FILE id="TrTb01" name="TransportToolbarComponent.cpp" compile="1" resource="0"
+            file="Source/TransportToolbarComponent.cpp"/>
+      <FILE id="TrTb02" name="TransportToolbarComponent.h" compile="0" resource="0"
+            file="Source/TransportToolbarComponent.h"/>
       <FILE id="oDHitA" name="LogFileWriter.cpp" compile="1" resource="0"
             file="Source/LogFileWriter.cpp"/>
       <FILE id="jcmif7" name="LogFileWriter.h" compile="0" resource="0" file="Source/LogFileWriter.h"/>

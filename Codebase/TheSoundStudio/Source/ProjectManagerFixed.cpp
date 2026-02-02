@@ -180,7 +180,6 @@ void ProjectManager::initializeAnalysisProcessors()
 {
     realtimeAnalysisProcessor = std::make_unique<RealtimeAnalysisProcessor>(frequencyManager.get());
     fundamentalFrequencyProcessor = std::make_unique<FundamentalFrequencyProcessor>(frequencyManager.get());
-    feedbackModuleProcessor = std::make_unique<FeedbackModuleProcessor>();
 }
 
 // FIXED: Thread-safe mode management
@@ -257,7 +256,4 @@ void ProjectManager::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFil
         processFundamentalFrequency(*bufferToFill.buffer);
     }
     
-    if (feedbackModuleProcessor) {
-        processFeedbackModule(*bufferToFill.buffer);
-    }
 }

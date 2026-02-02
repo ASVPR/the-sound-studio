@@ -30,146 +30,83 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     fontLight.setHeight(33);
     
     // images
-
-    imageMainBackground                 = ImageCache::getFromMemory(BinaryData::ChordScannerBackground2_png, BinaryData::ChordScannerBackground2_pngSize);
-
-    imagePanicButton                    = ImageCache::getFromMemory(BinaryData::PanicButton2x_png, BinaryData::PanicButton2x_pngSize);
-    imagePlayButton                     = ImageCache::getFromMemory(BinaryData::playPause2x_png, BinaryData::playPause2x_pngSize);
-    imageProgresBarFill                 = ImageCache::getFromMemory(BinaryData::ProgressBarFill2x_png, BinaryData::ProgressBarFill2x_pngSize);
-    imageSettingsIcon                   = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
-    imageAddIcon                        = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
-    imageCloseIcon                      = ImageCache::getFromMemory(BinaryData::ShortcutClose2x_png, BinaryData::ShortcutClose2x_pngSize);
-    imageLeftIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutLeft2x_png, BinaryData::ShortcutLeft2x_pngSize);
-    imageRightIcon                      = ImageCache::getFromMemory(BinaryData::ShortcutRight2x_png, BinaryData::ShortcutRight2x_pngSize);
-    imageLoopIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutLoop2x_png, BinaryData::ShortcutLoop2x_pngSize);
-    imageMuteIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutMute2x_png, BinaryData::ShortcutMute2x_pngSize);
-    imageStopButton                     = ImageCache::getFromMemory(BinaryData::stop2x_png, BinaryData::stop2x_pngSize);
-    imageRecordButton                   = ImageCache::getFromMemory(BinaryData::RecordButton_png, BinaryData::RecordButton_pngSize);
-    imageFFTMockup                      = ImageCache::getFromMemory(BinaryData::FFTMockup_png, BinaryData::FFTMockup_pngSize);
-    imageColorSpectrumMockup            = ImageCache::getFromMemory(BinaryData::ColorSpectrumMockup_png, BinaryData::ColorSpectrumMockup_pngSize);
-    imageOctaveSpectrumMockup           = ImageCache::getFromMemory(BinaryData::OctaveSpectrumMockup_png, BinaryData::OctaveSpectrumMockup_pngSize);
     imageBlueButtonNormal               = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected             = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
     imageBlueCheckButtonNormal          = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
     imageBlueCheckButtonSelected        = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
-    
 
-    // Knobs
-    
-    int knobY = 916;
-    int knobL = 374;
-    
 
-    
-    
+    // Knobs (positions set in resized())
     slider_Amplitude    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
     slider_Amplitude    ->setRange (0, 1.0, 0);
     slider_Amplitude    ->addListener (this);
     slider_Amplitude    ->setTextValueSuffix("%");
     slider_Amplitude    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
-    slider_Amplitude    ->setBounds(knobL, knobY, 130, 158);
     slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
     slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
-    
     addAndMakeVisible(slider_Amplitude.get());
-    
-    int dif = 248;
-    
+
     slider_Attack       = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
     slider_Attack       ->setRange (0, 1.0, 0);
     slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Attack       ->addListener (this);
     slider_Attack       ->setTextValueSuffix("Ms");
     slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
-    slider_Attack       ->setBounds(knobL+(1 * dif), knobY, 130, 158);
     slider_Attack       ->setNumDecimalPlacesToDisplay(0);
     slider_Attack       ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_Attack.get());
-    
+
     slider_Sustain      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
     slider_Sustain      ->setRange (0, 1.0, 0);
     slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Sustain      ->addListener (this);
     slider_Sustain      ->setTextValueSuffix("%");
     slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
-    slider_Sustain      ->setBounds(knobL+(2 * dif), knobY, 130, 158);
     slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
-    slider_Sustain        ->setLookAndFeel(&lookAndFeel);
+    slider_Sustain      ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_Sustain.get());
-    
+
     slider_Decay        = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
     slider_Decay        ->setRange (0, 1.0, 0);
     slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Decay        ->addListener (this);
     slider_Decay        ->setTextValueSuffix("Ms");
     slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
-    slider_Decay        ->setBounds(knobL+(3 * dif), knobY, 130, 158);
     slider_Decay        ->setNumDecimalPlacesToDisplay(0);
     slider_Decay        ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_Decay.get());
-    
+
     slider_Release      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
     slider_Release      ->setRange (0, 1.0, 0);
     slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     slider_Release      ->addListener (this);
     slider_Release      ->setTextValueSuffix("Ms");
     slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
-    slider_Release      ->setBounds(knobL+(4 * dif), knobY, 130, 158);
     slider_Release      ->setNumDecimalPlacesToDisplay(0);
     slider_Release      ->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(slider_Release.get());
     
     // FFT
 
-    // Initialize playing status label with proper smart pointer management
-    label_Playing = std::make_unique<Label>();
-    label_Playing->setText("Playing (00:40)", dontSendNotification);
-    label_Playing->setJustificationType(Justification::left);
-    fontLight.setHeight(33);
-    label_Playing->setBounds(playingLeftMargin, playingTopMargin, 300, 40);
-    label_Playing->setFont(fontLight);
-    addAndMakeVisible(label_Playing.get());
-
-    
-    // Initialize play button with proper smart pointer management
-    button_Play = std::make_unique<ImageButton>();
-    button_Play->setTriggeredOnMouseDown(true);
-    button_Play->setImages (false, true, true,
-                            imagePlayButton, 0.999f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000),
-                            imagePlayButton, 0.6, Colour (0x00000000));
-    button_Play->addListener(this);
-    button_Play->setBounds(playLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Play.get());
-    
-    // Initialize stop button with proper smart pointer management
-    button_Stop = std::make_unique<ImageButton>();
-    button_Stop->setTriggeredOnMouseDown(true);
-    button_Stop->setImages (false, true, true,
-                            imageStopButton, 0.999f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000),
-                            imageStopButton, 0.6, Colour (0x00000000));
-    button_Stop->addListener(this);
-    button_Stop->setBounds(stopLeftMargin, playTopMargin, playWidth, playHeight);
-    addAndMakeVisible(button_Stop.get());
-    
-    // Initialize panic button with proper smart pointer management
-    button_Panic = std::make_unique<ImageButton>();
-    button_Panic->setTriggeredOnMouseDown(true);
-    button_Panic->setImages (false, true, true,
-                             imagePanicButton, 0.999f, Colour (0x00000000),
-                             Image(), 1.000f, Colour (0x00000000),
-                             imagePanicButton, 0.6, Colour (0x00000000));
-    button_Panic->addListener(this);
-    button_Panic->setBounds(panicLeftMargin, panicTopMargin, panicWidth, panicHeight);
-    addAndMakeVisible(button_Panic.get());
+    // Transport toolbar with Play/Stop/Panic/Record/Progress/Save/Load
+    TransportToolbarComponent::ButtonVisibility toolbarVis;
+    toolbarVis.play = true;
+    toolbarVis.stop = true;
+    toolbarVis.record = false;
+    toolbarVis.panic = true;
+    toolbarVis.progress = true;
+    toolbarVis.loop = false;
+    toolbarVis.simultaneous = false;
+    toolbarVis.save = true;
+    toolbarVis.load = true;
+    toolbarVis.playingLabel = true;
+    transportToolbar = std::make_unique<TransportToolbarComponent>(toolbarVis);
+    transportToolbar->addTransportListener(this);
+    addAndMakeVisible(transportToolbar.get());
 
 
-    // Waveform buttons
-    int waveY = 842;
-    // act as toggle between 5 buttons
-    // Initialize waveform selection buttons with proper smart pointer management
+    // Waveform buttons (positions set in resized())
     button_Default = std::make_unique<ImageButton>();
     button_Default->setTriggeredOnMouseDown(true);
     button_Default->setImages (false, true, true,
@@ -177,9 +114,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                Image(), 1.000f, Colour (0x00000000),
                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Default->addListener(this);
-    button_Default->setBounds(183, waveY, 38, 38);
     addAndMakeVisible(button_Default.get());
-    
+
     button_Sine = std::make_unique<ImageButton>();
     button_Sine->setTriggeredOnMouseDown(true);
     button_Sine->setImages (false, true, true,
@@ -187,9 +123,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                             Image(), 1.000f, Colour (0x00000000),
                             imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sine->addListener(this);
-    button_Sine->setBounds(330, waveY, 38, 38);
     addAndMakeVisible(button_Sine.get());
-    
+
     button_Triangle = std::make_unique<ImageButton>();
     button_Triangle->setTriggeredOnMouseDown(true);
     button_Triangle->setImages (false, true, true,
@@ -197,9 +132,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Triangle->addListener(this);
-    button_Triangle->setBounds(639, waveY, 38, 38);
     addAndMakeVisible(button_Triangle.get());
-    
+
     button_Square = std::make_unique<ImageButton>();
     button_Square->setTriggeredOnMouseDown(true);
     button_Square->setImages (false, true, true,
@@ -207,9 +141,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                               Image(), 1.000f, Colour (0x00000000),
                               imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Square->addListener(this);
-    button_Square->setBounds(924, waveY, 38, 38);
     addAndMakeVisible(button_Square.get());
-    
+
     button_Sawtooth = std::make_unique<ImageButton>();
     button_Sawtooth->setTriggeredOnMouseDown(true);
     button_Sawtooth->setImages (false, true, true,
@@ -217,25 +150,19 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Sawtooth->addListener(this);
-    button_Sawtooth->setBounds(1240, waveY, 38, 38);
     addAndMakeVisible(button_Sawtooth.get());
-    
+
     button_Wavetable = std::make_unique<ImageButton>();
     button_Wavetable->setTriggeredOnMouseDown(true);
     button_Wavetable->setImages (false, true, true,
-                                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
-                                                Image(), 1.000f, Colour (0x00000000),
-                                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
+                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000),
+                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_Wavetable->addListener(this);
     addAndMakeVisible(button_Wavetable.get());
 
     
-    //Chord Scan buttons
-    int size    = 50;
-    int scanY   = 462;
-
-    
-    // Initialize chord scanning buttons with proper smart pointer management
+    // Chord Scan buttons (positions set in resized())
     button_ScanOnlyMainChords = std::make_unique<ImageButton>();
     button_ScanOnlyMainChords->setTriggeredOnMouseDown(true);
     button_ScanOnlyMainChords->setImages (false, true, true,
@@ -243,7 +170,6 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanOnlyMainChords->addListener(this);
-    button_ScanOnlyMainChords->setBounds(150, scanY, size, size);
     addAndMakeVisible(button_ScanOnlyMainChords.get());
 
     button_ScanAllChords = std::make_unique<ImageButton>();
@@ -253,9 +179,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanAllChords->addListener(this);
-    button_ScanAllChords->setBounds(542, scanY, size, size);
     addAndMakeVisible(button_ScanAllChords.get());
-    
+
     button_ScanSpecificRange = std::make_unique<ImageButton>();
     button_ScanSpecificRange->setTriggeredOnMouseDown(true);
     button_ScanSpecificRange->setImages (false, true, true,
@@ -263,10 +188,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanSpecificRange->addListener(this);
-    button_ScanSpecificRange->setBounds(880, scanY, size, size);
     addAndMakeVisible(button_ScanSpecificRange.get());
-    
-    
+
     button_ScanByFrequency = std::make_unique<ImageButton>();
     button_ScanByFrequency->setTriggeredOnMouseDown(true);
     button_ScanByFrequency->setImages (false, true, true,
@@ -274,7 +197,6 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
                                           Image(), 1.000f, Colour (0x00000000),
                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
     button_ScanByFrequency->addListener(this);
-    button_ScanByFrequency->setBounds(1240, scanY, size, size);
     addAndMakeVisible(button_ScanByFrequency.get());
     
     imageBlueCheckButtonNormal  = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
@@ -293,10 +215,7 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     
     
     
-    // Text Entry for Repeater
-    int playY = 1252;
-    
-    // Initialize text editors for timing controls
+    // Text Entry for Repeater (positions set in resized())
     textEditorRepeat = std::make_unique<TextEditor>("");
     textEditorRepeat->setReturnKeyStartsNewLine(false);
     textEditorRepeat->setInputRestrictions(5, "0123456789");
@@ -309,10 +228,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorRepeat->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorRepeat->applyFontToAllText(fontSemiBold);
     textEditorRepeat->applyColourToAllText(Colours::lightgrey);
-    textEditorRepeat->setBounds(500, playY, 111, 35);
     addAndMakeVisible(textEditorRepeat.get());
 
-    
     textEditorPause = std::make_unique<TextEditor>("");
     textEditorPause->setReturnKeyStartsNewLine(false);
     textEditorPause->setInputRestrictions(5, "0123456789.");
@@ -325,10 +242,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorPause->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorPause->applyFontToAllText(fontSemiBold);
     textEditorPause->applyColourToAllText(Colours::lightgrey);
-    textEditorPause->setBounds(1094, playY, 111, 35);
     addAndMakeVisible(textEditorPause.get());
-    
-    
+
     textEditorLength = std::make_unique<TextEditor>("");
     textEditorLength->setReturnKeyStartsNewLine(false);
     textEditorLength->setMultiLine(false);
@@ -341,47 +256,11 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorLength->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorLength->applyFontToAllText(fontSemiBold);
     textEditorLength->applyColourToAllText(Colours::lightgrey);
-    textEditorLength->setBounds(794, playY, 111, 35);
     addAndMakeVisible(textEditorLength.get());
-    
-    
-    // visualiser component
-    // Initialize visualizer container component
-    visualiserContainerComponent = std::make_unique<VisualiserContainerComponent2>(projectManager, AUDIO_MODE::MODE_CHORD_SCANNER);
-    visualiserContainerComponent->setBounds(350, 28, 1146, 320);
-    addAndMakeVisible(visualiserContainerComponent.get());
-    
-    // Progress bar
-    // Initialize progress bar component
-    progressBar = std::make_unique<CustomProgressBar>();
-    progressBar->setBounds(292, 420, 1226, 42);
-    addAndMakeVisible(progressBar.get());
-    
-    
-    // Load / Save Button
-//    button_Load = new TextButton("Load");
-//    button_Load->setBounds(1430, 1204, 60, 40);
-//    button_Load->addListener(this);
-//    addAndMakeVisible(button_Load);
-//
-//    button_Save = new TextButton("Save");
-//    button_Save->setBounds(1360, 1204, 60, 40);
-//    button_Save->addListener(this);
-//    addAndMakeVisible(button_Save);
 
-    
-    // Initialize save/load buttons with proper smart pointer management
-    button_Load = std::make_unique<TextButton>("Load");
-    button_Load->setBounds(1470, 1204, 100, 40);
-    button_Load->addListener(this);
-    button_Load->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Load.get());
-    
-    button_Save = std::make_unique<TextButton>("Save");
-    button_Save->setBounds(1360, 1204, 100, 40);
-    button_Save->addListener(this);
-    button_Save->setLookAndFeel(&lookAndFeel);
-    addAndMakeVisible(button_Save.get());
+    // Visualiser component (position set in resized())
+    visualiserContainerComponent = std::make_unique<VisualiserContainerComponent2>(projectManager, AUDIO_MODE::MODE_CHORD_SCANNER);
+    addAndMakeVisible(visualiserContainerComponent.get());
     
     // combobox playing instrument
     comboBoxPlayingInstrument = std::make_unique<ComboBox>();
@@ -410,91 +289,73 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
 
     
     
-    // Initialize information display labels with proper memory management
+    // Information display labels (positions set in resized())
     label_CurrentPlayingChord = std::make_unique<Label>();
     label_CurrentPlayingChord->setText("F#Maj7", dontSendNotification);
-    label_CurrentPlayingChord->setBounds(140, 310, 300, 40);
     fontLight.setHeight(33);
     label_CurrentPlayingChord->setJustificationType(Justification::left);
     label_CurrentPlayingChord->setFont(fontLight);
     label_CurrentPlayingChord->setColour(Label::textColourId , Colours::darkgrey);
     addAndMakeVisible(label_CurrentPlayingChord.get());
-    
+
     label_Frequency = std::make_unique<Label>();
     label_Frequency->setText("440hz", dontSendNotification);
-    label_Frequency->setBounds(250, 659, 300, 40);
     label_Frequency->setJustificationType(Justification::left);
     fontLight.setHeight(33);
     label_Frequency->setFont(fontLight);
     label_Frequency->setColour(Label::textColourId , Colours::darkgrey);
     addAndMakeVisible(label_Frequency.get());
-    
+
     label_ClosestChord = std::make_unique<Label>();
     label_ClosestChord->setText("A Minor", dontSendNotification);
-    label_ClosestChord->setBounds(1030, 659, 300, 40);
     label_ClosestChord->setJustificationType(Justification::left);
     fontLight.setHeight(33);
     label_ClosestChord->setFont(fontLight);
     label_ClosestChord->setColour(Label::textColourId , Colours::darkgrey);
     addAndMakeVisible(label_ClosestChord.get());
-    
-    
-    // Initialize container components for UI organization
+
+    // Container components for UI organization (positions set in resized())
     component_KeynoteContainer = std::make_unique<Component>();
-    component_KeynoteContainer->setBounds(0, 563, 600, 35);
     addAndMakeVisible(component_KeynoteContainer.get());
-    
-    //=============================================
-    
+
     component_FrequencyContainer = std::make_unique<Component>();
-    component_FrequencyContainer->setBounds(0, 563, 600, 35);
     addAndMakeVisible(component_FrequencyContainer.get());
     
     switchKeynoteFrequencyComponent(true);
     
     //=============================================
     
-    int octaveY = 563;
-    int keynoteToX = 420;
-    int keynoteFromX =  176;
-    int comboBoxWidth = 186;
-    
-    
-    // Initialize octave selection combo boxes
+    // Octave selection combo boxes (positions set in resized())
     comboBoxOctaveFrom = std::make_unique<ComboBox>();
     comboBoxOctaveFrom->addItemList(ProjectStrings::getOctaveArray(), 1);
     comboBoxOctaveFrom->setSelectedId(1);
     comboBoxOctaveFrom->addListener(this);
-    comboBoxOctaveFrom->setBounds(1174-250-40, octaveY, comboBoxWidth, 35);
     comboBoxOctaveFrom->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(comboBoxOctaveFrom.get());
-    
+
     comboBoxOctaveTo = std::make_unique<ComboBox>();
     comboBoxOctaveTo->addItemList(ProjectStrings::getOctaveArray(), 1);
     comboBoxOctaveTo->setSelectedId(1);
     comboBoxOctaveTo->addListener(this);
-    comboBoxOctaveTo->setBounds(1174-40, octaveY, comboBoxWidth, 35);
     comboBoxOctaveTo->setLookAndFeel(&lookAndFeel);
     addAndMakeVisible(comboBoxOctaveTo.get());
-    
-    // Initialize keynote selection combo boxes
+
+    // Keynote selection combo boxes
     comboBoxKeynoteFrom = std::make_unique<ComboBox>();
     comboBoxKeynoteFrom->addItemList(ProjectStrings::getKeynoteArray(), 1);
     comboBoxKeynoteFrom->setSelectedId(1);
     comboBoxKeynoteFrom->addListener(this);
-    comboBoxKeynoteFrom->setBounds(keynoteFromX, 0, comboBoxWidth, 35);
     comboBoxKeynoteFrom->setLookAndFeel(&lookAndFeel);
     component_KeynoteContainer->addAndMakeVisible(comboBoxKeynoteFrom.get());
-    
+
     comboBoxKeynoteTo = std::make_unique<ComboBox>();
     comboBoxKeynoteTo->addItemList(ProjectStrings::getKeynoteArray(), 1);
     comboBoxKeynoteTo->setSelectedId(1);
     comboBoxKeynoteTo->addListener(this);
-    comboBoxKeynoteTo->setBounds(keynoteToX, 0, comboBoxWidth, 35);
     comboBoxKeynoteTo->setLookAndFeel(&lookAndFeel);
     component_KeynoteContainer->addAndMakeVisible(comboBoxKeynoteTo.get());
-    
-    // Initialize frequency input text editors
+
+    // Frequency input text editors
     textEditorFrequencyFrom = std::make_unique<TextEditor>("");
     textEditorFrequencyFrom->setReturnKeyStartsNewLine(false);
     textEditorFrequencyFrom->setMultiLine(false);
@@ -506,9 +367,8 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorFrequencyFrom->setFont(fontSemiBold);
     textEditorFrequencyFrom->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorFrequencyFrom->applyFontToAllText(fontSemiBold);
-    textEditorFrequencyFrom->setBounds(keynoteFromX, 0, comboBoxWidth, 35);
     component_FrequencyContainer->addAndMakeVisible(textEditorFrequencyFrom.get());
-    
+
     textEditorFrequencyTo = std::make_unique<TextEditor>("");
     textEditorFrequencyTo->setReturnKeyStartsNewLine(false);
     textEditorFrequencyTo->setMultiLine(false);
@@ -520,7 +380,6 @@ ChordScannerComponent::ChordScannerComponent(ProjectManager * pm)
     textEditorFrequencyTo->setFont(fontSemiBold);
     textEditorFrequencyTo->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorFrequencyTo->applyFontToAllText(fontSemiBold);
-    textEditorFrequencyTo->setBounds(keynoteToX, 0, comboBoxWidth, 35);
     component_FrequencyContainer->addAndMakeVisible(textEditorFrequencyTo.get());
     
 
@@ -556,129 +415,118 @@ ChordScannerComponent::~ChordScannerComponent() { }
 
 void ChordScannerComponent::resized()
 {
+    using Layout = TSS::Design::Layout;
     auto bounds = getLocalBounds();
-    float dynamicScale = jmin(bounds.getWidth() / 1600.0f, bounds.getHeight() / 1200.0f);
-    dynamicScale = jlimit(0.5f, 2.0f, dynamicScale) * scaleFactor;
+    const int w = bounds.getWidth();
+    const int h = bounds.getHeight();
+    const float s = w / Layout::kRefContentWidth; // proportional scale
 
-    int fontSize = 30; // Define fontSize for text editors
+    // Toolbar at bottom
+    int toolbarH = (int)(h * Layout::kToolbarHeightRatio);
+    transportToolbar->setBounds(bounds.removeFromBottom(toolbarH));
 
-    // Calculate positions relative to window size
-    int knobAreaY = bounds.getHeight() * 0.76f; // 76% down from top
-    int knobAreaLeft = bounds.getWidth() * 0.23f; // 23% from left
-    int knobSpacing = bounds.getWidth() * 0.155f; // 15.5% width spacing
+    // Visualiser at top-right (~23% from left, ~2% from top, ~73% width, ~22% height)
+    int visX = (int)(w * 0.224f);
+    int visY = (int)(h * 0.019f);
+    int visW = (int)(w * 0.735f);
+    int visH = (int)(h * 0.225f);
+    visualiserContainerComponent->setBounds(visX, visY, visW, visH);
 
-    int knobWidth = 130 * dynamicScale;
-    int knobHeight = 158 * dynamicScale;
-    int textBoxWidth = 78 * dynamicScale;
-    int textBoxHeight = 28 * dynamicScale;
+    // Current playing chord label
+    int fontSize = (int)(30 * s);
+    label_CurrentPlayingChord->setBounds((int)(w * 0.090f), (int)(h * 0.215f), (int)(w * 0.192f), (int)(h * 0.028f));
+    label_CurrentPlayingChord->setFont(fontSize);
 
-    // Position ADSR knobs proportionally
-    slider_Amplitude->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
-    slider_Amplitude->setBounds(knobAreaLeft, knobAreaY, knobWidth, knobHeight);
+    // Scan mode buttons row (~32% down)
+    int scanBtnSize = (int)(50 * s);
+    int scanY = (int)(h * 0.321f);
+    button_ScanOnlyMainChords->setBounds((int)(w * 0.096f), scanY, scanBtnSize, scanBtnSize);
+    button_ScanAllChords->setBounds((int)(w * 0.346f), scanY, scanBtnSize, scanBtnSize);
+    button_ScanSpecificRange->setBounds((int)(w * 0.562f), scanY, scanBtnSize, scanBtnSize);
+    button_ScanByFrequency->setBounds((int)(w * 0.793f), scanY, scanBtnSize, scanBtnSize);
 
-    slider_Attack->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
-    slider_Attack->setBounds(knobAreaLeft + knobSpacing, knobAreaY, knobWidth, knobHeight);
+    // Keynote/Frequency containers (~39% down)
+    int containerY = (int)(h * 0.391f);
+    int containerH = (int)(35 * s);
+    int containerW = (int)(w * 0.383f);
+    component_KeynoteContainer->setBounds(0, containerY, containerW, containerH);
+    component_FrequencyContainer->setBounds(0, containerY, containerW, containerH);
 
-    slider_Sustain->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
-    slider_Sustain->setBounds(knobAreaLeft + (2 * knobSpacing), knobAreaY, knobWidth, knobHeight);
+    int comboBoxWidth = (int)(186 * s);
+    int keynoteFromX = (int)(176 * s);
+    int keynoteToX = (int)(420 * s);
+    comboBoxKeynoteFrom->setBounds(keynoteFromX, 0, comboBoxWidth, containerH);
+    comboBoxKeynoteTo->setBounds(keynoteToX, 0, comboBoxWidth, containerH);
+    textEditorFrequencyFrom->setBounds(keynoteFromX, 0, comboBoxWidth, containerH);
+    textEditorFrequencyFrom->applyFontToAllText(fontSize);
+    textEditorFrequencyTo->setBounds(keynoteToX, 0, comboBoxWidth, containerH);
+    textEditorFrequencyTo->applyFontToAllText(fontSize);
 
-    slider_Decay->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
-    slider_Decay->setBounds(knobAreaLeft + (3 * knobSpacing), knobAreaY, knobWidth, knobHeight);
+    // Octave combo boxes
+    int octaveY = containerY;
+    comboBoxOctaveFrom->setBounds((int)(w * 0.565f), octaveY, comboBoxWidth, containerH);
+    comboBoxOctaveTo->setBounds((int)(w * 0.725f), octaveY, comboBoxWidth, containerH);
 
-    slider_Release->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
-    slider_Release->setBounds(knobAreaLeft + (4 * knobSpacing), knobAreaY, knobWidth, knobHeight);
+    // Extended range checkbox
+    button_ExtendedRange->setBounds((int)(w * 0.850f), octaveY + (int)(5 * s), (int)(30 * s), (int)(30 * s));
 
-    // Position labels and buttons proportionally
-    int playAreaY = bounds.getHeight() * 0.59f; // 59% down
-    int playAreaLeft = bounds.getWidth() * 0.07f; // 7% from left
+    // Frequency & closest chord labels (~46% down)
+    label_Frequency->setBounds((int)(w * 0.160f), (int)(h * 0.458f), (int)(w * 0.192f), (int)(h * 0.028f));
+    label_Frequency->setFont(fontSize);
+    label_ClosestChord->setBounds((int)(w * 0.658f), (int)(h * 0.458f), (int)(w * 0.192f), (int)(h * 0.028f));
+    label_ClosestChord->setFont(fontSize);
 
-    label_Playing->setBounds(playAreaLeft, playAreaY - 40 * dynamicScale, 300 * dynamicScale, 40 * dynamicScale);
-    label_Playing->setFont(30 * dynamicScale);
+    // Instrument combo box (~53% down)
+    comboBoxPlayingInstrument->setBounds((int)(w * 0.198f), (int)(h * 0.528f), (int)(w * 0.192f), (int)(43 * s));
 
-    button_Play->setBounds(playAreaLeft, playAreaY, playWidth * dynamicScale, playHeight * dynamicScale);
-    button_Stop->setBounds(playAreaLeft + 100 * dynamicScale, playAreaY, playWidth * dynamicScale, playHeight * dynamicScale);
-    button_Panic->setBounds(bounds.getWidth() * 0.85f, bounds.getHeight() * 0.75f, panicWidth * dynamicScale, panicHeight * dynamicScale);
-    
-    int shift = 90;
-    button_WavetableEditor          ->setBounds((1465-shift) * scaleFactor, 760 * scaleFactor, 150 * scaleFactor, 43 * scaleFactor);
-    
-    int waveY = 842 * scaleFactor;
+    // WT Editor button
+    button_WavetableEditor->setBounds((int)(w * 0.878f), (int)(h * 0.528f), (int)(150 * s), (int)(43 * s));
 
-    button_Default      ->setBounds(147 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
-    button_Sine         ->setBounds(330 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
-    button_Triangle     ->setBounds(570 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
-    button_Square       ->setBounds(818 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
-    button_Sawtooth     ->setBounds(1098 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
-    button_Wavetable    ->setBounds(1370 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
-    
-    int size    = 50 * scaleFactor;
-    int scanY   = 462 * scaleFactor;
-    button_ScanOnlyMainChords->setBounds(150 * scaleFactor, scanY, size, size);
-    button_ScanAllChords->setBounds(542 * scaleFactor, scanY, size, size);
-    button_ScanSpecificRange->setBounds(880 * scaleFactor, scanY, size, size);
-    button_ScanByFrequency->setBounds(1240 * scaleFactor, scanY, size, size);\
-    
-    
-    
-    int playY = 1252 * scaleFactor;
-    
-    float xDif = 200;
-    
-    textEditorRepeat->setBounds((472 - xDif) * scaleFactor, playY, 120 * scaleFactor, 35 * scaleFactor);
-    textEditorRepeat->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditorPause->setBounds((1100 - xDif) * scaleFactor, playY, 120 * scaleFactor, 35 * scaleFactor);
-    textEditorPause->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditorLength->setBounds((794 - xDif) * scaleFactor, playY, 111 * scaleFactor, 35 * scaleFactor);
-    textEditorLength->applyFontToAllText(fontSize * scaleFactor);
-    
-//    setBounds(350, 28, 1146, 320);
-    visualiserContainerComponent->setBounds(350 * scaleFactor, 28 * scaleFactor, 1150 * scaleFactor, 324 * scaleFactor);
+    // Waveform buttons row (~58% down)
+    int waveBtnSize = (int)(38 * s);
+    int waveY = (int)(h * 0.585f);
+    button_Default->setBounds((int)(w * 0.094f), waveY, waveBtnSize, waveBtnSize);
+    button_Sine->setBounds((int)(w * 0.211f), waveY, waveBtnSize, waveBtnSize);
+    button_Triangle->setBounds((int)(w * 0.364f), waveY, waveBtnSize, waveBtnSize);
+    button_Square->setBounds((int)(w * 0.523f), waveY, waveBtnSize, waveBtnSize);
+    button_Sawtooth->setBounds((int)(w * 0.702f), waveY, waveBtnSize, waveBtnSize);
+    button_Wavetable->setBounds((int)(w * 0.876f), waveY, waveBtnSize, waveBtnSize);
 
+    // ADSR knobs (~64% down)
+    int knobW = (int)(130 * s);
+    int knobH = (int)(158 * s);
+    int textBoxW = (int)(78 * s);
+    int textBoxH = (int)(28 * s);
+    int knobY = (int)(h * 0.636f);
+    int knobSpacing = (int)(w * 0.155f);
+    int knobLeft = (int)(w * 0.239f);
 
-    progressBar->setBounds(292 * scaleFactor, 420 * scaleFactor, 1226 * scaleFactor, 42 * scaleFactor);
-    
-    button_Load->setBounds(1440 * scaleFactor, 1160 * scaleFactor, 100 * scaleFactor, 40 * scaleFactor);
-    button_Save->setBounds(1330 * scaleFactor, 1160 * scaleFactor, 100 * scaleFactor, 40 * scaleFactor);
-    
-    comboBoxPlayingInstrument->setBounds(310 * scaleFactor, 760 * scaleFactor, 300 * scaleFactor, 43 * scaleFactor);
-    
-    label_CurrentPlayingChord->setBounds(140 * scaleFactor, 310 * scaleFactor, 300 * scaleFactor, 40 * scaleFactor);
-    label_CurrentPlayingChord->setFont(fontSize * scaleFactor);
-    
-    label_Frequency->setBounds(250 * scaleFactor, 659 * scaleFactor, 300 * scaleFactor, 40 * scaleFactor);
-    label_Frequency->setFont(fontSize * scaleFactor);
-    
-    label_ClosestChord->setBounds(1030 * scaleFactor, 659 * scaleFactor, 300 * scaleFactor, 40 * scaleFactor);
-    label_ClosestChord->setFont(fontSize * scaleFactor);
-    
-    component_KeynoteContainer->setBounds(0, 563 * scaleFactor, 600 * scaleFactor, 35 * scaleFactor);
-    component_FrequencyContainer->setBounds(0, 563 * scaleFactor, 600 * scaleFactor, 35 * scaleFactor);
-    
-    int octaveY = 563 * scaleFactor;
-    int keynoteToX = 420 * scaleFactor;
-    int keynoteFromX =  176 * scaleFactor;
-    int comboBoxWidth = 186 * scaleFactor;
-    
-    comboBoxOctaveFrom->setBounds((1174-250-40) * scaleFactor, octaveY, comboBoxWidth, 35 * scaleFactor);
-    comboBoxOctaveTo->setBounds((1174-40) * scaleFactor, octaveY, comboBoxWidth, 35 * scaleFactor);
-    comboBoxKeynoteFrom->setBounds(keynoteFromX, 0, comboBoxWidth, 35 * scaleFactor);
-    comboBoxKeynoteTo->setBounds(keynoteToX, 0, comboBoxWidth, 35 * scaleFactor);
-    
-    button_ExtendedRange->setBounds(1330 * scaleFactor, octaveY + (5 * scaleFactor), 30 * scaleFactor, 30 * scaleFactor);
-    
-    textEditorFrequencyFrom->setBounds(keynoteFromX, 0, comboBoxWidth, 35 * scaleFactor);
-    textEditorFrequencyFrom->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditorFrequencyTo->setBounds(keynoteToX, 0, comboBoxWidth, 35 * scaleFactor);
-    textEditorFrequencyTo->applyFontToAllText(fontSize * scaleFactor);
-    
+    slider_Amplitude->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxW, textBoxH);
+    slider_Amplitude->setBounds(knobLeft, knobY, knobW, knobH);
+    slider_Attack->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxW, textBoxH);
+    slider_Attack->setBounds(knobLeft + knobSpacing, knobY, knobW, knobH);
+    slider_Sustain->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxW, textBoxH);
+    slider_Sustain->setBounds(knobLeft + 2 * knobSpacing, knobY, knobW, knobH);
+    slider_Decay->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxW, textBoxH);
+    slider_Decay->setBounds(knobLeft + 3 * knobSpacing, knobY, knobW, knobH);
+    slider_Release->setTextBoxStyle(Slider::TextBoxBelow, false, textBoxW, textBoxH);
+    slider_Release->setBounds(knobLeft + 4 * knobSpacing, knobY, knobW, knobH);
+
+    // Repeater text editors (~87% down, relative to remaining area)
+    int playY = (int)(h * 0.869f);
+    int editorW = (int)(120 * s);
+    int editorH = (int)(35 * s);
+    textEditorRepeat->setBounds((int)(w * 0.174f), playY, editorW, editorH);
+    textEditorRepeat->applyFontToAllText(fontSize);
+    textEditorLength->setBounds((int)(w * 0.380f), playY, (int)(111 * s), editorH);
+    textEditorLength->applyFontToAllText(fontSize);
+    textEditorPause->setBounds((int)(w * 0.575f), playY, editorW, editorH);
+    textEditorPause->applyFontToAllText(fontSize);
+
+    // Output selection combo box
+    comboBoxOutputSelection->setBounds((int)(w * 0.735f), (int)(h * 0.867f), (int)(250 * s), (int)(43 * s));
+
     wavetableEditorComponent->setShortcut(0);
-    
-    comboBoxOutputSelection         -> setBounds(1150 * scaleFactor, 1248 * scaleFactor, 250 * scaleFactor, 43 * scaleFactor);
-    
-    
 }
 
 void ChordScannerComponent::timerCallback()
@@ -686,14 +534,14 @@ void ChordScannerComponent::timerCallback()
     if (projectManager->chordScannerProcessor->getPlaystate() == PLAY_STATE::PLAYING)
     {
         MessageManagerLock lock;
-        
+
         float val = projectManager->chordScannerProcessor->repeater->getProgressBarValue();
-        
-        progressBar->setValue(val);
-        
+
+        transportToolbar->setProgressValue(val);
+
         String text = projectManager->chordScannerProcessor->repeater->getTimeRemainingInSecondsString();
-        
-        label_Playing->setText(text, dontSendNotification);
+
+        transportToolbar->setPlayingText(text);
         
         // Current Chord label
         int keynote = projectManager->chordScannerProcessor->repeater->keynoteIterator - 1;
@@ -727,35 +575,13 @@ void ChordScannerComponent::timerCallback()
 
 void ChordScannerComponent::paint (Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-    
-    g.setOpacity(1.0);
-    g.drawImage(imageMainBackground, 0, 0, 1562 * scaleFactor, 1440 * scaleFactor, 0, 0, 1562, 1440);
+    g.fillAll(juce::Colour(45, 44, 44));
 }
 
 
 void ChordScannerComponent::buttonClicked (Button*button)
 {
-    if (button == button_Record.get())
-    {
-        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_RECORD);
-    }
-    else if (button == button_Play.get())
-    {
-        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
-    }
-    else if (button == button_Stop.get())
-    {
-        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
-    }
-    else if (button == button_Panic.get())
-    {
-        projectManager->setPanicButton();
-    }
-
-    else if (button == button_Default.get())
+    if (button == button_Default.get())
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_WAVEFORM_TYPE, 0);
     }
@@ -817,14 +643,37 @@ void ChordScannerComponent::buttonClicked (Button*button)
     {
         projectManager->setChordScannerParameter(CHORD_SCANNER_OCTAVE_EXTENDED, !button_ExtendedRange->getToggleState());
     }
-    else if (button == button_Load.get())
-    {
-        projectManager->loadProfileForMode(AUDIO_MODE::MODE_CHORD_SCANNER);
-    }
-    else if (button == button_Save.get())
-    {
-        projectManager->saveProfileForMode(AUDIO_MODE::MODE_CHORD_SCANNER);
-    }
+}
+
+// TransportToolbarComponent::Listener implementations
+void ChordScannerComponent::transportPlayClicked()
+{
+    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
+}
+
+void ChordScannerComponent::transportStopClicked()
+{
+    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
+}
+
+void ChordScannerComponent::transportRecordClicked()
+{
+    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_RECORD);
+}
+
+void ChordScannerComponent::transportPanicClicked()
+{
+    projectManager->setPanicButton();
+}
+
+void ChordScannerComponent::transportSaveClicked()
+{
+    projectManager->saveProfileForMode(AUDIO_MODE::MODE_CHORD_SCANNER);
+}
+
+void ChordScannerComponent::transportLoadClicked()
+{
+    projectManager->loadProfileForMode(AUDIO_MODE::MODE_CHORD_SCANNER);
 }
 
 void ChordScannerComponent::sliderValueChanged (Slider* slider)

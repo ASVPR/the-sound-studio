@@ -12,24 +12,18 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainViewComponent.h"
 
+using Layout = TSS::Design::Layout;
+
 //==============================================================================
 MainViewComponent::MainViewComponent(ProjectManager * pm)
 {
     projectManager = pm;
 
     // Image Cache
-    // Use the TSS icon for the application logo
     Image tssLogo = ImageCache::getFromMemory(BinaryData::icon_128_png, BinaryData::icon_128_pngSize);
-    imageLogoButton = tssLogo; // Use TSS icon instead of LogoButton_Normal
+    imageLogoButton = tssLogo;
     imageMenuButtonNormal = ImageCache::getFromMemory(BinaryData::Sidebar_Button_Normal_png, BinaryData::Sidebar_Button_Normal_pngSize);
     imageMenuButtonSelected = ImageCache::getFromMemory(BinaryData::Sidebar_ButtonHighlighted_png, BinaryData::Sidebar_ButtonHighlighted_pngSize);
-    imageSidebar = ImageCache::getFromMemory(BinaryData::SidebarNew_png, BinaryData::SidebarNew_pngSize);
-
-
-    // sidebar component
-    imageComponent_Sidebar = std::make_unique<ImageComponent>();
-    imageComponent_Sidebar->setImage(imageSidebar);
-    addAndMakeVisible(*imageComponent_Sidebar);
 
     // Buttons - Use TSS logo for the main application button
     menuButton_ASVPRTool = std::make_unique<ImageButton>();
@@ -40,7 +34,7 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
                             tssLogo, 1.000f, Colour (0x00000000));
     menuButton_ASVPRTool->addListener(this);
     addAndMakeVisible(*menuButton_ASVPRTool);
-    
+
     for (auto i = 0; i < (int)MenuItem::NumItems; i++) {
         auto& menuButton = menuButtons.emplace_back(std::make_unique<ImageButton>());
         menuButton->setTriggeredOnMouseDown(true);
@@ -51,10 +45,10 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
         menuButton->addListener(this);
         addAndMakeVisible(*menuButton);
     }
-    
+
     // container views
     addAndMakeVisible(mainContainerComponent);
-    
+
     // menu views
     menuViews.resize((int)MenuItem::NumItems);
 
@@ -78,13 +72,6 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
 
     menuViews[(int)MenuItem::FundamentalFrequency] = std::make_unique<FundamentalFrequencyComponent>(*projectManager);;
     mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::FundamentalFrequency]);
-
-    auto* feedbackModule = projectManager->feedbackModuleProcessor.get();
-    menuViews[(int)MenuItem::Feedback] = std::make_unique<FeedbackModuleComponent>(*feedbackModule);
-    mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::Feedback]);
-
-    menuViews[(int)MenuItem::FeedbackHardware] = std::make_unique<FeedbackModuleComponent>(*feedbackModule);
-    mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::FeedbackHardware]);
 
     menuViews[(int)MenuItem::RealTimeAnalysis] = std::make_unique<RealtimeAnalysisComponent>(projectManager);
     mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::RealTimeAnalysis]);
@@ -112,24 +99,47 @@ MainViewComponent::~MainViewComponent()
 
 void MainViewComponent::paint (Graphics& g)
 {
-    g.fillAll ({45,44,44});
+    auto bounds = getLocalBounds();
+    const int w = bounds.getWidth();
+    const int h = bounds.getHeight();
+
+    // Compute sidebar width proportionally
+    int sidebarW = jlimit((int)Layout::kSidebarMinWidth,
+                          (int)Layout::kSidebarMaxWidth,
+                          (int)(w * Layout::kSidebarWidthRatio));
+
+    // Draw sidebar background (vector — replaces PNG)
+    auto sidebarBounds = bounds.removeFromLeft(sidebarW);
+    g.setColour(juce::Colour(58, 61, 69));
+    g.fillRect(sidebarBounds);
+
+    // Right-edge border line
+    g.setColour(juce::Colour(40, 40, 42));
+    g.fillRect(sidebarBounds.getRight() - (int)Layout::kSidebarBorderWidth,
+               sidebarBounds.getY(),
+               (int)Layout::kSidebarBorderWidth,
+               sidebarBounds.getHeight());
+
+    // Content area background
+    g.setColour(juce::Colour(45, 44, 44));
+    g.fillRect(bounds);
 }
 
 void MainViewComponent::paintOverChildren(juce::Graphics& g)
 {
-    auto menuBounds = imageComponent_Sidebar->getBounds();
+    auto totalBounds = getLocalBounds();
+    const int w = totalBounds.getWidth();
+    const int h = totalBounds.getHeight();
 
-    menuBounds.removeFromRight(2);
-    auto bottomBounds = juce::Rectangle<int>(0, 720, menuBounds.getWidth(), getHeight() - 720);
-    auto logoBounds = menuBounds.removeFromTop(65);
+    int sidebarW = jlimit((int)Layout::kSidebarMinWidth,
+                          (int)Layout::kSidebarMaxWidth,
+                          (int)(w * Layout::kSidebarWidthRatio));
 
-    g.setColour({58, 61, 69});
+    int logoH = (int)(h * Layout::kLogoHeightRatio);
 
-    g.fillRect(logoBounds);
-    g.fillRect(bottomBounds);
+    // Draw logo in the logo area
+    auto logoBounds = juce::Rectangle<int>(0, 0, sidebarW, logoH).reduced(10, 10);
     g.setColour(juce::Colours::white);
-
-    logoBounds.reduce(10, 10);
     g.drawImageWithin(imageLogoButton,
                       logoBounds.getX(),
                       logoBounds.getY(),
@@ -137,38 +147,52 @@ void MainViewComponent::paintOverChildren(juce::Graphics& g)
                       logoBounds.getHeight(),
                       juce::RectanglePlacement::centred);
 
-    auto local = getLocalBounds();
-
-    g.drawText(labelProjectVersion.getText(),
-               local.removeFromBottom(labelProjectVersion.getHeight()),
-               juce::Justification::centredLeft);
-
-//    logoBounds.reduced(<#int delta#>)
+    // Version label at bottom of sidebar
+    float labelH = Layout::kVersionLabelHeight;
+    auto versionBounds = juce::Rectangle<int>(0, h - (int)labelH, sidebarW, (int)labelH);
+    g.setColour(juce::Colours::white.withAlpha(0.7f));
+    g.setFont(12.0f);
+    g.drawText(labelProjectVersion.getText(), versionBounds, juce::Justification::centredLeft);
 }
 
 void MainViewComponent::resized()
 {
-    printf("MainView Resize called");
-    
-    imageComponent_Sidebar              ->setBounds(0*scaleFactor, 0*scaleFactor, 358*scaleFactor, 1440*scaleFactor);
-    menuButton_ASVPRTool                ->setBounds(18*scaleFactor, 36*scaleFactor, logoButtonWidth*scaleFactor, logoButtonHeight*scaleFactor);
+    auto bounds = getLocalBounds();
+    const int w = bounds.getWidth();
+    const int h = bounds.getHeight();
 
-    for (auto i = 0; i < menuButtons.size(); i++) {
-        menuButtons[i]->setBounds(0*scaleFactor, (buttonTopMargin + (buttonHeight * i))*scaleFactor, buttonWidth*scaleFactor, buttonHeight*scaleFactor);
+    // Sidebar width — proportional with clamp
+    int sidebarW = jlimit((int)Layout::kSidebarMinWidth,
+                          (int)Layout::kSidebarMaxWidth,
+                          (int)(w * Layout::kSidebarWidthRatio));
+
+    // Logo button at top of sidebar
+    int logoH = (int)(h * Layout::kLogoHeightRatio);
+    menuButton_ASVPRTool->setBounds(10, 10, sidebarW - 20, logoH - 20);
+
+    // Menu buttons stacked below logo
+    int buttonH = (int)(h * Layout::kMenuButtonHeightRatio);
+    int buttonTopY = (int)(h * Layout::kMenuButtonTopRatio);
+    for (auto i = 0; i < (int)menuButtons.size(); i++) {
+        menuButtons[i]->setBounds(0, buttonTopY + (buttonH * i), sidebarW, buttonH);
     }
-    
-    mainContainerComponent.setBounds(menuSideBarWidth*scaleFactor, 0, containerWidth*scaleFactor, containerHeight + 200 *scaleFactor);
+
+    // Content area fills remaining space to the right of the sidebar
+    auto contentBounds = bounds.withTrimmedLeft(sidebarW);
+    mainContainerComponent.setBounds(contentBounds);
+
+    // All menu views fill the content area
     for (auto& view : menuViews) {
-        view->setBounds(0, 0, containerWidth*scaleFactor, containerHeight*scaleFactor);
+        view->setBounds(0, 0, contentBounds.getWidth(), contentBounds.getHeight());
     }
 
-    float labelH = 40 * scaleFactor;
-    labelProjectVersion.setBounds(0* scaleFactor, getHeight() - labelH, buttonWidth * scaleFactor, labelH);
+    // Version label — hidden, we paint it ourselves in paintOverChildren
+    labelProjectVersion.setBounds(0, 0, 0, 0);
 }
 
 void MainViewComponent::buttonClicked (Button* button)
 {
-    
+
     if (button == menuButton_ASVPRTool.get())
     {
         // call website or something...
@@ -225,11 +249,11 @@ void MainViewComponent::switchMenuView()
 
 void MainViewComponent::setScale(float factor)
 {
-    // Override auto-calculated scale if needed
+    // Layout is now proportional via getLocalBounds() in resized().
+    // Propagation kept only for sub-components not yet converted.
     scaleFactor = jlimit(0.5f, 2.0f, factor);
     for (auto& view : menuViews) {
         view->setScale(scaleFactor);
     }
     lookAndFeel.setScale(scaleFactor);
-    resized();  // Re-layout with new scale
 }

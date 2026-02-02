@@ -177,65 +177,42 @@ public:
     
     void resized() override
     {
-        float comboBoxL         = 0 * scaleFactor;
-        float comboBoxW         = 200 * scaleFactor;
-        float comboBoxH         = 38 * scaleFactor;
-        
-        float topSectionH       = 42 * scaleFactor;
-        float labelL            = comboBoxL + comboBoxW + (20 * scaleFactor);
-        float labelW            = 300 * scaleFactor;
-        float buttonL           = getWidth() - topSectionH;
-        
-        float comboBoxSourceL   = buttonL - comboBoxW - (20 * scaleFactor);
-        
-        comboBoxTypeSelector    ->setBounds(comboBoxL, 0, comboBoxW, comboBoxH);
-        comboBoxSourceSelector  ->setBounds(comboBoxSourceL, 0, comboBoxW, comboBoxH);
-//        labelVisualiserType     ->setBounds(labelL, 0, labelW, topSectionH);
-        button_Popup            ->setBounds(buttonL, 0, topSectionH, topSectionH);
-        button_Compare          ->setBounds(buttonL - (110 * scaleFactor), 4 * scaleFactor, 100 * scaleFactor, (topSectionH - 8 * scaleFactor));
-        buttonShouldProcess     ->setBounds(labelL, 0, labelW, topSectionH);
-        
-        Rectangle<float> spectrumRect(getWidth(), getHeight() - topSectionH);
-        
+        auto bounds = getLocalBounds();
+        const int w = bounds.getWidth();
+        const int h = bounds.getHeight();
+
+        // Header area
+        int headerH = jmax(30, (int)(h * 0.06f));
+        auto header = bounds.removeFromTop(headerH);
+
+        int comboW = jmax(120, (int)(w * 0.15f));
+        int comboH = headerH - 4;
+
+        comboBoxTypeSelector->setBounds(header.removeFromLeft(comboW).reduced(0, 2));
+
+        int popupBtnSize = headerH;
+        button_Popup->setBounds(header.removeFromRight(popupBtnSize));
+
+        int compareBtnW = jmax(70, (int)(w * 0.08f));
+        button_Compare->setBounds(header.removeFromRight(compareBtnW).reduced(2));
+
+        comboBoxSourceSelector->setBounds(header.removeFromRight(comboW).reduced(0, 2));
+        buttonShouldProcess->setBounds(header);
+
+        // Content area fills remainder
+        auto contentArea = bounds;
+
         switch ((int)visualiserType)
         {
-            case SPECTROGRAM:
-            {
-                spectrogramComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
-                spectrogramComponent->setScale(scaleFactor);
-            }
-                break;
-            case COLOUR:
-            {
-
-                colourComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
-                colourComponent->setScale(scaleFactor);
-            }
-                break;
-            case OCTAVE:
-            {
-                octaveComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
-                octaveComponent->setScale(scaleFactor);
-            }
-                break;
-            case OSCILLOSCOPE:
-            {
-                oscilloscopeComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
-                oscilloscopeComponent->setScale(scaleFactor);
-            }
-                break;
-            case LISSAJOUS:
-            {
-                lissajousComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
-                lissajousComponent->setScale(scaleFactor);
-            }
-                break;
-            case FREQ_DATA:
-            {
-                frequencyDataComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
-                frequencyDataComponent->setScale(scaleFactor);
-            }
-                break;
+            case SPECTROGRAM:   if (spectrogramComponent)   spectrogramComponent->setBounds(contentArea); break;
+            case COLOUR:        if (colourComponent)        colourComponent->setBounds(contentArea); break;
+            case OCTAVE:        if (octaveComponent)        octaveComponent->setBounds(contentArea); break;
+            case OSCILLOSCOPE:  if (oscilloscopeComponent)  oscilloscopeComponent->setBounds(contentArea); break;
+            case LISSAJOUS:     if (lissajousComponent)     lissajousComponent->setBounds(contentArea); break;
+            case FREQ_DATA:     if (frequencyDataComponent) frequencyDataComponent->setBounds(contentArea); break;
+            case HARMONICS_CHART: if (harmonicsChartComponent) harmonicsChartComponent->setBounds(contentArea); break;
+            case FREQ_COLOR_SPECTRUM: if (freqColorSpectrumComponent) freqColorSpectrumComponent->setBounds(contentArea); break;
+            case STANDING_WAVE: if (standingWaveComponent) standingWaveComponent->setBounds(contentArea); break;
         }
     }
     
@@ -253,7 +230,7 @@ public:
                     Rectangle<float> spectrumRect(getWidth(), getHeight());
                     
                     SpectrogramComponent * comp = new SpectrogramComponent(projectManager, spectrumRect, true);
-                    comp->setBounds(0,0, fftWidth* scaleFactor, fftHeight* scaleFactor);
+                    comp->setBounds(0, 0, static_cast<int>(getWidth() * scaleFactor), static_cast<int>(getHeight() * scaleFactor));
                     comp->setScale(scaleFactor);
                     comp->visualiserSource = visualiserSource;
                     
@@ -487,18 +464,19 @@ public:
         
         // update component..
 //        Rectangle<float> spectrumRect(fftWidth * scaleFactor, fftHeight * scaleFactor);
-        Rectangle<float> spectrumRect(getWidth(), getHeight() - (42  * scaleFactor));
-        
+        int headerH = jmax(30, (int)(getHeight() * 0.06f));
+        Rectangle<float> spectrumRect(getWidth(), getHeight() - headerH);
+
         switch ((int)visualiserType)
         {
             case SPECTROGRAM:
             {
                 spectrogramComponent = new SpectrogramComponent(projectManager, spectrumRect, false);
-                spectrogramComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                spectrogramComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(spectrogramComponent);
-                
+
                 spectrogramComponent->visualiserSource = visualiserSource;
-                
+
                 spectrogramComponent->setShouldUpdate(buttonShouldProcess->getToggleState());
                 spectrogramComponent->setScale(scaleFactor);
             }
@@ -506,11 +484,11 @@ public:
             case COLOUR:
             {
                 colourComponent = new ColourSpectrumVisualiserComponent(projectManager, spectrumRect.getWidth(), spectrumRect.getHeight());
-                colourComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                colourComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(colourComponent);
-                
+
                 colourComponent->visualiserSource = visualiserSource;
-                
+
                 colourComponent->setShouldUpdate(buttonShouldProcess->getToggleState());
                 colourComponent->setScale(scaleFactor);
             }
@@ -518,11 +496,11 @@ public:
             case OCTAVE:
             {
                 octaveComponent = new OctaveVisualiserComponent2(projectManager);
-                octaveComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                octaveComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(octaveComponent);
-                
+
                 octaveComponent->visualiserSource = visualiserSource;
-                
+
                 octaveComponent->setShouldUpdate(buttonShouldProcess->getToggleState());
                 octaveComponent->setScale(scaleFactor);
             }
@@ -530,11 +508,11 @@ public:
             case OSCILLOSCOPE:
             {
                 oscilloscopeComponent = new OscilloscopeComponent(projectManager);
-                oscilloscopeComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                oscilloscopeComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(oscilloscopeComponent);
-                
+
                 oscilloscopeComponent->visualiserSource = visualiserSource;
-                
+
                 oscilloscopeComponent->setShouldUpdate(buttonShouldProcess->getToggleState());
                 oscilloscopeComponent->setScale(scaleFactor);
             }
@@ -542,11 +520,11 @@ public:
             case LISSAJOUS:
             {
                 lissajousComponent = new LissajousCurveViewerComponent(projectManager, false);
-                lissajousComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                lissajousComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(lissajousComponent);
-                
+
                 lissajousComponent->visualiserSource = visualiserSource;
-                
+
                 lissajousComponent->setShouldUpdate(buttonShouldProcess->getToggleState());
                 lissajousComponent->setScale(scaleFactor);
             }
@@ -554,11 +532,11 @@ public:
             case FREQ_DATA:
             {
                 frequencyDataComponent = new FrequencyDataComponent(projectManager);
-                frequencyDataComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                frequencyDataComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(frequencyDataComponent);
-                
+
                 frequencyDataComponent->visualiserSource = visualiserSource;
-                
+
                 frequencyDataComponent->setShouldUpdate(buttonShouldProcess->getToggleState());
                 frequencyDataComponent->setScale(scaleFactor);
             }
@@ -566,16 +544,16 @@ public:
             case HARMONICS_CHART:
             {
                 harmonicsChartComponent = new SpectraHarmonicsChart(projectManager);
-                harmonicsChartComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                harmonicsChartComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(harmonicsChartComponent);
-                
+
                 harmonicsChartComponent->setScale(scaleFactor);
             }
                 break;
             case FREQ_COLOR_SPECTRUM:
             {
                 freqColorSpectrumComponent = new FrequencyColorSpectrogram(projectManager);
-                freqColorSpectrumComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                freqColorSpectrumComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(freqColorSpectrumComponent);
 
                 freqColorSpectrumComponent->setScale(scaleFactor);
@@ -584,7 +562,7 @@ public:
             case STANDING_WAVE:
             {
                 standingWaveComponent = new StandingWaveSpectrogram(projectManager);
-                standingWaveComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+                standingWaveComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
                 addAndMakeVisible(standingWaveComponent);
 
                 standingWaveComponent->setScale(scaleFactor);
@@ -593,7 +571,7 @@ public:
             // case HARMONICS_3D:  // Temporarily disabled - needs OpenGL fixes
             // {
             //     harmonics3DComponent = new HarmonicsSurface3D(projectManager);
-            //     harmonics3DComponent->setBounds(0, (42  * scaleFactor), spectrumRect.getWidth(), spectrumRect.getHeight());
+            //     harmonics3DComponent->setBounds(0, headerH, spectrumRect.getWidth(), spectrumRect.getHeight());
             //     addAndMakeVisible(harmonics3DComponent);
             //
             //     harmonics3DComponent->setScale(scaleFactor);
@@ -685,26 +663,8 @@ private:
     
     ToggleButton * buttonShouldProcess;
     
-    int mainContainerHeight = 1096;
-    int fftLeftMargin       = 48;
-    int fftTopMargin        = 64;
-    int fftWidth            = 1476;
-    int fftShortWidth       = 1100;
-    int fftHeight           = 310;
-    int fftShortHeight      = 254;
-    
-    int colorLeftMargin     = fftLeftMargin;
-    int colorTopMargin      = fftTopMargin + fftHeight + 67;
-    int colorWidth          = 742;
-    int colorHeight         = 271;
-    
-    int octaveLeftMergin    = 822;
-    int octaveTopMargin     = colorTopMargin;
-    int octaveWidth         = 699;
-    int octaveHeight        = colorHeight;
-    
 
-    
+
 };
 
 class VisualiserContainerComponent2 : public Component, public ProjectManager::UIListener
@@ -722,60 +682,45 @@ public:
         if (audioMode == AUDIO_MODE::MODE_REALTIME_ANALYSIS)
         {
             numVisualisers  = 4;
-            
-            Rectangle<float> spectrumRect(fftWidth, fftHeight);
 
             visualiserSelectorComponent[0] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[0].get());
-            visualiserSelectorComponent[0]->setBounds(fftLeftMargin * scaleFactor, fftTopMargin * scaleFactor, fftWidth * scaleFactor, fftHeight * scaleFactor);
             visualiserSelectorComponent[0]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM);
-            
+
             visualiserSelectorComponent[1] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[1].get());
-            visualiserSelectorComponent[1]->setBounds(colorLeftMargin * scaleFactor, colorTopMargin * scaleFactor, fftWidth * scaleFactor, colorHeight * scaleFactor);
             visualiserSelectorComponent[1]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR);
-            
+
             visualiserSelectorComponent[2] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::FREQ_DATA, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[2].get());
-            visualiserSelectorComponent[2]->setBounds(colorLeftMargin * scaleFactor, (colorTopMargin + colorHeight + 40) * scaleFactor, colorWidth * scaleFactor , 350.f * scaleFactor);
             visualiserSelectorComponent[2]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::FREQ_DATA);
-            
+
             visualiserSelectorComponent[3] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::OSCILLOSCOPE, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[3].get());
-            visualiserSelectorComponent[3]->setBounds(820 * scaleFactor, (colorTopMargin + colorHeight + 40) * scaleFactor, colorWidth * scaleFactor , 350.f * scaleFactor);
             visualiserSelectorComponent[3]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::OSCILLOSCOPE);
         }
         else if (audioMode == AUDIO_MODE::MODE_CHORD_PLAYER || audioMode == AUDIO_MODE::MODE_FREQUENCY_PLAYER)
         {
             numVisualisers  = 3;
-            
-            Rectangle<float> spectrumRect(fftWidth, fftHeight);
-            
+
             visualiserSelectorComponent[0] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[0].get());
-            visualiserSelectorComponent[0]->setBounds(fftLeftMargin * scaleFactor, fftTopMargin * scaleFactor, fftWidth * scaleFactor, fftHeight * scaleFactor);
             visualiserSelectorComponent[0]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM);
-            
+
             visualiserSelectorComponent[1] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[1].get());
-            visualiserSelectorComponent[1]->setBounds(colorLeftMargin * scaleFactor, colorTopMargin * scaleFactor, colorWidth * scaleFactor, colorHeight * scaleFactor);
             visualiserSelectorComponent[1]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::COLOUR);
-            
+
             visualiserSelectorComponent[2] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::OCTAVE, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[2].get());
-            visualiserSelectorComponent[2]->setBounds(octaveLeftMergin * scaleFactor, octaveTopMargin * scaleFactor, octaveWidth * scaleFactor, octaveHeight * scaleFactor);
             visualiserSelectorComponent[2]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::OCTAVE);
-            
         }
         else if (audioMode == AUDIO_MODE::MODE_CHORD_SCANNER || audioMode == AUDIO_MODE::MODE_FREQUENCY_SCANNER)
         {
             numVisualisers  = 1;
-            
-            Rectangle<float> spectrumRect(fftWidthScanner, fftHeightScanner);
 
             visualiserSelectorComponent[0] = std::make_unique<VisualiserSelectorComponent>(projectManager, VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM, audioMode);
             addAndMakeVisible(visualiserSelectorComponent[0].get());
-            visualiserSelectorComponent[0]->setBounds(fftLeftMarginScanner * scaleFactor, fftTopMarginScanner * scaleFactor, fftWidthScanner * scaleFactor, fftHeightScanner * scaleFactor);
             visualiserSelectorComponent[0]->setNewVisualiserType(VisualiserSelectorComponent::VISUALISER_TYPE::SPECTROGRAM);
         }
 
@@ -785,24 +730,47 @@ public:
     
     void resized() override
     {
+        auto bounds = getLocalBounds();
+        const int w = bounds.getWidth();
+        const int h = bounds.getHeight();
+        const int pad = jmax(4, (int)(w * 0.01f));
+
         if (audioMode == AUDIO_MODE::MODE_REALTIME_ANALYSIS)
         {
-            visualiserSelectorComponent[0]   ->setBounds(fftLeftMargin * scaleFactor, fftTopMargin * scaleFactor, fftWidth * scaleFactor, fftHeight * scaleFactor);
-            visualiserSelectorComponent[1]   ->setBounds(colorLeftMargin * scaleFactor, colorTopMargin * scaleFactor, fftWidth * scaleFactor, colorHeight * scaleFactor);
-            visualiserSelectorComponent[2]   ->setBounds(colorLeftMargin * scaleFactor, (colorTopMargin + colorHeight + 40) * scaleFactor, colorWidth * scaleFactor , 350.f * scaleFactor);
-            visualiserSelectorComponent[3]   ->setBounds(820 * scaleFactor, (colorTopMargin + colorHeight + 40) * scaleFactor, colorWidth * scaleFactor , 350.f * scaleFactor);
+            // 4 visualisers: full-width top, full-width second row, two side-by-side bottom
+            int topH = (int)(h * 0.38f);
+            int midH = (int)(h * 0.30f);
+            int botH = h - topH - midH;
+
+            auto topArea = bounds.removeFromTop(topH).reduced(pad);
+            visualiserSelectorComponent[0]->setBounds(topArea);
+
+            auto midArea = bounds.removeFromTop(midH).reduced(pad);
+            visualiserSelectorComponent[1]->setBounds(midArea);
+
+            auto botArea = bounds.reduced(pad);
+            int halfW = botArea.getWidth() / 2;
+            visualiserSelectorComponent[2]->setBounds(botArea.removeFromLeft(halfW).reduced(pad/2, 0));
+            visualiserSelectorComponent[3]->setBounds(botArea.reduced(pad/2, 0));
         }
         else if (audioMode == AUDIO_MODE::MODE_CHORD_PLAYER || audioMode == AUDIO_MODE::MODE_FREQUENCY_PLAYER)
         {
-            visualiserSelectorComponent[0]->setBounds(fftLeftMargin * scaleFactor, fftTopMargin * scaleFactor, fftWidth * scaleFactor, fftHeight * scaleFactor);
-            visualiserSelectorComponent[1]->setBounds(colorLeftMargin * scaleFactor, colorTopMargin * scaleFactor, colorWidth * scaleFactor, colorHeight * scaleFactor);
-            visualiserSelectorComponent[2]->setBounds(octaveLeftMergin * scaleFactor, octaveTopMargin * scaleFactor, octaveWidth * scaleFactor, octaveHeight * scaleFactor);
-            
+            // 3 visualisers: full-width top, two side-by-side bottom
+            int topH = (int)(h * 0.52f);
+            int botH = h - topH;
+
+            auto topArea = bounds.removeFromTop(topH).reduced(pad);
+            visualiserSelectorComponent[0]->setBounds(topArea);
+
+            auto botArea = bounds.reduced(pad);
+            int halfW = botArea.getWidth() / 2;
+            visualiserSelectorComponent[1]->setBounds(botArea.removeFromLeft(halfW).reduced(pad/2, 0));
+            visualiserSelectorComponent[2]->setBounds(botArea.reduced(pad/2, 0));
         }
         else if (audioMode == AUDIO_MODE::MODE_CHORD_SCANNER || audioMode == AUDIO_MODE::MODE_FREQUENCY_SCANNER)
         {
-            visualiserSelectorComponent[0]->setBounds(fftLeftMarginScanner * scaleFactor, fftTopMarginScanner * scaleFactor, fftWidthScanner * scaleFactor, fftHeightScanner * scaleFactor);
-
+            // 1 visualiser: fills all available space
+            visualiserSelectorComponent[0]->setBounds(bounds.reduced(pad));
         }
     }
 
@@ -849,30 +817,6 @@ private:
     std::unique_ptr<VisualiserSelectorComponent> visualiserSelectorComponent[4];
     
 
-    // UI Layout Variables
-    int mainContainerHeight = 1096;
-    int fftLeftMargin       = 48;
-    int fftTopMargin        = 30;
-    int fftWidth            = 1476;
-    int fftShortWidth       = 1100;
-    int fftHeight           = 340;
-    int fftShortHeight      = 254;
-    
-    int fftLeftMarginScanner       = 48;
-    int fftTopMarginScanner        = 30;
-    int fftWidthScanner            = 1100;
-    int fftHeightScanner           = 280;
-    
-    
-    int colorLeftMargin     = fftLeftMargin;
-    int colorTopMargin      = fftTopMargin + fftHeight + 30;
-    int colorWidth          = 742;
-    int colorHeight         = 300;
-    
-    int octaveLeftMergin    = 822;
-    int octaveTopMargin     = colorTopMargin;
-    int octaveWidth         = 699;
-    int octaveHeight        = colorHeight;
     
     
    

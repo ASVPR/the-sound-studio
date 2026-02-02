@@ -24,8 +24,6 @@ SettingsComponent::SettingsComponent(ProjectManager * pm)
     
     
     
-    imageBackground                     = ImageCache::getFromMemory(BinaryData::SettingsBackgroundNew, BinaryData::SettingsBackgroundNewSize);
-    
     imageBlueButtonNormal               = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected             = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
     imageBlueCheckButtonNormal          = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
@@ -1250,160 +1248,158 @@ void SettingsComponent::updateUI(int settingIndex)
 
 void SettingsComponent::paint (Graphics& g)
 {
-    g.drawImage(imageBackground, 0, 0, 1560 * scaleFactor, 1440 * scaleFactor, 0, 0, 1560, 1440);
+    g.fillAll(juce::Colour(45, 44, 44));
+
+    const float sx = getWidth() / 1566.0f;
+    const float sy = getHeight() / 1440.0f;
 
     g.setColour(Colour::fromString("ff424242"));
-    g.fillRoundedRectangle({851 * scaleFactor, 858 * scaleFactor, 679 * scaleFactor, 100 * scaleFactor}, 5.f);
+    g.fillRoundedRectangle(851*sx, 858*sy, 679*sx, 100*sy, 5.f);
 
     g.setColour(Colours::white);
-    g.setFont(Font{30.f * scaleFactor}.withStyle(Font::FontStyleFlags::bold));
-    g.drawFittedText("Find fundamental frequency:", Rectangle<double>{878 * scaleFactor, 890 * scaleFactor, 338 * scaleFactor, 39 * scaleFactor}.toNearestInt(), Justification::centredLeft, 1);
+    g.setFont(Font{30.f * sx}.withStyle(Font::FontStyleFlags::bold));
+    g.drawFittedText("Find fundamental frequency:", Rectangle<int>((int)(878*sx), (int)(890*sy), (int)(338*sx), (int)(39*sy)), Justification::centredLeft, 1);
 }
 
 void SettingsComponent::resized()
 {
+    const float sx = getWidth() / 1566.0f;
+    const float sy = getHeight() / 1440.0f;
+
     int fontSize = 29;
-    
+
     float labelW = 600;
     float labelX = 360;
-    label_LogFileLocation->setBounds(labelX * scaleFactor, 60 * scaleFactor, labelW * scaleFactor , 41 * scaleFactor);
-    label_LogFileLocation->setFont(fontSize * scaleFactor);
-    
-    // Make the record file location label wider to accommodate long paths
-    label_RecordFileLocation->setBounds((labelX + 60) * scaleFactor, 125 * scaleFactor, (labelW + 200) * scaleFactor, 41 * scaleFactor);
-    label_RecordFileLocation->setFont(fontSize * scaleFactor);
-    
+    label_LogFileLocation->setBounds((int)(labelX * sx), (int)(60 * sy), (int)(labelW * sx), (int)(41 * sy));
+    label_LogFileLocation->setFont((int)(fontSize * sx));
+
+    label_RecordFileLocation->setBounds((int)((labelX + 60) * sx), (int)(125 * sy), (int)((labelW + 200) * sx), (int)(41 * sy));
+    label_RecordFileLocation->setFont((int)(fontSize * sx));
+
     float freqY = 296;
     float xAdj = 204;
-    
-    textEditor_NotesFrequency->setBounds((288 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    textEditor_NotesFrequency->applyFontToAllText(fontSize  * scaleFactor);
-    
-    label_B_Frequency->setBounds((443 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    label_B_Frequency->setFont(fontSize  * scaleFactor);
-    
-    label_C_Frequency->setBounds((598 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    label_C_Frequency->setFont(fontSize  * scaleFactor);
-    
-    label_D_Frequency->setBounds((754 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    label_D_Frequency->setFont(fontSize  * scaleFactor);
-    
-    label_E_Frequency->setBounds((909 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    label_E_Frequency->setFont(fontSize * scaleFactor);
-    
-    label_F_Frequency->setBounds((1064 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    label_F_Frequency->setFont(fontSize  * scaleFactor);
-    
-    label_G_Frequency->setBounds((1219 - xAdj) * scaleFactor, freqY * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    label_G_Frequency->setFont(fontSize  * scaleFactor);
-    
+
+    textEditor_NotesFrequency->setBounds((int)((288 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    textEditor_NotesFrequency->applyFontToAllText((int)(fontSize * sx));
+
+    label_B_Frequency->setBounds((int)((443 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    label_B_Frequency->setFont((int)(fontSize * sx));
+
+    label_C_Frequency->setBounds((int)((598 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    label_C_Frequency->setFont((int)(fontSize * sx));
+
+    label_D_Frequency->setBounds((int)((754 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    label_D_Frequency->setFont((int)(fontSize * sx));
+
+    label_E_Frequency->setBounds((int)((909 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    label_E_Frequency->setFont((int)(fontSize * sx));
+
+    label_F_Frequency->setBounds((int)((1064 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    label_F_Frequency->setFont((int)(fontSize * sx));
+
+    label_G_Frequency->setBounds((int)((1219 - xAdj) * sx), (int)(freqY * sy), (int)(117 * sx), (int)(41 * sy));
+    label_G_Frequency->setFont((int)(fontSize * sx));
+
     float xMin = 260;
     float xMax = 455;
-    
+
     fontSize = 31;
-    
-    textEditor_AmplitudeMin->setBounds(xMin * scaleFactor, 478 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
-    textEditor_AmplitudeMin->applyFontToAllText(fontSize  * scaleFactor);
-    
-    textEditor_AttackMin->setBounds(xMin * scaleFactor, 577 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
-    textEditor_AttackMin->applyFontToAllText(fontSize  * scaleFactor);
-    
-    textEditor_DecayMin->setBounds(xMin * scaleFactor, 642 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
-    textEditor_DecayMin->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditor_SustainMin->setBounds(xMin * scaleFactor, 705 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
-    textEditor_SustainMin->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditor_ReleaseMin->setBounds(xMin * scaleFactor, 769 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
-    textEditor_ReleaseMin->applyFontToAllText(fontSize * scaleFactor);
-    
+
+    textEditor_AmplitudeMin->setBounds((int)(xMin * sx), (int)(478 * sy), (int)(125 * sx), (int)(41 * sy));
+    textEditor_AmplitudeMin->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_AttackMin->setBounds((int)(xMin * sx), (int)(577 * sy), (int)(125 * sx), (int)(41 * sy));
+    textEditor_AttackMin->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_DecayMin->setBounds((int)(xMin * sx), (int)(642 * sy), (int)(125 * sx), (int)(41 * sy));
+    textEditor_DecayMin->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_SustainMin->setBounds((int)(xMin * sx), (int)(705 * sy), (int)(125 * sx), (int)(41 * sy));
+    textEditor_SustainMin->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_ReleaseMin->setBounds((int)(xMin * sx), (int)(769 * sy), (int)(125 * sx), (int)(41 * sy));
+    textEditor_ReleaseMin->applyFontToAllText((int)(fontSize * sx));
+
     int maxW = 130;
-    
-    textEditor_AmplitudeMax->setBounds(xMax * scaleFactor, 478 * scaleFactor, maxW * scaleFactor, 41 * scaleFactor);
-    textEditor_AmplitudeMax->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditor_AttackMax->setBounds(xMax * scaleFactor, 577 * scaleFactor, maxW * scaleFactor, 41 * scaleFactor);
-    textEditor_AttackMax->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditor_DecayMax->setBounds(xMax * scaleFactor, 642 * scaleFactor, maxW * scaleFactor, 41 * scaleFactor);
-    textEditor_DecayMax->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditor_SustainMax->setBounds(xMax * scaleFactor, 705 * scaleFactor, maxW * scaleFactor, 41 * scaleFactor);
-    textEditor_SustainMax->applyFontToAllText(fontSize * scaleFactor);
-    
-    textEditor_ReleaseMax->setBounds(xMax * scaleFactor, 769 * scaleFactor, maxW * scaleFactor, 41 * scaleFactor);
-    textEditor_ReleaseMax->applyFontToAllText(fontSize * scaleFactor);
-    
-    int buttonW = 160 * scaleFactor;
-    textButton_ResetAmp->setBounds(633 * scaleFactor,  478 * scaleFactor, buttonW , 40 * scaleFactor);
-    textButton_ResetAttack->setBounds(633 * scaleFactor,  577 * scaleFactor, buttonW , 40 * scaleFactor);
-    textButton_ResetDecay->setBounds(633 * scaleFactor, 642 * scaleFactor, buttonW , 40 * scaleFactor);
-    textButton_ResetSustain->setBounds(633 * scaleFactor, 705 * scaleFactor, buttonW , 40 * scaleFactor);
-    textButton_ResetRelease->setBounds(633 * scaleFactor, 769 * scaleFactor, buttonW , 40 * scaleFactor);
-    
-    textButton_ChangeLogFile->setBounds(1020 * scaleFactor, 62 * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    textButton_ChangeRecordFile->setBounds(1020 * scaleFactor, 125 * scaleFactor, 117 * scaleFactor, 41 * scaleFactor);
-    textButton_OpenAudioSettings->setBounds(1190 * scaleFactor, 62 * scaleFactor, 310 * scaleFactor, 41 * scaleFactor);
-    
-    textButton_SpectrogramSetttingsPopup->setBounds(1240 * scaleFactor, 740 * scaleFactor, 280 * scaleFactor, 41 * scaleFactor);
-    
-    spectrogramPopupComponent->setBounds(0 * scaleFactor, 0 * scaleFactor, getWidth(), getHeight());
-    
-    scanPluginsButton   ->setBounds(360 * scaleFactor, 873 * scaleFactor, 150 * scaleFactor, 41 * scaleFactor);
-    
-    comboBox_Scales->setBounds(1180 * scaleFactor, 308 * scaleFactor, 330 * scaleFactor, 41 * scaleFactor);
-    
-    audioSetupComponent->setBounds(60 * scaleFactor, 300 * scaleFactor, 1300 * scaleFactor, 1000 * scaleFactor);
-    audioSetupComponent->setItemHeight(70 * scaleFactor);
-    
-    // plugin rack
-    int comboWidth     = 228;
-    int buttonWidth    = 41;
-    int centreX         = 160;
-    int y               = 960;
-    int ySpace          = 60;
-    
+
+    textEditor_AmplitudeMax->setBounds((int)(xMax * sx), (int)(478 * sy), (int)(maxW * sx), (int)(41 * sy));
+    textEditor_AmplitudeMax->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_AttackMax->setBounds((int)(xMax * sx), (int)(577 * sy), (int)(maxW * sx), (int)(41 * sy));
+    textEditor_AttackMax->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_DecayMax->setBounds((int)(xMax * sx), (int)(642 * sy), (int)(maxW * sx), (int)(41 * sy));
+    textEditor_DecayMax->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_SustainMax->setBounds((int)(xMax * sx), (int)(705 * sy), (int)(maxW * sx), (int)(41 * sy));
+    textEditor_SustainMax->applyFontToAllText((int)(fontSize * sx));
+
+    textEditor_ReleaseMax->setBounds((int)(xMax * sx), (int)(769 * sy), (int)(maxW * sx), (int)(41 * sy));
+    textEditor_ReleaseMax->applyFontToAllText((int)(fontSize * sx));
+
+    int buttonW = (int)(160 * sx);
+    textButton_ResetAmp->setBounds((int)(633 * sx), (int)(478 * sy), buttonW, (int)(40 * sy));
+    textButton_ResetAttack->setBounds((int)(633 * sx), (int)(577 * sy), buttonW, (int)(40 * sy));
+    textButton_ResetDecay->setBounds((int)(633 * sx), (int)(642 * sy), buttonW, (int)(40 * sy));
+    textButton_ResetSustain->setBounds((int)(633 * sx), (int)(705 * sy), buttonW, (int)(40 * sy));
+    textButton_ResetRelease->setBounds((int)(633 * sx), (int)(769 * sy), buttonW, (int)(40 * sy));
+
+    textButton_ChangeLogFile->setBounds((int)(1020 * sx), (int)(62 * sy), (int)(117 * sx), (int)(41 * sy));
+    textButton_ChangeRecordFile->setBounds((int)(1020 * sx), (int)(125 * sy), (int)(117 * sx), (int)(41 * sy));
+    textButton_OpenAudioSettings->setBounds((int)(1190 * sx), (int)(62 * sy), (int)(310 * sx), (int)(41 * sy));
+
+    textButton_SpectrogramSetttingsPopup->setBounds((int)(1240 * sx), (int)(740 * sy), (int)(280 * sx), (int)(41 * sy));
+
+    spectrogramPopupComponent->setBounds(0, 0, getWidth(), getHeight());
+
+    scanPluginsButton->setBounds((int)(360 * sx), (int)(873 * sy), (int)(150 * sx), (int)(41 * sy));
+
+    comboBox_Scales->setBounds((int)(1180 * sx), (int)(308 * sy), (int)(330 * sx), (int)(41 * sy));
+
+    audioSetupComponent->setBounds((int)(60 * sx), (int)(300 * sy), (int)(1300 * sx), (int)(1000 * sy));
+    audioSetupComponent->setItemHeight((int)(70 * sy));
+
+    int comboWidth = 228;
+    int centreX = 160;
+    int y = 960;
+    int ySpace = 60;
+
     fontSize = 28;
-    
+
     for (int i = 0; i < NUM_PLUGIN_SLOTS; i++)
     {
-        labelPluginSlot[i]          ->setBounds((centreX - 120) * scaleFactor, (y + (i * ySpace)) * scaleFactor, comboWidth * scaleFactor, 41 * scaleFactor);
-        labelPluginSlot[i]          ->setFont(fontSize * scaleFactor);
-        
-        comboBoxPluginSelector[i]   ->setBounds((centreX + 80) * scaleFactor, (y + (i * ySpace)) * scaleFactor, comboWidth * scaleFactor, 41 * scaleFactor);
-        
-        buttonRemovePlugin[i]       ->setBounds((centreX + comboWidth + 90 ) * scaleFactor, (y + 11 + (i * ySpace)) * scaleFactor, 22 * scaleFactor, 22 * scaleFactor);
-        
-        buttonOpenPlugin[i]         ->setBounds((centreX ) * scaleFactor, (y + (i * ySpace) + 10 ) * scaleFactor, 66 * scaleFactor, 22 * scaleFactor);
-    }
-    
-//    comboBox_RecordFormat->setBounds(1260 * scaleFactor, 1300 * scaleFactor, 250 * scaleFactor, 41 * scaleFactor);
-    
-    comboBox_NoiseType->setBounds(1350 * scaleFactor, 130 * scaleFactor, 150 * scaleFactor, 41 * scaleFactor);
-    
-    button_Load->setBounds(1000 * scaleFactor, 1300 * scaleFactor, 257 * scaleFactor, 69 * scaleFactor);
-    button_Save->setBounds(1280 * scaleFactor, 1300 * scaleFactor, 257 * scaleFactor, 69 * scaleFactor);
+        labelPluginSlot[i]->setBounds((int)((centreX - 120) * sx), (int)((y + (i * ySpace)) * sy), (int)(comboWidth * sx), (int)(41 * sy));
+        labelPluginSlot[i]->setFont((int)(fontSize * sx));
 
-    // Freq to Chord
-    freqY = 1150;
+        comboBoxPluginSelector[i]->setBounds((int)((centreX + 80) * sx), (int)((y + (i * ySpace)) * sy), (int)(comboWidth * sx), (int)(41 * sy));
+
+        buttonRemovePlugin[i]->setBounds((int)((centreX + comboWidth + 90) * sx), (int)((y + 11 + (i * ySpace)) * sy), (int)(22 * sx), (int)(22 * sy));
+
+        buttonOpenPlugin[i]->setBounds((int)(centreX * sx), (int)((y + (i * ySpace) + 10) * sy), (int)(66 * sx), (int)(22 * sy));
+    }
+
+    comboBox_NoiseType->setBounds((int)(1350 * sx), (int)(130 * sy), (int)(150 * sx), (int)(41 * sy));
+
+    button_Load->setBounds((int)(1000 * sx), (int)(1300 * sy), (int)(257 * sx), (int)(69 * sy));
+    button_Save->setBounds((int)(1280 * sx), (int)(1300 * sy), (int)(257 * sx), (int)(69 * sy));
+
     float bX = 870;
-    button_FreqToChordMainHarmonics ->setBounds(bX * scaleFactor, 478 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
-    button_FreqToChordAverage       ->setBounds(bX * scaleFactor, 528 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
-    button_FreqToChordEMA           ->setBounds(bX * scaleFactor, 580 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
-    
-    
+    button_FreqToChordMainHarmonics->setBounds((int)(bX * sx), (int)(478 * sy), (int)(38 * sx), (int)(38 * sy));
+    button_FreqToChordAverage->setBounds((int)(bX * sx), (int)(528 * sy), (int)(38 * sx), (int)(38 * sy));
+    button_FreqToChordEMA->setBounds((int)(bX * sx), (int)(580 * sy), (int)(38 * sx), (int)(38 * sy));
+
     float scaleButtonX = 874;
     float sp = 80;
     float scY = 726;
-    
-    buttonScale25    ->setBounds((scaleButtonX + (sp * 0)) * scaleFactor, scY * scaleFactor, 70 * scaleFactor, 70 * scaleFactor);
-    buttonScale50   ->setBounds((scaleButtonX + (sp * 1)) * scaleFactor, scY * scaleFactor, 70 * scaleFactor, 70 * scaleFactor);
-    buttonScale75   ->setBounds((scaleButtonX + (sp * 2)) * scaleFactor, scY * scaleFactor, 70 * scaleFactor, 70 * scaleFactor);
-    buttonScale100  ->setBounds((scaleButtonX + (sp * 3)) * scaleFactor, scY * scaleFactor, 70 * scaleFactor, 70 * scaleFactor);
-    
-    buttonMixer     ->setBounds((centreX - 120) * scaleFactor, (y + (6 * ySpace) + 10 ) * scaleFactor, 310 * scaleFactor, 41 * scaleFactor);
 
-    fundamentalFrequencyAlgorithmChooser.setBounds(1243 * scaleFactor, 889 * scaleFactor, 263 * scaleFactor, 45 * scaleFactor);
+    buttonScale25->setBounds((int)((scaleButtonX + (sp * 0)) * sx), (int)(scY * sy), (int)(70 * sx), (int)(70 * sy));
+    buttonScale50->setBounds((int)((scaleButtonX + (sp * 1)) * sx), (int)(scY * sy), (int)(70 * sx), (int)(70 * sy));
+    buttonScale75->setBounds((int)((scaleButtonX + (sp * 2)) * sx), (int)(scY * sy), (int)(70 * sx), (int)(70 * sy));
+    buttonScale100->setBounds((int)((scaleButtonX + (sp * 3)) * sx), (int)(scY * sy), (int)(70 * sx), (int)(70 * sy));
+
+    buttonMixer->setBounds((int)((centreX - 120) * sx), (int)((y + (6 * ySpace) + 10) * sy), (int)(310 * sx), (int)(41 * sy));
+
+    fundamentalFrequencyAlgorithmChooser.setBounds((int)(1243 * sx), (int)(889 * sy), (int)(263 * sx), (int)(45 * sy));
 }
 
 void SettingsComponent::rescanPlugins()

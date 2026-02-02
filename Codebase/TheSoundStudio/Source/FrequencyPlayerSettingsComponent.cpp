@@ -21,7 +21,6 @@ FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManage
     
     
     
-    mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::FrequencyPlayerSettingsBackground2_png, BinaryData::FrequencyPlayerSettingsBackground2_pngSize);
     imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
     imageBlueButtonNormal       = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected     = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
@@ -527,12 +526,11 @@ void FrequencyPlayerSettingsComponent::resized()
 
 void FrequencyPlayerSettingsComponent::paint (Graphics&g)
 {
-    g.setColour(Colours::black);
-    g.setOpacity(0.88);
-    g.fillAll();
-    
-    g.setOpacity(1.0);
-    g.drawImage(mainBackgroundImage, 52 * scaleFactor, 252 * scaleFactor, 1463 * scaleFactor, 847 * scaleFactor, 0, 0, 1463, 847);
+    g.fillAll(juce::Colour(45, 44, 44));
+    const float sx = getWidth() / 1566.0f;
+    const float sy = getHeight() / 1440.0f;
+    g.setColour(juce::Colour(55, 54, 54));
+    g.fillRoundedRectangle(52*sx, 252*sy, 1463*sx, 847*sy, 8.0f);
 }
 
 void FrequencyPlayerSettingsComponent::updateMinMaxSettings(int paramIndex)

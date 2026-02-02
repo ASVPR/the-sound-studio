@@ -45,7 +45,6 @@ public:
 private:
     ProjectManager * projectManager;
     int   shortcutRef;
-    Image backgroundImage;
     Image imageBlueCheckButtonNormal;
     Image imageBlueCheckButtonSelected;
     std::unique_ptr<ImageButton> addonButton[NUM_ADDONS];
@@ -183,7 +182,6 @@ private:
     Label labelEstimatedOctaveValue;
     
     // Images
-    Image mainBackgroundImage;
     Image sectionTopLeftBackground;
     Image section;
     

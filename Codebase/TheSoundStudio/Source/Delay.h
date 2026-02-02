@@ -11,14 +11,6 @@
 
 
 #pragma once
-//
-//  Delay.h
-//  AudioVitamins
-//
-//  Created by Gary Jones on 28/12/2015.
-//
-//
-
 #ifndef __AudioVitamins__Delay__
 #define __AudioVitamins__Delay__
 

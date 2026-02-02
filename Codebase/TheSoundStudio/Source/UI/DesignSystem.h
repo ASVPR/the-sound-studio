@@ -234,5 +234,69 @@ struct ZIndex
     static constexpr int notification = 3000;
 };
 
+//==============================================================================
+// LAYOUT RATIOS - Proportional layout derived from reference 1566x1440 content area
+// All ratios are relative to the parent component's bounds via getLocalBounds()
+//==============================================================================
+struct Layout
+{
+    // Reference resolution (content area, excluding sidebar)
+    static constexpr float kRefContentWidth  = 1566.0f;
+    static constexpr float kRefContentHeight = 1440.0f;
+    static constexpr float kRefTotalWidth    = 1920.0f;  // content + sidebar
+    static constexpr float kRefTotalHeight   = 1440.0f;
+
+    // Sidebar (MainViewComponent)
+    static constexpr float kSidebarWidthRatio   = 354.0f / kRefTotalWidth;   // ~0.184
+    static constexpr float kSidebarMinWidth     = 200.0f;
+    static constexpr float kSidebarMaxWidth     = 420.0f;
+    static constexpr float kLogoHeightRatio     = 65.0f / kRefTotalHeight;   // ~0.045
+    static constexpr float kMenuButtonHeightRatio = 70.0f / kRefTotalHeight; // ~0.049
+    static constexpr float kMenuButtonTopRatio  = 134.0f / kRefTotalHeight;  // ~0.093
+    static constexpr float kVersionLabelHeight  = 40.0f;
+
+    // Sidebar border
+    static constexpr float kSidebarBorderWidth  = 2.0f;
+
+    // Shortcut bar (top of chord/frequency player views)
+    static constexpr float kShortcutBarHeightRatio = 344.0f / kRefContentHeight; // ~0.239
+
+    // Toolbar (transport controls at bottom of views)
+    static constexpr float kToolbarHeightRatio = 200.0f / kRefContentHeight;     // ~0.139
+
+    // Visualiser grid (inside main container, between shortcut bar and toolbar)
+    // Top row: full width spectrogram
+    static constexpr float kVisTopRowHeightRatio   = 340.0f / 896.0f;  // ratio of visualiser area
+    // Bottom row: two panels side by side
+    static constexpr float kVisBottomLeftWidthRatio  = 742.0f / kRefContentWidth;
+    static constexpr float kVisBottomRightWidthRatio = 1.0f - kVisBottomLeftWidthRatio;
+    static constexpr float kVisInsetRatio            = 48.0f / kRefContentWidth;
+    static constexpr float kVisGapRatio              = 30.0f / kRefContentHeight;
+
+    // Realtime analysis: 4-panel grid
+    static constexpr float kRtTopRowHeightRatio      = 340.0f / 1300.0f;
+    static constexpr float kRtMidRowHeightRatio      = 300.0f / 1300.0f;
+    static constexpr float kRtBottomRowHeightRatio   = 350.0f / 1300.0f;
+
+    // Scanner views: single visualiser
+    static constexpr float kScannerVisHeightRatio    = 280.0f / kRefContentHeight;
+
+    // Shortcut card sizing
+    static constexpr int   kShortcutCardsVisible     = 4;
+    static constexpr float kShortcutCardWidthRatio   = 1.0f / kShortcutCardsVisible;
+    static constexpr float kShortcutCardAspect       = 344.0f / 327.0f; // height / width
+
+    // Transport toolbar button sizing (relative to toolbar height)
+    static constexpr float kTransportButtonSizeRatio = 0.45f;  // button height = 45% of toolbar height
+    static constexpr float kTransportProgressHeight  = 0.28f;  // progress bar = 28% of toolbar height
+    static constexpr float kTransportRecordSizeRatio = 0.50f;  // record button slightly larger
+
+    // VisualiserSelector header
+    static constexpr float kVisSelectorHeaderHeight  = 42.0f;
+
+    // Font scaling: compute local scale as getWidth() / kRefContentWidth
+    // then multiply by base font size
+};
+
 } // namespace Design
 } // namespace TSS

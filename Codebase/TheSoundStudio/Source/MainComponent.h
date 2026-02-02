@@ -14,7 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainViewComponent.h"
 #include "ProjectManager.h"
-#include "ResponsiveUIHelper.h"
+
 
 //==============================================================================
 /*
@@ -37,30 +37,22 @@ public:
     void paint (Graphics& g) override;
     void resized() override
     {
-        // Use responsive layout helper for optimal scaling
-        auto bounds = getLocalBounds();
-        
-        // Calculate optimal scale using responsive helper
-        scaleFactor = ResponsiveUIHelper::calculateOptimalScale(
-            bounds.getWidth(), bounds.getHeight(), mainWidth, mainHeight);
-        
         if (mainViewComponent)
-        {
-            mainViewComponent->setBounds(bounds);
-            mainViewComponent->setScale(scaleFactor);
-        }
+            mainViewComponent->setBounds(getLocalBounds());
     }
-    
+
     float scaleFactor = 1.0f;
     void setScale(float factor)
     {
         scaleFactor = factor;
-        
+
+        // Propagate to sub-components that still use scaleFactor internally
         if (mainViewComponent)
             mainViewComponent->setScale(scaleFactor);
-        
-        // Set window size based on scale factor
-        setSize(mainWidth * scaleFactor, mainHeight * scaleFactor);
+
+        // Resize window — resized() will be called automatically,
+        // and all children use proportional layout from getLocalBounds()
+        setSize((int)(mainWidth * scaleFactor), (int)(mainHeight * scaleFactor));
     }
     
     MainComponent * getMainComponent() {return this; }

@@ -587,10 +587,7 @@ void FrequencyScannerProcessor::PlayRepeater::calculatePlaybackTimers()
     
     totalMSOfLoop           = (totalNumSamplesOfLoop / sampleRate * 1000);
     totalNumRepeats         = totalNumIntervals * numRepeats;
-    
-//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
-//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
-    
+
 }
 
 //=================================================================

@@ -489,10 +489,7 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
     }
     
     totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
-    
-//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
-//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
-    
+
 }
 
 //=================================================================
@@ -1080,8 +1077,6 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::processSimultaneousShortcu
 //
 //    totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
 //
-////    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
-////    printf("\n Total MS of sequence = %i", totalMSOfLoop);
 //
 //}
 //
@@ -1851,9 +1846,6 @@ void LissajousChordPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
 
     
     totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
-    
-//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
-//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
 
 }
 

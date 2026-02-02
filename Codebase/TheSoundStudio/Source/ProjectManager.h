@@ -27,7 +27,6 @@
 #include "RingBuffer.h"
 #include "NoiseOscillator.h"
 #include "FundamentalFrequencyProcessor.h"
-#include "FeedbackModuleProcessor.h"
 #include "AnalyzerPool.h"
 #include "RecordingManager.h"
 #include "LogFileWriter.h"
@@ -80,8 +79,6 @@ public:
     void processRealtimeAnalysis(AudioBuffer<float>& buffer);
     
     void processFundamentalFrequency(AudioBuffer<float>& buffer);
-    
-    void processFeedbackModule(AudioBuffer<float>& buffer);
     
     void releaseResources();
     
@@ -276,8 +273,6 @@ public:
     
     std::unique_ptr<FundamentalFrequencyProcessor> fundamentalFrequencyProcessor;
 
-    std::unique_ptr<FeedbackModuleProcessor> feedbackModuleProcessor;
-
     //===============================================================================
 #pragma mark Frequency Player Parameters
     //===============================================================================
@@ -402,8 +397,6 @@ public:
         virtual void updateChordScannerUIParameter(int paramIndex) {}
         
         virtual void updateFundamentalFrequencyUIParameter(int paramIndex) {}
-        
-        virtual void updateFundamentalFeedbackUIParameter(int paramIndex) {}
         
         virtual void updateFrequencyPlayerUIParameter(int shortcutRef, int paramIndex) {}
         

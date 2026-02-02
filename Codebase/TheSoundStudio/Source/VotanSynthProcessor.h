@@ -146,9 +146,8 @@ public:
     
     void prepareToPlay(float hwSampleRate, int blockSize)
     {
-//        printf("Processor Prepare to Play, SR = %f, Blocksize = %i", hwSampleRate, blockSize);
         internal_sample_rate = hwSampleRate * OVERSAMPLE_FACTOR;
-        
+
         setCurrentPlaybackSampleRate(internal_sample_rate);
     }
     
@@ -346,9 +345,8 @@ public:
     
     void prepareToPlay(float hwSampleRate, int blockSize)
     {
-//        printf("Processor Prepare to Play, SR = %f, Blocksize = %i", hwSampleRate, blockSize);
         internal_sample_rate = hwSampleRate * OVERSAMPLE_FACTOR;
-        
+
         setCurrentPlaybackSampleRate(internal_sample_rate);
     }
     
@@ -486,9 +484,8 @@ public:
     
     void prepareToPlay(float hwSampleRate, int blockSize)
     {
-//        printf("Processor Prepare to Play, SR = %f, Blocksize = %i", hwSampleRate, blockSize);
         internal_sample_rate = hwSampleRate * OVERSAMPLE_FACTOR;
-        
+
         setCurrentPlaybackSampleRate(internal_sample_rate);
     }
     

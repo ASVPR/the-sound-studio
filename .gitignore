@@ -36,3 +36,17 @@ Thumbs.db
 # Audio samples (if needed to reduce size)
 # **/Samples/**/*.wav
 # **/Samples/**/*.aiff
+
+# Compiled application binary
+The Sound Studio.app/
+
+# Runtime files
+*.pid
+.tss_pid
+logs/
+app_output.log
+
+# Development scripts
+launch.sh
+monitor_app.sh
+scripts/
