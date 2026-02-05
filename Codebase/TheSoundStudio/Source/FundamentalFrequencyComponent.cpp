@@ -2,14 +2,18 @@
   ==============================================================================
 
     FundamentalFrequencyComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "FundamentalFrequencyComponent.h"
+#include "ResponsiveUIHelper.h"
+#include "UI/DesignSystem.h"
 
 
 FundamentalFrequencyComponent::FundamentalFrequencyComponent(ProjectManager& pm) :
@@ -31,19 +35,11 @@ frequencyProcessor(pm.fundamentalFrequencyProcessor ? *pm.fundamentalFrequencyPr
     Image imageBlueButtonSelected = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
     Image imageAddButton = ImageCache::getFromMemory(BinaryData::AddButton2x_png, BinaryData::AddButton2x_pngSize);
     
-    // fonts
-    Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
-    Typeface::Ptr AssistantBold     = Typeface::createSystemTypefaceFor(BinaryData::AssistantBold_ttf, BinaryData::AssistantBold_ttfSize);
-    Typeface::Ptr AssistantSemiBold   = Typeface::createSystemTypefaceFor(BinaryData::AssistantSemiBold_ttf, BinaryData::AssistantSemiBold_ttfSize);
-    Font fontBold(AssistantBold);
-    Font fontNormal(AssistantSemiBold);
-    Font fontLight(AssistantLight);
-    Font fontSemiBold(AssistantSemiBold);
-    
-    fontNormal.setHeight(33);
-    fontBold.setHeight(38);
-    fontSemiBold.setHeight(33 * scaleFactor);
-    fontLight.setHeight(33 * scaleFactor);
+    // Standardize fonts using Design System
+    const Font fontNormal = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(33);
+    const Font fontBold = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(38);
+    const Font fontLight = ProjectManager::getAssistantFont(ProjectManager::FontType::Light).withHeight(33);
+    const Font fontSemiBold = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(33);
     
     buttonStart = std::make_unique<asvpr::PlayerButton>(asvpr::PlayerButton::Type::PlayPause);
     buttonStart->setTriggeredOnMouseDown(true);
@@ -162,96 +158,229 @@ void FundamentalFrequencyComponent::resized()
 {
     auto bounds = getLocalBounds();
 
-    // Calculate dynamic scale factor based on window size
-    float dynamicScale = jmin(bounds.getWidth() / 1600.0f, bounds.getHeight() / 900.0f);
-    dynamicScale = jlimit(0.5f, 2.0f, dynamicScale);
+    // Calculate scale based on available space
+    const float layoutScale = jlimit(0.5f, 2.0f,
+                                     jmin(bounds.getWidth() / 1600.0f,
+                                          bounds.getHeight() / 1000.0f));
 
-    // Visualizer takes up top portion, scaled properly
-    auto visualizerArea = bounds.removeFromTop(bounds.getHeight() * 0.45f);
-    visualizerArea = visualizerArea.reduced(bounds.getWidth() * 0.03f, bounds.getHeight() * 0.02f);
-    visualiserSelectorComponent->setBounds(visualizerArea);
+    lookAndFeel.setScale(layoutScale);
+    visualiserSelectorComponent->setScale(layoutScale);
 
-    // Main content area below visualizer
-    auto contentArea = bounds.reduced(20 * dynamicScale);
+    const int padding = jmax(10, roundToInt(20 * layoutScale));
+    const int gap = jmax(8, roundToInt(12 * layoutScale));
 
-    auto x = contentArea.getX();
-    auto y = contentArea.getY();
-    auto width = contentArea.getWidth();
+    auto contentBounds = bounds.reduced(padding);
 
-    auto setContainerBounds = [this] (int index, const juce::Rectangle<int>& rec)
+    // Bottom button row
+    const int buttonRowHeight = jmax(70, roundToInt(90 * layoutScale));
+    auto buttonRow = contentBounds.removeFromBottom(buttonRowHeight);
+    contentBounds.removeFromBottom(gap);
+
+    // Visualiser at top (40% of content)
+    int visualiserHeight = roundToInt(contentBounds.getHeight() * 0.40f);
+    visualiserHeight = jmax(200, visualiserHeight);
+    auto visualiserArea = contentBounds.removeFromTop(visualiserHeight);
+    visualiserArea = visualiserArea.reduced(padding / 2);
+    visualiserSelectorComponent->setBounds(visualiserArea);
+
+    contentBounds.removeFromTop(gap);
+
+    // Calculate row heights for containers - give each section adequate space
+    const int totalRowsHeight = contentBounds.getHeight();
+    const int row0Height = jmax(90, roundToInt(totalRowsHeight * 0.18f));   // FFT Parameters
+    const int row1Height = jmax(160, roundToInt(totalRowsHeight * 0.32f));  // Threshold/Range side by side
+    const int row2Height = jmax(130, roundToInt(totalRowsHeight * 0.26f));  // Process
+    const int row3Height = jmax(90, roundToInt(totalRowsHeight * 0.18f));   // Harmonics
+
+    // Row 0: FFT Parameters (full width)
+    auto row0 = contentBounds.removeFromTop(row0Height);
+    contentBounds.removeFromTop(gap);
+
+    // Row 1: Threshold & Tolerance (left) + Range (right)
+    auto row1 = contentBounds.removeFromTop(row1Height);
+    contentBounds.removeFromTop(gap);
+
+    // Row 2: Process (full width)
+    auto row2 = contentBounds.removeFromTop(row2Height);
+    contentBounds.removeFromTop(gap);
+
+    // Row 3: Harmonics/Results (full width)
+    auto row3 = contentBounds;
+
+    // Set container bounds
+    containers.setContainerBounds(0, row0);
+
+    // Split row1 into left (Threshold) and right (Range)
+    const int row1LeftWidth = roundToInt(row1.getWidth() * 0.65f);
+    auto row1Left = row1.removeFromLeft(row1LeftWidth);
+    row1.removeFromLeft(gap);
+    auto row1Right = row1;
+    containers.setContainerBounds(1, row1Left);
+    containers.setContainerBounds(2, row1Right);
+
+    containers.setContainerBounds(3, row2);
+    containers.setContainerBounds(4, row3);
+
+    // =========== Transport Buttons (bottom row) ===========
+    const int playWidth = jmax(120, roundToInt(150 * layoutScale));
+    const int playHeight = jmax(40, roundToInt(50 * layoutScale));
+    const int stopWidth = jmax(90, roundToInt(110 * layoutScale));
+    const int buttonSpacing = jmax(15, roundToInt(20 * layoutScale));
+
+    auto centerX = buttonRow.getCentreX();
+    auto playBounds = Rectangle<int>(centerX - (playWidth + stopWidth + buttonSpacing) / 2,
+                                     buttonRow.getCentreY() - playHeight / 2,
+                                     playWidth, playHeight);
+    auto stopBounds = playBounds.withX(playBounds.getRight() + buttonSpacing).withWidth(stopWidth);
+    stopBounds = stopBounds.withHeight(playHeight);
+
+    buttonStart->setBounds(playBounds);
+    buttonStop->setBounds(stopBounds);
+
+    const int noiseSize = jmax(60, roundToInt(80 * layoutScale));
+    auto noiseBounds = buttonRow.removeFromRight(noiseSize + padding);
+    noiseBounds = noiseBounds.withSizeKeepingCentre(noiseSize, noiseSize);
+    noiseButton->setBounds(noiseBounds);
+
+    // =========== Container 0: FFT Parameters ===========
+    auto cont0 = containers.getContainer(0).getLocalBounds().reduced(10);
+    const int comboHeight = jmax(36, roundToInt(42 * layoutScale));
+    const int comboTop = jmax(30, roundToInt(38 * layoutScale));
+    const int comboGap = jmax(8, roundToInt(12 * layoutScale));
+    const int numCombos = 5;
+    int comboWidth = (cont0.getWidth() - (numCombos - 1) * comboGap - 20) / numCombos;
+    comboWidth = jmax(100, comboWidth);
+
+    int comboX = 10;
+    comboBoxFFTSize->setBounds(comboX, comboTop, comboWidth, comboHeight);
+    comboX += comboWidth + comboGap;
+    comboBoxFFTWindow->setBounds(comboX, comboTop, comboWidth, comboHeight);
+    comboX += comboWidth + comboGap;
+    comboBoxInput->setBounds(comboX, comboTop, comboWidth, comboHeight);
+    comboX += comboWidth + comboGap;
+    comboBoxAlgorithm->setBounds(comboX, comboTop, comboWidth, comboHeight);
+    comboX += comboWidth + comboGap;
+    comboBoxNumHarmonics->setBounds(comboX, comboTop, comboWidth, comboHeight);
+
+    // =========== Container 1: Threshold & Tolerance (4 units) ===========
+    // Layout: Gauge (rotary) at top, TextBox below gauge, Label at bottom
+    auto cont1 = containers.getContainer(1).getLocalBounds().reduced(10);
+    const int labelReservedHeight = jmax(22, roundToInt(25 * layoutScale)); // Space for label at bottom
+    const int availableSliderHeight = cont1.getHeight() - labelReservedHeight - 15; // Leave margin
+    const int unitWidth = jmax(70, roundToInt(80 * layoutScale));
+    const int unitHeight = jmax(100, availableSliderHeight); // Slider height (gauge + textbox)
+    const int unitGap = jmax(15, roundToInt(30 * layoutScale));
+    const int numUnits = 4;
+    int totalUnitsWidth = numUnits * unitWidth + (numUnits - 1) * unitGap;
+    int startX = (cont1.getWidth() - totalUnitsWidth) / 2;
+    const int unitTop = 5; // Small top margin
+
+    sliderThresholdInputDetection->setBounds(startX, unitTop, unitWidth, unitHeight);
+    sliderKeynoteTolerance->setBounds(startX + (unitWidth + unitGap), unitTop, unitWidth, unitHeight);
+    sliderMinIntervalSize->setBounds(startX + 2 * (unitWidth + unitGap), unitTop, unitWidth, unitHeight);
+    sliderMaxIntervalSize->setBounds(startX + 3 * (unitWidth + unitGap), unitTop, unitWidth, unitHeight);
+
+    // =========== Container 2: Range ===========
+    auto cont2 = containers.getContainer(2).getLocalBounds().reduced(10);
+    const int rangeEditorHeight = jmax(26, roundToInt(32 * layoutScale));
+    const int rangeEditorWidth = jmin(cont2.getWidth() / 2 - 20, jmax(85, roundToInt(100 * layoutScale)));
+    const int rangeCheckSize = jmax(16, roundToInt(20 * layoutScale));
+    const int rangeGap = jmax(8, roundToInt(10 * layoutScale));
+
+    // Checkbox for custom range - positioned near top
+    buttonCustomFrequencyRange->setBounds(15, 28, rangeCheckSize, rangeCheckSize);
+
+    // Min/Max frequency editors - centered horizontally, positioned in lower half
+    const int editorsY = cont2.getHeight() - rangeEditorHeight - 35; // Leave space for labels above
+    const int totalEditorsWidth = 2 * rangeEditorWidth + rangeGap;
+    const int editorsStartX = (cont2.getWidth() - totalEditorsWidth) / 2;
+
+    textEditorMinFrequency->setBounds(editorsStartX, editorsY, rangeEditorWidth, rangeEditorHeight);
+    textEditorMaxFrequency->setBounds(editorsStartX + rangeEditorWidth + rangeGap, editorsY, rangeEditorWidth, rangeEditorHeight);
+
+    // =========== Container 3: Process ===========
+    // Layout: Two rows - top row for controls, bottom row for sliders/presets
+    auto cont3 = containers.getContainer(3).getLocalBounds().reduced(10);
+    const int procEditorWidth = jmax(65, roundToInt(80 * layoutScale));
+    const int procEditorHeight = jmax(24, roundToInt(28 * layoutScale));
+    const int procButtonWidth = jmax(70, roundToInt(85 * layoutScale));
+    const int procButtonHeight = jmax(26, roundToInt(32 * layoutScale));
+    const int procToggleWidth = jmax(90, roundToInt(100 * layoutScale));
+    const int procGap = jmax(8, roundToInt(12 * layoutScale));
+
+    // Calculate column positions based on container width
+    const int colWidth = (cont3.getWidth() - 40) / 5; // 5 logical columns
+
+    // Top Row Y position (below label area)
+    const int topY3 = 32;
+
+    // Column 0-1: IR controls (left section)
+    int irX = 15;
+    toggleIREnable->setBounds(irX, topY3, procToggleWidth, procEditorHeight);
+    buttonIRLoad->setBounds(irX + procToggleWidth + procGap, topY3, jmax(100, roundToInt(115 * layoutScale)), procButtonHeight);
+
+    // Column 2: Iterations (center-left)
+    const int iterX = colWidth * 2;
+    textEditorIteration->setBounds(iterX, topY3, procEditorWidth, procEditorHeight);
+
+    // Column 3: Iteration length (center-right)
+    const int lengthX = colWidth * 3;
+    textEditorLength->setBounds(lengthX, topY3, procEditorWidth + 15, procEditorHeight);
+
+    // Column 4: Auto A (right section)
+    const int autoAX = cont3.getWidth() - jmax(200, roundToInt(210 * layoutScale)) - 10;
+    toggleAutoA->setBounds(autoAX, topY3, jmax(190, roundToInt(200 * layoutScale)), procEditorHeight);
+
+    // Bottom Row Y position
+    const int bottomY3 = cont3.getHeight() - procButtonHeight - 10;
+
+    // Left: IR wet slider
+    sliderIRWet->setBounds(15, bottomY3, jmax(220, roundToInt(250 * layoutScale)), 25);
+
+    // Right: Range preset buttons (FULL, LOW, VOCAL) - properly spaced
+    const int totalPresetsWidth = 3 * procButtonWidth + 2 * procGap;
+    const int presetsX = cont3.getWidth() - totalPresetsWidth - 15;
+    buttonRangeFull->setBounds(presetsX, bottomY3, procButtonWidth, procButtonHeight);
+    buttonRangeLow->setBounds(presetsX + procButtonWidth + procGap, bottomY3, procButtonWidth, procButtonHeight);
+    buttonRangeVocal->setBounds(presetsX + 2 * (procButtonWidth + procGap), bottomY3, procButtonWidth, procButtonHeight);
+
+    // =========== Container 4: Harmonics/Results ===========
+    auto cont4 = containers.getContainer(4).getLocalBounds().reduced(10);
+    const float resultFontSize = ResponsiveUIHelper::getReadableFontSize(
+        24.0f, layoutScale, TSS::Design::Usability::toolbarLabelMinFont);
+    const auto resultFont = projectManager.getAssistantFont(ProjectManager::FontType::SemiBold)
+                                .withHeight(resultFontSize);
+
+    labelFrequency->setFont(resultFont);
+    labelChord->setFont(resultFont);
+    labelFrequency->setBounds(10, 10, 120, 35);
+    labelChord->setBounds(10, 45, 120, 35);
+
+    // Harmonic labels positioned horizontally
+    int harmonicX = 150;
+    int harmonicW = 100;
+    int harmonicH = 28;
+    for (int i = 0; i < 5; ++i)
     {
-        containers.setContainerBounds(index, rec);
-        return containers.getContainer(index).getBottom();
-    };
+        labelHarmonic[i].setBounds(harmonicX + i * (harmonicW + 8), 10, harmonicW, harmonicH);
+    }
+    for (int i = 5; i < 10; ++i)
+    {
+        labelHarmonic[i].setBounds(harmonicX + (i - 5) * (harmonicW + 8), 40, harmonicW, harmonicH);
+    }
 
-    auto gap = 10 * dynamicScale;
-
-    // Container heights scaled dynamically
-    y = setContainerBounds(0, juce::Rectangle<int>(x, y, width, 90 * dynamicScale)) + gap;
-
-    y = std::max(setContainerBounds(1, juce::Rectangle<int>(x, y, width * 0.6f, 140 * dynamicScale)),
-                 setContainerBounds(2, juce::Rectangle<int>(x + width * 0.6f + gap,
-                                                            y,
-                                                            (width * 0.4f) - gap,
-                                                            140 * dynamicScale))) + gap;
-
-    y = setContainerBounds(3, juce::Rectangle<int>(x,
-                                                   y,
-                                                   width,
-                                                   150 * dynamicScale)) + gap;
-
-    y = setContainerBounds(4, juce::Rectangle<int>(x, y, width, 100 * dynamicScale)) + gap;
-
-    // Position buttons at bottom with dynamic positioning
-    auto buttonY = bounds.getBottom() - (80 * dynamicScale);
-    auto centerX = bounds.getCentreX();
-    buttonStart->setBounds(centerX - (45 * dynamicScale), buttonY, 90 * dynamicScale, 25 * dynamicScale);
-    buttonStop->setBounds(centerX - (140 * dynamicScale), buttonY, 60 * dynamicScale, 25 * dynamicScale);
-    noiseButton->setBounds(centerX + (250 * dynamicScale), buttonY - (5 * dynamicScale), 75 * dynamicScale, 75 * dynamicScale);
-
-    // Layout controls inside Process container (index 3) with relative positioning
-    auto& processCont = containers.getContainer(3);
-    auto pb = processCont.getLocalBounds().reduced(10 * dynamicScale, 8 * dynamicScale);
-
-    // Position range preset buttons relative to container
-    auto rangeButtonY = pb.getY() + (70 * dynamicScale);
-    auto rangeButtonX = pb.getX() + (450 * dynamicScale);
-    buttonRangeFull ->setBounds(rangeButtonX, rangeButtonY, 60 * dynamicScale, 24 * dynamicScale);
-    buttonRangeLow  ->setBounds(rangeButtonX + (65 * dynamicScale), rangeButtonY, 60 * dynamicScale, 24 * dynamicScale);
-    buttonRangeVocal->setBounds(rangeButtonX + (130 * dynamicScale), rangeButtonY, 70 * dynamicScale, 24 * dynamicScale);
-
-    // Place IR controls at the bottom of the Process container
-    auto bottomRow = pb.removeFromBottom(28 * dynamicScale);
-    toggleIREnable->setBounds(bottomRow.removeFromLeft(120 * dynamicScale));
-    buttonIRLoad->setBounds(bottomRow.removeFromLeft(180 * dynamicScale));
-    auto wetRow = pb.removeFromBottom(28 * dynamicScale);
-    sliderIRWet->setBounds(wetRow.removeFromLeft(300 * dynamicScale));
-
-    // Reposition child components within their containers with relative positioning
-    // Container 0 components
-    auto cont0Bounds = containers.getContainer(0).getLocalBounds();
-    int boxWidth = (cont0Bounds.getWidth() - 50 * dynamicScale) / 5;
-    comboBoxFFTSize->setBounds(20 * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
-    comboBoxFFTWindow->setBounds((20 + boxWidth + 10) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
-    comboBoxInput->setBounds((20 + 2 * (boxWidth + 10)) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
-    comboBoxAlgorithm->setBounds((20 + 3 * (boxWidth + 10)) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
-    comboBoxNumHarmonics->setBounds((20 + 4 * (boxWidth + 10)) * dynamicScale, 40 * dynamicScale, boxWidth, 40 * dynamicScale);
-
-    // Container 2 components (Frequency Range)
-    auto cont2Bounds = containers.getContainer(2).getLocalBounds();
-    buttonCustomFrequencyRange->setBounds(30 * dynamicScale, 60 * dynamicScale, 15 * dynamicScale, 15 * dynamicScale);
-    textEditorMinFrequency->setBounds(30 * dynamicScale, 110 * dynamicScale, 110 * dynamicScale, 20 * dynamicScale);
-    textEditorMaxFrequency->setBounds(150 * dynamicScale, 110 * dynamicScale, 110 * dynamicScale, 20 * dynamicScale);
-
-    // Container 3 components (Process)
-    buttonProcessFFT->setBounds(55 * dynamicScale, 40 * dynamicScale, 15 * dynamicScale, 15 * dynamicScale);
-    textEditorIteration->setBounds(300 * dynamicScale, 37 * dynamicScale, 80 * dynamicScale, 20 * dynamicScale);
-    textEditorLength->setBounds(600 * dynamicScale, 37 * dynamicScale, 80 * dynamicScale, 20 * dynamicScale);
-    toggleAutoA->setBounds(700 * dynamicScale, 35 * dynamicScale, 220 * dynamicScale, 24 * dynamicScale);
-
-    // Container 4 components (Results)
-    labelFrequency->setBounds(0, 15 * dynamicScale, 150 * dynamicScale, 40 * dynamicScale);
-    labelChord->setBounds(0, 50 * dynamicScale, 150 * dynamicScale, 40 * dynamicScale);
+    // Update fonts for text editors
+    const auto editorFont = projectManager.getAssistantFont(ProjectManager::FontType::SemiBold)
+                                .withHeight(ResponsiveUIHelper::getReadableFontSize(
+                                    18.0f, layoutScale, TSS::Design::Usability::toolbarLabelMinFont));
+    textEditorMinFrequency->setFont(editorFont);
+    textEditorMaxFrequency->setFont(editorFont);
+    textEditorIteration->setFont(editorFont);
+    textEditorLength->setFont(editorFont);
+    textEditorMinFrequency->applyFontToAllText(editorFont);
+    textEditorMaxFrequency->applyFontToAllText(editorFont);
+    textEditorIteration->applyFontToAllText(editorFont);
+    textEditorLength->applyFontToAllText(editorFont);
 }
 
 void FundamentalFrequencyComponent::paint(Graphics&g)
@@ -304,25 +433,24 @@ void FundamentalFrequencyComponent::buttonClicked (Button * button)
 {
     if (button == buttonStart.get())
     {
-        if (frequencyProcessor.is_fft_process_enable())
-        {
-            frequencyProcessor.startAnalyser();
+        // Start analyser regardless of Process FFT checkbox state
+        // This fixes the bug where Play button appeared broken when checkbox was off
+        frequencyProcessor.startAnalyser();
 
-            if (frequencyProcessor.isPlaying())
-            {
-                visualiserSelectorComponent->setProcessingActive(true);
-                buttonStart->setButtonText("Playing...");
-                buttonStart->setButtonColour({129, 135, 140});
-                buttonStart->setEnabled(false);
-                logToFile = true;
-            }
-            else
-            {
-                visualiserSelectorComponent->setProcessingActive(false);
-                buttonStart->resetButtonColour();
-                buttonStart->resetButtonText();
-                buttonStart->setEnabled(true);
-            }
+        if (frequencyProcessor.isPlaying())
+        {
+            visualiserSelectorComponent->setProcessingActive(true);
+            buttonStart->setButtonText("Playing...");
+            buttonStart->setButtonColour({129, 135, 140});
+            buttonStart->setEnabled(false);
+            logToFile = true;
+        }
+        else
+        {
+            visualiserSelectorComponent->setProcessingActive(false);
+            buttonStart->resetButtonColour();
+            buttonStart->resetButtonText();
+            buttonStart->setEnabled(true);
         }
     }
     else if (button == buttonStop.get())
@@ -337,10 +465,6 @@ void FundamentalFrequencyComponent::buttonClicked (Button * button)
     else if (button == noiseButton.get())
     {
         projectManager.setPanicButton();
-    }
-    else if (button ==  buttonProcessFFT.get())
-    {
-        frequencyProcessor.enable_fft_process(buttonProcessFFT->getToggleState());
     }
     else if (button == buttonCustomFrequencyRange.get())
     {
@@ -574,44 +698,61 @@ void FundamentalFrequencyComponent::prepare_thresholdAndTolerance()
         slider = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
         slider->setRange (newMinimum, newMaximum, newInterval);
         slider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
-        slider->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
         slider->setNumDecimalPlacesToDisplay(decimals);
         slider->setLookAndFeel(&lookAndFeel);
         slider->setBounds(bounds);
-        slider->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
+        
+        // TextBox at bottom of unit (managed by Slider component height)
+        slider->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
 
         containers.getContainer(1).addAndMakeVisible(*slider);
     };
 
 
-    create(sliderThresholdInputDetection, -80, 6.0, 0, {15, 35, 80, 80}, 1);
-    create(sliderKeynoteTolerance, -100, 100, 0, {115, 35, 80, 80}, 0);
-    create(sliderMinIntervalSize, 0.05, 4.0, 0, {235, 35, 80, 80}, 3);
-    create(sliderMaxIntervalSize, 0.05, 4.0, 0,{340, 35, 80, 80}, 3);
+    // Initial bounds - will be properly set in resized()
+    create(sliderThresholdInputDetection, -80, 6.0, 0, {10, 5, 80, 120}, 1);
+    create(sliderKeynoteTolerance, -100, 100, 0, {100, 5, 80, 120}, 0);
+    create(sliderMinIntervalSize, 0.05, 4.0, 0, {190, 5, 80, 120}, 3);
+    create(sliderMaxIntervalSize, 0.05, 4.0, 0, {280, 5, 80, 120}, 3);
 
 
     containers.getContainer(1).paintInBackground = [this] (juce::Graphics& g, const juce::Rectangle<int>& bounds)
     {
-        auto rect = juce::Rectangle<int>(10, 102, 80, 50);
+        // Labels are drawn BELOW the textboxes (which are below the rotary gauges)
+        // Label Y is at the very bottom of the container
+        const int labelHeight = 18;
+        const int labelY = bounds.getHeight() - labelHeight - 5; // 5px bottom margin
+        const int labelWidth = 95;
 
         g.setColour(juce::Colours::white);
+        const Font labelFont = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(11);
+        g.setFont(labelFont);
+
+        // Match the dynamic layout calculation from resized()
+        const int unitWidth = 80;
+        const int unitGap = 30;
+        const int numUnits = 4;
+        const int totalWidth = numUnits * unitWidth + (numUnits - 1) * unitGap;
+        const int startX = (bounds.getWidth() - totalWidth) / 2;
+
+        // Center labels under each slider unit
+        const int labelOffset = (unitWidth - labelWidth) / 2;
 
         g.drawFittedText("Input Threshold",
-                         rect,
+                         juce::Rectangle<int>(startX + labelOffset, labelY, labelWidth, labelHeight),
                          juce::Justification::centred, 1);
 
-        g.drawFittedText("Keynote Tolerance",
-                         rect.translated(110, 0),
+        g.drawFittedText("Keynote Tol.",
+                         juce::Rectangle<int>(startX + (unitWidth + unitGap) + labelOffset, labelY, labelWidth, labelHeight),
                          juce::Justification::centred, 1);
 
-        g.drawFittedText("Min Interval (oct)",
-                         rect.translated(230, 0),
+        g.drawFittedText("Min Interval",
+                         juce::Rectangle<int>(startX + 2 * (unitWidth + unitGap) + labelOffset, labelY, labelWidth, labelHeight),
                          juce::Justification::centred, 1);
 
-        g.drawFittedText("Max Interval (oct)",
-                         rect.translated(340, 0),
+        g.drawFittedText("Max Interval",
+                         juce::Rectangle<int>(startX + 3 * (unitWidth + unitGap) + labelOffset, labelY, labelWidth, labelHeight),
                          juce::Justification::centred, 1);
-
     };
 
 }
@@ -638,7 +779,7 @@ void FundamentalFrequencyComponent::prepare_range()
 
     containers.getContainer(2).addAndMakeVisible(buttonCustomFrequencyRange.get());
 
-    buttonCustomFrequencyRange->setBounds(30, 60, 15, 15);
+    buttonCustomFrequencyRange->setBounds(30, 35, 15, 15);
 
     auto fontNormal = projectManager.getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(20);
 
@@ -654,7 +795,7 @@ void FundamentalFrequencyComponent::prepare_range()
     textEditorMinFrequency->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorMinFrequency->applyFontToAllText(fontNormal);
     textEditorMinFrequency->applyColourToAllText(Colours::lightgrey);
-    textEditorMinFrequency->setBounds(30, 110, 110, 20);
+    textEditorMinFrequency->setBounds(30, 110, 110, 30);
     containers.getContainer(2).addAndMakeVisible(textEditorMinFrequency.get());
 
     textEditorMaxFrequency = std::make_unique<juce::TextEditor>("");
@@ -669,43 +810,40 @@ void FundamentalFrequencyComponent::prepare_range()
     textEditorMaxFrequency->setColour(TextEditor::textColourId, Colours::darkgrey);
     textEditorMaxFrequency->applyFontToAllText(fontNormal);
     textEditorMaxFrequency->applyColourToAllText(Colours::lightgrey);
-    textEditorMaxFrequency->setBounds(150, 110, 110, 20);
+    textEditorMaxFrequency->setBounds(150, 110, 110, 30);
     containers.getContainer(2).addAndMakeVisible(textEditorMaxFrequency.get());
 
     containers.getContainer(2).paintInBackground = [this] (juce::Graphics& g, const juce::Rectangle<int>& bounds)
     {
         g.setColour(juce::Colours::white);
-        auto b = buttonCustomFrequencyRange->getBounds().translated(10, 0).withWidth(100);
+        const Font labelFont = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(12);
+        g.setFont(labelFont);
 
-        g.drawFittedText("Custom Range",  b, juce::Justification::centredRight, 1);
+        // "Custom Range" label next to checkbox
+        auto checkboxBounds = buttonCustomFrequencyRange->getBounds();
+        g.drawFittedText("Custom Range",
+                         checkboxBounds.translated(checkboxBounds.getWidth() + 5, 0).withWidth(100),
+                         juce::Justification::centredLeft, 1);
 
-        b.translate(-25, 30);
-        g.drawFittedText("Min Frequency",  b, juce::Justification::centredRight, 1);
+        // Get positions from the text editors
+        auto minBounds = textEditorMinFrequency->getBounds();
+        auto maxBounds = textEditorMaxFrequency->getBounds();
 
-        b.translate(125, 0);
-        g.drawFittedText("Max Frequency",  b, juce::Justification::centredRight, 1);
+        // Labels ABOVE the text editors
+        const int labelY = minBounds.getY() - 20;
+        g.drawFittedText("Min Frequency",
+                         juce::Rectangle<int>(minBounds.getX(), labelY, minBounds.getWidth(), 18),
+                         juce::Justification::centred, 1);
+        g.drawFittedText("Max Frequency",
+                         juce::Rectangle<int>(maxBounds.getX(), labelY, maxBounds.getWidth(), 18),
+                         juce::Justification::centred, 1);
     };
 }
 
 void FundamentalFrequencyComponent::prepare_process_and_synth()
 {
-
-    auto imageBlueCheckButtonNormal = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png,
-                                                                BinaryData::Button_Checkbox_Normal_Max_pngSize);
-    auto imageBlueCheckButtonSelected = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png,
-                                                                  BinaryData::Button_Checkbox_Selected_Max_pngSize);
-
-    buttonProcessFFT = std::make_unique<ImageButton>();
-    buttonProcessFFT->setClickingTogglesState(true);
-    buttonProcessFFT->setImages (false, true, true,
-                                 imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
-                                 Image(), 1.000f, Colour (0x00000000),
-                                 imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
-    buttonProcessFFT->addListener(this);
-    buttonProcessFFT->setLookAndFeel(&lookAndFeel);
-    buttonProcessFFT->setToggleState(frequencyProcessor.is_fft_process_enable(), juce::dontSendNotification);
-    containers.getContainer(3).addAndMakeVisible(*buttonProcessFFT);
-    buttonProcessFFT->setBounds(55, 40, 15, 15);
+    // FFT processing is always enabled - no toggle needed
+    frequencyProcessor.enable_fft_process(true);
 
     auto fontSemiBold = projectManager.getAssistantFont(ProjectManager::FontType::SemiBold);
 
@@ -789,25 +927,33 @@ void FundamentalFrequencyComponent::prepare_process_and_synth()
     containers.getContainer(3).paintInBackground = [this] (juce::Graphics& g, const juce::Rectangle<int>& bounds)
     {
         g.setColour(juce::Colours::white);
-        g.drawFittedText("Process FFT",
-                         juce::Rectangle<int>(80, 23, 200, 50),
+        const Font labelFont = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(12);
+        g.setFont(labelFont);
+
+        // Calculate column positions to match resized() layout
+        const int colWidth = (bounds.getWidth() - 40) / 5;
+        const int labelY = 10;
+        const int labelH = 18;
+
+        // IR section label (left)
+        g.drawFittedText("Impulse Response",
+                         juce::Rectangle<int>(15, labelY, 130, labelH),
                          juce::Justification::centredLeft, 1);
 
+        // Iterations label (center-left)
         g.drawFittedText("Iterations",
-                         juce::Rectangle<int>(230, 23, 200, 50),
-                         juce::Justification::centredLeft, 1);
+                         juce::Rectangle<int>(colWidth * 2, labelY, 80, labelH),
+                         juce::Justification::centred, 1);
 
-        g.drawFittedText("Iteration length (ms)",
-                         juce::Rectangle<int>(450, 23, 200, 50),
-                         juce::Justification::centredLeft, 1);
-        
+        // Iteration length label (center-right)
+        g.drawFittedText("Length (ms)",
+                         juce::Rectangle<int>(colWidth * 3, labelY, 95, labelH),
+                         juce::Justification::centred, 1);
+
+        // Tuning/Auto A label (right)
         g.drawFittedText("Tuning",
-                         juce::Rectangle<int>(700, 23, 200, 50),
-                         juce::Justification::centredLeft, 1);
-
-        g.drawFittedText("Range presets",
-                         juce::Rectangle<int>(450, 60, 200, 40),
-                         juce::Justification::centredLeft, 1);
+                         juce::Rectangle<int>(bounds.getWidth() - 210, labelY, 200, labelH),
+                         juce::Justification::centred, 1);
     };
 
 }

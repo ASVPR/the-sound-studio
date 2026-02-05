@@ -1,54 +1,61 @@
 # The Sound Studio
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/Platform-macOS-blue.svg)](https://www.apple.com/macos/)
+[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
+[![JUCE](https://img.shields.io/badge/JUCE-Framework-orange.svg)](https://juce.com/)
 
 A professional audio synthesis and analysis platform built with the [JUCE](https://juce.com/) framework. The Sound Studio replaces traditional sample-based audio with real-time synthesis algorithms, delivering a lightweight application with rich sound design capabilities.
 
 ## Features
 
 ### Synthesis Engine
-- **Physical Modeling Synthesis** — Piano with inharmonic partials, strings with bowed modeling
-- **Karplus-Strong Algorithm** — Guitar, harp, and plucked string instruments
-- **Wavetable Synthesis** — Church organ, synthesizers, and pads
-- **24+ instruments** across six categories (Keys, Strings, Wind, Percussion, Ethnic, Synth)
+- **Physical Modeling Synthesis** — Piano with inharmonic partials, strings with bowed modeling.
+- **Karplus-Strong Algorithm** — Guitar, harp, and plucked string instruments.
+- **Wavetable Synthesis** — Church organ, synthesizers, and pads.
+- **24+ Instruments** — Across categories including Keys, Strings, Wind, Percussion, Ethnic, and Synth.
 
 ### Audio Analysis & Visualization
-- **Frequency Color Spectrogram** — 40-octave frequency-to-light color mapping
-- **Spectra Harmonics Chart** — Real-time harmonic overtone analysis
-- **Standing Wave Spectrogram** — Physics-based wave visualization
-- **Compare Spectrograms** — Side-by-side analysis with synced zoom and pan
-- **Multi-dimensional Lissajous Curves** — 2D through 6D expandable visualization
+- **Frequency Color Spectrogram** — High-resolution 40-octave frequency-to-light color mapping.
+- **Spectra Harmonics Chart** — Real-time harmonic overtone analysis.
+- **Standing Wave Spectrogram** — Physics-based wave visualization.
+- **Dual Spectrogram Comparison** — Side-by-side analysis with synchronized zoom and pan.
+- **Multi-dimensional Lissajous Curves** — 2D through 6D expandable phase visualization.
 
 ### Core Capabilities
-- Real-time chord playback with multiple voicings
-- Frequency analysis and pitch detection
-- Audio recording and export
-- MIDI input support
-- Configurable synthesis parameters (ADSR, filters, modulation)
+- Real-time chord playback with multiple voicings and scales.
+- Frequency analysis and high-precision pitch detection.
+- Multi-format audio recording and session logging.
+- Full MIDI input support for external controllers.
+- Deeply configurable synthesis parameters (ADSR, filters, modulation).
 
 ## Screenshots
 
 | Chord Scanner | Settings |
 |:---:|:---:|
-| ![Chord Scanner](example/Chord%20Scanner.png) | ![Settings](example/Settings.png) |
+| ![Chord Scanner](Screenshots/Chord%20Scanner.png) | ![Settings](Screenshots/Settings.png) |
 
 ## Building
 
 ### Requirements
-- macOS with Xcode
-- JUCE framework (included via Projucer project)
+- macOS 10.13+
+- Xcode 15+
+- JUCE 8.0+
 - C++17 compatible compiler
 
 ### Build Steps
 
-1. Open the Xcode project:
-   ```
-   Codebase/TheSoundStudio/Builds/MacOSX/The Sound Studio.xcodeproj
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/the-sound-studio.git
+   cd the-sound-studio
    ```
 
-2. Select the **The Sound Studio - App** scheme.
+2. **Open the Projucer file:**
+   Open `Codebase/TheSoundStudio/TheSoundStudio.jucer` in the JUCE Projucer and click "Save and Open in IDE" to generate the Xcode project.
 
-3. Build and run (⌘R) or archive for release.
+3. **Build in Xcode:**
+   Select the **The Sound Studio - App** scheme and build (⌘B).
 
 Alternatively, build from the command line:
 ```bash
@@ -62,40 +69,34 @@ xcodebuild -project "The Sound Studio.xcodeproj" \
 ## Project Structure
 
 ```
-tss/
+The Sound Studio/
 ├── Codebase/TheSoundStudio/
 │   ├── Source/              # Application source code
 │   │   ├── Main.cpp         # Application entry point
-│   │   ├── MainComponent.*  # Root UI component
-│   │   ├── Synth*/          # Synthesis engine components
-│   │   ├── Spectrogram*/    # Visualization components
-│   │   ├── ChordPlayer*/    # Chord playback system
+│   │   ├── Synth/           # Synthesis engine components
+│   │   ├── UI/              # Modern UI components
+│   │   ├── FeedbackModule/  # Real-time feedback processing
 │   │   └── ...
 │   ├── Builds/MacOSX/       # Xcode project files
 │   └── TheSoundStudio.jucer # Projucer project file
 ├── Assets/                  # UI assets, images, and fonts
-├── Graphics/                # Visual design assets
+├── documentation/           # Technical documentation
 └── README.md
 ```
 
+## Documentation
+
+Technical documentation is available in the [documentation](./documentation) folder:
+- [Architecture Overview](./documentation/ARCHITECTURE.md)
+- [Codebase Overview](./documentation/CODEBASE_OVERVIEW.md)
+- [Changelog](./documentation/CHANGELOG.md)
+
 ## Contributing
 
-Contributions are welcome! To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes (`git commit -m 'Add my feature'`)
-4. Push to the branch (`git push origin feature/my-feature`)
-5. Open a Pull Request
-
-## Acknowledgments
-
-- [JUCE](https://juce.com/) — Cross-platform C++ audio framework
-- [HIIR](https://github.com/music-dsp-collection/hiir) — Halfband IIR filter library by Laurent de Soras
-- [readerwriterqueue](https://github.com/cameron314/readerwriterqueue) — Lock-free single-producer, single-consumer queue
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2026 Ziv Elovitch.
+Copyright (c) 2026 Ziv Elovitch. All rights reserved.

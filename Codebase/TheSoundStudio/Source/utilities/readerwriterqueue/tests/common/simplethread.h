@@ -1,3 +1,16 @@
+/*
+  ==============================================================================
+
+    simplethread.h
+    The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
+
+  ==============================================================================
+*/
+
 #pragma once
 
 // Like C++11's std::thread, but with a reduced API, and works on Windows with MSVC2010+.

@@ -2,13 +2,14 @@
   ==============================================================================
 
     VotanSynthProcessor.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
-
 
 #pragma once
 #ifndef VOTANSYNTHPROCESSOR_H_INCLUDED
@@ -146,8 +147,9 @@ public:
     
     void prepareToPlay(float hwSampleRate, int blockSize)
     {
+//        printf("Processor Prepare to Play, SR = %f, Blocksize = %i", hwSampleRate, blockSize);
         internal_sample_rate = hwSampleRate * OVERSAMPLE_FACTOR;
-
+        
         setCurrentPlaybackSampleRate(internal_sample_rate);
     }
     
@@ -345,8 +347,9 @@ public:
     
     void prepareToPlay(float hwSampleRate, int blockSize)
     {
+//        printf("Processor Prepare to Play, SR = %f, Blocksize = %i", hwSampleRate, blockSize);
         internal_sample_rate = hwSampleRate * OVERSAMPLE_FACTOR;
-
+        
         setCurrentPlaybackSampleRate(internal_sample_rate);
     }
     
@@ -484,8 +487,9 @@ public:
     
     void prepareToPlay(float hwSampleRate, int blockSize)
     {
+//        printf("Processor Prepare to Play, SR = %f, Blocksize = %i", hwSampleRate, blockSize);
         internal_sample_rate = hwSampleRate * OVERSAMPLE_FACTOR;
-
+        
         setCurrentPlaybackSampleRate(internal_sample_rate);
     }
     

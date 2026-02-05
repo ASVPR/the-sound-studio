@@ -2,9 +2,11 @@
   ==============================================================================
 
     MainViewComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -12,6 +14,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <array>
 #include "ProjectManager.h"
 #include "ChordPlayerComponent.h"
 #include "ChordScannerComponent.h"
@@ -23,8 +26,10 @@
 #include "SettingsComponent.h"
 #include "PluginRackComponent.h"
 #include "FundamentalFrequencyComponent.h"
+#include "FeedbackModuleComponent.h"
 #include "CustomLookAndFeel.h"
-#include "UI/DesignSystem.h"
+
+class SidebarMenuButton;
 
 // 1. menu system
 // 2. buttons and container views
@@ -35,7 +40,7 @@ public:
     enum class MenuItem
     {
         ChordPlayer = 0, ChordScanner, FundamentalFrequency, FrequencyPlayer,
-        FrequencyScanner, RealTimeAnalysis, LissajousCurves,
+        FrequencyScanner, RealTimeAnalysis, LissajousCurves, Feedback,
         FrequencyLight, Settings, NumItems
     };
 
@@ -43,7 +48,6 @@ public:
     ~MainViewComponent();
 
     void paint (Graphics&) override;
-    void paintOverChildren(juce::Graphics& g) override;
     void resized() override;
     void buttonClicked (Button*button)override;
 
@@ -51,40 +55,44 @@ public:
     MenuItem currentMenuItem;
 private:
     void switchMenuView();
+    void updateLayoutForWindowSize();
+
+    struct MenuEntry
+    {
+        MenuItem item;
+        const char* label;
+        bool hasMode;
+        AUDIO_MODE mode;
+    };
+
+    static const std::array<MenuEntry, static_cast<size_t>(MenuItem::NumItems)> menuEntries;
 
     ProjectManager* projectManager;
     CustomLookAndFeel lookAndFeel;
-
+    
     // Buttons
     std::unique_ptr<ImageButton>                  menuButton_ASVPRTool;
 
-    ImageButton* currentSelectedButton;
-
+    SidebarMenuButton* currentSelectedButton = nullptr;
+    
     // container views
     Component mainContainerComponent;
     std::vector<std::unique_ptr<MenuViewInterface>> menuViews;
 
     // Menu buttons
-    std::vector<std::unique_ptr<ImageButton>> menuButtons;
-
-    const std::map<MenuItem, AUDIO_MODE> menuItemToModeMap {
-        {MenuItem::ChordPlayer, AUDIO_MODE::MODE_CHORD_PLAYER},
-        {MenuItem::ChordScanner, AUDIO_MODE::MODE_CHORD_SCANNER},
-        {MenuItem::FundamentalFrequency, AUDIO_MODE::MODE_FUNDAMENTAL_FREQUENCY},
-        {MenuItem::FrequencyPlayer, AUDIO_MODE::MODE_FREQUENCY_PLAYER},
-        {MenuItem::FrequencyScanner, AUDIO_MODE::MODE_FREQUENCY_SCANNER},
-        {MenuItem::RealTimeAnalysis, AUDIO_MODE::MODE_REALTIME_ANALYSIS},
-        {MenuItem::LissajousCurves, AUDIO_MODE::MODE_LISSAJOUS_CURVES},
-        {MenuItem::FrequencyLight, AUDIO_MODE::MODE_FREQUENCY_TO_LIGHT}
-    };
+    std::vector<std::unique_ptr<SidebarMenuButton>> menuButtons;
 
     // Image Cache
-    Image imageMenuButtonNormal;
-    Image imageMenuButtonSelected;
-    Image imageLogoButton;
-
+    
     Label labelProjectVersion;
     float scaleFactor = 1.0f;
+    
+    // Window size tracking for responsive behavior
+    int lastWindowWidth = 0;
+    int lastWindowHeight = 0;
 
+    Rectangle<int> sidebarBounds;
+    Rectangle<int> contentBounds;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainViewComponent)
 };

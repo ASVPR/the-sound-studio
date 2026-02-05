@@ -2,9 +2,11 @@
   ==============================================================================
 
     SamplerProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -89,7 +91,7 @@ AudioBuffer<float>* SynthSamplerSound::getAudioData() const noexcept
 //==============================================================================
 bool SynthSamplerSound::appliesToNote (int midiNoteNumber)
 {
-    // TODO: Add frequency range validation
+    // should prob hack it here and run checks on frequency.
     return true;
 }
 

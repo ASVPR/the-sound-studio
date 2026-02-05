@@ -2,9 +2,11 @@
   ==============================================================================
 
     FrequencyToLightSubComponents.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -87,7 +89,7 @@ public:
     ~ShortcutColourComponent();
     void paint (Graphics&g) override
     {
-        g.fillAll(juce::Colour(45, 44, 44));
+        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
     }
     
     void setState(bool shouldBeActive)
@@ -132,6 +134,7 @@ private:
     bool isActive;
 
     
+    Image backgroundImage;
     Image imageAddIcon;
     Image imageSettings;
     Image imageDelete;
@@ -148,7 +151,7 @@ public:
     
     void paint (Graphics&g) override
     {
-        g.fillAll(juce::Colour(45, 44, 44));
+        g.drawImage(imageMainBackground, 0, 0, 1566*scaleFactor, 1440*scaleFactor, 0, 0, 1566, 1440);
     }
   
     std::unique_ptr<ImageButton> button_Multiplication;
@@ -171,6 +174,7 @@ private:
     
     int shortcutRef;
     
+    Image imageMainBackground;
     Image imageStopButton;
     Image imageStartButton;
     Image imageBlueButtonNormal;

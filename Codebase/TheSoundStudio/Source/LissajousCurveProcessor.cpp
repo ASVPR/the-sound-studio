@@ -2,9 +2,11 @@
   ==============================================================================
 
     LissajousCurveProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -489,7 +491,10 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
     }
     
     totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
-
+    
+//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
+    
 }
 
 //=================================================================
@@ -1077,6 +1082,8 @@ void LissajousFrequencyPlayerProcessor::PlayRepeater::processSimultaneousShortcu
 //
 //    totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
 //
+////    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+////    printf("\n Total MS of sequence = %i", totalMSOfLoop);
 //
 //}
 //
@@ -1846,6 +1853,9 @@ void LissajousChordPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
 
     
     totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
+    
+//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
 
 }
 

@@ -2,9 +2,11 @@
   ==============================================================================
 
     DesignSystem.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -13,48 +15,6 @@
 
 namespace TSS {
 namespace Design {
-
-//==============================================================================
-// COLOR IMPLEMENTATIONS
-//==============================================================================
-
-// Primary Brand Colors - Modern blue with good contrast
-const juce::Colour Colors::primary = juce::Colour(0xff3b82f6);        // Blue-500
-const juce::Colour Colors::primaryDark = juce::Colour(0xff2563eb);    // Blue-600
-const juce::Colour Colors::primaryLight = juce::Colour(0xff60a5fa);   // Blue-400
-
-// Semantic Colors - Industry standard
-const juce::Colour Colors::success = juce::Colour(0xff10b981);  // Green-500
-const juce::Colour Colors::warning = juce::Colour(0xfff59e0b);  // Amber-500
-const juce::Colour Colors::error = juce::Colour(0xffef4444);    // Red-500
-const juce::Colour Colors::info = juce::Colour(0xff06b6d4);     // Cyan-500
-
-// Light Theme Colors
-const juce::Colour Colors::Light::background = juce::Colour(0xfffafafa);      // Gray-50
-const juce::Colour Colors::Light::surface = juce::Colour(0xffffffff);         // White
-const juce::Colour Colors::Light::surfaceHover = juce::Colour(0xfff5f5f5);    // Gray-100
-const juce::Colour Colors::Light::border = juce::Colour(0xffe5e7eb);          // Gray-200
-const juce::Colour Colors::Light::divider = juce::Colour(0xffd1d5db);         // Gray-300
-
-const juce::Colour Colors::Light::text = juce::Colour(0xff111827);            // Gray-900
-const juce::Colour Colors::Light::textSecondary = juce::Colour(0xff6b7280);   // Gray-500
-const juce::Colour Colors::Light::textDisabled = juce::Colour(0xff9ca3af);    // Gray-400
-
-// Dark Theme Colors - True dark with good contrast
-const juce::Colour Colors::Dark::background = juce::Colour(0xff0f172a);       // Slate-900
-const juce::Colour Colors::Dark::surface = juce::Colour(0xff1e293b);          // Slate-800
-const juce::Colour Colors::Dark::surfaceHover = juce::Colour(0xff334155);     // Slate-700
-const juce::Colour Colors::Dark::border = juce::Colour(0xff475569);           // Slate-600
-const juce::Colour Colors::Dark::divider = juce::Colour(0xff64748b);          // Slate-500
-
-const juce::Colour Colors::Dark::text = juce::Colour(0xfff8fafc);             // Slate-50
-const juce::Colour Colors::Dark::textSecondary = juce::Colour(0xff94a3b8);    // Slate-400
-const juce::Colour Colors::Dark::textDisabled = juce::Colour(0xff64748b);     // Slate-500
-
-// Audio-specific colors
-const juce::Colour Colors::waveform = juce::Colour(0xff3b82f6);       // Blue-500
-const juce::Colour Colors::peakMeter = juce::Colour(0xff10b981);      // Green-500
-const juce::Colour Colors::clipping = juce::Colour(0xffef4444);       // Red-500
 
 //==============================================================================
 // TYPOGRAPHY IMPLEMENTATIONS
@@ -115,7 +75,7 @@ juce::Font Typography::getCaption()
 // SHADOWS IMPLEMENTATIONS
 //==============================================================================
 
-const juce::DropShadow Shadows::none = juce::DropShadow(juce::Colours::transparentBlack, 0, {0, 0});
+const juce::DropShadow Shadows::none = juce::DropShadow(juce::Colours::transparentBlack, 1, {0, 0});
 
 const juce::DropShadow Shadows::sm = juce::DropShadow(
     juce::Colours::black.withAlpha(0.1f), 4, {0, 1}

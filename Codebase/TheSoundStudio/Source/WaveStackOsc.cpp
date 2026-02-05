@@ -2,9 +2,11 @@
   ==============================================================================
 
     WaveStackOsc.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -355,9 +357,10 @@ void WaveStackOsc::loadTableFromFileChooser(File * file)
     {
         float divisor =  i / (numSamples / numWaveStacks);
         j = (int)floorf(divisor);
+        //   printf("j = %i", j);
         stack[j][i-(2048*j)] = (double)floatData[i];
     }
-
+    
     // run env on buffer
     
     for (int j = 0; j < numWaveStacks; j++)
@@ -388,14 +391,15 @@ void WaveStackOsc::loadTableFromFileChooser(File * file)
         _waveStackArray[j] = stack[j];
     }
     
-    // Normalize wave stacks
+    // ok got stacks, debug stacks
     for (int j = 0; j < numWaveStacks; j++)
     {
         for (int i = 0; i < 2048; i++)
         {
+          //  if (j == 0) printf("stack %i- sample %i , val = %f", j , i , _waveStackArray[j][i]);
         }
     }
-
+    
     // recreate osccilators
     // initalise
     for (int i = 0; i < numWaveStacks; i++)
@@ -438,9 +442,10 @@ void WaveStackOsc::reinitialiseTable(int ref)
         // every 2048 samples needs to accumulate j++
         float divisor =  i / (numSamples / numWaveStacks);
         j = (int)floorf(divisor);
+        //   printf("j = %i", j);
         stack[j][i-(2048*j)] = (double)floatData[i];
     }
-
+    
     //copy stacks to WaveStacks
     for (int j = 0; j < numWaveStacks; j++)
     {
@@ -448,14 +453,15 @@ void WaveStackOsc::reinitialiseTable(int ref)
         _waveStackArray[j] = stack[j];
     }
     
-    // Normalize wave stacks
+    // ok got stacks, debug stacks
     for (int j = 0; j < numWaveStacks; j++)
     {
         for (int i = 0; i < 2048; i++)
         {
+            //  printf("stack %i- sample %i , val = %f", j , i , _waveStackArray[j][i]);
         }
     }
-
+    
     // delet current oscs
     
     // recreate osccilators
@@ -549,14 +555,15 @@ void WaveStackOsc::convertAudioFileToSampleArray()
         _waveStackArray[j] = stack[j];
     }
     
-    // Normalize wave stacks
+    // ok got stacks, debug stacks
     for (int j = 0; j < numWaveStacks; j++)
     {
         for (int i = 0; i < 2048; i++)
         {
+            //  printf("stack %i- sample %i , val = %f", j , i , _waveStackArray[j][i]);
         }
     }
-
+     
      */
 }
 

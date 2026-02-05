@@ -2,9 +2,11 @@
   ==============================================================================
 
     SpectrogramComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -72,8 +74,8 @@
 class OscilloscopeComponent : public Component, public Timer
 {
 public:
-    
-    VISUALISER_SOURCE   visualiserSource;
+
+    VISUALISER_SOURCE   visualiserSource = VISUALISER_SOURCE::OUTPUT_1;
     
     OscilloscopeComponent(ProjectManager * pm)
     {
@@ -82,7 +84,11 @@ public:
         startTimerHz(33);
     }
     
-    ~OscilloscopeComponent(){}
+    ~OscilloscopeComponent()
+    {
+        // CRITICAL: Stop timer before destruction to prevent race condition
+        stopTimer();
+    }
     
     void paint (Graphics&g) override
     {
@@ -182,37 +188,48 @@ public:
     
     void drawOscilloscope(Graphics &g)
     {
-        AudioBuffer<float> oscilloscopeBuffer(projectManager->getOscillscopeBuffer());
-        
+        // Safety check: projectManager must be valid
+        if (projectManager == nullptr)
+            return;
+
+        // Use the selected visualiser source to get the correct channel's buffer
+        const int channelIndex = static_cast<int>(visualiserSource) - 1;
+        if (channelIndex < 0 || channelIndex >= 8)
+            return;
+
+        AudioBuffer<float> oscilloscopeBuffer(projectManager->getOscilloscopeBufferForChannel(channelIndex));
+
+        const int numSamples = oscilloscopeBuffer.getNumSamples();
+        if (numSamples < 3)
+            return;
+
         oscilloscopePath.clear();
-        oscilloscopePath.preallocateSpace (oscilloscopeBuffer.getNumSamples());
-        
+        oscilloscopePath.preallocateSpace(numSamples);
+
         circlePointCentre.x = 0;
         circlePointCentre.y = yInset + radius;
 
         oscilloscopePath.startNewSubPath(circlePointCentre);
-        
-        float xFactor = (float)getWidth() / (oscilloscopeBuffer.getNumSamples()-1);
-        
-        for (int s = 1; s < oscilloscopeBuffer.getNumSamples()-1; s++)
+
+        const float xFactor = static_cast<float>(getWidth()) / static_cast<float>(numSamples - 1);
+
+        for (int s = 1; s < numSamples - 1; s++)
         {
-            circlePointCentre.x = (xFactor * s);
+            circlePointCentre.x = (xFactor * static_cast<float>(s));
             circlePointCentre.y = (yInset + radius) + (radius * oscilloscopeBuffer.getSample(0, s));
-            
+
             oscilloscopePath.lineTo(circlePointCentre);
         }
-        
-        circlePointCentre.x = getWidth();
+
+        circlePointCentre.x = static_cast<float>(getWidth());
         circlePointCentre.y = yInset + radius;
-        
+
         oscilloscopePath.lineTo(circlePointCentre);
-        
+
         oscilloscopePath.closeSubPath();
-        
 
         g.setColour(Colour::fromRGBA(70, 240, 70, 200));
         g.strokePath(oscilloscopePath, PathStrokeType(1.f * scaleFactor));
-
     }
     
     bool shouldUpdate = false;
@@ -249,8 +266,8 @@ private:
 class LissajousCurveViewerComponent : public Component, public Timer
 {
 public:
-    
-    VISUALISER_SOURCE   visualiserSource;
+
+    VISUALISER_SOURCE   visualiserSource = VISUALISER_SOURCE::OUTPUT_1;
     
     LissajousCurveViewerComponent(ProjectManager * pm, bool isLissajous)
     {
@@ -258,7 +275,11 @@ public:
         isForLissajous = isLissajous;
     }
     
-    ~LissajousCurveViewerComponent() { }
+    ~LissajousCurveViewerComponent()
+    {
+        // CRITICAL: Stop timer before destruction to prevent race condition
+        stopTimer();
+    }
     
     void paint (Graphics&g) override
     {
@@ -405,55 +426,71 @@ public:
     
     void drawLissajous(Graphics &g)
     {
-        
+        // Safety check: projectManager must be valid
+        if (projectManager == nullptr)
+            return;
+
         if (isForLissajous)
         {
+            // Safety check: lissajousProcessor must be valid
+            if (projectManager->lissajousProcessor == nullptr)
+                return;
+
             AudioBuffer<float> lissajousBuffer(projectManager->lissajousProcessor->getLissajousBuffer());
-            
+
+            const int numSamples = lissajousBuffer.getNumSamples();
+            if (numSamples < 1 || lissajousBuffer.getNumChannels() < 2)
+                return;
+
             lissajousPath.clear();
-            lissajousPath.preallocateSpace (lissajousBuffer.getNumSamples()+1);
-            
+            lissajousPath.preallocateSpace(numSamples + 1);
+
             circlePointCentre.x = (xInset + radius) + (radius * lissajousBuffer.getSample(0, 0));
             circlePointCentre.y = (yInset + radius) + (radius * lissajousBuffer.getSample(1, 0));
 
             lissajousPath.startNewSubPath(circlePointCentre);
-            
-            for (int s = 0; s < lissajousBuffer.getNumSamples(); s++)
+
+            for (int s = 0; s < numSamples; s++)
             {
                 circlePointCentre.x = (xInset + radius) + (radius * lissajousBuffer.getSample(0, s));
                 circlePointCentre.y = (yInset + radius) + (radius * lissajousBuffer.getSample(1, s));
-                
+
                 lissajousPath.lineTo(circlePointCentre);
             }
         }
         else
         {
-            AudioBuffer<float> lissajousBuffer(projectManager->getOscillscopeBuffer());
-            
+            // Use the selected visualiser source to get the correct channel's buffer
+            const int channelIndex = static_cast<int>(visualiserSource) - 1;
+            if (channelIndex < 0 || channelIndex >= 8)
+                return;
+
+            AudioBuffer<float> lissajousBuffer(projectManager->getOscilloscopeBufferForChannel(channelIndex));
+
+            const int numSamples = lissajousBuffer.getNumSamples();
+            if (numSamples < 1 || lissajousBuffer.getNumChannels() < 2)
+                return;
+
             lissajousPath.clear();
-            lissajousPath.preallocateSpace (lissajousBuffer.getNumSamples()+1);
-            
+            lissajousPath.preallocateSpace(numSamples + 1);
+
             circlePointCentre.x = (xInset + radius) + (radius * lissajousBuffer.getSample(0, 0));
             circlePointCentre.y = (yInset + radius) + (radius * lissajousBuffer.getSample(1, 0));
 
             lissajousPath.startNewSubPath(circlePointCentre);
-            
-            for (int s = 0; s < lissajousBuffer.getNumSamples(); s++)
+
+            for (int s = 0; s < numSamples; s++)
             {
                 circlePointCentre.x = (xInset + radius) + (radius * lissajousBuffer.getSample(0, s));
                 circlePointCentre.y = (yInset + radius) + (radius * lissajousBuffer.getSample(1, s));
-                
+
                 lissajousPath.lineTo(circlePointCentre);
             }
         }
 
-        
-//        lissajousPath.closeSubPath();
-        
         Colour lissColour(projectManager->getSettingsColorParameter(10));
         g.setColour(lissColour);
         g.strokePath(lissajousPath, PathStrokeType(1.f * scaleFactor));
-
     }
     
     void setScale(float factor) { scaleFactor = factor; }
@@ -477,8 +514,8 @@ private:
 class FrequencyDataComponent : public Component, public Timer
 {
 public:
-    
-    VISUALISER_SOURCE   visualiserSource;
+
+    VISUALISER_SOURCE   visualiserSource = VISUALISER_SOURCE::OUTPUT_1;
     
     // Contains Funademtnal Harmonics & peak frequ3encies etc
     FrequencyDataComponent(ProjectManager * pm);
@@ -546,8 +583,8 @@ private:
 class OctaveVisualiserComponent2 : public Component, public Timer
 {
 public:
-    
-    VISUALISER_SOURCE   visualiserSource;
+
+    VISUALISER_SOURCE   visualiserSource = VISUALISER_SOURCE::OUTPUT_1;
     
     OctaveVisualiserComponent2(ProjectManager * pm);
     ~OctaveVisualiserComponent2();
@@ -633,8 +670,8 @@ private:
 class SpectrogramComponent    : public Component, public Slider::Listener, public Timer, public Button::Listener
 {
 public:
-    
-    VISUALISER_SOURCE   visualiserSource;
+
+    VISUALISER_SOURCE   visualiserSource = VISUALISER_SOURCE::OUTPUT_1;
     
     SpectrogramComponent(ProjectManager * pm, Rectangle<float> initialSize, bool popup);
     ~SpectrogramComponent();
@@ -658,6 +695,8 @@ public:
     void mouseUp (const MouseEvent& event) override;
     void mouseWheelMove (const MouseEvent&event, const MouseWheelDetails&wheel)override
     {
+//        printf("delta x = %f", wheel.deltaX);
+
         // when called, simply update delta to new position.
         // timer update callback will request the min/max fft as required
         
@@ -898,7 +937,7 @@ class ColourSpectrumVisualiserComponent : public Component, public Timer
 {
 public:
     
-    VISUALISER_SOURCE   visualiserSource;
+    VISUALISER_SOURCE   visualiserSource = VISUALISER_SOURCE::OUTPUT_1;
     
     ColourSpectrumVisualiserComponent(ProjectManager * pm, int initW, int initH);
     ~ColourSpectrumVisualiserComponent();
@@ -955,15 +994,25 @@ public:
         zoomRange_FreqHigh      = getFrequencyForPosition(range_X_Max_Factor);
 
         
+//        printf ("\n YMin = %f , yMax = %f", range_Y_Min_Factor, range_Y_Max_Factor);
+
         viewRangeDidChange();
     }
 
     // drawing functions
     float getFrequencyForPosition (float posYFactor)
     {
-        sampleRate      = projectManager->getSampleRate();
-        float freq      = powf(10.f, posYFactor * (log10f(sampleRate / 2.f)-log10f(kDefaultMinHertz)) + log10f(kDefaultMinHertz));
-        
+        // Safety check: projectManager must be valid
+        if (projectManager != nullptr)
+        {
+            const float sr = projectManager->getSampleRate();
+            if (sr > 0.0f)
+                sampleRate = sr;
+        }
+
+        // Use current sampleRate (either updated or default)
+        const float freq = powf(10.f, posYFactor * (log10f(sampleRate / 2.f) - log10f(kDefaultMinHertz)) + log10f(kDefaultMinHertz));
+
         return freq;
     }
 
@@ -1017,7 +1066,7 @@ private:
     ProjectManager * projectManager;
     float sampleRate;
     Image spectrogramImage;
-    Image * newSpectrogramImage;
+    std::unique_ptr<Image> newSpectrogramImage;
     
     
     

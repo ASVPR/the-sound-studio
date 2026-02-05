@@ -2,16 +2,17 @@
   ==============================================================================
 
     Main.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
-#include "TSSPaths.h"
 
 //==============================================================================
 class TSSApplication  : public JUCEApplication
@@ -90,13 +91,37 @@ public:
            #else
             // Set window to be resizable with constraints
             setResizable (true, true);
-            setResizeLimits (800, 600, 3840, 2160); // Min: 800x600, Max: 4K
-            
-            // Set initial size based on screen size
+            setResizeLimits (1024, 768, 3840, 2160); // Min: 1024x768, Max: 4K
+
+            // Set initial size based on screen size - use 90% of available space
+            // with higher limits to ensure the app opens at a usable size
             auto& desktop = Desktop::getInstance();
             auto screenBounds = desktop.getDisplays().getPrimaryDisplay()->userArea;
-            int initialWidth = jmin(1920, (int)(screenBounds.getWidth() * 0.8f));
-            int initialHeight = jmin(1080, (int)(screenBounds.getHeight() * 0.8f));
+
+            // Calculate initial size: prefer 90% of screen, with reasonable limits
+            // Reference design is 1920x1440, so target aspect ratio ~1.33:1
+            int targetWidth = (int)(screenBounds.getWidth() * 0.90f);
+            int targetHeight = (int)(screenBounds.getHeight() * 0.90f);
+
+            // Ensure minimum usable size of 1280x960
+            int initialWidth = jmax(1280, jmin(2560, targetWidth));
+            int initialHeight = jmax(960, jmin(1920, targetHeight));
+
+            // Maintain aspect ratio close to reference (1920x1440 = 4:3)
+            const float refAspect = 1920.0f / 1440.0f;
+            const float currentAspect = (float)initialWidth / (float)initialHeight;
+
+            if (currentAspect > refAspect)
+            {
+                // Too wide, reduce width
+                initialWidth = (int)(initialHeight * refAspect);
+            }
+            else
+            {
+                // Too tall, reduce height
+                initialHeight = (int)(initialWidth / refAspect);
+            }
+
             centreWithSize (initialWidth, initialHeight);
            #endif
 
@@ -160,8 +185,12 @@ private:
     
     void initialiseErrorLogging()
     {
-        // Create logs directory via centralized path management
-        const File logsDir = TSS::TSSPaths::getLogsDirectory();
+        // Create logs directory in user's application data folder (cross-platform)
+        const File appDataDir = File::getSpecialLocation(File::userApplicationDataDirectory)
+                                    .getChildFile("TheSoundStudio");
+        const File logsDir = appDataDir.getChildFile("Logs");
+        if (! logsDir.exists())
+            logsDir.createDirectory();
 
         // Create a date-stamped error log file
         const auto dateStamp = Time::getCurrentTime().formatted("%Y-%m-%d_%H-%M-%S");

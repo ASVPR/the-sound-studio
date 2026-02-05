@@ -3,7 +3,7 @@
 <JUCERPROJECT id="TssStd" name="The Sound Studio" projectType="guiapp" reportAppUsage="0"
               jucerFormatVersion="1" version="1.0.0.0" cppLanguageStandard="17"
               displaySplashScreen="1" defines="JUCE_DISPLAY_SPLASH_SCREEN=0&#10;TSS_SYNTHESIS_ENGINE=1"
-              headerPath="../../Source/Views/Interface/&#10;../../Source/">
+              headerPath="../../Source/Views/Interface/&#10;../../Source/&#10;../../Source/FeedbackModule/">
   <MAINGROUP id="hjLDaa" name="The Sound Studio">
     <GROUP id="{23453521-7FF0-2AFB-D26F-A48F5AD9BCE8}" name="Source">
       <GROUP id="{77BB7B11-A842-0FD3-9591-F461C16D9E72}" name="Synthesis">
@@ -313,13 +313,34 @@
           <FILE id="xFFIjl" name="FrequencyPlayerSettingsComponent.h" compile="0"
                 resource="0" file="Source/FrequencyPlayerSettingsComponent.h"/>
         </GROUP>
-        <GROUP id="{A5200909-8E6E-1470-DAE4-64E4DFA7BEC0}" name="FrequencyScanner">
-          <FILE id="cpUKMC" name="FrequencyScannerComponent.cpp" compile="1"
-                resource="0" file="Source/FrequencyScannerComponent.cpp"/>
-          <FILE id="QYITwn" name="FrequencyScannerComponent.h" compile="0" resource="0"
-                file="Source/FrequencyScannerComponent.h"/>
-        </GROUP>
-        <GROUP id="{D8FA3B42-9FDA-2C09-FCFF-26A1E7AFD605}" name="FrequencyToLight">
+              <GROUP id="{A5200909-8E6E-1470-DAE4-64E4DFA7BEC0}" name="FrequencyScanner">
+                <FILE id="cpUKMC" name="FrequencyScannerComponent.cpp" compile="1"
+                      resource="0" file="Source/FrequencyScannerComponent.cpp"/>
+                <FILE id="QYITwn" name="FrequencyScannerComponent.h" compile="0" resource="0"
+                      file="Source/FrequencyScannerComponent.h"/>
+              </GROUP>
+              <GROUP id="{FB000001-FEED-BACK-MODU-LE00000000001}" name="FeedbackModule">
+                <FILE id="FBMC001" name="FeedbackModuleComponent.cpp" compile="1" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleComponent.cpp"/>
+                <FILE id="FBMC002" name="FeedbackModuleComponent.h" compile="0" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleComponent.h"/>
+                <FILE id="FBMP001" name="FeedbackModuleProcessor.cpp" compile="1" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleProcessor.cpp"/>
+                <FILE id="FBMP002" name="FeedbackModuleProcessor.h" compile="0" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleProcessor.h"/>
+                <FILE id="FBPS001" name="FeedbackModuleParameterSettingsComponent.cpp" compile="1"
+                      resource="0" file="Source/FeedbackModule/FeedbackModuleParameterSettingsComponent.cpp"/>
+                <FILE id="FBPS002" name="FeedbackModuleParameterSettingsComponent.h" compile="0"
+                      resource="0" file="Source/FeedbackModule/FeedbackModuleParameterSettingsComponent.h"/>
+                <FILE id="FBSS001" name="FeedbackSpectrumSettingsComponent.cpp" compile="1"
+                      resource="0" file="Source/FeedbackModule/FeedbackSpectrumSettingsComponent.cpp"/>
+                <FILE id="FBSS002" name="FeedbackSpectrumSettingsComponent.h" compile="0"
+                      resource="0" file="Source/FeedbackModule/FeedbackSpectrumSettingsComponent.h"/>
+                <FILE id="FBIO001" name="FeedbackInputOutputComponent.cpp" compile="1" resource="0"
+                      file="Source/FeedbackModule/FeedbackInputOutputComponent.cpp"/>
+                <FILE id="FBIO002" name="FeedbackInputOutputComponent.h" compile="0" resource="0"
+                      file="Source/FeedbackModule/FeedbackInputOutputComponent.h"/>
+              </GROUP>        <GROUP id="{D8FA3B42-9FDA-2C09-FCFF-26A1E7AFD605}" name="FrequencyToLight">
           <FILE id="b8C1ou" name="FrequencyToLightSubComponents.cpp" compile="1"
                 resource="0" file="Source/FrequencyToLightSubComponents.cpp"/>
           <FILE id="hgBunt" name="FrequencyToLightSubComponents.h" compile="0"
@@ -617,7 +638,7 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="p4m5wf" bigIcon="Rq6E4Q"
                hardenedRuntime="0" microphonePermissionNeeded="1" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TSS_SYNTHESIS_ENGINE=1"
-               enableGNUExtensions="1">
+               enableGNUExtensions="1" postBuildScript="if [ &quot;$CONFIGURATION&quot; == &quot;Release&quot; ] || [ &quot;$CONFIGURATION&quot; == &quot;Debug&quot; ]; then&#10;  echo &quot;Cleaning detritus from ${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app&quot;&#10;  /usr/bin/xattr -cr &quot;${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app&quot;&#10;  /usr/sbin/dot_clean -m &quot;${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app&quot;&#10;fi">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" macOSDeploymentTarget="10.13" osxCompatibility="10.13 SDK"/>
         <CONFIGURATION isDebug="0" name="Release" macOSDeploymentTarget="10.13" osxCompatibility="10.13 SDK"/>

@@ -2,9 +2,11 @@
   ==============================================================================
 
     KarplusStrongSynth.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -77,20 +79,7 @@ private:
     };
     
     DelayLine delayLine;
-
-    // Pre-allocated buffers for audio-thread safety (no heap allocation in processBlock)
-    juce::HeapBlock<float> preallocatedMonoBuffer;
-    int preallocatedMonoBufferSize = 0;
-    juce::HeapBlock<float> preallocatedExcitation;
-    int preallocatedExcitationSize = 0;
-
-    // Per-instance filter state (removed from static to fix polyphonic corruption)
-    float onePoleState = 0.0f;
-    float allPassState = 0.0f;
-    float bodyState1 = 0.0f;
-    float bodyState2 = 0.0f;
-    float bodyState3 = 0.0f;
-
+    
     // Filters for tone shaping
     float lowpassState;
     float highpassState;

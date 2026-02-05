@@ -2,9 +2,11 @@
   ==============================================================================
 
     FrequencyToLightProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -15,8 +17,7 @@
 FrequencyToLightProcessor::FrequencyToLightProcessor(FrequencyManager * fm)
 {
     frequencyManager    = fm;
-    ownedChordManager   = std::make_unique<ChordManager>(frequencyManager);
-    chordManager        = ownedChordManager.get();
+    chordManager        = new ChordManager(frequencyManager);
         
     // GUI Params
     conversionSource    = false;
@@ -186,8 +187,8 @@ float FrequencyToLightProcessor::getFrequencyForShortcut(int shortcut)
     
 Colour FrequencyToLightProcessor::getColourFromWavelength(double Wavelength)
 {
-    const double Gamma        = TSS::FreqToLight::kGamma;
-    const double IntensityMax = TSS::FreqToLight::kIntensityMax;
+    double Gamma            = 0.80;
+    double IntensityMax     = 255;
 
     double factor, Red,Green,Blue;
 
@@ -254,15 +255,13 @@ Colour FrequencyToLightProcessor::getColourFromWavelength(double Wavelength)
     }
 
 
-    // Stack allocation — no heap allocation (was: new int[3] with memory leak)
-    int rgb[3];
+    int* rgb = new int[3];
 
     // Don't want 0^x = 1 for x <> 0
     rgb[0] = Red==0.0 ? 0 : (int) round(IntensityMax * pow(Red * factor, Gamma));
     rgb[1] = Green==0.0 ? 0 : (int) round(IntensityMax * pow(Green * factor, Gamma));
     rgb[2] = Blue==0.0 ? 0 : (int) round(IntensityMax * pow(Blue * factor, Gamma));
 
-    return Colour::fromRGB(static_cast<uint8>(rgb[0]),
-                           static_cast<uint8>(rgb[1]),
-                           static_cast<uint8>(rgb[2]));
+    
+    return  Colour::fromRGB(rgb[0], rgb[1], rgb[2]);
 }

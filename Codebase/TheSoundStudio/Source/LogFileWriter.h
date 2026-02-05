@@ -2,87 +2,87 @@
   ==============================================================================
 
     LogFileWriter.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
-#pragma once
-
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "Parameters.h"
-
-class ProjectManager;
-class FrequencyManager;
-
-class LogFileWriter
-{
-public:
-    AUDIO_MODE logAudioMode;
-
-    LogFileWriter(ProjectManager* pm);
-    ~LogFileWriter();
-
-    void createNewFileForRealtimeAnalysisLogging();
-
-    void setupLogRecording(const File& file);
-
-    void processLog(double peakFrequency, double peakDB, Array<float> upperHarmonics,
-                    Array<float> intervals, int keynote, int octave, double ema);
-
-    void startRecordingLog();
-    void stopRecordingLog();
-    bool isRecordingLog();
-
-    void initNewLogFileForAudioMode(AUDIO_MODE newMode);
-
-    void processLog_ChordPlayer_Parameters();
-    void processLog_ChordPlayer_Sequencer(int shortcutRef, const Array<String>& noteStrings,
-                                          const Array<float>& noteFreqs);
-
-    void processLog_ChordScanner_Parameters();
-    void processLog_ChordScanner_Sequencer(bool isAllChords, Array<int> notes,
-                                           Array<float> noteFreqs);
-
-    void processLog_FrequencyPlayer_Parameters();
-    void processLog_FrequencyPlayer_Sequencer(int shortcutRef, float freq);
-
-    void processLog_FrequencyScanner_Parameters();
-    void processLog_FrequencyScanner_Sequencer(float freq);
-
-    void processLog_FundamentalFrequency_Sequencer(const String& fundamental,
-                                                   const String& chord,
-                                                   const Array<String>& harmonics);
-
-    void processLog_FrequencyToLight(String conversionType, String base,
-                                     String wavelength, String rgbHex,
-                                     StringArray manipulationStrings);
-
-    void processLog_PanicButtonPressed(int noise_type);
-
-    void initNewSettingsLogFile();
-    void processLog_Settings_Parameters();
-
-    void checkForOldLoggingFile();
-
-    String getDateAndTimeString();
-    String getScaleString(int scaleRef);
-
-private:
-    bool shouldRecordLog = false;
-
-    String logString;
-    uint64 recordLogSamples;
-    uint64 loggingSampleRate;
-    uint64 loggingCounter;
-
-    File currentLogFile_RealtimeAnalysis;
-    File logFile[AUDIO_MODE::NUM_MODES];
-    File logFileSettings;
-
-    ProjectManager*  projectManager;
-    FrequencyManager* frequencyManager;
-    File*            logFileDirectory;
-};
+//
+//#pragma once
+//#include "../JuceLibraryCode/JuceHeader.h"
+//#include "Parameters.h"
+//
+//// Basically, need to embed this class into ProjectManager
+//// then pass it through to ChordPlayerProcessor/ScannerProcessor etc...
+////
+//
+//class LogFileWriter
+//{
+//public:
+//    
+//    LogFileWriter(File * logFileDir)
+//    {
+//        logFileDirectory = logFileDir;
+//    }
+//    
+//    File * logFileDirectory;
+//    
+//    ~LogFileWriter()
+//    {
+//        
+//    }
+//    
+//    void createNewFileForRealtimeAnalysisLogging();
+//
+//    void setupLogRecording (const File& file);
+//    
+//    void processLog(double peakFrequency, double peakDB, Array<float> upperHarmonics, Array<float> lowerHarmonics, int keynote, int octave, double ema);
+//    
+//    void startRecordingLog();
+//
+//    void stopRecordingLog();
+//
+//    bool isRecordingLog();
+//    
+//    
+//    // When audioMode changes, create a new log file timestamped...
+//    void initNewLogFileForAudioMode(AUDIO_MODE newMode);
+//    
+//    void processLog_ChordPlayer();
+//
+//    void processLog_ChordScanner_init();
+//    void processLog_ChordScanner_addition();
+//    
+//    void processLog_FrequencyPlayer();
+//
+//    void processLog_FrequencyScanner_init();
+//    void processLog_FrequencyScanner_addition();
+//    
+//    void processLog_FrequencyToLight();
+//        
+//    void checkForOldLoggingFile();
+//    
+//private:
+//    
+//    bool shouldRecordLog = false;
+//    
+//    String logString;               // String where logs are set, to be written to file later
+//    uint64 recordLogSamples;        // number of samples taken thus far
+//    uint64 loggingSampleRate;       // grabs log sample every x samples
+//    uint64 loggingCounter;          // counts samples to trigger log
+//    
+//    File currentLogFile_RealtimeAnalysis;            //
+//    // Other Logs for parameter changes
+//    File logFileChordPlayer;
+//    File logFileChordScanner;
+//    File logFileFrequencyPlayer;
+//    File logFileFrequencyScanner;
+//    File logFileLissajous;
+//    File logFileFrequencyToLight;
+//    
+//    
+//};

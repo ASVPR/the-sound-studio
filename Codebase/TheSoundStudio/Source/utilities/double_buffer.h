@@ -2,8 +2,11 @@
   ==============================================================================
 
     double_buffer.h
-    Created: 2 Feb 2022 12:03:37pm
-    Author:  Javier Andoni Aizpuru Rodríguez
+    The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */

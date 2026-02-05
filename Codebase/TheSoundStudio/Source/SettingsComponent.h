@@ -2,9 +2,11 @@
   ==============================================================================
 
     SettingsComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -893,6 +895,7 @@ public:
         projectManager = pm;
         projectManager->addUIListener(this);
         
+        imageBackground = ImageCache::getFromMemory(BinaryData::SettingsSpectrogramBackground, BinaryData::SettingsSpectrogramBackgroundSize);
         imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
         imageBlueButtonNormal       = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
         imageBlueButtonSelected     = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
@@ -1071,56 +1074,57 @@ public:
     
     void paint (Graphics&g) override
     {
-        g.fillAll(juce::Colour(45, 44, 44));
+        g.drawImage(imageBackground, 0, 0, 1560 * scaleFactor, 1440 * scaleFactor, 0, 0, 1560, 1440);
     }
     
     void resized() override
     {
-        const float sx = getWidth() / 1560.0f;
-        const float sy = getHeight() / 1440.0f;
+        button_Close                    ->setBounds(1380 * scaleFactor, 224 * scaleFactor, 150 * scaleFactor, 28 * scaleFactor);
+        
+        button_Add                      ->setBounds(609 * scaleFactor, 1040 * scaleFactor, 341 * scaleFactor, 84 * scaleFactor);
+        
+        comboBox_FFTSize                ->setBounds(156 * scaleFactor, 872 * scaleFactor, 200 * scaleFactor, 41 * scaleFactor);
+        
+        comboBox_FFTWindow              ->setBounds(420 * scaleFactor, 872 * scaleFactor, 200 * scaleFactor, 41 * scaleFactor);
+        
+        textEditor_NumHighestPeakFreqs  ->setBounds(600 * scaleFactor, 523 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
+        textEditor_NumHighestPeakFreqs  ->applyFontToAllText(33 * scaleFactor);
+        
+        textEditor_NumHighestPeakOctaves->setBounds(550 * scaleFactor, 662 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
+        textEditor_NumHighestPeakOctaves->applyFontToAllText(33 * scaleFactor);
+        
+        textEditor_FFTDelay             ->setBounds(954 * scaleFactor, 406 * scaleFactor, 125 * scaleFactor, 41 * scaleFactor);
+        textEditor_FFTDelay             ->applyFontToAllText(33 * scaleFactor);
+        
+        button_HighestPeakFreqBool      ->setBounds(155 * scaleFactor, 472 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
+        button_HighestPeakOctaveBool    ->setBounds(155 * scaleFactor, 610 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
+        
+        float mainX = 1227 * scaleFactor;
+        float secX  = 1316 * scaleFactor;
+        float fftY  = 595 * scaleFactor;
+        float ySpace = 65 * scaleFactor;
+        float colourW = 64 * scaleFactor;
+        float colourH = 27 * scaleFactor;
 
-        button_Close->setBounds((int)(1380*sx), (int)(224*sy), (int)(150*sx), (int)(28*sy));
-        button_Add->setBounds((int)(609*sx), (int)(1040*sy), (int)(341*sx), (int)(84*sy));
-
-        comboBox_FFTSize->setBounds((int)(156*sx), (int)(872*sy), (int)(200*sx), (int)(41*sy));
-        comboBox_FFTWindow->setBounds((int)(420*sx), (int)(872*sy), (int)(200*sx), (int)(41*sy));
-
-        textEditor_NumHighestPeakFreqs->setBounds((int)(600*sx), (int)(523*sy), (int)(125*sx), (int)(41*sy));
-        textEditor_NumHighestPeakFreqs->applyFontToAllText((int)(33*sx));
-
-        textEditor_NumHighestPeakOctaves->setBounds((int)(550*sx), (int)(662*sy), (int)(125*sx), (int)(41*sy));
-        textEditor_NumHighestPeakOctaves->applyFontToAllText((int)(33*sx));
-
-        textEditor_FFTDelay->setBounds((int)(954*sx), (int)(406*sy), (int)(125*sx), (int)(41*sy));
-        textEditor_FFTDelay->applyFontToAllText((int)(33*sx));
-
-        button_HighestPeakFreqBool->setBounds((int)(155*sx), (int)(472*sy), (int)(38*sx), (int)(38*sy));
-        button_HighestPeakOctaveBool->setBounds((int)(155*sx), (int)(610*sy), (int)(38*sx), (int)(38*sy));
-
-        float mainX = 1227 * sx;
-        float secX  = 1316 * sx;
-        float fftY  = 595 * sy;
-        float ySpace = 65 * sy;
-        float colourW = 64 * sx;
-        float colourH = 27 * sy;
-
-        colourSelectorFFTMain->setBounds(mainX, fftY + (ySpace * 0), colourW, colourH);
-        colourSelectorFFTSec->setBounds(secX, fftY + (ySpace * 0), colourW, colourH);
-
+        colourSelectorFFTMain   ->setBounds(mainX, fftY + (ySpace * 0), colourW, colourH);
+        colourSelectorFFTSec    ->setBounds(secX, fftY + (ySpace * 0), colourW, colourH);
+        
         colourSelectorOctaveMain->setBounds(mainX, fftY + (ySpace * 1), colourW, colourH);
         colourSelectorOctaveSec->setBounds(secX, fftY + (ySpace * 1), colourW, colourH);
-
+        
         colourSelectorColourMain->setBounds(mainX, fftY + (ySpace * 2), colourW, colourH);
         colourSelectorColourSec->setBounds(secX, fftY + (ySpace * 2), colourW, colourH);
-
+        
         colourSelector3DMain->setBounds(mainX, fftY + (ySpace * 3), colourW, colourH);
         colourSelector3DSec->setBounds(secX, fftY + (ySpace * 3), colourW, colourH);
-
+        
         colourSelectorFrequencyMain->setBounds(mainX, fftY + (ySpace * 4), colourW, colourH);
         colourSelectorFrequencySec->setBounds(secX, fftY + (ySpace * 4), colourW, colourH);
-
+        
         colourSelectorLissajousMain->setBounds(mainX, fftY + (ySpace * 5), colourW, colourH);
         colourSelectorLissajousSec->setBounds(secX, fftY + (ySpace * 5), colourW, colourH);
+
+
     }
     
     // Text editor listener overrides
@@ -1309,7 +1313,9 @@ private:
     CustomLookAndFeel lookAndFeel;
     
     ProjectManager * projectManager;
-
+    
+    Image imageBackground;
+    
     std::unique_ptr<ImageButton> button_Add;
     std::unique_ptr<ImageButton> button_Close;
     
@@ -1402,7 +1408,7 @@ private:
     class AudioSettingsContainer : public Component, public Button::Listener
     { public: // simple container class to open and close the audio settings
         AudioSettingsContainer(){
-            imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
+            mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::AudioSettingsBackground_png, BinaryData::AudioSettingsBackground_pngSize); imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
             
             button_Close = std::make_unique<ImageButton>(); button_Close->setTriggeredOnMouseDown(true);
             button_Close->setImages (false, true, true,
@@ -1416,11 +1422,10 @@ private:
         
         void paint (Graphics&g) override
         {
-            g.fillAll(juce::Colour(45, 44, 44));
-            const float sx = getWidth() / 1566.0f;
-            const float sy = getHeight() / 1440.0f;
-            g.setColour(juce::Colour(55, 54, 54));
-            g.fillRoundedRectangle(24*sx, 94*sy, 1502*sx, 1242*sy, 8.0f);
+            g.setColour(Colours::black);
+            g.setOpacity(0.88);
+            g.fillAll(); g.setOpacity(1.0);
+            g.drawImage(mainBackgroundImage, 24 * scaleFactor, 94 * scaleFactor, 1502*scaleFactor, 1242*scaleFactor, 0, 0, 1502, 1242);
             
         }
         
@@ -1436,11 +1441,13 @@ private:
         
         
     private:
-        std::unique_ptr<ImageButton> button_Close; Image imageCloseButton;
+        std::unique_ptr<ImageButton> button_Close; Image mainBackgroundImage; Image imageCloseButton;
     };
     
     AudioSettingsContainer* component_AudioSettings;
 
+    Image imageBackground;
+    
     std::unique_ptr<TextEditor> textEditor_AmplitudeMin;
     std::unique_ptr<TextEditor> textEditor_AttackMin;
     std::unique_ptr<TextEditor> textEditor_DecayMin;

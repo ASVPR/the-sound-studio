@@ -2,9 +2,11 @@
   ==============================================================================
 
     MainComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -14,7 +16,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainViewComponent.h"
 #include "ProjectManager.h"
-
+#include "ResponsiveUIHelper.h"
+#include "UI/DesignSystem.h"
 
 //==============================================================================
 /*
@@ -37,28 +40,36 @@ public:
     void paint (Graphics& g) override;
     void resized() override
     {
+        // Use responsive layout helper for optimal scaling
+        auto bounds = getLocalBounds();
+        
+        // Calculate optimal scale using responsive helper
+        scaleFactor = ResponsiveUIHelper::calculateOptimalScale(
+            bounds.getWidth(), bounds.getHeight(), mainWidth, mainHeight);
+        
         if (mainViewComponent)
-            mainViewComponent->setBounds(getLocalBounds());
+        {
+            mainViewComponent->setBounds(bounds);
+            mainViewComponent->setScale(scaleFactor);
+        }
     }
-
+    
     float scaleFactor = 1.0f;
     void setScale(float factor)
     {
         scaleFactor = factor;
-
-        // Propagate to sub-components that still use scaleFactor internally
+        
         if (mainViewComponent)
             mainViewComponent->setScale(scaleFactor);
-
-        // Resize window — resized() will be called automatically,
-        // and all children use proportional layout from getLocalBounds()
-        setSize((int)(mainWidth * scaleFactor), (int)(mainHeight * scaleFactor));
+        
+        // Set window size based on scale factor
+        setSize(mainWidth * scaleFactor, mainHeight * scaleFactor);
     }
     
     MainComponent * getMainComponent() {return this; }
 
-    int mainHeight          = 1440 + 300;
-    int mainWidth           = 1566 + 354;
+    int mainHeight          = (int)TSS::Design::Layout::kRefTotalHeight;
+    int mainWidth           = (int)TSS::Design::Layout::kRefTotalWidth;
     
     std::unique_ptr<MainViewComponent> mainViewComponent;
     

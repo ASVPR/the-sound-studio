@@ -2,9 +2,11 @@
   ==============================================================================
 
     AnalyzerNew.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -39,13 +41,16 @@ public:
 
     void initFFT()
     {
-        forwardFFT1024      = new dsp::FFT(10);
-        forwardFFT2048      = new dsp::FFT(11);
-        forwardFFT4096      = new dsp::FFT(12);
-        forwardFFT8192      = new dsp::FFT(13);
-        forwardFFT16384     = new dsp::FFT(14);
-        forwardFFT32768     = new dsp::FFT(15);
-        forwardFFT65536     = new dsp::FFT(16);
+        forwardFFT1024      = std::make_unique<dsp::FFT>(10);
+        forwardFFT2048      = std::make_unique<dsp::FFT>(11);
+        forwardFFT4096      = std::make_unique<dsp::FFT>(12);
+        forwardFFT8192      = std::make_unique<dsp::FFT>(13);
+        forwardFFT16384     = std::make_unique<dsp::FFT>(14);
+        forwardFFT32768     = std::make_unique<dsp::FFT>(15);
+        forwardFFT65536     = std::make_unique<dsp::FFT>(16);
+
+        fftSize             = forwardFFT1024->getSize();
+        fft                 = forwardFFT1024.get();
 
         averager            .setSize (5, forwardFFT65536->getSize() / 2, false, false, true);
         fftBuffer           .setSize (1, forwardFFT65536->getSize(), false, false, true );
@@ -306,44 +311,52 @@ public:
         db      = 20.0 * log10(sqrt(fftData[highestBin])); // * might not need the sqrt **
     }
 
-    void getHarmonics(Array<float> & frequencies, Array<float> &db, int numHarmonicsToFind, bool upper)
+    void getHarmonics(Array<float>& frequencies, Array<float>& db, int numHarmonicsToFind, bool upper)
     {
-        // thpght it would be easy, but alas, maybe not
-        // attaining the higherst 5 peaks wont be sufficient
-        // because, the 5 highest bins, might be in the same harmonic..
-        // need to scan the fft and check the position of the peaks
-        // if they are within a x bins of the highest peak bin, they hsould be ignored..
-        // find
+        if (numHarmonicsToFind <= 0) return;
 
+        const auto* fftData = averager.getReadPointer(0);
+        int numSamples = averager.getNumSamples();
 
-        //        ScopedLock lockedForReading (pathCreationLock);
-        const auto* fftData = averager.getReadPointer (0);
-
-        float highest[numHarmonicsToFind];
-        int highestBin[numHarmonicsToFind];
-
-        for (int i = 0; i < numHarmonicsToFind; i++) { highest[i] = 0; highestBin[i] = 0; }
+        std::vector<float> highest(numHarmonicsToFind, 0.0f);
+        std::vector<int> highestBin(numHarmonicsToFind, 0);
 
         for (int harmonic = 0; harmonic < numHarmonicsToFind; harmonic++)
         {
-            for (int i = 0; i < averager.getNumSamples(); ++i)
+            for (int i = 0; i < numSamples; ++i)
             {
                 if (upper)
                 {
-                    if (fftData[i] > highest[harmonic] && i != highestBin[harmonic] )
+                    bool alreadyFound = false;
+                    for (int h = 0; h < harmonic; h++)
                     {
-                        highest[harmonic]       = fftData[i];
-                        highestBin[harmonic]    = i;
+                        if (i == highestBin[h])
+                        {
+                            alreadyFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadyFound && fftData[i] > highest[harmonic])
+                    {
+                        highest[harmonic] = fftData[i];
+                        highestBin[harmonic] = i;
                     }
                 }
             }
 
-            frequencies.getReference(harmonic)  = (sampleRate * highestBin[harmonic]) / fftSize;
-            db.getReference(harmonic)           = 20.0 * log10(fftData[highestBin[harmonic]]);
+            if (harmonic < frequencies.size())
+                frequencies.set(harmonic, (sampleRate * (float)highestBin[harmonic]) / (float)fftSize);
+            else
+                frequencies.add((sampleRate * (float)highestBin[harmonic]) / (float)fftSize);
+
+            float dbVal = (fftData[highestBin[harmonic]] > 0) ? 20.0f * std::log10(std::sqrt(fftData[highestBin[harmonic]])) : -100.0f;
+            if (harmonic < db.size())
+                db.set(harmonic, dbVal);
+            else
+                db.add(dbVal);
         }
     }
-
-
 
     // Octave Visualiser
     //===================================
@@ -356,7 +369,11 @@ public:
     {
         centralFrequencies.clear();
         lowerFrequencies.clear();
+        upperFrequencies.clear();
         binBandStarts.clear();
+
+        if (minFreq <= 0 || maxFreq <= minFreq || sampleRate <= 0 || fftSize <= 0)
+            return 0;
 
         int   num           = 0;
         float currentFreq   = minFreq;
@@ -364,76 +381,71 @@ public:
         // find count bands
         while (currentFreq < maxFreq)
         {
-            currentFreq *= powf(10.f, 0.1);
-
-            if (currentFreq > maxFreq) { break; }
-            else { num++; }
-
+            currentFreq *= powf(10.f, 0.1f);
+            if (currentFreq > maxFreq) break;
+            num++;
         }
+
+        if (num <= 0) return 0;
 
         // then calculate lower, central and uppfreqs
         currentFreq = minFreq;
-
         for (int i = 0; i < num; i++)
         {
             lowerFrequencies.add(currentFreq);
-            centralFrequencies.add(currentFreq *=powf(10.f, 0.05));
-            upperFrequencies.add(currentFreq *=powf(10.f, 0.05));
+            currentFreq *= powf(10.f, 0.05f);
+            centralFrequencies.add(currentFreq);
+            currentFreq *= powf(10.f, 0.05f);
+            upperFrequencies.add(currentFreq);
             binBandStarts.add(0);
 
-            //            printf("\n Lower Freq Band %i : %f", i, lowerFrequencies.getReference(i));
-            //            printf("\n Centr Freq Band %i : %f", i, centralFrequencies.getReference(i));
-            //            printf("\n Upper Freq Band %i : %f", i, upperFrequencies.getReference(i));
-
-
             if (currentFreq > maxFreq)
-            {
                 break;
-            }
-
         }
 
-
+        // Adjust num if loop broke early
+        num = lowerFrequencies.size();
 
         // calculate bands
-        octaveFFTSize   = fftSize;
+        octaveFFTSize = fftSize;
+        int halfFFT = octaveFFTSize / 2;
+        if (halfFFT <= 0) return 0;
 
-        float indexFreq[octaveFFTSize/2];
-        for (int index = 0; index < (octaveFFTSize/2); index++)
+        std::vector<float> indexFreq(halfFFT);
+        for (int index = 0; index < halfFFT; index++)
         {
-            indexFreq[index] = (sampleRate * index) / octaveFFTSize;
+            indexFreq[index] = (sampleRate * (float)index) / (float)octaveFFTSize;
         }
 
-
         // calculate binBandStarts.getReference(0)
-        for (int index = 0; index < (octaveFFTSize/2); index++)
+        if (binBandStarts.size() > 0)
         {
-            if (indexFreq[index] >= minFreq)
+            for (int index = 0; index < halfFFT; index++)
             {
-                binBandStarts.getReference(0) = index;
-
-                //                printf("\n bin 0 : freq %f", indexFreq[index]);
-                break;
+                if (indexFreq[index] >= minFreq)
+                {
+                    binBandStarts.set(0, index);
+                    break;
+                }
             }
         }
 
         // set last band limit
-        binBandStarts.add(octaveFFTSize/2); // add one extra to the end which is @ bin half fftsize
+        binBandStarts.add(halfFFT); 
 
-        for (int b = 0; b < num-1; b++)
+        for (int b = 0; b < num && (b + 1) < binBandStarts.size(); b++)
         {
-            // get range of band and check indexFeeq if they are within the range
-            for (int index = binBandStarts.getReference(b); index < (octaveFFTSize/2); index++)
+            for (int index = binBandStarts[b]; index < halfFFT; index++)
             {
-                if (indexFreq[index] > upperFrequencies.getReference(b))
+                if (indexFreq[index] > upperFrequencies[b])
                 {
-                    //                    printf("\n bin %i : index %i : freq %f", b+1, index, indexFreq[index]);
-
-                    binBandStarts.getReference(b+1) = index;
-
+                    binBandStarts.set(b + 1, index);
                     break;
                 }
             }
+            // Ensure next start is at least current start
+            if (binBandStarts[b+1] < binBandStarts[b])
+                binBandStarts.set(b+1, binBandStarts[b]);
         }
 
         return num;
@@ -446,13 +458,18 @@ public:
     bool isFirstRun = true;
     int startBin = 0; // set as minFreqBin
 
-    void getMagnitudeDataForOctave(Array<float> & magnitude, int & numBands, float  minFreq, float maxFreq, float sr, Array<float> & centralFreqs)
+    void getMagnitudeDataForOctave(Array<float>& magnitude, int& numBands, float minFreq, float maxFreq, float sr, Array<float>& centralFreqs)
     {
-        //        ScopedLock lockedForReading (pathCreationLock);
-        const auto* fftData = averager.getReadPointer (0);
+        magnitude.clear();
+        
+        if (averager.getNumChannels() == 0)
+        {
+            numBands = 0;
+            return;
+        }
 
+        const auto* fftData = averager.getReadPointer(0);
 
-        // if min or max freq has changed, recalculate the number of octave bands
         if (minFreq != octaveMinFreq || maxFreq != octaveMaxFreq || sr != sampleRate || octaveFFTSize != fftSize || isFirstRun)
         {
             isFirstRun      = false;
@@ -463,52 +480,46 @@ public:
             octaveNumBands  = calculateBands(octaveMinFreq, octaveMaxFreq, sr, fftSize);
         }
 
-        centralFreqs    = centralFrequencies;
-
+        centralFreqs = centralFrequencies;
         numBands = octaveNumBands;
 
-        int bandRef     = 0;
+        if (numBands <= 0) return;
 
-        float bandValues[numBands];
+        std::vector<float> bandValues(numBands, 0.0f);
+        int bandRef = 0;
 
-        for (int i = 0; i < numBands; i++) { bandValues[i] = 0.f; }
+        int firstBin = (binBandStarts.size() > 0) ? binBandStarts[0] : 0;
+        int maxBin = averager.getNumSamples();
 
-
-
-        bandRef = 1;
-        for (int bin = binBandStarts.getReference(0); bin < averager.getNumSamples(); ++bin)
+        for (int bin = firstBin; bin < maxBin; ++bin)
         {
-            if (bin < binBandStarts.getReference(bandRef))
+            while (bandRef < numBands && (bandRef + 1) < binBandStarts.size() && bin >= binBandStarts[bandRef + 1])
+            {
+                bandRef++;
+            }
+
+            if (bandRef < numBands)
             {
                 bandValues[bandRef] += fftData[bin];
             }
             else
             {
-                if (bandRef < numBands)
-                {
-                    bandRef++;
-                }
-                else
-                {
-                    break;
-                }
+                break;
             }
         }
 
-        // scale accumlated values by num bins
         for (int i = 0; i < numBands; i++)
         {
-            // Come back and test this again once we are using higher res fft
-            // it will give us more bins and a more precise
-            if (std::isnan(bandValues[i]))
+            if (std::isnan(bandValues[i]) || std::isinf(bandValues[i]))
             {
                 bandValues[i] = 0.f;
             }
 
-            int numBinsToDivide = binBandStarts.getReference(i+1) - binBandStarts.getReference(i);
+            int start = (i < binBandStarts.size()) ? binBandStarts[i] : 0;
+            int end = ((i + 1) < binBandStarts.size()) ? binBandStarts[i + 1] : start;
+            int numBinsToDivide = jmax(1, end - start);
 
-            bandValues[i] /= numBinsToDivide;
-
+            bandValues[i] /= (float)numBinsToDivide;
             magnitude.add(bandValues[i]);
         }
     }
@@ -527,6 +538,12 @@ public:
     void createColourSpectrum(Image & imageToRenderTo, float minFreq, float maxFreq, float logScale)
     {
         ScopedLock lockedForReading (pathCreationLock);
+        if (averager.getNumChannels() == 0 || fft == nullptr || sampleRate <= 0)
+            return;
+
+        if (imageToRenderTo.getWidth() <= 0 || imageToRenderTo.getHeight() <= 0)
+            return;
+
         const auto* fftData = averager.getReadPointer (0);
 
         auto rightHandEdge = imageToRenderTo.getWidth() - 1;
@@ -536,92 +553,86 @@ public:
 
         for (auto y = 0; y < imageHeight; ++y)
         {
-            float y2                = imageHeight - y;
+            float y2                = (float)imageHeight - y;
 
-            auto fftDataIndex       = xToBinIndex(y2, imageHeight, minFreq, maxFreq, sampleRate, fftSize);
+            auto fftDataIndex       = xToBinIndex(y2, (float)imageHeight, minFreq, maxFreq, (float)sampleRate, fftSize);
 
-            float infinity          = -80.f;
-
-            auto level              = jmap (Decibels::gainToDecibels (fftData[fftDataIndex], infinity), infinity, 0.0f, 0.f, 1.f);
-
-            imageToRenderTo.setPixelAt (rightHandEdge, y, gradientDecibels.getColourAtPosition(level));
+            if (fftDataIndex >= 0 && fftDataIndex < averager.getNumSamples())
+            {
+                float infinity          = -80.f;
+                auto level              = jmap (Decibels::gainToDecibels (fftData[fftDataIndex], infinity), infinity, 0.0f, 0.f, 1.f);
+                imageToRenderTo.setPixelAt (rightHandEdge, y, gradientDecibels.getColourAtPosition(level));
+            }
         }
     }
 
-    void getFrequencyData(double & peakFrequency, double & peakDB, Array<float> &harmonics, Array<float> &intervals, double & ema)
+    void getFrequencyData(double& peakFrequency, double& peakDB, Array<float>& harmonics, Array<float>& intervals, double& ema)
     {
-        //        ScopedLock lockedForReading (pathCreationLock);
-        const auto* fftData = averager.getReadPointer (0);
+        const auto* fftData = averager.getReadPointer(0);
+        int numSamples = averager.getNumSamples();
+
+        if (numSamples <= 0) return;
 
         // Peak Frequency
-        float highest   = 0.f;
-        int highestBin  = 0;
-        //
-        for (int i = 0; i < averager.getNumSamples(); ++i)
+        float highest = 0.f;
+        int highestBin = 0;
+        for (int i = 0; i < numSamples; ++i)
         {
             if (fftData[i] > highest)
             {
-                highest         = fftData[i];
-                highestBin      = i;
+                highest = fftData[i];
+                highestBin = i;
             }
         }
-        //
-        // harmonics
-        float harmonicFreq[6];
-        float peakDBBin[6];
-        float interval[6];
-        int bin[6];
 
-        for (int i = 0;i < 6; i++) {
-            harmonicFreq[i] = 0; peakDBBin[i] = 0; interval[i] = 0; bin[i] = 0;
-        }
+        std::vector<float> harmonicFreq(6, 0.0f);
+        std::vector<float> peakDBBin(6, -100.0f);
+        std::vector<float> interval(6, 0.0f);
+        std::vector<int> bin(6, 0);
 
-        bin[0]              = highestBin;
-        harmonicFreq[0]     = (sampleRate * bin[0]) / fftSize;
-        peakDBBin[0]        = 20.0 * log10(fftData[bin[0]]);
+        bin[0] = highestBin;
+        harmonicFreq[0] = (sampleRate * (float)bin[0]) / (float)fftSize;
+        peakDBBin[0] = (fftData[bin[0]] > 0) ? 20.0f * std::log10(std::sqrt(fftData[bin[0]])) : -100.0f;
 
         for (int harmonic = 1; harmonic < 6; harmonic++)
         {
             highest = 0.f;
+            int lastBin = bin[harmonic - 1];
+            float lastFreq = (sampleRate * (float)lastBin) / (float)fftSize;
+            float nextFreq = lastFreq * powf(2.f, 0.25f);
+            int nextBin = (int)((nextFreq / sampleRate) * (float)fftSize);
 
-            // need to define the next bin from the last highest peak + a deteremined interval, 1 semitone (@current scale) etc.. 1/4 octave , 4/12..
+            if (nextBin >= numSamples) break;
 
-            //            int nextBin = bin[harmonic-1]+1;
-
-            int lastBin         = bin[harmonic-1];
-            float lastFreq      = (sampleRate * lastBin) / fftSize;
-            float nextFreq      = lastFreq * powf(2.f, 0.25);
-            int nextBin         = (int)nextFreq / sampleRate  * fft->getSize();
-
-            for (int i = nextBin; i < averager.getNumSamples(); ++i)
+            for (int i = nextBin; i < numSamples; ++i)
             {
                 if (fftData[i] > highest)
                 {
-                    highest         = fftData[i];
-                    bin[harmonic]   = i;
+                    highest = fftData[i];
+                    bin[harmonic] = i;
                 }
             }
 
-            harmonicFreq[harmonic]              = (sampleRate * bin[harmonic]) / fftSize;
-            peakDBBin[harmonic]                 = 20.0 * log10(fftData[bin[harmonic]]);
+            harmonicFreq[harmonic] = (sampleRate * (float)bin[harmonic]) / (float)fftSize;
+            peakDBBin[harmonic] = (fftData[bin[harmonic]] > 0) ? 20.0f * std::log10(std::sqrt(fftData[bin[harmonic]])) : -100.0f;
 
-            harmonics.getReference(harmonic)    = harmonicFreq[harmonic];
+            if (harmonic < harmonics.size())
+                harmonics.set(harmonic, harmonicFreq[harmonic]);
+            else
+                harmonics.add(harmonicFreq[harmonic]);
 
-            // calculate interval from last to this
-            if (harmonic != 0)
-            {
-                interval[harmonic] = harmonicFreq[harmonic] - harmonicFreq[harmonic-1];
-
-                intervals.getReference(harmonic) = interval[harmonic];
-            }
+            interval[harmonic] = harmonicFreq[harmonic] - harmonicFreq[harmonic - 1];
+            if (harmonic < intervals.size())
+                intervals.set(harmonic, interval[harmonic]);
+            else
+                intervals.add(interval[harmonic]);
         }
 
-        peakFrequency       = harmonicFreq[0];
-        peakDB              = peakDBBin[0]; // * might not need the sqrt
+        peakFrequency = harmonicFreq[0];
+        peakDB = peakDBBin[0];
 
         calculateMovingAverage();
-
-        ema                 = movingAvgFreq;
+        ema = movingAvgFreq;
     }
 
     bool checkForNewData()
@@ -633,13 +644,15 @@ public:
 
     void setNewFFTWindowFunction(int windowEnum)
     {
+        if (fft == nullptr) return;
+
         shouldProcess   = false;
 
         windowingEnum   = windowEnum;
 
         windowMethod    = (dsp::WindowingFunction<float>::WindowingMethod) windowingEnum ;
 
-        windowing       = new dsp::WindowingFunction<float> (fft->getSize(),  windowMethod, true, 4 );
+        windowing       = std::make_unique<dsp::WindowingFunction<float>> (fft->getSize(),  windowMethod, true, 4 );
 
         shouldProcess   = true;
     }
@@ -653,21 +666,24 @@ public:
 
         abstractFifo.reset();
 
-        if      (fftEnum == 1) { fftSize = 1024; fft = forwardFFT1024; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true); }
-        else if (fftEnum == 2) { fftSize = 2048; fft = forwardFFT2048; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true); }
-        else if (fftEnum == 3) { fftSize = 4096; fft = forwardFFT4096; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true);  }
-        else if (fftEnum == 4) { fftSize = 8192; fft = forwardFFT8192; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true);  }
-        else if (fftEnum == 5) { fftSize = 16384; fft = forwardFFT16384; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true); }
-        else if (fftEnum == 6) { fftSize = 32768; fft = forwardFFT32768; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true); }
-        else if (fftEnum == 7) { fftSize = 65536; fft = forwardFFT65536; fftBuffer.setSize(1, fftSize, false, false, true); averager.setSize(5, fftSize / 2, false, false, true); }
+        if      (fftEnum == 1 || fftEnum == 0) { fftSize = 1024; fft = forwardFFT1024.get(); }
+        else if (fftEnum == 2) { fftSize = 2048; fft = forwardFFT2048.get(); }
+        else if (fftEnum == 3) { fftSize = 4096; fft = forwardFFT4096.get(); }
+        else if (fftEnum == 4) { fftSize = 8192; fft = forwardFFT8192.get(); }
+        else if (fftEnum == 5) { fftSize = 16384; fft = forwardFFT16384.get(); }
+        else if (fftEnum == 6) { fftSize = 32768; fft = forwardFFT32768.get(); }
+        else if (fftEnum == 7) { fftSize = 65536; fft = forwardFFT65536.get(); }
 
-        audioFifo.setSize (1, fftSize + 1);
+        if (fft != nullptr)
+        {
+            fftBuffer.setSize(1, fftSize, false, false, true); 
+            averager.setSize(5, fftSize / 2, false, false, true);
+            audioFifo.setSize (1, fftSize + 1);
+            abstractFifo.setTotalSize (fftSize + 1);
 
-        abstractFifo.setTotalSize (fftSize + 1);
-
-        windowMethod    = (dsp::WindowingFunction<float>::WindowingMethod) windowingEnum ;
-
-        windowing       = new dsp::WindowingFunction<float> (fft->getSize(),  windowMethod, true, 4 );
+            windowMethod    = (dsp::WindowingFunction<float>::WindowingMethod) windowingEnum ;
+            windowing       = std::make_unique<dsp::WindowingFunction<float>> (fft->getSize(),  windowMethod, true, 4 );
+        }
 
         shouldProcess   = true;
     }
@@ -708,20 +724,20 @@ private:
 
     Type sampleRate {};
 
-    int fftSize;
+    int fftSize = 0;
     int windowingEnum = 0;
 
     // mine
-    dsp::FFT * fft;
-    dsp::FFT * forwardFFT1024;
-    dsp::FFT * forwardFFT2048;
-    dsp::FFT * forwardFFT4096;
-    dsp::FFT * forwardFFT8192;
-    dsp::FFT * forwardFFT16384;
-    dsp::FFT * forwardFFT32768;
-    dsp::FFT * forwardFFT65536;
+    dsp::FFT * fft { nullptr };
+    std::unique_ptr<dsp::FFT> forwardFFT1024;
+    std::unique_ptr<dsp::FFT> forwardFFT2048;
+    std::unique_ptr<dsp::FFT> forwardFFT4096;
+    std::unique_ptr<dsp::FFT> forwardFFT8192;
+    std::unique_ptr<dsp::FFT> forwardFFT16384;
+    std::unique_ptr<dsp::FFT> forwardFFT32768;
+    std::unique_ptr<dsp::FFT> forwardFFT65536;
 
-    dsp::WindowingFunction<float> * windowing;
+    std::unique_ptr<dsp::WindowingFunction<float>> windowing;
     dsp::WindowingFunction<float>::WindowingMethod  windowMethod;
     AudioBuffer<float> fftBuffer;
     AudioBuffer<float> averager;
@@ -729,9 +745,9 @@ private:
     AbstractFifo abstractFifo              { 96000 };
     AudioBuffer<Type> audioFifo;
 
-    std::atomic<bool> newDataAvailable;
+    std::atomic<bool> newDataAvailable { false };
 
-    bool shouldProcess = true;
+    bool shouldProcess = false;
 
 #define NUM_AVG 30
 
@@ -793,16 +809,6 @@ private:
         }
     }
 public:
-    const float* getFFTData() const
-    {
-        return averager.getReadPointer(0);
-    }
-
-    int getFFTDataSize() const
-    {
-        return averager.getNumSamples();
-    }
-
     void getMovingAveragePeakData(double & _peakFreq, double & _peakDB, double & _movingAvgFreq)
     {
         _peakFreq       = peakFreq;

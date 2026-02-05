@@ -2,240 +2,54 @@
   ==============================================================================
 
     HighQualityMeter.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
-
-
 #include "HighQualityMeter.h"
-#include "JuceHeader.h"
 
-
-//==============================================================================
-// Meter level limits (in dB).
-#define HQ_METER_MAXDB       (+0.0f)
-#define HQ_METER_MINDB        (-80.0f)
-// The decay rates (magic goes here :).
-// - value decay rate (faster)
-#define HQ_METER_DECAY_RATE1    (1.0f - 3E-2f)
-// - peak decay rate (slower)
-#define HQ_METER_DECAY_RATE2    (1.0f - 3E-6f)
-// Number of cycles the peak stays on hold before fall-off.
-#define HQ_METER_PEAK_FALLOFF    16
-
-
-//==============================================================================
-HighQualityMeterValue::HighQualityMeterValue (HighQualityMeter *pMeter)
-  : m_pMeter (pMeter),
-    m_fValue (0.0f),
-    m_iValueHold (0),
-    m_fValueDecay (HQ_METER_DECAY_RATE1),
-    m_iPeak (0),
-    m_iPeakHold (0),
-    m_fPeakDecay (HQ_METER_DECAY_RATE2),
-    m_iPeakColor (HighQualityMeter::Color6dB)
-{
-}
-
-HighQualityMeterValue::~HighQualityMeterValue ()
-{
-}
-
-void HighQualityMeterValue::setValue (const float fValue)
-{
-    m_fValue = fValue;
-}
-
-void HighQualityMeterValue::peakReset ()
-{
-    m_iPeak = 0;
-}
-
-void HighQualityMeterValue::refresh ()
-{
-    if (m_fValue > 0.001f || m_iPeak > 0)
-        repaint();
-}
-
-void HighQualityMeterValue::paint (Graphics& g)
-{
-    int w = getWidth();
-    int h = getHeight();
-    int y;
-
-    if (isEnabled())
-    {
-        g.setColour (m_pMeter->color (HighQualityMeter::ColorBack));
-        g.fillRect (0, 0, w, h);
-
-        y = m_pMeter->iec_level (HighQualityMeter::Color0dB);
-
-        g.setColour (m_pMeter->color (HighQualityMeter::ColorFore));
-        g.drawLine (0, h - y, w, h - y);
-    }
-    else
-    {
-        g.setColour (Colours::black);
-        g.fillRect (0, 0, w, h);
-    }
-
-    float dB = HQ_METER_MINDB;
-    if (m_fValue > 0.0f)
-        dB = 20.0f * log10f (m_fValue);
-
-    if (dB < HQ_METER_MINDB)
-        dB = HQ_METER_MINDB;
-    else if (dB > HQ_METER_MAXDB)
-        dB = HQ_METER_MAXDB;
-
-    int y_over = 0;
-    int y_curr = 0;
-
-    y = m_pMeter->iec_scale (dB);
-    if (m_iValueHold < y)
-    {
-        m_iValueHold = y;
-        m_fValueDecay = HQ_METER_DECAY_RATE1;
-    }
-    else
-    {
-        m_iValueHold = int (float (m_iValueHold * m_fValueDecay));
-        if (m_iValueHold < y)
-            m_iValueHold = y;
-        else {
-            m_fValueDecay *= m_fValueDecay;
-            y = m_iValueHold;
-        }
-    }
-
-    int iLevel;
-    for (iLevel = HighQualityMeter::Color10dB;
-         iLevel > HighQualityMeter::ColorOver && y >= y_over; iLevel--)
-    {
-        y_curr = m_pMeter->iec_level (iLevel);
-
-//        g.setColour (m_pMeter->color (iLevel));
-
-        g.setGradientFill (ColourGradient (m_pMeter->color (iLevel), 0, h - y_over,
-                                           m_pMeter->color (iLevel-1), 0, h - y_curr,
-                                           false));
-
-        if (y < y_curr)
-            g.fillRect(0, h - y, w, y - y_over);
-        else
-            g.fillRect(0, h - y_curr, w, y_curr - y_over);
-
-        y_over = y_curr;
-    }
-
-    if (y > y_over)
-    {
-        g.setColour (m_pMeter->color (HighQualityMeter::ColorOver));
-        g.fillRect (0, h - y, w, y - y_over);
-    }
-
-    if (m_iPeak < y)
-    {
-        m_iPeak = y;
-        m_iPeakHold = 0;
-        m_fPeakDecay = HQ_METER_DECAY_RATE2;
-        m_iPeakColor = iLevel;
-    }
-    else if (++m_iPeakHold > m_pMeter->getPeakFalloff())
-    {
-        m_iPeak = int (float (m_iPeak * m_fPeakDecay));
-        if (m_iPeak < y) {
-            m_iPeak = y;
-        } else {
-            if (m_iPeak < m_pMeter->iec_level (HighQualityMeter::Color10dB))
-                m_iPeakColor = HighQualityMeter::Color6dB;
-            m_fPeakDecay *= m_fPeakDecay;
-        }
-    }
-
-    g.setColour (m_pMeter->color (m_iPeakColor));
-    g.drawLine (0, h - m_iPeak, w, h - m_iPeak);
-}
-
-void HighQualityMeterValue::resized ()
-{
-    m_iPeak = 0;
-}
-
-
-//==============================================================================
 HighQualityMeter::HighQualityMeter (const int numPorts)
-  : m_iPortCount (numPorts), // FIXME: Default port count.
-    m_ppValues (0),
-    m_fScale (0.0f),
-    m_iPeakFalloff (HQ_METER_PEAK_FALLOFF)
+    : m_iPortCount (numPorts),
+      m_iPeakFalloff (1)
 {
-    for (int i = 0; i < LevelCount; i++)
-        m_levels[i] = 0;
+    m_ppValues = new HighQualityMeterValue*[m_iPortCount];
 
-    m_colors[ColorOver] = Colours::red;
-    m_colors[Color0dB]  = Colours::red;
-    m_colors[Color3dB]  = Colours::orange;
-    m_colors[Color6dB]  = Colours::yellow;
-    m_colors[Color10dB] = Colours::green;
-    m_colors[ColorBack] = Colours::transparentBlack; //backgroundColourId; // Colours::black;
-    m_colors[ColorFore] = Colours::transparentBlack;
-
-    if (m_iPortCount > 0)
+    for (int i = 0; i < m_iPortCount; i++)
     {
-        m_ppValues = new HighQualityMeterValue* [m_iPortCount];
-
-        for (int iPort = 0; iPort < m_iPortCount; iPort++)
-        {
-            m_ppValues[iPort] = new HighQualityMeterValue (this);
-            addAndMakeVisible (m_ppValues[iPort]);
-        }
+        m_ppValues[i] = new HighQualityMeterValue (this);
+        addAndMakeVisible (m_ppValues[i]);
     }
+
+    m_fScale = 100.0f;
+
+    m_levels[0] = 0;
+    m_levels[1] = 0;
+    m_levels[2] = 0;
+    m_levels[3] = 0;
+    m_levels[4] = 0;
+
+    m_colors[0] = Colours::red;
+    m_colors[1] = Colours::red;
+    m_colors[2] = Colours::orange;
+    m_colors[3] = Colours::yellow;
+    m_colors[4] = Colours::green;
+    m_colors[5] = Colours::black;
+    m_colors[6] = Colours::white;
 }
 
-
-// Default destructor.
-HighQualityMeter::~HighQualityMeter (void)
+HighQualityMeter::~HighQualityMeter()
 {
-    for (int iPort = 0; iPort < m_iPortCount; iPort++)
-        delete m_ppValues[iPort];
+    for (int i = 0; i < m_iPortCount; i++)
+        delete m_ppValues[i];
 
-    delete [] m_ppValues;
+    delete[] m_ppValues;
 }
 
-void HighQualityMeter::resized ()
-{
-    //m_fScale = 0.85f * getHeight();
-    m_fScale = getHeight();
-
-    m_levels[Color0dB]  = iec_scale (  0.0f);
-    m_levels[Color3dB]  = iec_scale ( -3.0f);
-    m_levels[Color6dB]  = iec_scale ( -6.0f);
-    m_levels[Color10dB] = iec_scale (-10.0f);
-
-    int size = getWidth () / m_iPortCount;
-
-    for (int iPort = 0; iPort < m_iPortCount; iPort++)
-    {
-        m_ppValues[iPort]->setBounds (iPort * size, 0, size, getHeight ());
-    }
-}
-
-void HighQualityMeter::paint (Graphics& g)
-{
-/*
-    g.drawBevel (0, 0, getWidth(), getHeight(), 1,
-                 Colours::black.withAlpha(0.2f),
-                 Colours::white.withAlpha(0.2f));
-*/
-}
-
-
-// Child widget accessors.
 int HighQualityMeter::iec_scale (const float dB) const
 {
     float fDef = 1.0;
@@ -252,7 +66,7 @@ int HighQualityMeter::iec_scale (const float dB) const
         fDef = (dB + 40.0) * 0.015 + 0.15;
     else if (dB < -20.0)
         fDef = (dB + 30.0) * 0.02 + 0.3;
-    else // if (dB < 0.0)
+    else 
         fDef = (dB + 20.0) * 0.025 + 0.5;
 
     return (int) (fDef * m_fScale);
@@ -260,7 +74,9 @@ int HighQualityMeter::iec_scale (const float dB) const
 
 int HighQualityMeter::iec_level (const int index) const
 {
-    return m_levels[index];
+    if (index >= 0 && index < LevelCount)
+        return m_levels[index];
+    return 0;
 }
 
 int HighQualityMeter::portCount () const
@@ -280,25 +96,148 @@ int HighQualityMeter::getPeakFalloff () const
 
 void HighQualityMeter::peakReset ()
 {
-    for (int iPort = 0; iPort < m_iPortCount; iPort++)
-        m_ppValues[iPort]->peakReset();
+    for (int i = 0; i < m_iPortCount; i++)
+        if (m_ppValues[i]) m_ppValues[i]->peakReset ();
 }
 
 void HighQualityMeter::refresh ()
 {
-    for (int iPort = 0; iPort < m_iPortCount; iPort++)
-        m_ppValues[iPort]->refresh();
+    for (int i = 0; i < m_iPortCount; i++)
+        if (m_ppValues[i]) m_ppValues[i]->refresh ();
 }
 
 void HighQualityMeter::setValue (const int iPort, const float fValue)
 {
-    m_ppValues[iPort]->setValue(fValue);
+    if (iPort >= 0 && iPort < m_iPortCount && m_ppValues[iPort])
+        m_ppValues[iPort]->setValue (fValue);
 }
 
 const Colour& HighQualityMeter::color (const int index) const
 {
-    return m_colors[index];
+    if (index >= 0 && index < ColorCount)
+        return m_colors[index];
+    return m_colors[ColorBack];
 }
 
-// END_JUCE_NAMESPACE
+void HighQualityMeter::paint (Graphics& g)
+{
+}
 
+void HighQualityMeter::resized ()
+{
+    m_fScale = (float) getHeight();
+
+    m_levels[0] = iec_scale (0.0);
+    m_levels[1] = iec_scale (-3.0);
+    m_levels[2] = iec_scale (-6.0);
+    m_levels[3] = iec_scale (-10.0);
+    m_levels[4] = iec_scale (-20.0);
+
+    if (m_iPortCount > 0)
+    {
+        int iWidth = getWidth() / m_iPortCount;
+
+        for (int i = 0; i < m_iPortCount; i++)
+            if (m_ppValues[i]) m_ppValues[i]->setBounds (i * iWidth, 0, iWidth, getHeight());
+    }
+}
+
+HighQualityMeterValue::HighQualityMeterValue (HighQualityMeter *pMeter)
+    : m_pMeter (pMeter),
+      m_fValue (-100.0f),
+      m_iValueHold (0),
+      m_fValueDecay (0.0f),
+      m_iPeak (0),
+      m_iPeakHold (0),
+      m_fPeakDecay (0.0f),
+      m_iPeakColor (0)
+{
+}
+
+HighQualityMeterValue::~HighQualityMeterValue()
+{
+}
+
+void HighQualityMeterValue::setValue (const float fValue)
+{
+    m_fValue = fValue;
+}
+
+void HighQualityMeterValue::refresh()
+{
+    if (m_pMeter == nullptr) return;
+
+    int iValue = m_pMeter->iec_scale (m_fValue);
+
+    if (iValue > m_iValueHold)
+    {
+        m_iValueHold = iValue;
+        m_fValueDecay = 0.0f;
+    }
+    else
+    {
+        m_fValueDecay += 1.0f;
+        m_iValueHold -= (int) (m_fValueDecay * 0.1f);
+        if (m_iValueHold < 0) m_iValueHold = 0;
+    }
+
+    if (iValue > m_iPeakHold)
+    {
+        m_iPeakHold = iValue;
+        m_fPeakDecay = 0.0f;
+    }
+    else if (m_pMeter->getPeakFalloff() > 0)
+    {
+        m_fPeakDecay += 0.05f;
+        m_iPeakHold -= (int) (m_fPeakDecay);
+        if (m_iPeakHold < 0) m_iPeakHold = 0;
+    }
+
+    repaint();
+}
+
+void HighQualityMeterValue::peakReset()
+{
+    m_iPeakHold = 0;
+    repaint();
+}
+
+void HighQualityMeterValue::paint (Graphics& g)
+{
+    if (m_pMeter == nullptr) return;
+
+    int h = getHeight();
+    int w = getWidth();
+
+    if (h <= 0 || w <= 0) return;
+
+    g.fillAll (m_pMeter->color (HighQualityMeter::ColorBack));
+
+    int iVal = m_iValueHold;
+    if (iVal > h) iVal = h;
+    
+    for (int y = 0; y < iVal; ++y)
+    {
+        int colorIdx = HighQualityMeter::Color10dB;
+        if (y >= m_pMeter->iec_level(0)) colorIdx = HighQualityMeter::ColorOver;
+        else if (y >= m_pMeter->iec_level(1)) colorIdx = HighQualityMeter::Color0dB;
+        else if (y >= m_pMeter->iec_level(2)) colorIdx = HighQualityMeter::Color3dB;
+        else if (y >= m_pMeter->iec_level(3)) colorIdx = HighQualityMeter::Color6dB;
+
+        g.setColour (m_pMeter->color (colorIdx));
+        g.drawHorizontalLine (h - y - 1, 1.0f, (float) w - 1.0f);
+    }
+
+    if (m_iPeakHold > 0)
+    {
+        int yPeak = m_iPeakHold;
+        if (yPeak >= h) yPeak = h - 1;
+
+        g.setColour (m_pMeter->color (HighQualityMeter::ColorFore));
+        g.drawHorizontalLine (h - yPeak - 1, 1.0f, (float) w - 1.0f);
+    }
+}
+
+void HighQualityMeterValue::resized ()
+{
+}

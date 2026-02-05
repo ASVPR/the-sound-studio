@@ -2,9 +2,11 @@
   ==============================================================================
 
     FundamentalFrequencyComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -118,7 +120,8 @@ public:
     {
         scaleFactor = factor;
         lookAndFeel.setScale(scaleFactor);
-
+        resized();
+        repaint();
     }
 
     void prepare_fft_parameters();
@@ -178,7 +181,7 @@ private:
     /* ************** */
 
     /* Process and Synth Parameters */
-    std::unique_ptr<ImageButton>   buttonProcessFFT;
+    // Note: FFT processing is always enabled - no toggle needed
     std::unique_ptr<juce::TextEditor> textEditorLength;
     std::unique_ptr<juce::TextEditor> textEditorIteration;
     /* ************** */

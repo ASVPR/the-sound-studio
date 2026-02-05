@@ -2,9 +2,11 @@
   ==============================================================================
 
     ShortcutComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -112,9 +114,47 @@ private:
     Image imageSettingsIcon;
     Image imageMuteIcon;
     Image imageLoopIcon;
-
+    Image imageBackground;
     Image imageDelete; // delete, not close i think !!!!
     Image imageAddIcon;
+    
+    // UI Layout Variables
+    int insetDelete         = 16;
+    int deleteTopMargin     = 21;
+    int deleteSize          = 35;
+    
+    int backgroundTopMargin = 38;
+    int backgroundLeftMargin= insetDelete;
+    int backgroundWidth     = 303;
+    int backgroundHeight    = 271;
+    
+    int insetLeftLabels     = 16 + 8;
+    int insetRightLabels    = backgroundLeftMargin+backgroundWidth-130;
+    int labelHeight         = 40;
+    int labelWidth          = 120;
+    int label1Top           = 54;
+    int label2Top           = label1Top + labelHeight;
+    int label3Top           = label2Top + labelHeight;
+    int label4Top           = label3Top + labelHeight;
+    int label5Top           = label4Top + labelHeight;
+    
+    int mainWidth           = backgroundWidth + (2* insetDelete);
+    int mainHeight          = backgroundHeight + 73;
+    
+    int settingsLeftMargin  = 16 + backgroundLeftMargin;
+    int settingsTopMargin   = 223 + backgroundTopMargin;
+    int settingsSize        = 32;
+    
+    int muteLeftMargin      = 136 + backgroundLeftMargin;
+    int muteTopMargin       = settingsTopMargin;
+    int muteSize            = settingsSize;
+    
+    int loopLeftMargin      = 247 + backgroundLeftMargin;
+    int loopTopMargin       = 218 + backgroundTopMargin;
+    int loopWidth           = 39;
+    int loopHeight          = 35;
+    
+    ImageComponent * backgroundImageComp;
     
     CustomLookAndFeel lookAndFeel;
 };
@@ -160,6 +200,24 @@ private:
     
     Image imageLeftButton;
     Image imageRightButton;
+    
+    // UI Variables
+    int leftButtonLeftMargin    = 48;
+    int leftButtonTopMargin     = 153;
+    
+    int rightButtonLeftMargin   = 1475;
+    int rightButtonTopMargin    = leftButtonTopMargin;
+    
+    int buttonWidth             = 27;
+    int buttonHeight            = 47;
+    
+    int shortcutWidth           = 303 + 24;
+    int shortcutSpace           = 10;
+    int containerWidth          = (shortcutWidth + shortcutSpace) * (NUM_SHORTCUT_SYNTHS) - ((shortcutWidth + shortcutSpace)* 0.5);
+    
+    int viewportLeftMargin      = 107 - 10;
+    int viewportTopMargin       = 0;
+    int viewportWidth           = (shortcutWidth + shortcutSpace) * 4;
     
     CustomLookAndFeel lookAndFeel;
 };
@@ -243,13 +301,49 @@ private:
     std::unique_ptr<Component>containerView_Active;
     std::unique_ptr<Component>containerView_Inactive;
     
+    ImageComponent * backgroundImageComp;
+    
     // Image Chache
     Image imageSettingsIcon;
     Image imageMuteIcon;
     Image imageLoopIcon;
-
+    Image imageBackground;
     Image imageDelete; // delete, not close i think !!!!
     Image imageAddIcon;
+    
+    // UI Layout Variables
+    int insetDelete         = 16;
+    int deleteTopMargin     = 21;
+    int deleteSize          = 35;
+    
+    int backgroundTopMargin = 38;
+    int backgroundLeftMargin= insetDelete;
+    int backgroundWidth     = 303;
+    int backgroundHeight    = 271;
+    
+    int insetLeftLabels     = 16 + 8;
+    int insetRightLabels    = backgroundLeftMargin+backgroundWidth-130;
+    int labelHeight         = 40;
+    int labelWidth          = 120;
+    int label1Top           = 54;
+    int label2Top           = label1Top + labelHeight;
+    int label3Top           = label2Top + labelHeight;
+    
+    int mainWidth           = backgroundWidth + (2* insetDelete);
+    int mainHeight          = backgroundHeight + 73;
+    
+    int settingsLeftMargin  = 16 + backgroundLeftMargin;
+    int settingsTopMargin   = 223 + backgroundTopMargin;
+    int settingsSize        = 32;
+    
+    int muteLeftMargin      = 136 + backgroundLeftMargin;
+    int muteTopMargin       = settingsTopMargin;
+    int muteSize            = settingsSize;
+    
+    int loopLeftMargin      = 247 + backgroundLeftMargin;
+    int loopTopMargin       = 218 + backgroundTopMargin;
+    int loopWidth           = 39;
+    int loopHeight          = 35;
     
     CustomLookAndFeel lookAndFeel;
 };
@@ -299,6 +393,24 @@ private:
     Image imageLeftButton;
     Image imageRightButton;
     
-
+    
+    // UI Variables
+    int leftButtonLeftMargin    = 48;
+    int leftButtonTopMargin     = 153;
+    
+    int rightButtonLeftMargin   = 1475;
+    int rightButtonTopMargin    = leftButtonTopMargin;
+    
+    int buttonWidth             = 27;
+    int buttonHeight            = 47;
+    
+    int shortcutWidth           = 303 + 24;
+    int shortcutSpace           = 10;
+    int containerWidth          = (shortcutWidth + shortcutSpace) * (NUM_SHORTCUT_SYNTHS) - ((shortcutWidth + shortcutSpace)* 0.5);
+    
+    int viewportLeftMargin      = 107 - 10;
+    int viewportTopMargin       = 0;
+    int viewportWidth           = (shortcutWidth + shortcutSpace) * 4;
+    
     CustomLookAndFeel lookAndFeel;
 };

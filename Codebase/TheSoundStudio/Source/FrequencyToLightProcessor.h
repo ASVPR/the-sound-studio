@@ -2,9 +2,11 @@
   ==============================================================================
 
     FrequencyToLightProcessor.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -14,7 +16,6 @@
 #include "ChordManager.h"
 #include "Parameters.h"
 #include "FrequencyManager.h"
-#include <memory>
 
 #define NUM_HARMONICS 5
 
@@ -188,7 +189,6 @@ public:
 private:
     
     FrequencyManager * frequencyManager;
-    std::unique_ptr<ChordManager> ownedChordManager;
     ChordManager * chordManager;
     
     // GUI parameters

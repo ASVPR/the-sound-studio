@@ -2,9 +2,11 @@
   ==============================================================================
 
     ShortcutComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -36,17 +38,22 @@ ShortcutComponent::ShortcutComponent(int shortcut, ProjectManager * pm)
     imageSettingsIcon       = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
     imageMuteIcon           = ImageCache::getFromMemory(BinaryData::ShortcutMute2x_png, BinaryData::ShortcutMute2x_pngSize);
     imageLoopIcon           = ImageCache::getFromMemory(BinaryData::ShortcutLoop2x_png, BinaryData::ShortcutLoop2x_pngSize);
-
+    imageBackground         = ImageCache::getFromMemory(BinaryData::ShortcutBackground2x_png, BinaryData::ShortcutBackground2x_pngSize);
     imageDelete             = ImageCache::getFromMemory(BinaryData::ShortcutClose2x_png, BinaryData::ShortcutClose2x_pngSize);
     imageAddIcon            = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
     
     
     
     
+    // background
+    backgroundImageComp = new ImageComponent();
+    backgroundImageComp     ->setImage(imageBackground);
+    addAndMakeVisible(backgroundImageComp);
+    
     // containers
     containerView_Active = std::make_unique<Component>();
     addAndMakeVisible(containerView_Active.get());
-
+    
     containerView_Inactive = std::make_unique<Component>();
     addAndMakeVisible(containerView_Inactive.get());
     
@@ -182,76 +189,47 @@ ShortcutComponent::ShortcutComponent(int shortcut, ProjectManager * pm)
 
 void ShortcutComponent::resized()
 {
-    auto bounds = getLocalBounds();
-    const int w = bounds.getWidth();
-    const int h = bounds.getHeight();
-    const float s = w / 335.0f;  // reference card width
-
-    int fontSize = (int)(26.0f * s);
-    int bgMargin = (int)(16.0f * s);
-    int bgTop = (int)(38.0f * s);
-    int bgW = w - bgMargin * 2;
-    int bgH = (int)(271.0f * s);
-
-    containerView_Active->setBounds(bounds);
-    containerView_Inactive->setBounds(bounds);
-
-    // Delete button top-left
-    int delSize = (int)(35.0f * s);
-    button_Delete->setBounds(0, (int)(21.0f * s), delSize, delSize);
-
-    // Labels area
-    int labelY = (int)(54.0f * s);
-    int labelH = (int)(40.0f * s);
-    int leftX = (int)(24.0f * s);
-    int labelW = (int)(120.0f * s);
-    int rightX = w - leftX - labelW;
-
-    label_Chord->setBounds(leftX, labelY, labelW, labelH);
-    label_ChordValue->setBounds(rightX, labelY, labelW, labelH);
-    labelY += labelH;
-
-    label_Chordtype->setBounds(leftX, labelY, labelW, labelH);
-    label_ChordtypeValue->setBounds(rightX, labelY, labelW, labelH);
-    labelY += labelH;
-
-    label_Scale->setBounds(leftX, labelY, labelW, labelH);
-    label_ScaleValue->setBounds(rightX, labelY, labelW, labelH);
-    labelY += labelH;
-
-    label_Instrument->setBounds(leftX, labelY, labelW, labelH);
-    label_InstrumentValue->setBounds(rightX, labelY, labelW, labelH);
-    labelY += labelH;
-
-    label_Frequency->setBounds(leftX, labelY, labelW, labelH);
-    label_FrequencyValue->setBounds(rightX, labelY, labelW, labelH);
-
-    // Bottom buttons
-    int btnSize = (int)(32.0f * s);
-    int btnY = bgTop + bgH - btnSize - (int)(16.0f * s);
-    button_Settings->setBounds(bgMargin + (int)(16.0f * s), btnY, btnSize, btnSize);
-    button_Mute->setBounds(bgMargin + (int)(136.0f * s), btnY, btnSize, btnSize);
-    button_Loop->setBounds(bgMargin + (int)(247.0f * s), btnY, (int)(39.0f * s), (int)(35.0f * s));
-
-    // Shortcut ref label at bottom
-    shortcutRefLabel->setBounds(0, bgTop + bgH + (int)(5.0f * s), w, labelH);
-
-    // Add button (inactive state)
-    int addSize = (int)(71.0f * s);
-    button_Add->setBounds((w - addSize) / 2, bgTop + (int)(100.0f * s), addSize, addSize);
-
-    // Fonts
-    label_Chord->setFont(fontSize);
-    label_Chordtype->setFont(fontSize);
-    label_Scale->setFont(fontSize);
-    label_Instrument->setFont(fontSize);
-    label_Frequency->setFont(fontSize);
-    label_ChordValue->setFont(fontSize);
-    label_ChordtypeValue->setFont(fontSize);
-    label_ScaleValue->setFont(fontSize);
-    label_InstrumentValue->setFont(fontSize);
-    label_FrequencyValue->setFont(fontSize);
-    shortcutRefLabel->setFont((int)(28.0f * s));
+    int fontSize = 26;
+    backgroundImageComp     ->setBounds(backgroundLeftMargin * scaleFactor, backgroundTopMargin * scaleFactor, backgroundWidth * scaleFactor, backgroundHeight * scaleFactor);
+    containerView_Active    ->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    containerView_Inactive  ->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    
+    button_Settings         ->setBounds(settingsLeftMargin * scaleFactor, settingsTopMargin * scaleFactor, settingsSize * scaleFactor, settingsSize * scaleFactor);
+    button_Mute             ->setBounds(loopLeftMargin * scaleFactor, loopTopMargin * scaleFactor, muteSize * scaleFactor, muteSize * scaleFactor);
+    button_Loop             ->setBounds(loopLeftMargin * scaleFactor, loopTopMargin * scaleFactor, loopWidth * scaleFactor, loopHeight * scaleFactor);
+    button_Delete           ->setBounds(0, deleteTopMargin * scaleFactor, deleteSize * scaleFactor, deleteSize * scaleFactor);
+    
+    label_Chord             ->setBounds(insetLeftLabels * scaleFactor, label1Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_Chordtype         ->setBounds(insetLeftLabels * scaleFactor, label2Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_Scale             ->setBounds(insetLeftLabels * scaleFactor, label3Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_Instrument        ->setBounds(insetLeftLabels * scaleFactor, label4Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_Frequency         ->setBounds(insetLeftLabels * scaleFactor, label5Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    
+    label_ChordValue        ->setBounds(insetRightLabels * scaleFactor, label1Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_ChordtypeValue    ->setBounds(insetRightLabels * scaleFactor, label2Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_ScaleValue        ->setBounds(insetRightLabels * scaleFactor, label3Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_InstrumentValue   ->setBounds(insetRightLabels * scaleFactor, label4Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_FrequencyValue    ->setBounds(insetRightLabels * scaleFactor, label5Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    
+    
+    shortcutRefLabel        ->setBounds(0, 300 * scaleFactor, mainWidth * scaleFactor, labelHeight * scaleFactor);
+    
+    button_Add              ->setBounds((118 + 18) * scaleFactor, 138 * scaleFactor, 71 * scaleFactor, 71 * scaleFactor);
+    
+    label_Chord             ->setFont(fontSize * scaleFactor);
+    label_Chordtype         ->setFont(fontSize * scaleFactor);
+    label_Scale             ->setFont(fontSize * scaleFactor);
+    label_Instrument        ->setFont(fontSize * scaleFactor);
+    label_Frequency         ->setFont(fontSize * scaleFactor);
+    label_ChordValue        ->setFont(fontSize * scaleFactor);
+    label_ChordtypeValue    ->setFont(fontSize * scaleFactor);
+    label_ScaleValue        ->setFont(fontSize * scaleFactor);
+    label_InstrumentValue   ->setFont(fontSize * scaleFactor);
+    label_FrequencyValue    ->setFont(fontSize * scaleFactor);
+    
+    
+    shortcutRefLabel        ->setFont(28 * scaleFactor);
+    
 }
 
 
@@ -369,15 +347,16 @@ ShortcutContainerComponent::ShortcutContainerComponent(ProjectManager * pm)
     addAndMakeVisible(button_Right.get());
     
     shortcutsContainer = std::make_unique<Component>();
-
+    shortcutsContainer->setBounds(0, 0, containerWidth, 344);
+    
     // shortcuts array
-
+    
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
         shortcutComponent[i] = std::make_unique<ShortcutComponent>(i, projectManager);
         shortcutsContainer->addAndMakeVisible(shortcutComponent[i].get());
     }
-
+    
     // viewport
     viewport = std::make_unique<Viewport>();
     viewport            ->setViewedComponent(shortcutsContainer.get());
@@ -387,32 +366,18 @@ ShortcutContainerComponent::ShortcutContainerComponent(ProjectManager * pm)
 
 void ShortcutContainerComponent::resized()
 {
-    auto bounds = getLocalBounds();
-    const int w = bounds.getWidth();
-    const int h = bounds.getHeight();
-
-    int btnW = jmax(20, (int)(w * 0.02f));
-    int btnH = jmax(35, (int)(h * 0.14f));
-    int btnY = (h - btnH) / 2;
-
-    button_Left->setBounds(btnW, btnY, btnW, btnH);
-    button_Right->setBounds(w - btnW * 2, btnY, btnW, btnH);
-
-    int vpLeft = btnW * 3;
-    int vpWidth = w - vpLeft * 2;
-
-    int cardW = vpWidth / 4;  // show 4 cards at a time
-    int containerW = cardW * NUM_SHORTCUT_SYNTHS;
-
-    shortcutsContainer->setBounds(0, 0, containerW, h);
-
+    
+    button_Left->setBounds(leftButtonLeftMargin * scaleFactor, leftButtonTopMargin * scaleFactor, buttonWidth * scaleFactor, buttonHeight * scaleFactor);
+    button_Right->setBounds(rightButtonLeftMargin * scaleFactor, rightButtonTopMargin * scaleFactor, buttonWidth * scaleFactor, buttonHeight * scaleFactor);
+    shortcutsContainer->setBounds(0, 0, containerWidth * scaleFactor, 344 * scaleFactor);
+    
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
-        shortcutComponent[i]->setBounds(cardW * i, 0, cardW, h);
-        shortcutComponent[i]->setScale(scaleFactor);
+        shortcutComponent[i]->setBounds((shortcutWidth * i)  * scaleFactor, 0, shortcutWidth * scaleFactor, 344 * scaleFactor);
     }
-
-    viewport->setBounds(vpLeft, 0, vpWidth, h);
+    
+    viewport->setBounds(viewportLeftMargin * scaleFactor, 0, viewportWidth * scaleFactor, 344 * scaleFactor);
+    
 }
 
 void ShortcutContainerComponent::buttonClicked (Button*button)
@@ -431,8 +396,7 @@ void ShortcutContainerComponent::buttonClicked (Button*button)
 
 void ShortcutContainerComponent::moveViewport()
 {
-    int cardW = viewport->getWidth() / 4;
-    int x = cardW * shiftToRight;
+    int x = (shortcutWidth + shortcutSpace) * shiftToRight;
     viewport->setViewPosition(x, 0);
 }
 
@@ -461,20 +425,28 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
     imageSettingsIcon       = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
     imageMuteIcon           = ImageCache::getFromMemory(BinaryData::ShortcutMute2x_png, BinaryData::ShortcutMute2x_pngSize);
     imageLoopIcon           = ImageCache::getFromMemory(BinaryData::ShortcutLoop2x_png, BinaryData::ShortcutLoop2x_pngSize);
-
+    imageBackground         = ImageCache::getFromMemory(BinaryData::ShortcutBackground2x_png, BinaryData::ShortcutBackground2x_pngSize);
     imageDelete             = ImageCache::getFromMemory(BinaryData::ShortcutClose2x_png, BinaryData::ShortcutClose2x_pngSize);
     imageAddIcon            = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
     
     
     
     
+    // background
+    backgroundImageComp = new ImageComponent();
+    backgroundImageComp     ->setImage(imageBackground);
+    backgroundImageComp     ->setBounds(backgroundLeftMargin, backgroundTopMargin, backgroundWidth, backgroundHeight);
+    addAndMakeVisible(backgroundImageComp);
+    
     // containers
     containerView_Active = std::make_unique<Component>();
+    containerView_Active->setBounds(0, 0, mainWidth, mainHeight);
     addAndMakeVisible(containerView_Active.get());
-
+    
     containerView_Inactive = std::make_unique<Component>();
+    containerView_Inactive->setBounds(0, 0, mainWidth, mainHeight);
     addAndMakeVisible(containerView_Inactive.get());
-
+    
     // active buttons
     button_Settings = std::make_unique<ImageButton>();
     button_Settings->setTriggeredOnMouseDown(true);
@@ -483,8 +455,9 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                                 Image(), 1.000f, Colour (0x00000000),
                                 imageSettingsIcon, 0.75, Colour (0x00000000));
     button_Settings->addListener(this);
+    button_Settings->setBounds(settingsLeftMargin, settingsTopMargin, settingsSize, settingsSize);
     containerView_Active->addAndMakeVisible(button_Settings.get());
-
+    
     button_Mute = std::make_unique<ImageButton>();
     button_Mute->setTriggeredOnMouseDown(true);
     button_Mute->setImages (false, true, true,
@@ -492,8 +465,9 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                             Image(), 1.000f, Colour (0x00000000),
                             imageMuteIcon, 0.99, Colour (0x00000000));
     button_Mute->addListener(this);
+    button_Mute->setBounds(loopLeftMargin, loopTopMargin, muteSize, muteSize);
     containerView_Active->addAndMakeVisible(button_Mute.get());
-
+    
     button_Loop = std::make_unique<ImageButton>();
     button_Loop->setTriggeredOnMouseDown(true);
     button_Loop->setImages (false, true, true,
@@ -501,8 +475,9 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                             Image(), 1.000f, Colour (0x00000000),
                             imageLoopIcon, 0.999, Colour (0x00000000));
     button_Loop->addListener(this);
-
-
+    button_Loop->setBounds(loopLeftMargin, loopTopMargin, loopWidth, loopHeight);
+    
+    
     button_Delete = std::make_unique<ImageButton>();
     button_Delete->setTriggeredOnMouseDown(true);
     button_Delete->setImages (false, true, true,
@@ -510,48 +485,56 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                               Image(), 1.000f, Colour (0x00000000),
                               imageDelete, 0.75, Colour (0x00000000));
     button_Delete->addListener(this);
+    button_Delete->setBounds(0, deleteTopMargin, deleteSize, deleteSize);
     containerView_Active->addAndMakeVisible(button_Delete.get());
+    
 
-
+    
+    
     label_Wavetype = std::make_unique<Label>();
     label_Wavetype->setText("Wave type", dontSendNotification);
     label_Wavetype->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
+    label_Wavetype->setBounds(insetLeftLabels, label2Top, labelWidth, labelHeight);
     label_Wavetype->setFont(fontSemiBold);
     containerView_Active->addAndMakeVisible(label_Wavetype.get());
-
-
+    
+    
     label_Frequency = std::make_unique<Label>();
     label_Frequency->setText("Frequency", dontSendNotification);
     label_Frequency->setJustificationType(Justification::left);
     fontSemiBold.setHeight(33);
+    label_Frequency->setBounds(insetLeftLabels, label3Top, labelWidth, labelHeight);
     label_Frequency->setFont(fontSemiBold);
     containerView_Active->addAndMakeVisible(label_Frequency.get());
-
+    
     label_WavetypeValue = std::make_unique<Label>();
     label_WavetypeValue->setText(waveType, dontSendNotification);
     label_WavetypeValue->setJustificationType(Justification::right);
+    label_WavetypeValue->setBounds(insetRightLabels, label2Top, labelWidth, labelHeight);
     label_WavetypeValue->setFont(fontLight);
     containerView_Active->addAndMakeVisible(label_WavetypeValue.get());
-
-
+    
+    
     label_FrequencyValue = std::make_unique<Label>();
     label_FrequencyValue->setText(frequencyHz, dontSendNotification);
     label_FrequencyValue->setJustificationType(Justification::right);
+    label_FrequencyValue->setBounds(insetRightLabels, label3Top, labelWidth, labelHeight);
     label_FrequencyValue->setFont(fontLight);
     containerView_Active->addAndMakeVisible(label_FrequencyValue.get());
-
-
+    
+    
     shortcutRefLabel = std::make_unique<Label>();
     String shortcutString("Shortcut ");
     shortcutString.append(ProjectStrings::getShortcuts().getReference(shortcutRef), 2);
     shortcutRefLabel->setText(shortcutString, dontSendNotification);
     shortcutRefLabel->setJustificationType(Justification::centred);
     fontLight.setHeight(33);
+    shortcutRefLabel->setBounds(0, 300, mainWidth, labelHeight);
     shortcutRefLabel->setFont(fontLight);
     containerView_Active->addAndMakeVisible(shortcutRefLabel.get());
-
-
+    
+    
     // inactive button
     button_Add = std::make_unique<ImageButton>();
     button_Add->setTriggeredOnMouseDown(true);
@@ -560,6 +543,7 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
                            Image(), 1.000f, Colour (0x00000000),
                            imageAddIcon, 0.75, Colour (0x00000000));
     button_Add->addListener(this);
+    button_Add->setBounds(118 + 18, 138, 71, 71);
     containerView_Inactive->addAndMakeVisible(button_Add.get());
     
     setState(0);
@@ -568,49 +552,31 @@ ShortcutComponentFrequency::ShortcutComponentFrequency(int shortcut, ProjectMana
 
 void ShortcutComponentFrequency::resized()
 {
-    auto bounds = getLocalBounds();
-    const int w = bounds.getWidth();
-    const int h = bounds.getHeight();
-    const float s = w / 335.0f;
-
-    int fontSize = (int)(28.0f * s);
-    int bgMargin = (int)(16.0f * s);
-    int bgTop = (int)(38.0f * s);
-    int bgH = (int)(271.0f * s);
-
-    containerView_Active->setBounds(bounds);
-    containerView_Inactive->setBounds(bounds);
-
-    button_Delete->setBounds(0, (int)(21.0f * s), (int)(35.0f * s), (int)(35.0f * s));
-
-    int labelY = (int)(94.0f * s);
-    int labelH = (int)(40.0f * s);
-    int leftX = (int)(24.0f * s);
-    int labelW = (int)(120.0f * s);
-    int rightX = w - leftX - labelW;
-
-    label_Wavetype->setBounds(leftX, labelY, labelW, labelH);
-    label_WavetypeValue->setBounds(rightX, labelY, labelW, labelH);
-    label_Wavetype->setFont(fontSize);
-    label_WavetypeValue->setFont(fontSize);
-    labelY += labelH;
-
-    label_Frequency->setBounds(leftX, labelY, labelW, labelH);
-    label_FrequencyValue->setBounds(rightX, labelY, labelW, labelH);
-    label_Frequency->setFont(fontSize);
-    label_FrequencyValue->setFont(fontSize);
-
-    int btnSize = (int)(32.0f * s);
-    int btnY = bgTop + bgH - btnSize - (int)(16.0f * s);
-    button_Settings->setBounds(bgMargin + (int)(16.0f * s), btnY, btnSize, btnSize);
-    button_Mute->setBounds(bgMargin + (int)(136.0f * s), btnY, btnSize, btnSize);
-    button_Loop->setBounds(bgMargin + (int)(247.0f * s), btnY, (int)(39.0f * s), (int)(35.0f * s));
-
-    shortcutRefLabel->setBounds(0, bgTop + bgH + (int)(5.0f * s), w, labelH);
-    shortcutRefLabel->setFont(fontSize);
-
-    int addSize = (int)(71.0f * s);
-    button_Add->setBounds((w - addSize) / 2, bgTop + (int)(100.0f * s), addSize, addSize);
+    backgroundImageComp     ->setBounds(backgroundLeftMargin * scaleFactor, backgroundTopMargin * scaleFactor, backgroundWidth * scaleFactor, backgroundHeight * scaleFactor);
+    containerView_Active->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    containerView_Inactive->setBounds(0, 0, mainWidth * scaleFactor, mainHeight * scaleFactor);
+    button_Settings->setBounds(settingsLeftMargin * scaleFactor, settingsTopMargin * scaleFactor, settingsSize * scaleFactor, settingsSize * scaleFactor);
+    button_Mute->setBounds(loopLeftMargin * scaleFactor, loopTopMargin * scaleFactor, muteSize * scaleFactor, muteSize * scaleFactor);
+    button_Loop->setBounds(loopLeftMargin * scaleFactor, loopTopMargin * scaleFactor, loopWidth * scaleFactor, loopHeight * scaleFactor);
+    button_Delete->setBounds(0, deleteTopMargin * scaleFactor, deleteSize * scaleFactor, deleteSize * scaleFactor);
+    
+    label_Wavetype->setBounds(insetLeftLabels * scaleFactor, label2Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_Wavetype->setFont(28 * scaleFactor);
+    
+    label_Frequency->setBounds(insetLeftLabels * scaleFactor, label3Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_Frequency->setFont(28 * scaleFactor);
+    
+    label_WavetypeValue->setBounds(insetRightLabels * scaleFactor, label2Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_WavetypeValue->setFont(28 * scaleFactor);
+    
+    label_FrequencyValue->setBounds(insetRightLabels * scaleFactor, label3Top * scaleFactor, labelWidth * scaleFactor, labelHeight * scaleFactor);
+    label_FrequencyValue->setFont(28 * scaleFactor);
+    
+    shortcutRefLabel->setBounds(0, 300 * scaleFactor, mainWidth * scaleFactor, labelHeight * scaleFactor);
+    shortcutRefLabel->setFont(28 * scaleFactor);
+    
+    button_Add->setBounds((118 + 18) * scaleFactor, 138 * scaleFactor, 71 * scaleFactor, 71 * scaleFactor);
+    
 }
 
 void ShortcutComponentFrequency::buttonClicked (Button*button)
@@ -697,8 +663,9 @@ ShortcutFrequencyContainerComponent::ShortcutFrequencyContainerComponent(Project
                             Image(), 1.000f, Colour (0x00000000),
                             imageLeftButton, 0.75, Colour (0x00000000));
     button_Left->addListener(this);
+    button_Left->setBounds(leftButtonLeftMargin, leftButtonTopMargin, buttonWidth, buttonHeight);
     addAndMakeVisible(button_Left.get());
-
+    
     button_Right = std::make_unique<ImageButton>();
     button_Right->setTriggeredOnMouseDown(true);
     button_Right->setImages (false, true, true,
@@ -706,20 +673,25 @@ ShortcutFrequencyContainerComponent::ShortcutFrequencyContainerComponent(Project
                              Image(), 1.000f, Colour (0x00000000),
                              imageRightButton, 0.75, Colour (0x00000000));
     button_Right->addListener(this);
+    button_Right->setBounds(rightButtonLeftMargin, rightButtonTopMargin, buttonWidth, buttonHeight);
     addAndMakeVisible(button_Right.get());
-
+    
     shortcutsContainer = std::make_unique<Component>();
-
+    shortcutsContainer->setBounds(0, 0, containerWidth, 344);
+    
     // shortcuts array
-
+    
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
         shortcutComponent[i] = std::make_unique<ShortcutComponentFrequency>(i, projectManager);
+        shortcutComponent[i]->setBounds(shortcutWidth * i, 0, shortcutWidth, 344);
         shortcutsContainer->addAndMakeVisible(shortcutComponent[i].get());
     }
-
+    
     // viewport
     viewport = std::make_unique<Viewport>();
+    viewport->setBounds(viewportLeftMargin, 0, viewportWidth, 344);
+    
     viewport            ->setViewedComponent(shortcutsContainer.get());
     viewport            ->setScrollBarsShown(false, false, false, true);
     addAndMakeVisible(viewport.get());
@@ -727,32 +699,16 @@ ShortcutFrequencyContainerComponent::ShortcutFrequencyContainerComponent(Project
 
 void ShortcutFrequencyContainerComponent::resized()
 {
-    auto bounds = getLocalBounds();
-    const int w = bounds.getWidth();
-    const int h = bounds.getHeight();
-
-    int btnW = jmax(20, (int)(w * 0.02f));
-    int btnH = jmax(35, (int)(h * 0.14f));
-    int btnY = (h - btnH) / 2;
-
-    button_Left->setBounds(btnW, btnY, btnW, btnH);
-    button_Right->setBounds(w - btnW * 2, btnY, btnW, btnH);
-
-    int vpLeft = btnW * 3;
-    int vpWidth = w - vpLeft * 2;
-
-    int cardW = vpWidth / 4;
-    int containerW = cardW * NUM_SHORTCUT_SYNTHS;
-
-    shortcutsContainer->setBounds(0, 0, containerW, h);
-
+    button_Left->setBounds(leftButtonLeftMargin * scaleFactor, leftButtonTopMargin * scaleFactor, buttonWidth * scaleFactor, buttonHeight * scaleFactor);
+    button_Right->setBounds(rightButtonLeftMargin * scaleFactor, rightButtonTopMargin * scaleFactor, buttonWidth * scaleFactor, buttonHeight * scaleFactor);
+    shortcutsContainer->setBounds(0, 0, containerWidth * scaleFactor, 344 * scaleFactor);
+    
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
-        shortcutComponent[i]->setBounds(cardW * i, 0, cardW, h);
-        shortcutComponent[i]->setScale(scaleFactor);
+        shortcutComponent[i]->setBounds(shortcutWidth  * scaleFactor * i, 0, shortcutWidth * scaleFactor, 344 * scaleFactor);
     }
-
-    viewport->setBounds(vpLeft, 0, vpWidth, h);
+    
+    viewport->setBounds(viewportLeftMargin * scaleFactor, 0, viewportWidth * scaleFactor, 344 * scaleFactor);
 }
 
 void ShortcutFrequencyContainerComponent::buttonClicked (Button*button)
@@ -771,7 +727,6 @@ void ShortcutFrequencyContainerComponent::buttonClicked (Button*button)
 
 void ShortcutFrequencyContainerComponent::moveViewport()
 {
-    int cardW = viewport->getWidth() / 4;
-    int x = cardW * shiftToRight;
+    int x = (shortcutWidth + shortcutSpace) * shiftToRight;
     viewport->setViewPosition(x, 0);
 }

@@ -2,9 +2,11 @@
   ==============================================================================
 
     WavetableSynth.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -78,10 +80,6 @@ private:
     Array<float> squareWavetable;
     Array<float> organWavetable;
     
-    // Pre-allocated mono buffer for audio-thread safety (no heap allocation in processBlock)
-    juce::HeapBlock<float> preallocatedMonoBuffer;
-    int preallocatedMonoBufferSize = 0;
-
     // Wavetable methods
     void initializeWavetables();
     float getWavetableSample(const Array<float>& wavetable, float phase);

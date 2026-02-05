@@ -2,16 +2,17 @@
   ==============================================================================
 
     FrequencyScannerProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "FrequencyScannerProcessor.h"
 #include "ProjectManager.h"
-#include "AudioRouting.h"
 
 FrequencyScannerProcessor::FrequencyScannerProcessor(FrequencyManager * fm, ProjectManager * pm)
 {
@@ -166,7 +167,20 @@ void FrequencyScannerProcessor::processBlock (AudioBuffer<float>& buffer,
             synth->processBlock(outputBuffer, midiMessages);
         }
         
-        TSS::Audio::routeToOutput(buffer, outputBuffer, output);
+        if      (output == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+        else if (output == AUDIO_OUTPUTS::MONO_2 && buffer.getNumChannels() > 1) { buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+        else if (output == AUDIO_OUTPUTS::MONO_3 && buffer.getNumChannels() > 2) { buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+        else if (output == AUDIO_OUTPUTS::MONO_4 && buffer.getNumChannels() > 3) { buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+        else if (output == AUDIO_OUTPUTS::STEREO_1_2 && buffer.getNumChannels() > 1)
+        {
+            buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+            buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+        }
+        else if (output == AUDIO_OUTPUTS::STEREO_3_4 && buffer.getNumChannels() > 2)
+        {
+            buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+            buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+        }
     }
 
 }
@@ -587,7 +601,10 @@ void FrequencyScannerProcessor::PlayRepeater::calculatePlaybackTimers()
     
     totalMSOfLoop           = (totalNumSamplesOfLoop / sampleRate * 1000);
     totalNumRepeats         = totalNumIntervals * numRepeats;
-
+    
+//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
+    
 }
 
 //=================================================================

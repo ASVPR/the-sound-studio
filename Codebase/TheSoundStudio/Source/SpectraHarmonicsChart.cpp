@@ -2,9 +2,11 @@
   ==============================================================================
 
     SpectraHarmonicsChart.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -132,32 +134,12 @@ void SpectraHarmonicsChart::resized()
 
 void SpectraHarmonicsChart::timerCallback()
 {
+    // Update display if needed
     if (projectManager)
     {
-        int fftChannel = 0;
-
-        double peakFreq = 0.0;
-        double peakDB = 0.0;
-        double movingAvgFreq = 0.0;
-        projectManager->getMovingAveragePeakData(fftChannel, peakFreq, peakDB, movingAvgFreq);
-
-        if (movingAvgFreq > 20.0 && movingAvgFreq < 20000.0)
-        {
-            fundamentalFreq = static_cast<float>(movingAvgFreq);
-        }
-
-        sampleRate = static_cast<float>(projectManager->getSampleRate());
-        int currentFFTSize = projectManager->getFFTSize();
-
-        const float* fftData = projectManager->analyzerPool.getAnalyzer(fftChannel).getFFTData();
-        int fftDataSize = projectManager->analyzerPool.getAnalyzer(fftChannel).getFFTDataSize();
-
-        if (fftData && fftDataSize > 0 && fundamentalFreq > 0)
-        {
-            detectHarmonics(fftData, fftDataSize);
-        }
-
-        repaint();
+        // Get FFT data from project manager
+        // This would be implemented based on your FFT processor interface
+        // TODO: Connect to actual FFT data source
     }
 }
 

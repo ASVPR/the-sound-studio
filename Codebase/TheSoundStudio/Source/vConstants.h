@@ -2,9 +2,11 @@
   ==============================================================================
 
     vConstants.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -103,7 +105,13 @@ inline bool normalizeBuffer(double* pInputBuffer, unsigned uBufferSize)
 //#define min(a,b)            (((a) < (b)) ? (a) : (b))
 //#endif
 
-// Legacy C macros removed — use snprintf-based versions from pluginconstants.h if needed
+#ifndef itoa
+#define itoa(value,string,radix)  sprintf(string, "%d", value)
+#endif
+
+#ifndef ltoa
+#define ltoa(value,string,radix)  sprintf(string, "%u", value)
+#endif
 
 // MAINTAINABILITY IMPROVEMENT: Audio-specific constants to replace magic numbers
 // These named constants improve code readability and make it easier to change values

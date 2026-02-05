@@ -2,9 +2,11 @@
   ==============================================================================
 
     SpectraHarmonicsChart.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -26,6 +28,8 @@ public:
     void resized() override;
     
     void timerCallback() override;
+    
+    void setShouldUpdate(bool should) { if (should) startTimer(TIMER_UPDATE_RATE); else stopTimer(); }
     
     // Set FFT data for analysis
     void setFFTData(const float* fftData, int fftSize, float sampleRate);

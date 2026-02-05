@@ -2,9 +2,11 @@
   ==============================================================================
 
     ChordPlayerSettingsComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -18,6 +20,8 @@ AddOnPopupComponent::AddOnPopupComponent(ProjectManager * pm)
 {
     projectManager = pm;
     shortcutRef = 0;
+    
+    backgroundImage = ImageCache::getFromMemory(BinaryData::AddOn_Background_Max_png, BinaryData::AddOn_Background_Max_pngSize);
     
     imageBlueCheckButtonNormal  = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
@@ -292,7 +296,7 @@ void AddOnPopupComponent::resized()
 void AddOnPopupComponent::paint (Graphics&g)
 {
     // draw background
-    g.fillAll(juce::Colour(55, 54, 54));
+    g.drawImage(backgroundImage, 0, 0, 357, 179, 0, 0, 357, 179);
 }
 
 void AddOnPopupComponent::buttonClicked (Button*button)
@@ -453,6 +457,7 @@ ChordPlayerSettingsComponent::ChordPlayerSettingsComponent(ProjectManager * pm)
     
     // LookAndFeels
     
+    mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::ChordPlayerSettingsBackground2_png, BinaryData::ChordPlayerSettingsBackground2_pngSize);
     imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
     imageBlueButtonNormal       = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected     = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
@@ -1026,11 +1031,12 @@ void ChordPlayerSettingsComponent::resized()
 
 void ChordPlayerSettingsComponent::paint (Graphics&g)
 {
-    g.fillAll(juce::Colour(45, 44, 44));
-    const float sx = getWidth() / 1566.0f;
-    const float sy = getHeight() / 1440.0f;
-    g.setColour(juce::Colour(55, 54, 54));
-    g.fillRoundedRectangle(24*sx, 94*sy, 1502*sx, 1242*sy, 8.0f);
+    g.setColour(Colours::black);
+    g.setOpacity(0.88);
+    g.fillAll();
+    
+    g.setOpacity(1.0);
+    g.drawImage(mainBackgroundImage, 24 * scaleFactor, 94 * scaleFactor, 1502 * scaleFactor, 1242 * scaleFactor, 0, 0, 1502, 1242);
 }
 
 void ChordPlayerSettingsComponent::buttonClicked (Button*button)

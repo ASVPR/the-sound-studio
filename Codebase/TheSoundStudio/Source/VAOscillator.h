@@ -2,9 +2,11 @@
   ==============================================================================
 
     VAOscillator.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -14,7 +16,6 @@
 #include "pluginconstants.h"
 #include "synthfunctions.h"
 #include "Parameters.h"
-#include <random>
 
 #define OSC_FO_MOD_RANGE 2			//2 semitone default
 #define OSC_HARD_SYNC_RATIO_RANGE 4	//
@@ -86,12 +87,10 @@ protected:
 	double m_dFo;			// current (actual) frequency of oscillator
 	double m_dPulseWidth;	// pulse width in % for calculation
 	
-	// --- for noise and random sample/hold (thread-safe, deterministic PRNG)
+	// --- for noise and random sample/hold
 	UINT   m_uPNRegister;	// for PN Noise sequence
 	int    m_nRSHCounter;	// random sample/hold counter
-	double m_dRSHValue;		// current rsh output
-	std::mt19937 m_rng { 42 };  // Deterministic, per-instance PRNG (replaces srand/rand)
-	std::uniform_int_distribution<uint32_t> m_rngDist { 0, UINT32_MAX };
+	double m_dRSHValue;		// currnet rsh output
 	
 	// --- for DPW
 	double m_dDPWSquareModulator;	// square toggle

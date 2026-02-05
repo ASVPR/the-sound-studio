@@ -2,9 +2,11 @@
   ==============================================================================
 
     ChordScannerComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -18,10 +20,9 @@
 #include "CustomRotarySlider.h"
 #include "CustomProgressBar.h"
 #include "WaveTableOscViewComponent.h"
-#include "TransportToolbarComponent.h"
-#include "MenuViewInterface.h"
-#include "UI/DesignSystem.h"
+#include "PopupFFTWindow.h"
 #include <memory>
+#include "MenuViewInterface.h"
 
 //==============================================================================
 /*
@@ -33,7 +34,6 @@ class ChordScannerComponent :
         public Slider::Listener,
         public ComboBox::Listener,
         public TextEditor::Listener,
-        public TransportToolbarComponent::Listener,
         public Timer
 {
 public:
@@ -54,15 +54,6 @@ public:
     
     void updateChordScannerUIParameter(int paramIndex)override;
     void updateMinMaxSettings(int paramIndex) override;
-
-    // TransportToolbarComponent::Listener
-    void transportPlayClicked() override;
-    void transportStopClicked() override;
-    void transportRecordClicked() override;
-    void transportPanicClicked() override;
-    void transportSaveClicked() override;
-    void transportLoadClicked() override;
-
     void updateSettingsUIParameter(int settingIndex)override
     {
         if (settingIndex == DEFAULT_SCALE)
@@ -91,12 +82,15 @@ public:
         if (scaleFactor != factor)
         {
             scaleFactor = factor;
-            
+
+            if (!layoutReady)
+                return;
+
             // Update all components with new scale
             lookAndFeel.setScale(scaleFactor);
             if (visualiserContainerComponent)
                 visualiserContainerComponent->setScale(scaleFactor);
-            
+
             // Trigger re-layout with new scale
             resized();
             repaint();
@@ -106,6 +100,7 @@ public:
     
     
 private:
+    bool layoutReady = false;
     
     ProjectManager * projectManager;
     
@@ -170,11 +165,24 @@ private:
     }
     
     
-    std::unique_ptr<TransportToolbarComponent> transportToolbar;
+    std::unique_ptr<ImageButton> button_Record;
+    std::unique_ptr<ImageButton> button_Play;
+    std::unique_ptr<ImageButton> button_Stop;
+    std::unique_ptr<ImageButton> button_Panic;
+    std::unique_ptr<Label> label_Playing;
+    
+    // need checkbox
+
+    std::unique_ptr<TextButton>   button_Save;
+    std::unique_ptr<TextButton>   button_Load;
     
     std::unique_ptr<TextButton> button_WavetableEditor;
-    WaveTableOscViewComponent * wavetableEditorComponent;
-    PopupFFTWindow * popupWavetableWindow;
+    // Owned by PopupFFTWindow via setContentOwned; keep a non-owning pointer here
+    WaveTableOscViewComponent* wavetableEditorComponent { nullptr };
+    std::unique_ptr<PopupFFTWindow> popupWavetableWindow;
+    
+    // needs custom progress bar
+    std::unique_ptr<CustomProgressBar> progressBar;
     
     // Waveform buttons
     std::unique_ptr<ImageButton> button_Default;
@@ -203,14 +211,90 @@ private:
     
     
     // Image Cache
+    Image imageCheckboxBackground;
+    Image imageMainBackground;
+    
     Image imageBlueCheckButtonNormal;
     Image imageBlueCheckButtonSelected;
 
+    Image imagePanicButton;
+    Image imagePlayButton;
+    Image imageProgresBarFill;
+    Image imageSettingsIcon;
+    Image imageAddIcon;
+    Image imageCloseIcon;
+    Image imageLeftIcon;
+    Image imageRightIcon;
+    Image imageLoopIcon;
+    Image imageMuteIcon;
+    Image imageStopButton;
+    Image imageRecordButton;
+    
     Image imageBlueButtonNormal;
     Image imageBlueButtonSelected;
+    Image imageAddButton;
 
+    
+    Image imageFFTMockup;
+    Image imageColorSpectrumMockup;
+    Image imageOctaveSpectrumMockup;
+    
+    
+    // UI Layout Variables
+    int mainContainerHeight = 1096;
+    int fftLeftMargin       = 48;
+    int fftTopMargin        = 64;
+    int fftWidth            = 1476;
+    int fftHeight           = 310;
+    
+    int colorLeftMargin     = fftLeftMargin;
+    int colorTopMargin      = fftTopMargin + fftHeight + 67;
+    int colorWidth          = 742;
+    int colorHeight         = 271;
+    
+    int octaveLeftMergin    = 822;
+    int octaveTopMargin     = colorTopMargin;
+    int octaveWidth         = 699;
+    int octaveHeight        = colorHeight;
+    
+    int shortcutHeight      = 344;
+    int shortcutWidth       = 1566;
+    
+    int recordLeftMargin    = 102;
+    int recordTopMargin     = 835;
+    int recordWidth         = 95;
+    int recordHeight        = 95;
+    
+    int playingLeftMargin   = 90;
+    int playingTopMargin    = 374;
+    int playingWidth        = 205;
+    int playingHeight       = 33;
+    
+    int playLeftMargin      = 521;
+    int playTopMargin       = 1352;
+    int playWidth           = 249;
+    int playHeight          = 61;
+    
+    int stopLeftMargin      = 802;
+    int stopTopMargin       = 970;
+    
+    int panicLeftMargin     = 1390;
+    int panicTopMargin      = 1280;
+    int panicWidth          = 180;
+    int panicHeight         = panicWidth;
+    
+    int progressLeftMargin  = 220;
+    int progressTopMargin   = 856;
+    int progressWidth       = 1128;
+    int progressHeight      = 53;
+    
+    
     // LookAndFeel
     CustomLookAndFeel  lookAndFeel;
+
+    // Layout metrics for responsive scaling
+    float layoutScale = 1.0f;
+    juce::Rectangle<int> layoutBounds;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChordScannerComponent)

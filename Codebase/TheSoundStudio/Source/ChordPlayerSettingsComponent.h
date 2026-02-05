@@ -2,9 +2,11 @@
   ==============================================================================
 
     ChordPlayerSettingsComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -45,6 +47,7 @@ public:
 private:
     ProjectManager * projectManager;
     int   shortcutRef;
+    Image backgroundImage;
     Image imageBlueCheckButtonNormal;
     Image imageBlueCheckButtonSelected;
     std::unique_ptr<ImageButton> addonButton[NUM_ADDONS];
@@ -182,6 +185,7 @@ private:
     Label labelEstimatedOctaveValue;
     
     // Images
+    Image mainBackgroundImage;
     Image sectionTopLeftBackground;
     Image section;
     

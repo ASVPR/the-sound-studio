@@ -2,16 +2,17 @@
   ==============================================================================
 
     PluginRackComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include <JuceHeader.h>
 #include "PluginRackComponent.h"
-#include "UI/PluginMenuBuilder.h"
 
 //==============================================================================
 
@@ -65,8 +66,38 @@ PluginRackComponent::PluginRackComponent(ProjectManager * pm)
     comboBoxPluginSelector->setLookAndFeel(&lookAndFeel);
     comboBoxPluginSelector->addListener(this);
     
-    TSS::UI::populatePluginMenu(*comboBoxPluginSelector->getRootMenu(),
-                                *projectManager->knownPluginList, &lookAndFeel);
+    PopupMenu * pluginMenu =  comboBoxPluginSelector->getRootMenu();
+    
+    PopupMenu auMenu;   auMenu.setLookAndFeel(&lookAndFeel);
+    PopupMenu vstMenu;  vstMenu.setLookAndFeel(&lookAndFeel);
+    PopupMenu linuxMenu;  linuxMenu.setLookAndFeel(&lookAndFeel);
+        
+    // do search for plugins and add to au/vst menu
+    for (int i = 0; i < projectManager->knownPluginList->getNumTypes(); i++)
+    {
+        PluginDescription * desc = projectManager->knownPluginList->getType(i);
+            
+        if (!desc->isInstrument)
+        {
+            if (desc->pluginFormatName == "AudioUnit")
+            {
+                auMenu.addItem(i+1, desc->name);
+            }
+            else if (desc->pluginFormatName =="VST")
+            {
+                vstMenu.addItem(i+1, desc->name);
+            }
+//            else if (desc->pluginFormatName =="LADSPA")
+//            {
+//                linuxMenu.addItem(i+1, desc->name);
+//            }
+        }
+    }
+        
+        
+    pluginMenu->addSubMenu("AU", auMenu);
+    pluginMenu->addSubMenu("VST", vstMenu);
+    
     addAndMakeVisible(comboBoxPluginSelector);
     
     
@@ -143,8 +174,34 @@ void PluginRackComponent::buttonClicked (Button*button)
     {
         rescanPlugins();
         
-        TSS::UI::populatePluginMenu(*comboBoxPluginSelector->getRootMenu(),
-                                    *projectManager->knownPluginList, &lookAndFeel);
+        // when finished it should update the plugin List of the combobox..
+        PopupMenu * pluginMenu =  comboBoxPluginSelector->getRootMenu();
+        
+        pluginMenu->clear();
+        
+        PopupMenu auMenu;   auMenu.setLookAndFeel(&lookAndFeel);
+        PopupMenu vstMenu;  vstMenu.setLookAndFeel(&lookAndFeel);
+            
+        // do search for plugins and add to au/vst menu
+        for (int i = 0; i < projectManager->knownPluginList->getNumTypes(); i++)
+        {
+            PluginDescription * desc = projectManager->knownPluginList->getType(i);
+                
+            if (!desc->isInstrument)
+            {
+                if (desc->pluginFormatName == "AudioUnit")
+                {
+                    auMenu.addItem(i+1, desc->name);
+                }
+                else if (desc->pluginFormatName =="VST")
+                {
+                    vstMenu.addItem(i+1, desc->name);
+                }
+            }
+        }
+            
+        pluginMenu->addSubMenu("AU", auMenu);
+        pluginMenu->addSubMenu("VST", vstMenu);
 
         
     }

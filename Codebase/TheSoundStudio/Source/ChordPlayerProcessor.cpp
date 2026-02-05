@@ -2,16 +2,17 @@
   ==============================================================================
 
     ChordPlayerProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "ChordPlayerProcessor.h"
 #include "ProjectManager.h"
-#include "AudioRouting.h"
 
 ChordPlayerProcessor::ChordPlayerProcessor(FrequencyManager * fm, SynthesisLibraryManager * slm, SynthesisEngine * se, ProjectManager * pm)
 {
@@ -293,7 +294,34 @@ void ChordPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
                     synth[s]->processBlock(outputBuffer, midiMessages);
                 }
                 
-                TSS::Audio::routeToOutput(buffer, outputBuffer, output[s]);
+                if      (output[s] == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_2 && buffer.getNumChannels() > 1) { buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_3 && buffer.getNumChannels() > 2) { buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_4 && buffer.getNumChannels() > 3) { buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_1_2 && buffer.getNumChannels() > 1)
+                {
+                    buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_3_4 && buffer.getNumChannels() > 2)
+                {
+                    buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_5 && buffer.getNumChannels() > 4) { buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_6 && buffer.getNumChannels() > 5) { buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_7 && buffer.getNumChannels() > 6) { buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_8 && buffer.getNumChannels() > 7) { buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_5_6 && buffer.getNumChannels() > 5)
+                {
+                    buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_7_8 && buffer.getNumChannels() > 7)
+                {
+                    buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
             }
         }
     }
@@ -479,8 +507,602 @@ void ChordPlayerProcessor::setPlayerPlayMode(PLAY_MODE mode)
     repeater->setPlayMode(mode);
 }
 
-// PlayRepeater implementation now lives in PlayRepeaterBase.h
-// ChordPlayerProcessor::PlayRepeater only overrides the virtual hooks (defined inline in header)
+//=================================================================
+// Play Repeater Embedded Class
+//=================================================================
+ChordPlayerProcessor::PlayRepeater::PlayRepeater(ChordPlayerProcessor * cp, double sr)
+{
+    sampleRate                  = sr;
+    proc                        = cp;
+    sampleCounter               = 0;
+    numSamplesPerMS             = sampleRate / 1000;
+    playMode                    = PLAY_MODE::NORMAL;
+    playState                   = PLAY_STATE::OFF;
+    currentMS                   = 0;
+    totalMSOfLoop               = 0;
+    playSimultaneous           = false;
+    
+    
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        isActive[i]             = false;
+        numRepeats[i]           = 0;
+        lengthMS[i]             = 0;
+        lengthInSamples[i]      = 0;
+        pauseMS[i]              = 0;
+        pauseInSamples[i]       = 0;
+        nextNoteOnEvent[i]      = 0;
+        nextNoteOffEvent[i]     = 0;
+        currentRepeat[i]        = 0;
+        isPaused[i]             = false;
+    }
+}
+
+ChordPlayerProcessor::PlayRepeater::~PlayRepeater()
+{
+    
+}
+
+void ChordPlayerProcessor::PlayRepeater::prepareToPlay(double newSampleRate)
+{
+    shouldProcess = false;
+    
+    sampleRate = newSampleRate;
+    
+    float oneMSInSamples = sampleRate / 1000;
+    
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        
+        lengthInSamples[i] = (int)lengthMS[i] * oneMSInSamples;
+        pauseInSamples[i]  = (int)pauseMS[i]  * oneMSInSamples;
+    }
+    
+    calculatePlaybackTimers();
+    
+    shouldProcess = true;
+}
+
+//=================================================================
+// Setters and Getters
+//=================================================================
+
+void ChordPlayerProcessor::PlayRepeater::setIsActive(int shortcutRef, bool should)
+{
+    isActive[shortcutRef] = should;
+    
+    calculatePlaybackTimers();
+}
+
+void ChordPlayerProcessor::PlayRepeater::calculateLengths(int shortcutRef)
+{
+    float oneMSInSamples = sampleRate / 1000;
+    
+    lengthInSamples[shortcutRef] = (int)lengthMS[shortcutRef] * oneMSInSamples;
+    pauseInSamples[shortcutRef]  = (int)pauseMS[shortcutRef]  * oneMSInSamples;
+    
+    calculatePlaybackTimers();
+}
+
+void ChordPlayerProcessor::PlayRepeater::setNumRepeats(int shortcutRef, int num)
+{
+    numRepeats[shortcutRef] = num; calculateLengths(shortcutRef);
+}
+
+void ChordPlayerProcessor::PlayRepeater::setPauseMS(int shortcutRef, int ms)
+{
+    pauseMS[shortcutRef] = ms; calculateLengths(shortcutRef);
+}
+
+void ChordPlayerProcessor::PlayRepeater::setLengthMS(int shortcutRef, int ms)
+{
+    lengthMS[shortcutRef] = ms; calculateLengths(shortcutRef);
+}
+
+void ChordPlayerProcessor::PlayRepeater::setPlayMode(PLAY_MODE mode)
+{
+    playMode = mode;
+}
+
+void ChordPlayerProcessor::PlayRepeater::setPlaySimultaneous(bool should)
+{
+    playSimultaneous = should;
+    resetTick();
+}
+
+int ChordPlayerProcessor::PlayRepeater::getTotalMSOfLoop()
+{
+    return totalMSOfLoop;
+}
+
+int ChordPlayerProcessor::PlayRepeater::getCurrentMSInLoop()
+{
+    return currentMS;
+}
+
+float ChordPlayerProcessor::PlayRepeater::getProgressBarValue()
+{
+    if (totalMSOfLoop == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return (float)currentMS / totalMSOfLoop;
+    }
+}
+
+String ChordPlayerProcessor::PlayRepeater::getTimeRemainingInSecondsString()
+{
+    String timeRemainingString("Playing (");
+    
+    int totalMSRemaining    = totalMSOfLoop - currentMS;
+    int totalSeconds        = (int)totalMSRemaining / 1000;
+    int minutes             = (int)totalSeconds / 60;
+    int secs                = (int)totalSeconds % 60;
+
+    String m(String::formatted("%.2i", minutes));
+    String mins(m); timeRemainingString.append(mins, 10); timeRemainingString.append(":",2);
+
+    String c(String::formatted("%.2i", secs));  String secon(c); timeRemainingString.append(secon, 2);
+    
+    String close(")"); timeRemainingString.append(close, 1);
+    
+    return timeRemainingString;
+}
+
+//=================================================================
+// Triggers & Event Management
+//=================================================================
+void ChordPlayerProcessor::PlayRepeater::triggerOnEvent(int shortcutRef)
+{
+    proc->triggerNoteOn(shortcutRef);
+}
+
+void ChordPlayerProcessor::PlayRepeater::triggerOffEvent(int shortcutRef)
+{
+    proc->triggerNoteOff(shortcutRef);
+}
+
+void ChordPlayerProcessor::PlayRepeater::allNotesOff()
+{
+    proc->panic();
+}
+
+void ChordPlayerProcessor::PlayRepeater::clearOpenRepeats()
+{
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        currentRepeat[i]        = 0;
+        currentPlayingShortcut  = 0;
+        nextNoteOnEvent[i]      = 0;
+    }
+}
+
+//=================================================================
+// Transport Start / Stop etc
+//=================================================================
+void ChordPlayerProcessor::PlayRepeater::resetTick()
+{
+//    calculatePlaybackTimers();
+//
+//    sampleCounter           = 0;
+//    currentPlayingShortcut  = 0;
+//
+//    clearOpenRepeats();
+    
+    calculatePlaybackTimers();
+    
+    sampleCounter           = 0;
+    
+    clearOpenRepeats();
+    
+    if (playSimultaneous)
+    {
+        currentPlayingShortcut  = 0;
+    }
+    else
+    {
+        currentPlayingShortcut  = 0;
+        
+        for (int c = currentPlayingShortcut; c < NUM_SHORTCUT_SYNTHS; c++)
+        {
+            if (isActive[c] && !proc->shouldMute[c])
+            {
+                currentPlayingShortcut = c; break;
+            }
+        }
+    }
+    
+}
+
+void ChordPlayerProcessor::PlayRepeater::play()
+{
+    if (proc->playState == PLAY_STATE::PLAYING)
+    {
+        shouldProcess = false;
+        
+        proc->playState = PLAY_STATE::PAUSED;
+        
+    }
+    else if (proc->playState == PLAY_STATE::PAUSED)
+    {
+        shouldProcess = true;
+        
+        proc->playState = PLAY_STATE::PLAYING;
+
+    }
+    else
+    {
+        resetTick();
+
+        shouldProcess   = true;
+        sampleCounter   = 0;
+        proc->playState = PLAY_STATE::PLAYING;
+    }
+}
+
+void ChordPlayerProcessor::PlayRepeater::stop()
+{
+    shouldProcess   = false;
+    
+    allNotesOff();
+    
+    proc->playState = PLAY_STATE::OFF;
+}
+//=================================================================
+// Calculators
+//=================================================================
+void ChordPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
+{
+    totalNumSamplesOfLoop       = 0;
+    int lastPauseInSamples      = 0;
+    
+    // first check for shoudPlays,
+    // find longest shouldPlay Loop and add to val
+    if (playSimultaneous)
+    {
+        int shortcutValInSamps  = 0;
+        
+        // simply find the longest loop
+        for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+        {
+            if (isActive[i] & !proc->shouldMute[i])
+            {
+                shortcutValInSamps = numRepeats[i] * (lengthInSamples[i] + pauseInSamples[i]);
+            }
+            
+            if (shortcutValInSamps > totalNumSamplesOfLoop)
+            {
+                totalNumSamplesOfLoop = shortcutValInSamps;
+            }
+        }
+        
+        
+    }
+    else
+    {
+        
+       
+        
+        // simply acc++  active shortcuts
+        for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+        {
+            if (isActive[i] && !proc->shouldMute[i])
+            {
+                int shortcutValInSamps = numRepeats[i] * (lengthInSamples[i] + pauseInSamples[i]);
+                
+                totalNumSamplesOfLoop += shortcutValInSamps;
+                
+                lastPauseInSamples = pauseInSamples[i];
+            }
+        }
+    }
+    
+
+    
+    totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
+    
+//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
+
+}
+
+//=================================================================
+// Tick & event sequencing
+//=================================================================
+void ChordPlayerProcessor::PlayRepeater::processSecondsClock()
+{
+    currentMS = sampleCounter / ( sampleRate / 1000) ;
+}
+
+void ChordPlayerProcessor::PlayRepeater::tickBuffer(int numSamples)
+{
+    if (shouldProcess)
+    {
+        for (int i = 0; i < numSamples; i++)
+        {
+            processSecondsClock();
+            
+            if (playSimultaneous)
+            {
+                processSimultaneousShortcuts(currentPlayingShortcut, sampleCounter);
+            }
+            else
+            {
+                // just sequence through active shortcuts
+                if (isActive[currentPlayingShortcut])
+                {
+                    processShortcut(currentPlayingShortcut, sampleCounter);
+                }
+            }
+            
+            sampleCounter++;
+            
+            if (playMode == PLAY_MODE::NORMAL)
+            {
+                if (sampleCounter >= (totalNumSamplesOfLoop))
+                {
+                    currentMS = totalMSOfLoop;
+                    
+                    stop();
+                }
+            }
+            else if (playMode == PLAY_MODE::LOOP)
+            {
+                if (sampleCounter >= totalNumSamplesOfLoop) resetTick();
+            }
+        }
+    }
+}
+
+void ChordPlayerProcessor::PlayRepeater::processShortcut(int shortcutRef, int sampleRef)
+{
+    if (sampleRef == nextNoteOnEvent[shortcutRef])
+    {
+        triggerOnEvent(shortcutRef);
+        
+        nextNoteOffEvent[shortcutRef] = sampleRef + lengthInSamples[shortcutRef];
+        
+        currentRepeat[shortcutRef]++;
+    }
+    else if (sampleRef == nextNoteOffEvent[shortcutRef])
+    {
+        triggerOffEvent(shortcutRef);
+        
+        // set next note on event after paus
+        if (currentRepeat[shortcutRef] < numRepeats[shortcutRef])
+        {
+            nextNoteOnEvent[shortcutRef] = sampleRef + pauseInSamples[shortcutRef];
+        }
+        else
+        {
+            for (int c = currentPlayingShortcut+1; c < NUM_SHORTCUT_SYNTHS; c++)
+            {
+                if (isActive[c] && !proc->shouldMute[c])
+                {
+                    currentPlayingShortcut = c;
+                    prepareNextShortcut();
+                    break;
+                }
+            }
+            
+        }
+    }
+}
+
+void ChordPlayerProcessor::PlayRepeater::prepareNextShortcut()
+{
+    nextNoteOnEvent[currentPlayingShortcut] = sampleCounter + pauseInSamples[currentPlayingShortcut-1];
+}
+
+void ChordPlayerProcessor::PlayRepeater::processSimultaneousShortcuts(int firstShortcutRef, int sampleRef)
+{
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        if (isActive[i])
+        {
+            if (sampleRef == nextNoteOnEvent[i])
+            {
+                triggerOnEvent(i);
+                
+                nextNoteOffEvent[i] = sampleRef + lengthInSamples[i];
+                
+                currentRepeat[i]++;
+            }
+            else if (sampleRef == nextNoteOffEvent[i])
+            {
+                triggerOffEvent(i);
+                
+                if (currentRepeat[i] < numRepeats[i])
+                {
+                    nextNoteOnEvent[i] = sampleRef + pauseInSamples[i];
+                }
+            }
+        }
+    }
+}
+
+
+
+////=================================================================
+//// Calculators
+////=================================================================
+//void ChordPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
+//{
+//    int val                     = 0;
+//    int shouldPlayVal           = 0;
+//    bool didFindFirstShortcut   = false;
+//
+//    doesHaveShouldPlays         = false;
+//    firstShouldPlayShortcut     = -1;
+//    lastShouldPlayShortcut      = -1;
+//    totalNumSamplesOfShouldPlay = 0;
+//    totalNumSamplesOfLoop       = 0;
+//
+//    // first check for shoudPlays, find longest shouldPlay Loop and add to val
+//
+//    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+//    {
+//        int shortcutValInSamps  = 0;
+//
+//        if (isActive[i])
+//        {
+//            if (shouldPlayAtSimultaneous[i])
+//            {
+//                doesHaveShouldPlays = true;
+//
+//                if (!didFindFirstShortcut)
+//                {
+//                    firstShouldPlayShortcut = i; didFindFirstShortcut = true;
+//                }
+//
+//                shortcutValInSamps  = numRepeats[i] * (lengthInSamples[i] + pauseInSamples[i]);
+//
+//                if (shortcutValInSamps > shouldPlayVal)
+//                {
+//                    shouldPlayVal               = shortcutValInSamps;
+//                    totalNumSamplesOfShouldPlay = shouldPlayVal;
+//                }
+//
+//                lastShouldPlayShortcut = i;
+//            }
+//            else
+//            {
+//                shortcutValInSamps = numRepeats[i] * (lengthInSamples[i] + pauseInSamples[i]);
+//
+//                val += shortcutValInSamps;
+//            }
+//        }
+//    }
+//
+//    if (doesHaveShouldPlays) { val += shouldPlayVal;  }
+//
+//    totalNumSamplesOfLoop   = val;
+//    totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
+//
+//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
+//    printf("\n First Should Play = %i", firstShouldPlayShortcut);
+//    printf("\n Last Should Play = %i", lastShouldPlayShortcut);
+//}
+//
+////=================================================================
+//// Tick & event sequencing
+////=================================================================
+//void ChordPlayerProcessor::PlayRepeater::processSecondsClock()
+//{
+//    currentMS = sampleCounter / ( sampleRate / 1000) ;
+//}
+//
+//void ChordPlayerProcessor::PlayRepeater::tickBuffer(int numSamples)
+//{
+//    if (shouldProcess)
+//    {
+//        for (int i = 0; i < numSamples; i++)
+//        {
+//            processSecondsClock();
+//
+//            if (doesHaveShouldPlays && (firstShouldPlayShortcut == currentPlayingShortcut))
+//            {
+//                // process all shouldplay shortcuts in unison
+//                processSimultaneousShortcuts(currentPlayingShortcut, sampleCounter);
+//            }
+//            else
+//            {
+//                // just sequence through active shortcuts
+//                if (isActive[currentPlayingShortcut] && !shouldPlayAtSimultaneous[currentPlayingShortcut])
+//                {
+//                    processShortcut(currentPlayingShortcut, sampleCounter);
+//                }
+//            }
+//
+//            sampleCounter++;
+//
+//            if (playMode == PLAY_MODE::NORMAL)
+//            {
+//                if (sampleCounter >= totalNumSamplesOfLoop) stop();
+//            }
+//            else if (playMode == PLAY_MODE::LOOP)
+//            {
+//                if (sampleCounter >= totalNumSamplesOfLoop) resetTick();
+//            }
+//        }
+//    }
+//}
+//
+//void ChordPlayerProcessor::PlayRepeater::processShortcut(int shortcutRef, int sampleRef)
+//{
+//    if (sampleRef == nextNoteOnEvent[shortcutRef])
+//    {
+//        triggerOnEvent(shortcutRef);
+//
+//        nextNoteOffEvent[shortcutRef] = sampleRef + lengthInSamples[shortcutRef];
+//
+//        currentRepeat[shortcutRef]++;
+//    }
+//    else if (sampleRef == nextNoteOffEvent[shortcutRef])
+//    {
+//        triggerOffEvent(shortcutRef);
+//
+//        // set next note on event after paus
+//        if (currentRepeat[shortcutRef] < numRepeats[shortcutRef])
+//        {
+//            nextNoteOnEvent[shortcutRef] = sampleRef + pauseInSamples[shortcutRef];
+//        }
+//        else
+//        {
+//            for (int c = currentPlayingShortcut+1; c < NUM_SHORTCUT_SYNTHS; c++)
+//            {
+//                if (isActive[c]) // && !shouldPlayAtSimultaneous
+//                {
+//                    currentPlayingShortcut = c;
+//                    prepareNextShortcut();
+//                    break;
+//                }
+//            }
+//
+//        }
+//    }
+//}
+//
+//void ChordPlayerProcessor::PlayRepeater::prepareNextShortcut()
+//{
+//    nextNoteOnEvent[currentPlayingShortcut] = sampleCounter + pauseInSamples[currentPlayingShortcut-1];
+//}
+//
+//void ChordPlayerProcessor::PlayRepeater::processSimultaneousShortcuts(int firstShortcutRef, int sampleRef)
+//{
+////    bool letsmoveon = false; int longestRepeats = 0;
+//
+//    for (int i = 0; i <= lastShouldPlayShortcut; i++)
+//    {
+////        if (numRepeats[i] > longestRepeats)  longestRepeats = numRepeats[i];
+//
+//        if (isActive[i] && shouldPlayAtSimultaneous[i] && i <= lastShouldPlayShortcut )
+//        {
+//            if (sampleRef == nextNoteOnEvent[i])
+//            {
+//                triggerOnEvent(i);
+//
+//                nextNoteOffEvent[i] = sampleRef + lengthInSamples[i];
+//
+//                currentRepeat[i]++;
+//            }
+//            else if (sampleRef == nextNoteOffEvent[i])
+//            {
+//                triggerOffEvent(i);
+//
+//                // set next note on event after paus
+//                if (currentRepeat[i] < numRepeats[i])
+//                {
+//                    nextNoteOnEvent[i] = sampleRef + pauseInSamples[i];
+//                }
+//            }
+//        }
+//    }
+//}
+
 // NEW: Helper methods for high-quality synthesis engine integration
 String ChordPlayerProcessor::getCurrentInstrumentName(int shortcutRef)
 {

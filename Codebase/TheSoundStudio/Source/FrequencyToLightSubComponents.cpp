@@ -2,9 +2,11 @@
   ==============================================================================
 
     FrequencyToLightSubComponents.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -58,7 +60,7 @@ ShortcutColourComponent::ShortcutColourComponent()
     
     imageAddIcon            = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
     
-
+    backgroundImage         = ImageCache::getFromMemory(BinaryData::ShortcutBackground2x_png, BinaryData::ShortcutBackground2x_pngSize);
     
     imageSettings           = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
     
@@ -154,7 +156,7 @@ ManipulationPopupComponent::ManipulationPopupComponent(){
     fontSemiBold.setHeight(33);
     fontLight.setHeight(33);
     
-
+    imageMainBackground             = ImageCache::getFromMemory(BinaryData::FrequencyToLightPopupBackground_png, BinaryData::FrequencyToLightPopupBackground_pngSize);
     
     imageStopButton                 = ImageCache::getFromMemory(BinaryData::Button_Stop_png, BinaryData::Button_Stop_pngSize);
     imageStartButton                = ImageCache::getFromMemory(BinaryData::Button_Start_png, BinaryData::Button_Start_pngSize);

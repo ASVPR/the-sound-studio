@@ -1,3 +1,16 @@
+/*
+  ==============================================================================
+
+    ProducerConsumerQueue.h
+    The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
+
+  ==============================================================================
+*/
+
 // Adapted from https://github.com/facebook/folly/blob/master/folly/ProducerConsumerQueue.h
 /*
  * Copyright 2013 Facebook, Inc.

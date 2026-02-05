@@ -2,20 +2,21 @@
   ==============================================================================
 
     WavetableSynth.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "WavetableSynth.h"
-#include "TSSConstants.h"
 
 WavetableEngine::WavetableEngine()
-    : sampleRate(TSS::Audio::kDefaultSampleRate)
-    , tuningReference(TSS::Audio::kDefaultA4Frequency)
-    , blockSize(0)
+    : sampleRate(44100.0)
+    , tuningReference(432.0)
+    , blockSize(512)
     , wavetablePosition(0.5f)
     , filterCutoff(0.7f)
     , filterResonance(0.2f)
@@ -37,10 +38,6 @@ void WavetableEngine::initialize(double newSampleRate, double newTuningReference
 void WavetableEngine::prepareToPlay(int newBlockSize)
 {
     blockSize = newBlockSize;
-
-    // Pre-allocate mono buffer to avoid heap allocation in audio callbacks
-    preallocatedMonoBufferSize = newBlockSize;
-    preallocatedMonoBuffer.allocate(preallocatedMonoBufferSize, true);
 }
 
 void WavetableEngine::releaseResources()
@@ -59,21 +56,20 @@ void WavetableEngine::generateSynth(AudioBuffer<float>& buffer, float frequency,
     
     voice->reset();
     
-    // Use pre-allocated buffer — no heap allocation on audio thread
-    jassert(numSamples <= preallocatedMonoBufferSize);
-    juce::FloatVectorOperations::clear(preallocatedMonoBuffer.getData(), numSamples);
-    generateWavetableNote(preallocatedMonoBuffer.getData(), numSamples, sawWavetable, frequency, velocity);
-
+    // Generate mono synth signal
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generateWavetableNote(monoBuffer.getData(), numSamples, sawWavetable, frequency, velocity);
+    
     // Copy to stereo channels with slight stereo widening
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-        const float stereoPan = (channel == 0) ? 0.98f : 1.02f;
-        const float* monoData = preallocatedMonoBuffer.getData();
-
+        float stereoPan = (channel == 0) ? 0.98f : 1.02f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoData[sample] * stereoPan;
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -89,21 +85,20 @@ void WavetableEngine::generateOrgan(AudioBuffer<float>& buffer, float frequency,
     
     voice->reset();
     
-    // Use pre-allocated buffer — no heap allocation on audio thread
-    jassert(numSamples <= preallocatedMonoBufferSize);
-    juce::FloatVectorOperations::clear(preallocatedMonoBuffer.getData(), numSamples);
-    generateOrganNote(preallocatedMonoBuffer.getData(), numSamples, frequency, velocity);
-
+    // Generate mono organ signal
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generateOrganNote(monoBuffer.getData(), numSamples, frequency, velocity);
+    
     // Copy to stereo channels with organ-style stereo spread
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-        const float stereoPan = (channel == 0) ? 0.95f : 1.05f;
-        const float* monoData = preallocatedMonoBuffer.getData();
-
+        float stereoPan = (channel == 0) ? 0.95f : 1.05f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoData[sample] * stereoPan;
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -126,7 +121,7 @@ void WavetableEngine::updateTuning(double newTuningReference)
 
 void WavetableEngine::initializeWavetables()
 {
-    const int wavetableSize = TSS::Audio::kWavetableSize;
+    const int wavetableSize = 2048;
     
     // Initialize sine wavetable
     sineWavetable.resize(wavetableSize);

@@ -2,16 +2,17 @@
   ==============================================================================
 
     FrequencyPlayerProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "FrequencyPlayerProcessor.h"
 #include "ProjectManager.h"
-#include "AudioRouting.h"
 
 FrequencyPlayerProcessor::FrequencyPlayerProcessor(FrequencyManager * fm, ProjectManager * pm)
 {
@@ -157,7 +158,34 @@ void FrequencyPlayerProcessor::processBlock (AudioBuffer<float>& buffer,
                     synth[s]->processBlock(outputBuffer, midiMessages);
                 }
                 
-                TSS::Audio::routeToOutput(buffer, outputBuffer, output[s]);
+                if      (output[s] == AUDIO_OUTPUTS::MONO_1) { buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_2 && buffer.getNumChannels() > 1) { buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_3 && buffer.getNumChannels() > 2) { buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_4 && buffer.getNumChannels() > 3) { buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_1_2 && buffer.getNumChannels() > 1)
+                {
+                    buffer.addFrom(0, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(1, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_3_4 && buffer.getNumChannels() > 2)
+                {
+                    buffer.addFrom(2, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(3, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_5 && buffer.getNumChannels() > 4) { buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_6 && buffer.getNumChannels() > 5) { buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_7 && buffer.getNumChannels() > 6) { buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::MONO_8 && buffer.getNumChannels() > 7) { buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples()); }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_5_6 && buffer.getNumChannels() > 5)
+                {
+                    buffer.addFrom(4, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(5, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
+                else if (output[s] == AUDIO_OUTPUTS::STEREO_7_8 && buffer.getNumChannels() > 7)
+                {
+                    buffer.addFrom(6, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                    buffer.addFrom(7, 0, outputBuffer, 0, 0, buffer.getNumSamples());
+                }
             }
         }
     }
@@ -271,5 +299,397 @@ void FrequencyPlayerProcessor::setPlayerPlayMode(PLAY_MODE mode)
     repeater->setPlayMode(mode);
 }
 
-// PlayRepeater implementation now lives in PlayRepeaterBase.h
-// FrequencyPlayerProcessor::PlayRepeater only overrides the virtual hooks (defined inline in header)
+// Play Repeater Embedded class
+
+FrequencyPlayerProcessor::PlayRepeater::PlayRepeater(FrequencyPlayerProcessor * cp, double sr)
+{
+    sampleRate                  = sr;
+    proc                        = cp;
+    sampleCounter               = 0;
+    numSamplesPerMS             = sampleRate / 1000;
+    playMode                    = PLAY_MODE::NORMAL;
+    playState                   = PLAY_STATE::OFF;
+    currentMS                   = 0;
+    totalMSOfLoop               = 0;
+    playSimultaneous           = false;
+    
+    
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        isActive[i]             = false;
+        numRepeats[i]           = 0;
+        lengthMS[i]             = 0;
+        lengthInSamples[i]      = 0;
+        pauseMS[i]              = 0;
+        pauseInSamples[i]       = 0;
+        nextNoteOnEvent[i]      = 0;
+        nextNoteOffEvent[i]     = 0;
+        currentRepeat[i]        = 0;
+        isPaused[i]             = false;
+    }
+}
+
+FrequencyPlayerProcessor::PlayRepeater::~PlayRepeater()
+{
+    
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::prepareToPlay(double newSampleRate)
+{
+    shouldProcess = false;
+    
+    sampleRate = newSampleRate;
+    
+    float oneMSInSamples = sampleRate / 1000;
+    
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        
+        lengthInSamples[i] = (int)lengthMS[i] * oneMSInSamples;
+        pauseInSamples[i]  = (int)pauseMS[i]  * oneMSInSamples;
+    }
+    
+    calculatePlaybackTimers();
+    
+    shouldProcess = true;
+}
+
+//=================================================================
+// Setters and Getters
+//=================================================================
+
+void FrequencyPlayerProcessor::PlayRepeater::setIsActive(int shortcutRef, bool should)
+{
+    isActive[shortcutRef] = should;
+    
+    calculatePlaybackTimers();
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::calculateLengths(int shortcutRef)
+{
+    float oneMSInSamples = sampleRate / 1000;
+    
+    lengthInSamples[shortcutRef] = (int)lengthMS[shortcutRef] * oneMSInSamples;
+    pauseInSamples[shortcutRef]  = (int)pauseMS[shortcutRef]  * oneMSInSamples;
+    
+    calculatePlaybackTimers();
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::setNumRepeats(int shortcutRef, int num)
+{
+    numRepeats[shortcutRef] = num; calculateLengths(shortcutRef);
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::setPauseMS(int shortcutRef, int ms)
+{
+    pauseMS[shortcutRef] = ms; calculateLengths(shortcutRef);
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::setLengthMS(int shortcutRef, int ms)
+{
+    lengthMS[shortcutRef] = ms; calculateLengths(shortcutRef);
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::setPlayMode(PLAY_MODE mode)
+{
+    playMode = mode;
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::setPlaySimultaneous(bool should)
+{
+    playSimultaneous = should;
+    resetTick();
+}
+
+int FrequencyPlayerProcessor::PlayRepeater::getTotalMSOfLoop()
+{
+    return totalMSOfLoop;
+}
+
+int FrequencyPlayerProcessor::PlayRepeater::getCurrentMSInLoop()
+{
+    return currentMS;
+}
+
+float FrequencyPlayerProcessor::PlayRepeater::getProgressBarValue()
+{
+    if (totalMSOfLoop == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return (float)currentMS / totalMSOfLoop;
+    }
+}
+
+String FrequencyPlayerProcessor::PlayRepeater::getTimeRemainingInSecondsString()
+{
+    String timeRemainingString("Playing (");
+    
+    int totalMSRemaining    = totalMSOfLoop - currentMS;
+    int totalSeconds        = (int)totalMSRemaining / 1000;
+    int minutes             = (int)totalSeconds / 60;
+    int secs                = (int)totalSeconds % 60;
+    
+    String m(String::formatted("%.2i", minutes));
+    String mins(m); timeRemainingString.append(mins, 10); timeRemainingString.append(":",2);
+    
+    String c(String::formatted("%.2i", secs));  String secon(c); timeRemainingString.append(secon, 2);
+    
+    String close(")"); timeRemainingString.append(close, 1);
+    
+    return timeRemainingString;
+}
+
+//=================================================================
+// Triggers & Event Management
+//=================================================================
+void FrequencyPlayerProcessor::PlayRepeater::triggerOnEvent(int shortcutRef)
+{
+    proc->triggerNoteOn(shortcutRef);
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::triggerOffEvent(int shortcutRef)
+{
+    proc->triggerNoteOff(shortcutRef);
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::allNotesOff()
+{
+    proc->panic();
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::clearOpenRepeats()
+{
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        currentRepeat[i]        = 0;
+        currentPlayingShortcut  = 0;
+        nextNoteOnEvent[i]      = 0;
+    }
+}
+
+//=================================================================
+// Transport Start / Stop etc
+//=================================================================
+void FrequencyPlayerProcessor::PlayRepeater::resetTick()
+{
+    calculatePlaybackTimers();
+    
+    sampleCounter           = 0;
+    
+    clearOpenRepeats();
+    
+    if (playSimultaneous)
+    {
+        currentPlayingShortcut  = 0;
+    }
+    else
+    {
+        currentPlayingShortcut  = 0;
+        
+        for (int c = currentPlayingShortcut; c < NUM_SHORTCUT_SYNTHS; c++)
+        {
+            if (isActive[c] && !proc->shouldMute[c])
+            {
+                currentPlayingShortcut = c; break;
+            }
+        }
+    }
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::play()
+{
+    if (proc->playState == PLAY_STATE::PLAYING)
+    {
+        shouldProcess = false;
+        
+        proc->playState = PLAY_STATE::PAUSED;
+        
+    }
+    else if (proc->playState == PLAY_STATE::PAUSED)
+    {
+        shouldProcess = true;
+        
+        proc->playState = PLAY_STATE::PLAYING;
+    }
+    else
+    {
+        resetTick();
+        
+        shouldProcess = true;
+        sampleCounter = 0;
+        
+        proc->playState = PLAY_STATE::PLAYING;
+    }
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::stop()
+{
+    
+    shouldProcess   = false;
+    
+    allNotesOff();
+    
+    proc->playState = PLAY_STATE::OFF;
+}
+//=================================================================
+// Calculators
+//=================================================================
+void FrequencyPlayerProcessor::PlayRepeater::calculatePlaybackTimers()
+{
+    totalNumSamplesOfLoop       = 0;
+    
+    // first check for shoudPlays,
+    // find longest shouldPlay Loop and add to val
+    if (playSimultaneous)
+    {
+        int shortcutValInSamps  = 0;
+        
+        // simply find the longest loop
+        for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+        {
+            if (isActive[i] & !proc->shouldMute[i])
+            {
+                shortcutValInSamps = numRepeats[i] * (lengthInSamples[i] + pauseInSamples[i]);
+            }
+            
+            if (shortcutValInSamps > totalNumSamplesOfLoop)
+            {
+                totalNumSamplesOfLoop = shortcutValInSamps;
+            }
+        }
+    }
+    else
+    {
+        
+        
+        // simply acc++  active shortcuts
+        for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+        {
+            if (isActive[i] && !proc->shouldMute[i])
+            {
+                int shortcutValInSamps = numRepeats[i] * (lengthInSamples[i] + pauseInSamples[i]);
+                
+                totalNumSamplesOfLoop += shortcutValInSamps;
+            }
+        }
+    }
+    
+    totalMSOfLoop           = totalNumSamplesOfLoop / sampleRate * 1000;
+    
+//    printf("\n Total samps of sequence = %i", totalNumSamplesOfLoop);
+//    printf("\n Total MS of sequence = %i", totalMSOfLoop);
+    
+}
+
+//=================================================================
+// Tick & event sequencing
+//=================================================================
+void FrequencyPlayerProcessor::PlayRepeater::processSecondsClock()
+{
+    currentMS = sampleCounter / ( sampleRate / 1000) ;
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::tickBuffer(int numSamples)
+{
+    if (shouldProcess)
+    {
+        for (int i = 0; i < numSamples; i++)
+        {
+            processSecondsClock();
+            
+            if (playSimultaneous)
+            {
+                processSimultaneousShortcuts(currentPlayingShortcut, sampleCounter);
+            }
+            else
+            {
+                // just sequence through active shortcuts
+                if (isActive[currentPlayingShortcut])
+                {
+                    processShortcut(currentPlayingShortcut, sampleCounter);
+                }
+            }
+            
+            sampleCounter++;
+            
+            if (playMode == PLAY_MODE::NORMAL)
+            {
+                if (sampleCounter >= (totalNumSamplesOfLoop)) stop();
+            }
+            else if (playMode == PLAY_MODE::LOOP)
+            {
+                if (sampleCounter >= totalNumSamplesOfLoop) resetTick();
+            }
+        }
+    }
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::processShortcut(int shortcutRef, int sampleRef)
+{
+    if (sampleRef == nextNoteOnEvent[shortcutRef])
+    {
+        triggerOnEvent(shortcutRef);
+        
+        nextNoteOffEvent[shortcutRef] = sampleRef + lengthInSamples[shortcutRef];
+        
+        currentRepeat[shortcutRef]++;
+    }
+    else if (sampleRef == nextNoteOffEvent[shortcutRef])
+    {
+        triggerOffEvent(shortcutRef);
+        
+        // set next note on event after paus
+        if (currentRepeat[shortcutRef] < numRepeats[shortcutRef])
+        {
+            nextNoteOnEvent[shortcutRef] = sampleRef + pauseInSamples[shortcutRef];
+        }
+        else
+        {
+            for (int c = currentPlayingShortcut+1; c < NUM_SHORTCUT_SYNTHS; c++)
+            {
+                if (isActive[c] && !proc->shouldMute[c])
+                {
+                    currentPlayingShortcut = c;
+                    prepareNextShortcut();
+                    break;
+                }
+            }
+            
+        }
+    }
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::prepareNextShortcut()
+{
+    nextNoteOnEvent[currentPlayingShortcut] = sampleCounter + pauseInSamples[currentPlayingShortcut-1];
+}
+
+void FrequencyPlayerProcessor::PlayRepeater::processSimultaneousShortcuts(int firstShortcutRef, int sampleRef)
+{
+    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
+    {
+        if (isActive[i])
+        {
+            if (sampleRef == nextNoteOnEvent[i])
+            {
+                triggerOnEvent(i);
+                
+                nextNoteOffEvent[i] = sampleRef + lengthInSamples[i];
+                
+                currentRepeat[i]++;
+            }
+            else if (sampleRef == nextNoteOffEvent[i])
+            {
+                triggerOffEvent(i);
+                
+                if (currentRepeat[i] < numRepeats[i])
+                {
+                    nextNoteOnEvent[i] = sampleRef + pauseInSamples[i];
+                }
+            }
+        }
+    }
+}

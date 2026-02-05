@@ -2,9 +2,11 @@
   ==============================================================================
 
     DesignSystem.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -191,6 +193,48 @@ struct Breakpoints
 };
 
 //==============================================================================
+// INLINE COLOR DEFINITIONS (header-only)
+//==============================================================================
+
+// Primary Brand Colors - Modern blue with good contrast
+inline const juce::Colour Colors::primary = juce::Colour(0xff3b82f6);        // Blue-500
+inline const juce::Colour Colors::primaryDark = juce::Colour(0xff2563eb);    // Blue-600
+inline const juce::Colour Colors::primaryLight = juce::Colour(0xff60a5fa);   // Blue-400
+
+// Semantic Colors - Industry standard
+inline const juce::Colour Colors::success = juce::Colour(0xff10b981);  // Green-500
+inline const juce::Colour Colors::warning = juce::Colour(0xfff59e0b);  // Amber-500
+inline const juce::Colour Colors::error = juce::Colour(0xffef4444);    // Red-500
+inline const juce::Colour Colors::info = juce::Colour(0xff06b6d4);     // Cyan-500
+
+// Light Theme Colors
+inline const juce::Colour Colors::Light::background = juce::Colour(0xfffafafa);      // Gray-50
+inline const juce::Colour Colors::Light::surface = juce::Colour(0xffffffff);         // White
+inline const juce::Colour Colors::Light::surfaceHover = juce::Colour(0xfff5f5f5);    // Gray-100
+inline const juce::Colour Colors::Light::border = juce::Colour(0xffe5e7eb);          // Gray-200
+inline const juce::Colour Colors::Light::divider = juce::Colour(0xffd1d5db);         // Gray-300
+
+inline const juce::Colour Colors::Light::text = juce::Colour(0xff111827);            // Gray-900
+inline const juce::Colour Colors::Light::textSecondary = juce::Colour(0xff6b7280);   // Gray-500
+inline const juce::Colour Colors::Light::textDisabled = juce::Colour(0xff9ca3af);    // Gray-400
+
+// Dark Theme Colors - True dark with good contrast
+inline const juce::Colour Colors::Dark::background = juce::Colour(0xff0f172a);       // Slate-900
+inline const juce::Colour Colors::Dark::surface = juce::Colour(0xff1e293b);          // Slate-800
+inline const juce::Colour Colors::Dark::surfaceHover = juce::Colour(0xff334155);     // Slate-700
+inline const juce::Colour Colors::Dark::border = juce::Colour(0xff475569);           // Slate-600
+inline const juce::Colour Colors::Dark::divider = juce::Colour(0xff64748b);          // Slate-500
+
+inline const juce::Colour Colors::Dark::text = juce::Colour(0xfff8fafc);             // Slate-50
+inline const juce::Colour Colors::Dark::textSecondary = juce::Colour(0xff94a3b8);    // Slate-400
+inline const juce::Colour Colors::Dark::textDisabled = juce::Colour(0xff64748b);     // Slate-500
+
+// Audio-specific colors
+inline const juce::Colour Colors::waveform = juce::Colour(0xff3b82f6);       // Blue-500
+inline const juce::Colour Colors::peakMeter = juce::Colour(0xff10b981);      // Green-500
+inline const juce::Colour Colors::clipping = juce::Colour(0xffef4444);       // Red-500
+
+//==============================================================================
 // COMPONENT DIMENSIONS - Standard sizes for UI elements
 //==============================================================================
 struct Dimensions
@@ -217,6 +261,29 @@ struct Dimensions
     static constexpr int sidebarWidth = 280;
     static constexpr int sidebarMinWidth = 200;
     static constexpr int sidebarMaxWidth = 400;
+};
+
+//==============================================================================
+// USABILITY MINIMUMS - Human-friendly minimum sizes
+//==============================================================================
+struct Usability
+{
+    // Typography minimums
+    static constexpr float sidebarMinFont = 18.0f;     // Large preset
+    static constexpr float toolbarLabelMinFont = 20.0f;
+    static constexpr float visualiserAxisMinFont = 18.0f;
+    static constexpr float visualiserValueMinFont = 18.0f;
+    static constexpr float visualiserLegendMinFont = 14.0f;
+
+    // Control minimums
+    static constexpr int sidebarButtonMinHeight = 50;  // Large preset
+    static constexpr int transportControlMinSize = 56;
+    static constexpr int progressMinHeight = 32;
+    static constexpr int toolbarTopMinHeight = 72;
+    static constexpr int toolbarBottomMinHeight = 64;
+    static constexpr int toolbarRowMinHeight = 30;
+    static constexpr int visualiserHeaderMinHeight = 48;
+    static constexpr int visualiserControlMinHeight = 32;
 };
 
 //==============================================================================
@@ -290,6 +357,12 @@ struct Layout
     static constexpr float kTransportButtonSizeRatio = 0.45f;  // button height = 45% of toolbar height
     static constexpr float kTransportProgressHeight  = 0.28f;  // progress bar = 28% of toolbar height
     static constexpr float kTransportRecordSizeRatio = 0.50f;  // record button slightly larger
+
+    // Transport toolbar layout zones (must sum to 1.0f)
+    static constexpr float kTransportTopZoneRatio = 0.34f;
+    static constexpr float kTransportProgressZoneRatio = 0.20f;
+    static constexpr float kTransportBottomZoneRatio =
+        1.0f - kTransportTopZoneRatio - kTransportProgressZoneRatio;
 
     // VisualiserSelector header
     static constexpr float kVisSelectorHeaderHeight  = 42.0f;

@@ -2,20 +2,21 @@
   ==============================================================================
 
     PhysicalModelingSynth.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "PhysicalModelingSynth.h"
-#include "TSSConstants.h"
 
 PhysicalModelingEngine::PhysicalModelingEngine()
-    : sampleRate(TSS::Audio::kDefaultSampleRate)
-    , tuningReference(TSS::Audio::kDefaultA4Frequency)
-    , blockSize(0)
+    : sampleRate(44100.0)
+    , tuningReference(432.0)
+    , blockSize(512)
     , stringTension(0.8f)
     , hammerHardness(0.6f)
     , damping(0.4f)
@@ -39,10 +40,6 @@ void PhysicalModelingEngine::initialize(double newSampleRate, double newTuningRe
 void PhysicalModelingEngine::prepareToPlay(int newBlockSize)
 {
     blockSize = newBlockSize;
-
-    // Pre-allocate mono buffer to avoid heap allocation in audio callbacks
-    preallocatedMonoBufferSize = newBlockSize;
-    preallocatedMonoBuffer.allocate(preallocatedMonoBufferSize, true);
 }
 
 void PhysicalModelingEngine::releaseResources()
@@ -62,22 +59,21 @@ void PhysicalModelingEngine::generatePiano(AudioBuffer<float>& buffer, float fre
     if (voice == nullptr) return;
     
     voice->reset();
-
-    // Use pre-allocated buffer — no heap allocation on audio thread
-    jassert(numSamples <= preallocatedMonoBufferSize);
-    juce::FloatVectorOperations::clear(preallocatedMonoBuffer.getData(), numSamples);
-    generatePianoNote(preallocatedMonoBuffer.getData(), numSamples, frequency, velocity);
-
+    
+    // Generate mono piano signal
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generatePianoNote(monoBuffer.getData(), numSamples, frequency, velocity);
+    
     // Apply stereo widening for more realistic sound
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-        const float stereoPan = (channel == 0) ? 0.95f : 1.05f;
-        const float* monoData = preallocatedMonoBuffer.getData();
-
+        float stereoPan = (channel == 0) ? 0.95f : 1.05f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoData[sample] * stereoPan;
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -92,22 +88,21 @@ void PhysicalModelingEngine::generateStrings(AudioBuffer<float>& buffer, float f
     if (voice == nullptr) return;
     
     voice->reset();
-
-    // Use pre-allocated buffer — no heap allocation on audio thread
-    jassert(numSamples <= preallocatedMonoBufferSize);
-    juce::FloatVectorOperations::clear(preallocatedMonoBuffer.getData(), numSamples);
-    generateStringNote(preallocatedMonoBuffer.getData(), numSamples, frequency, velocity);
-
+    
+    // Generate mono string signal
+    HeapBlock<float> monoBuffer;
+    monoBuffer.allocate(numSamples, true);
+    generateStringNote(monoBuffer.getData(), numSamples, frequency, velocity);
+    
     // Apply stereo widening
     for (int channel = 0; channel < numChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
-        const float stereoPan = (channel == 0) ? 0.98f : 1.02f;
-        const float* monoData = preallocatedMonoBuffer.getData();
-
+        float stereoPan = (channel == 0) ? 0.98f : 1.02f;
+        
         for (int sample = 0; sample < numSamples; ++sample)
         {
-            channelData[sample] = monoData[sample] * stereoPan;
+            channelData[sample] = monoBuffer.getData()[sample] * stereoPan;
         }
     }
 }
@@ -138,19 +133,17 @@ void PhysicalModelingEngine::generatePianoNote(float* output, int numSamples, fl
     
     // Enhanced piano physical modeling with realistic harmonic structure
     const float phase_increment = frequency * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-    const float decay_factor = 1.0f - (damping * TSS::Audio::kDefaultDecayRate);
-
+    const float decay_factor = 1.0f - (damping * 0.0008f);
+    
     // Initialize voice if needed
     if (!voice->isActive)
     {
         voice->reset();
     }
-
+    
     // Improved inharmonicity calculation based on string physics
     // Higher strings (treble) have more inharmonicity than bass strings
-    const float B_coefficient = TSS::Synthesis::kPianoInharmonicityCoeff
-                              * std::pow(frequency / TSS::Synthesis::kC4ReferenceFreq,
-                                         TSS::Synthesis::kInharmonicityExponent);
+    const float B_coefficient = 0.0001f * std::pow(frequency / 261.63f, 1.8f); // C4 = 261.63 Hz reference
     
     for (int i = 0; i < numSamples; ++i)
     {
@@ -181,7 +174,7 @@ void PhysicalModelingEngine::generatePianoNote(float* output, int numSamples, fl
         sample = applyHammerModel(sample, dynamic_hardness);
         
         // Add duplex scaling (additional resonant frequencies)
-        voice->resonancePhase += (frequency * TSS::Synthesis::kGoldenRatio) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
+        voice->resonancePhase += (frequency * 0.618f) * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate; // Golden ratio
         float duplexResonance = std::sin(voice->resonancePhase) * resonance * 0.12f * voice->amplitude;
         
         // Add sympathetic string resonance with octave and fifth relationships
@@ -211,7 +204,7 @@ void PhysicalModelingEngine::generatePianoNote(float* output, int numSamples, fl
         
         // Apply frequency-dependent damping
         float frequency_damping_factor = frequency > 1000.0f ? 1.2f : 1.0f;
-        voice->amplitude *= (1.0f - damping * frequency_damping_factor * TSS::Audio::kDefaultDecayRate);
+        voice->amplitude *= (1.0f - damping * frequency_damping_factor * 0.0008f);
         
         // Enhanced soundboard resonance with multiple resonant modes
         float soundboard_freq1 = 200.0f + resonance * 150.0f;  // Primary mode
@@ -249,7 +242,7 @@ void PhysicalModelingEngine::generateStringNote(float* output, int numSamples, f
     
     // Enhanced bowed string physical modeling
     const float phase_increment = frequency * 2.0f * juce::MathConstants<float>::pi / (float)sampleRate;
-    const float decay_factor = 1.0f - (damping * TSS::Audio::kStringDecayRate);
+    const float decay_factor = 1.0f - (damping * 0.0003f); // Slower decay for strings
     
     // Initialize voice if needed
     if (!voice->isActive)

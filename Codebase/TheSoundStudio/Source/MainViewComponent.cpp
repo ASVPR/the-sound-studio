@@ -2,17 +2,110 @@
   ==============================================================================
 
     MainViewComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainViewComponent.h"
+#include "ResponsiveUIHelper.h"
+#include "UI/DesignSystem.h"
 
-using Layout = TSS::Design::Layout;
+class SidebarMenuButton final : public Button
+{
+public:
+    explicit SidebarMenuButton(const String& labelText)
+        : Button(labelText),
+          label(labelText)
+    {
+        setClickingTogglesState(true);
+        setTriggeredOnMouseDown(true);
+        updateFont();
+    }
+
+    void setScale(float newScale)
+    {
+        scaleFactor = newScale;
+        updateFont();
+        repaint();
+    }
+
+private:
+    void updateFont()
+    {
+        const float baseSize = TSS::Design::Typography::h4;
+        const float scaledSize = ResponsiveUIHelper::scaleFontSize(baseSize, scaleFactor);
+        const float minSize = TSS::Design::Usability::sidebarMinFont;
+        const float fontSize = jmax(minSize, scaledSize);
+        font = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold).withHeight(fontSize);
+    }
+
+    void paintButton(Graphics& g, bool isHighlighted, bool isDown) override
+    {
+        auto bounds = getLocalBounds();
+
+        auto background = TSS::Design::Colors::Dark::surface;
+        auto hover = TSS::Design::Colors::Dark::surfaceHover;
+
+        if (getToggleState())
+        {
+            g.setColour(hover);
+            g.fillRect(bounds);
+
+            const int accentMinWidth = roundToInt(TSS::Design::Spacing::xxxs * scaleFactor);
+            const int accentWidth = jmax(accentMinWidth, roundToInt(TSS::Design::Spacing::xxs * scaleFactor));
+            g.setColour(TSS::Design::Colors::primary);
+            g.fillRect(bounds.removeFromLeft(accentWidth));
+        }
+        else if (isHighlighted || isDown)
+        {
+            g.setColour(hover);
+            g.fillRect(bounds);
+        }
+        else
+        {
+            g.setColour(background);
+            g.fillRect(bounds);
+        }
+
+        const int padding = roundToInt(TSS::Design::Spacing::sm * scaleFactor);
+        auto textBounds = getLocalBounds().reduced(padding, 0);
+
+        g.setColour(getToggleState() ? TSS::Design::Colors::Dark::text
+                                     : TSS::Design::Colors::Dark::textSecondary);
+        g.setFont(font);
+        g.drawText(label, textBounds, Justification::centredLeft, true);
+
+        g.setColour(TSS::Design::Colors::Dark::divider);
+        g.drawLine((float)getLocalBounds().getX(),
+                   (float)getLocalBounds().getBottom(),
+                   (float)getLocalBounds().getRight(),
+                   (float)getLocalBounds().getBottom());
+    }
+
+    String label;
+    float scaleFactor = 1.0f;
+    Font font;
+};
+
+const std::array<MainViewComponent::MenuEntry,
+    static_cast<size_t>(MainViewComponent::MenuItem::NumItems)> MainViewComponent::menuEntries = {{
+    {MenuItem::ChordPlayer, "Chord Player", true, AUDIO_MODE::MODE_CHORD_PLAYER},
+    {MenuItem::ChordScanner, "Chord Scanner", true, AUDIO_MODE::MODE_CHORD_SCANNER},
+    {MenuItem::FundamentalFrequency, "Fundamental Frequency", true, AUDIO_MODE::MODE_FUNDAMENTAL_FREQUENCY},
+    {MenuItem::FrequencyPlayer, "Frequency Player", true, AUDIO_MODE::MODE_FREQUENCY_PLAYER},
+    {MenuItem::FrequencyScanner, "Frequency Scanner", true, AUDIO_MODE::MODE_FREQUENCY_SCANNER},
+    {MenuItem::RealTimeAnalysis, "Realtime Analysis", true, AUDIO_MODE::MODE_REALTIME_ANALYSIS},
+    {MenuItem::LissajousCurves, "Lissajous Curves", true, AUDIO_MODE::MODE_LISSAJOUS_CURVES},
+    {MenuItem::Feedback, "Feedback", true, AUDIO_MODE::MODE_FEEDBACK_MODULE},
+    {MenuItem::FrequencyLight, "Frequency To Light", true, AUDIO_MODE::MODE_FREQUENCY_TO_LIGHT},
+    {MenuItem::Settings, "Settings", false, AUDIO_MODE::MODE_NONE}
+}};
 
 //==============================================================================
 MainViewComponent::MainViewComponent(ProjectManager * pm)
@@ -20,10 +113,8 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     projectManager = pm;
 
     // Image Cache
+    // Use the TSS icon for the application logo
     Image tssLogo = ImageCache::getFromMemory(BinaryData::icon_128_png, BinaryData::icon_128_pngSize);
-    imageLogoButton = tssLogo;
-    imageMenuButtonNormal = ImageCache::getFromMemory(BinaryData::Sidebar_Button_Normal_png, BinaryData::Sidebar_Button_Normal_pngSize);
-    imageMenuButtonSelected = ImageCache::getFromMemory(BinaryData::Sidebar_ButtonHighlighted_png, BinaryData::Sidebar_ButtonHighlighted_pngSize);
 
     // Buttons - Use TSS logo for the main application button
     menuButton_ASVPRTool = std::make_unique<ImageButton>();
@@ -35,20 +126,16 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     menuButton_ASVPRTool->addListener(this);
     addAndMakeVisible(*menuButton_ASVPRTool);
 
-    for (auto i = 0; i < (int)MenuItem::NumItems; i++) {
-        auto& menuButton = menuButtons.emplace_back(std::make_unique<ImageButton>());
-        menuButton->setTriggeredOnMouseDown(true);
-        menuButton->setImages (false, true, true,
-            imageMenuButtonNormal, 0.999f, Colour (0x00000000),
-            Image(), 1.000f, Colour (0x00000000),
-            imageMenuButtonSelected, 1.000f, Colour (0x00000000));
+    for (const auto& entry : menuEntries)
+    {
+        auto& menuButton = menuButtons.emplace_back(std::make_unique<SidebarMenuButton>(entry.label));
         menuButton->addListener(this);
         addAndMakeVisible(*menuButton);
     }
-
+    
     // container views
     addAndMakeVisible(mainContainerComponent);
-
+    
     // menu views
     menuViews.resize((int)MenuItem::NumItems);
 
@@ -73,6 +160,10 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     menuViews[(int)MenuItem::FundamentalFrequency] = std::make_unique<FundamentalFrequencyComponent>(*projectManager);;
     mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::FundamentalFrequency]);
 
+    auto* feedbackModule = projectManager->feedbackModuleProcessor.get();
+    menuViews[(int)MenuItem::Feedback] = std::make_unique<FeedbackModuleComponent>(*feedbackModule);
+    mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::Feedback]);
+
     menuViews[(int)MenuItem::RealTimeAnalysis] = std::make_unique<RealtimeAnalysisComponent>(projectManager);
     mainContainerComponent.addAndMakeVisible(*menuViews[(int)MenuItem::RealTimeAnalysis]);
 
@@ -87,6 +178,7 @@ MainViewComponent::MainViewComponent(ProjectManager * pm)
     stringProjectVersion.append(projectManager->getProjectVersionString(), 10);
     labelProjectVersion.setText(stringProjectVersion, dontSendNotification);
     labelProjectVersion.setJustificationType(Justification::centredLeft);
+    labelProjectVersion.setColour(Label::textColourId, TSS::Design::Colors::Dark::textSecondary);
     addAndMakeVisible(labelProjectVersion);
 }
 
@@ -99,105 +191,108 @@ MainViewComponent::~MainViewComponent()
 
 void MainViewComponent::paint (Graphics& g)
 {
-    auto bounds = getLocalBounds();
-    const int w = bounds.getWidth();
-    const int h = bounds.getHeight();
+    g.fillAll(TSS::Design::Colors::Dark::background);
 
-    // Compute sidebar width proportionally
-    int sidebarW = jlimit((int)Layout::kSidebarMinWidth,
-                          (int)Layout::kSidebarMaxWidth,
-                          (int)(w * Layout::kSidebarWidthRatio));
+    if (!sidebarBounds.isEmpty())
+    {
+        g.setColour(TSS::Design::Colors::Dark::surface);
+        g.fillRect(sidebarBounds);
 
-    // Draw sidebar background (vector — replaces PNG)
-    auto sidebarBounds = bounds.removeFromLeft(sidebarW);
-    g.setColour(juce::Colour(58, 61, 69));
-    g.fillRect(sidebarBounds);
-
-    // Right-edge border line
-    g.setColour(juce::Colour(40, 40, 42));
-    g.fillRect(sidebarBounds.getRight() - (int)Layout::kSidebarBorderWidth,
-               sidebarBounds.getY(),
-               (int)Layout::kSidebarBorderWidth,
-               sidebarBounds.getHeight());
-
-    // Content area background
-    g.setColour(juce::Colour(45, 44, 44));
-    g.fillRect(bounds);
-}
-
-void MainViewComponent::paintOverChildren(juce::Graphics& g)
-{
-    auto totalBounds = getLocalBounds();
-    const int w = totalBounds.getWidth();
-    const int h = totalBounds.getHeight();
-
-    int sidebarW = jlimit((int)Layout::kSidebarMinWidth,
-                          (int)Layout::kSidebarMaxWidth,
-                          (int)(w * Layout::kSidebarWidthRatio));
-
-    int logoH = (int)(h * Layout::kLogoHeightRatio);
-
-    // Draw logo in the logo area
-    auto logoBounds = juce::Rectangle<int>(0, 0, sidebarW, logoH).reduced(10, 10);
-    g.setColour(juce::Colours::white);
-    g.drawImageWithin(imageLogoButton,
-                      logoBounds.getX(),
-                      logoBounds.getY(),
-                      logoBounds.getWidth(),
-                      logoBounds.getHeight(),
-                      juce::RectanglePlacement::centred);
-
-    // Version label at bottom of sidebar
-    float labelH = Layout::kVersionLabelHeight;
-    auto versionBounds = juce::Rectangle<int>(0, h - (int)labelH, sidebarW, (int)labelH);
-    g.setColour(juce::Colours::white.withAlpha(0.7f));
-    g.setFont(12.0f);
-    g.drawText(labelProjectVersion.getText(), versionBounds, juce::Justification::centredLeft);
+        g.setColour(TSS::Design::Colors::Dark::divider);
+        const float borderWidth = TSS::Design::Layout::kSidebarBorderWidth * scaleFactor;
+        g.drawLine((float)sidebarBounds.getRight(), 0.0f,
+                   (float)sidebarBounds.getRight(), (float)getHeight(),
+                   borderWidth);
+    }
 }
 
 void MainViewComponent::resized()
 {
-    auto bounds = getLocalBounds();
-    const int w = bounds.getWidth();
-    const int h = bounds.getHeight();
+    updateLayoutForWindowSize();
 
-    // Sidebar width — proportional with clamp
-    int sidebarW = jlimit((int)Layout::kSidebarMinWidth,
-                          (int)Layout::kSidebarMaxWidth,
-                          (int)(w * Layout::kSidebarWidthRatio));
-
-    // Logo button at top of sidebar
-    int logoH = (int)(h * Layout::kLogoHeightRatio);
-    menuButton_ASVPRTool->setBounds(10, 10, sidebarW - 20, logoH - 20);
-
-    // Menu buttons stacked below logo
-    int buttonH = (int)(h * Layout::kMenuButtonHeightRatio);
-    int buttonTopY = (int)(h * Layout::kMenuButtonTopRatio);
-    for (auto i = 0; i < (int)menuButtons.size(); i++) {
-        menuButtons[i]->setBounds(0, buttonTopY + (buttonH * i), sidebarW, buttonH);
-    }
-
-    // Content area fills remaining space to the right of the sidebar
-    auto contentBounds = bounds.withTrimmedLeft(sidebarW);
     mainContainerComponent.setBounds(contentBounds);
-
-    // All menu views fill the content area
-    for (auto& view : menuViews) {
+    for (auto& view : menuViews)
+    {
         view->setBounds(0, 0, contentBounds.getWidth(), contentBounds.getHeight());
     }
+}
 
-    // Version label — hidden, we paint it ourselves in paintOverChildren
-    labelProjectVersion.setBounds(0, 0, 0, 0);
+void MainViewComponent::updateLayoutForWindowSize()
+{
+    const auto totalBounds = getLocalBounds();
+
+    lastWindowWidth = totalBounds.getWidth();
+    lastWindowHeight = totalBounds.getHeight();
+
+    const int desiredSidebarWidth = roundToInt(totalBounds.getWidth() * TSS::Design::Layout::kSidebarWidthRatio);
+    const int sidebarWidth = jlimit((int)TSS::Design::Layout::kSidebarMinWidth,
+                                    (int)TSS::Design::Layout::kSidebarMaxWidth,
+                                    desiredSidebarWidth);
+
+    sidebarBounds = totalBounds.withWidth(sidebarWidth);
+    contentBounds = totalBounds.withTrimmedLeft(sidebarWidth);
+
+    // Increase logo height ratio locally for a larger icon without affecting global constants
+    const float localLogoHeightRatio = TSS::Design::Layout::kLogoHeightRatio * 2.2f;
+    const int logoHeight = roundToInt((float)totalBounds.getHeight() * localLogoHeightRatio);
+    
+    // Adjust menu top ratio to account for larger logo
+    const float localMenuTopRatio = TSS::Design::Layout::kMenuButtonTopRatio * 1.5f;
+    const int menuTopRatio = roundToInt((float)totalBounds.getHeight() * localMenuTopRatio);
+    
+    int menuButtonHeight = roundToInt((float)totalBounds.getHeight() * TSS::Design::Layout::kMenuButtonHeightRatio);
+    const int minMenuButtonHeight = TSS::Design::Usability::sidebarButtonMinHeight;
+    menuButtonHeight = jmax(menuButtonHeight, minMenuButtonHeight);
+
+    const int spacing = ResponsiveUIHelper::getResponsiveSpacing(scaleFactor, TSS::Design::Spacing::xs);
+    const int footerHeight = jmax(roundToInt(TSS::Design::Spacing::md * scaleFactor),
+                                  roundToInt(TSS::Design::Layout::kVersionLabelHeight * scaleFactor));
+
+    const int menuCount = (int)menuButtons.size();
+    const int menuTop = jmax(menuTopRatio, logoHeight + spacing);
+    const int maxHeightForButtons = sidebarBounds.getHeight() - menuTop - footerHeight -
+        (menuCount > 0 ? (menuCount - 1) * spacing : 0);
+    if (menuCount > 0)
+    {
+        menuButtonHeight = jmin(menuButtonHeight, maxHeightForButtons / menuCount);
+    }
+
+    const int logoPadding = ResponsiveUIHelper::getResponsiveMargin(scaleFactor, TSS::Design::Spacing::sm);
+    if (menuButton_ASVPRTool)
+    {
+        auto logoBounds = sidebarBounds.withHeight(logoHeight).reduced(logoPadding);
+        menuButton_ASVPRTool->setBounds(logoBounds);
+    }
+
+    int currentY = sidebarBounds.getY() + menuTop;
+    const int buttonWidth = sidebarBounds.getWidth();
+
+    for (auto& button : menuButtons)
+    {
+        button->setBounds(sidebarBounds.getX(), currentY, buttonWidth, menuButtonHeight);
+        button->setScale(scaleFactor);
+        currentY += menuButtonHeight + spacing;
+    }
+
+    const float captionScaled = ResponsiveUIHelper::scaleFontSize(TSS::Design::Typography::caption, scaleFactor);
+    const float captionSize = jmax(TSS::Design::Typography::caption, captionScaled);
+    labelProjectVersion.setFont(ProjectManager::getAssistantFont(ProjectManager::FontType::Light)
+                                    .withHeight(captionSize));
+    labelProjectVersion.setBounds(sidebarBounds.getX() + logoPadding,
+                                  sidebarBounds.getBottom() - footerHeight - logoPadding / 2,
+                                  sidebarBounds.getWidth() - logoPadding * 2,
+                                  footerHeight);
 }
 
 void MainViewComponent::buttonClicked (Button* button)
 {
-
+    
     if (button == menuButton_ASVPRTool.get())
     {
         // call website or something...
     }
-    currentSelectedButton->setToggleState(false, dontSendNotification);
+    if (currentSelectedButton)
+        currentSelectedButton->setToggleState(false, dontSendNotification);
 
     // close popups of currently open mode
     if (currentMenuItem == MenuItem::ChordPlayer)
@@ -224,13 +319,14 @@ void MainViewComponent::buttonClicked (Button* button)
     // then processbutton and changing of mode
     //-------------------------------------
 
-    for (auto i= 0; i < (int)MenuItem::NumItems; i++) {
-        if (button == menuButtons[i].get()) {
-            currentMenuItem = (MenuItem)i;
+    for (auto i = 0; i < menuButtons.size(); i++)
+    {
+        if (button == menuButtons[i].get())
+        {
+            currentMenuItem = menuEntries[i].item;
             switchMenuView();
-            if (menuItemToModeMap.find(currentMenuItem) != menuItemToModeMap.end()) {
-                projectManager->setMode(menuItemToModeMap.at(currentMenuItem));
-            }
+            if (menuEntries[i].hasMode)
+                projectManager->setMode(menuEntries[i].mode);
         }
     }
 }
@@ -243,17 +339,21 @@ void MainViewComponent::switchMenuView()
     if (auto* view = menuViews[(int)currentMenuItem].get()) {
         view->setVisible(true);
     }
-    currentSelectedButton = menuButtons[(int)currentMenuItem].get();
-    currentSelectedButton->setToggleState(true, dontSendNotification);
+    if (!menuButtons.empty())
+    {
+        currentSelectedButton = menuButtons[(int)currentMenuItem].get();
+        if (currentSelectedButton)
+            currentSelectedButton->setToggleState(true, dontSendNotification);
+    }
 }
 
 void MainViewComponent::setScale(float factor)
 {
-    // Layout is now proportional via getLocalBounds() in resized().
-    // Propagation kept only for sub-components not yet converted.
+    // Override auto-calculated scale if needed
     scaleFactor = jlimit(0.5f, 2.0f, factor);
     for (auto& view : menuViews) {
         view->setScale(scaleFactor);
     }
     lookAndFeel.setScale(scaleFactor);
+    resized();  // Re-layout with new scale
 }

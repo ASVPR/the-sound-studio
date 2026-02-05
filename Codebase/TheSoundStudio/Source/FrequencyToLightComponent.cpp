@@ -2,9 +2,11 @@
   ==============================================================================
 
     FrequencyToLightComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -37,6 +39,7 @@ FrequencyToLightComponent::FrequencyToLightComponent(ProjectManager * pm)
     fontLight.setHeight(33);
     
     
+    imageMainBackground             = ImageCache::getFromMemory(BinaryData::FrequencyToLightBackground2_png, BinaryData::FrequencyToLightBackground2_pngSize);
     
     imageStopButton                 = ImageCache::getFromMemory(BinaryData::Button_Stop_png, BinaryData::Button_Stop_pngSize);
     imageStartButton                = ImageCache::getFromMemory(BinaryData::Button_Start_png, BinaryData::Button_Start_pngSize);
@@ -234,77 +237,64 @@ FrequencyToLightComponent::~FrequencyToLightComponent() { }
 
 void FrequencyToLightComponent::resized()
 {
-    const int w = getWidth();
-    const int h = getHeight();
-    const float sx = w / 1566.0f;
-    const float sy = h / 1440.0f;
-
-    button_ChordConversion->setBounds((int)(323*sx), (int)(106*sy), (int)(31*sx), (int)(31*sy));
-    button_FrequencyConversion->setBounds((int)(835*sx), (int)(106*sy), (int)(31*sx), (int)(31*sy));
-
-    component_ColourOutputMain->setBounds((int)(70*sx), (int)(453*sy), (int)(1418*sx), (int)(112*sy));
-    label_ColourCode->setBounds((int)(70*sx), (int)(453*sy), (int)(1418*sx), (int)(112*sy));
-
-    int labelWaveLengthX    = (int)(369 * sx);
-    int labelFrequencyX     = (int)(726 * sx);
-    int roundedColourX      = (int)(78 * sx);
-
-    int shortcutWidth       = (int)(180 * sx);
-    int shortcutHeight      = (int)(140 * sy);
-    int shortcutX           = (int)(70 * sx);
-    int shortcutY           = (int)(618 * sy);
-    int shortcutSpace       = (int)(126 * sx);
-
-    float fontSize = 33.0f * sx;
-
+    button_ChordConversion->setBounds(323 * scaleFactor, 106 * scaleFactor, 31 * scaleFactor, 31 * scaleFactor);
+    button_FrequencyConversion->setBounds(835 * scaleFactor, 106 * scaleFactor, 31 * scaleFactor, 31 * scaleFactor);
+    
+    component_ColourOutputMain->setBounds(70 * scaleFactor, 453 * scaleFactor, 1418 * scaleFactor, 112 * scaleFactor);
+    
+    label_ColourCode->setBounds(70 * scaleFactor,453 * scaleFactor,1418 * scaleFactor, 112 * scaleFactor);
+    
+    int labelWaveLengthX    = 369;
+    int labelFrequencyX     = 726;
+    int labelWaveLengthY[5] = { 955, 1079, 1155, 1232, 1307 };
+    int roundedColourX      = 78;
+    
+    int shortcutWidth       = 180;
+    int shortcutHeight      = 140;
+    int shortcutX           = 70;
+    int shortcutY           = 618;
+    int shortcutSpace       = 126;
+    
     for (int i = 0; i < 5; i++)
     {
-        int labelWaveLengthY;
-        switch(i) {
-            case 0: labelWaveLengthY = (int)(955 * sy); break;
-            case 1: labelWaveLengthY = (int)(1079 * sy); break;
-            case 2: labelWaveLengthY = (int)(1155 * sy); break;
-            case 3: labelWaveLengthY = (int)(1232 * sy); break;
-            case 4: labelWaveLengthY = (int)(1307 * sy); break;
-        }
-
-        shortcutComponent[i]->setBounds(shortcutX + ((shortcutWidth + shortcutSpace) * i), shortcutY, shortcutWidth, shortcutHeight);
-
-        labelWavelength[i]->setBounds(labelWaveLengthX, labelWaveLengthY, (int)(233*sx), (int)(51*sy));
-        labelWavelength[i]->setFont(fontSize);
-
-        labelFrequency[i]->setBounds(labelFrequencyX, labelWaveLengthY, (int)(800*sx), (int)(51*sy));
-        labelFrequency[i]->setFont(fontSize);
-
-        roundedColourOutput[i]->setBounds(roundedColourX, labelWaveLengthY + (int)(10*sy), (int)(130*sx), (int)(24*sy));
+        shortcutComponent[i]->setBounds((shortcutX + ((shortcutWidth + shortcutSpace) * i)) * scaleFactor, shortcutY * scaleFactor, shortcutWidth * scaleFactor, shortcutHeight * scaleFactor);
+        
+        // Fix overlap in bottom list by shifting labels left/right relative to their slots
+        labelWavelength[i]->setBounds((labelWaveLengthX + 30) * scaleFactor, labelWaveLengthY[i] * scaleFactor, 233 * scaleFactor, 51 * scaleFactor);
+        labelWavelength[i]->setFont(33 * scaleFactor);
+        
+        labelFrequency[i]->setBounds((labelFrequencyX + 50) * scaleFactor, labelWaveLengthY[i] * scaleFactor, 800 * scaleFactor, 51 * scaleFactor);
+        labelFrequency[i]->setFont(33 * scaleFactor);
+        
+        roundedColourOutput[i]->setBounds(roundedColourX * scaleFactor, (labelWaveLengthY[i]+10) * scaleFactor, 130 * scaleFactor, 24 * scaleFactor);
     }
-
-    comboBoxKeynote->setBounds((int)(420*sx), (int)(191*sy), (int)(149*sx), (int)(35*sy));
-    comboBoxChordtype->setBounds((int)(420*sx), (int)(257*sy), (int)(149*sx), (int)(35*sy));
-
-    int lX = (int)(1166 * sx);
-    int lw = (int)(104 * sx);
-    int comboH = (int)(35 * sy);
-
-    comboBox_FrequencySuffix->setBounds(lX, (int)(155*sy), lw, comboH);
-    comboBox_WavelgnthSuffix->setBounds(lX, (int)(220*sy), lw, comboH);
-    comboBox_PhaseSpeed->setBounds((int)(1000*sx), (int)(285*sy), (int)(220*sx), comboH);
-
-    float editorFont = 30.0f * sx;
-    textEditor_Frequency->setBounds((int)(1011*sx), (int)(159*sy), (int)(136*sx), comboH);
-    textEditor_Frequency->setFont(editorFont);
-    textEditor_Frequency->applyFontToAllText(editorFont);
-
-    textEditor_Wavelength->setBounds((int)(1011*sx), (int)(221*sy), (int)(136*sx), comboH);
-    textEditor_Wavelength->setFont(editorFont);
-    textEditor_Wavelength->applyFontToAllText(editorFont);
-
+    
+    comboBoxKeynote->setBounds(420 * scaleFactor, 191 * scaleFactor, 149 * scaleFactor, 35 * scaleFactor);
+    comboBoxChordtype->setBounds(420 * scaleFactor, 257 * scaleFactor, 149 * scaleFactor, 35 * scaleFactor);
+    
+    int lX = 1166;
+    int lw = 104;
+    
+    comboBox_FrequencySuffix->setBounds(lX * scaleFactor, 155 * scaleFactor, lw * scaleFactor, 35 * scaleFactor);
+    comboBox_WavelgnthSuffix->setBounds(lX * scaleFactor, 220 * scaleFactor, lw * scaleFactor, 35 * scaleFactor);
+    comboBox_PhaseSpeed->setBounds(1000 * scaleFactor, 285 * scaleFactor, 220 * scaleFactor, 35 * scaleFactor);
+    
+    textEditor_Frequency->setBounds(1011 * scaleFactor, 159 * scaleFactor, 136 * scaleFactor, 35 * scaleFactor);
+    textEditor_Frequency->setFont(30 * scaleFactor);
+    textEditor_Frequency->applyFontToAllText(30 * scaleFactor);
+    
+    textEditor_Wavelength->setBounds(1011 * scaleFactor, 221 * scaleFactor, 136 * scaleFactor, 35 * scaleFactor);
+    textEditor_Wavelength->setFont(30 * scaleFactor);
+    textEditor_Wavelength->applyFontToAllText(30 * scaleFactor);
+    
+    
     for (int i = 0; i < 5; i++)
     {
-        manipulationPopupComponent[i]->setBounds(0, 0, w, h);
+        manipulationPopupComponent[i]->setBounds(0, 0, 1566 * scaleFactor, 1440 * scaleFactor);
     }
-
-    sliderColour->setBounds((int)(66*sx), (int)(882*sy), (int)(1430*sx), (int)(60*sy));
+    
+    sliderColour->setBounds(66 * scaleFactor, 882 * scaleFactor, 1430 * scaleFactor, 60 * scaleFactor);
+    
 }
 
 
@@ -1231,6 +1221,19 @@ void FrequencyToLightComponent::closePopup()
 
 void FrequencyToLightComponent::paint (Graphics& g)
 {
-    g.fillAll(juce::Colour(45, 44, 44));
+    /* This demo code just fills the component's background and
+       draws some placeholder text to get you started.
+
+       You should replace everything in this method with your own
+       drawing code..
+    */
+
+    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+
+    g.setColour (Colours::grey);
+    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+
+    g.setOpacity(1.0);
+    g.drawImage(imageMainBackground, 0, 0, 1562 * scaleFactor, 1440 * scaleFactor, 0, 0, 1562, 1440);
 }
 

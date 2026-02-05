@@ -2,9 +2,11 @@
   ==============================================================================
 
     LissajousCurveAddChordComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -311,6 +313,8 @@ LissajousAddOnPopupComponent::LissajousAddOnPopupComponent(ProjectManager * pm, 
     projectManager = pm;
     shortcutRef     = axis;
     
+    backgroundImage = ImageCache::getFromMemory(BinaryData::AddOn_Background_Max_png, BinaryData::AddOn_Background_Max_pngSize);
+    
     imageBlueCheckButtonNormal  = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
     imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
     
@@ -605,7 +609,7 @@ void LissajousAddOnPopupComponent::resized()
 void LissajousAddOnPopupComponent::paint (Graphics&g)
 {
     // draw background
-    g.fillAll(juce::Colour(55, 54, 54));
+    g.drawImage(backgroundImage, 0, 0, 357, 179, 0, 0, 357, 179);
 }
 
 void LissajousAddOnPopupComponent::buttonClicked (Button*button)
@@ -762,6 +766,7 @@ LissajousChordPlayerSettingsComponent::LissajousChordPlayerSettingsComponent(Pro
     
     // LookAndFeels
     
+    mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::ChordPlayerSettingsBackground_png, BinaryData::ChordPlayerSettingsBackground_pngSize);
     imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
     imageBlueButtonNormal       = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected     = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
@@ -1329,11 +1334,12 @@ void LissajousChordPlayerSettingsComponent::resized()
 
 void LissajousChordPlayerSettingsComponent::paint (Graphics&g)
 {
-    g.fillAll(juce::Colour(45, 44, 44));
-    const float sx = getWidth() / 1566.0f;
-    const float sy = getHeight() / 1440.0f;
-    g.setColour(juce::Colour(55, 54, 54));
-    g.fillRoundedRectangle(24*sx, 94*sy, 1502*sx, 1242*sy, 8.0f);
+    g.setColour(Colours::black);
+    g.setOpacity(0.88);
+    g.fillAll();
+    
+    g.setOpacity(1.0);
+    g.drawImage(mainBackgroundImage, 24*scaleFactor, 94*scaleFactor, 1502*scaleFactor, 1242*scaleFactor, 0, 0, 1502, 1242);
 }
 
 void LissajousChordPlayerSettingsComponent::buttonClicked (Button*button)
@@ -1888,6 +1894,7 @@ LissajousFrequencyPlayerSettingsComponent::LissajousFrequencyPlayerSettingsCompo
     
     
     
+    mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::FrequencyPlayerSettingsBackgroundNew_png, BinaryData::FrequencyPlayerSettingsBackgroundNew_pngSize);
     imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
     imageBlueButtonNormal       = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
     imageBlueButtonSelected     = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
@@ -2410,11 +2417,12 @@ void LissajousFrequencyPlayerSettingsComponent::resized()
 
 void LissajousFrequencyPlayerSettingsComponent::paint (Graphics&g)
 {
-    g.fillAll(juce::Colour(45, 44, 44));
-    const float sx = getWidth() / 1566.0f;
-    const float sy = getHeight() / 1440.0f;
-    g.setColour(juce::Colour(55, 54, 54));
-    g.fillRoundedRectangle(52*sx, 252*sy, 1463*sx, 847*sy, 8.0f);
+    g.setColour(Colours::black);
+    g.setOpacity(0.88);
+    g.fillAll();
+    
+    g.setOpacity(1.0);
+    g.drawImage(mainBackgroundImage, 52 * scaleFactor, 252 * scaleFactor, 1463 * scaleFactor, 847 * scaleFactor, 0, 0, 1463, 847);
 }
 
 void LissajousFrequencyPlayerSettingsComponent::updateMinMaxSettings(int paramIndex)

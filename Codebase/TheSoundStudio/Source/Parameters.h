@@ -2,9 +2,11 @@
   ==============================================================================
 
     Parameters.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -13,6 +15,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+// Default sample filepath - empty, user should select their own samples
 #define DEFAULT_SAMPLER_FILEPATH   ""
 #define NUM_SHORTCUT_SYNTHS 20
 #define NUM_PLUGIN_SLOTS 4
@@ -78,6 +81,7 @@ enum AUDIO_MODE
     MODE_FREQUENCY_TO_LIGHT,
     MODE_REALTIME_ANALYSIS,
     MODE_LISSAJOUS_CURVES,
+    MODE_FEEDBACK_MODULE,
     MODE_CALCULATORS,
     NUM_MODES
 };
@@ -584,6 +588,61 @@ enum FUNDAMENTAL_FREQUENCY_PARAMS
     TOTAL_NUM_FUNDAMENTAL_FREQUENCY_PARAMS
 };
 
+enum FUNDAMENTAL_FEEDBACK_PARAMS
+{
+    // internal params for each shortcut
+    FUNDAMENTAL_FEEDBACK_FFT_SIZE  = 0,
+    
+    FUNDAMENTAL_FEEDBACK_FFT_WINDOW,
+    
+    FUNDAMENTAL_FEEDBACK_INPUT_CHANNEL,
+    FUNDAMENTAL_FEEDBACK_OUTPUT_CHANNEL,
+    
+    FUNDAMENTAL_FEEDBACK_NUM_HARMONICS_TO_TRACK,
+    
+    FUNDAMENTAL_FEEDBACK_ALGORITHM, // Freq or Chord, up/down, highest decending, noise reduction,
+    
+    FUNDAMENTAL_FEEDBACK_CUSTOM_RANGE, // brickwall filter for optimisation and focus
+    FUNDAMENTAL_FEEDBACK_MIN_FREQ,
+    FUNDAMENTAL_FEEDBACK_MAX_FREQ,
+
+    FUNDAMENTAL_FEEDBACK_INPUT_THRESHOLD, // main harmonic above certain db
+    FUNDAMENTAL_FEEDBACK_KEYNOTE_TOLERANCE, // % (in semitones) from keynote
+    FUNDAMENTAL_FEEDBACK_MIN_INTERVAL, //
+    FUNDAMENTAL_FEEDBACK_MAX_INTERVAL,
+    
+    // Synth params
+    FUNDAMENTAL_FEEDBACK_FREQ_SOURCE,
+    FUNDAMENTAL_FEEDBACK_CHOOSE_FREQ,
+    FUNDAMENTAL_FEEDBACK_RANGE_MIN,
+    FUNDAMENTAL_FEEDBACK_RANGE_MAX,
+    FUNDAMENTAL_FEEDBACK_RANGE_LENGTH,
+    FUNDAMENTAL_FEEDBACK_RANGE_LOG,
+    
+    // Manipulate Chosen Frequency
+    FUNDAMENTAL_FEEDBACK_MANIPULATE_CHOSEN_FREQUENCY,    // boolean
+    FUNDAMENTAL_FEEDBACK_MULTIPLY_OR_DIVISION,           // boolean
+    FUNDAMENTAL_FEEDBACK_MULTIPLY_VALUE,                 // double
+    FUNDAMENTAL_FEEDBACK_DIVISION_VALUE,
+    FUNDAMENTAL_FEEDBACK_WAVEFORM_TYPE,                  // osc type {default, sine, triangle, squ, saw}
+    FUNDAMENTAL_FEEDBACK_AMPLITUDE,
+    FUNDAMENTAL_FEEDBACK_ATTACK,
+    FUNDAMENTAL_FEEDBACK_DECAY,
+    FUNDAMENTAL_FEEDBACK_SUSTAIN,
+    FUNDAMENTAL_FEEDBACK_RELEASE,
+    
+    FUNDAMENTAL_FEEDBACK_REPEATER,
+    FUNDAMENTAL_FEEDBACK_NUM_PAUSE,
+    FUNDAMENTAL_FEEDBACK_NUM_DURATION,
+    
+    FUNDAMENTAL_FEEDBACK_FFT_ACTIVE,
+    FUNDAMENTAL_FEEDBACK_SYNTH_ACTIVE,
+    
+    FUNDAMENTAL_FEEDBACK__PHASE,
+    
+    TOTAL_NUM_FUNDAMENTAL_FEEDBACK_PARAMS
+};
+
 enum SCANNER_MODE
 {
     SCAN_MAIN_CHORDS = 0,
@@ -1033,6 +1092,13 @@ enum LISSAJOUSE_CURVE_PARAMS
     
     
     TOTAL_NUM_LISSAJOUS_CURVE_PARAMS
+};
+
+enum FEEDBACK_MODULE_PARAMS
+{
+    
+    TOTAL_NUM_FEEDBACK_MODULE_PARAMS
+    
 };
 
 enum FREQUENCY_TO_LIGHT_PARAMS

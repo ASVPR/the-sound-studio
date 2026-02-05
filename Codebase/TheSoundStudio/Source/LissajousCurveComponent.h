@@ -2,9 +2,11 @@
   ==============================================================================
 
     LissajousCurveComponent.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -20,8 +22,6 @@
 #include "SpectrogramComponent.h"
 #include "CustomProgressBar.h"
 #include "MenuViewInterface.h"
-#include "TransportToolbarComponent.h"
-#include "UI/DesignSystem.h"
 #include <memory>
 
 class LissajousCurveComponent :
@@ -29,8 +29,7 @@ class LissajousCurveComponent :
     public Button::Listener,
     public Slider::Listener,
     public TextEditor::Listener,
-    public ProjectManager::UIListener,
-    public TransportToolbarComponent::Listener
+    public ProjectManager::UIListener
 {
 public:
     LissajousCurveComponent(ProjectManager * pm);
@@ -43,6 +42,9 @@ public:
     void textEditorReturnKeyPressed (TextEditor&editor)override;
     
     float scaleFactor = 0.5;
+    float layoutScale = 1.0f;
+    Rectangle<int> layoutBounds;
+
     void setScale(float factor) override
     {
         scaleFactor = factor;
@@ -113,25 +115,35 @@ public:
     void updateLissajousCurveUIParameter(int paramIndex) override;
     void updateSettingsUIParameter(int settingIndex)override;
 
-    // TransportToolbarComponent::Listener
-    void transportPlayClicked() override;
-    void transportStopClicked() override;
-    void transportPanicClicked() override;
-    void transportLoopToggled(bool isOn) override;
-
 private:
     ProjectManager * projectManager;
     
+    Image background;
+    Image imagePanicButton;
+    Image imagePlayButton;
+    Image imageStopButton;
+    Image imageAddChordButton;
+    Image imageAddWavefileButton;
     Image imageSettingsIcon;
     Image imageMuteIcon;
-
+    Image imageDelete;
+    
     Image imageBlueButtonNormal;
     Image imageBlueButtonSelected;
-
+    
     Image imageChordFreqButtonNormal;
     Image imageChordFreqButtonSelected;
-
-    std::unique_ptr<TransportToolbarComponent> transportToolbar;
+    
+    Image imageSourceActive;
+    Image imageSourceInActive;
+    
+    std::unique_ptr<ImageComponent> backgroundImageComponent;
+    
+    std::unique_ptr<ImageButton> button_Play;
+    std::unique_ptr<ImageButton> button_Stop;
+    std::unique_ptr<ImageButton> button_Panic;
+    
+    std::unique_ptr<ToggleButton> button_PlayInLoop;
     
     std::unique_ptr<Label> labelChordOrFrequency[3];
     std::unique_ptr<ImageButton> buttonChordOrFrequency[3];

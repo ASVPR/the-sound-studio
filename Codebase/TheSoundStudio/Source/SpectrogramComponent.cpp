@@ -2,9 +2,11 @@
   ==============================================================================
 
     SpectrogramComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -13,6 +15,34 @@
 #include "SpectrogramComponent.h"
 #include "Parameters.h"
 #include "vConstants.h"
+#include "ResponsiveUIHelper.h"
+#include "UI/DesignSystem.h"
+
+namespace
+{
+float scaledWithMin(float baseValue, float scaleFactor, float minValue)
+{
+    return jmax(minValue, baseValue * scaleFactor);
+}
+
+float getAxisFontSize(float scaleFactor)
+{
+    return ResponsiveUIHelper::getReadableFontSize(
+        24.0f, scaleFactor, TSS::Design::Usability::visualiserAxisMinFont);
+}
+
+float getValueFontSize(float scaleFactor)
+{
+    return ResponsiveUIHelper::getReadableFontSize(
+        24.0f, scaleFactor, TSS::Design::Usability::visualiserValueMinFont);
+}
+
+float getLegendFontSize(float scaleFactor)
+{
+    return ResponsiveUIHelper::getReadableFontSize(
+        14.0f, scaleFactor, TSS::Design::Usability::visualiserLegendMinFont);
+}
+} // namespace
 
 
 /*
@@ -158,7 +188,12 @@ FrequencyDataComponent::FrequencyDataComponent(ProjectManager * pm)
 
 }
 
-FrequencyDataComponent::~FrequencyDataComponent(){}
+FrequencyDataComponent::~FrequencyDataComponent()
+{
+    // CRITICAL: Stop timer before destruction to prevent race condition
+    // where timer callback accesses member variables during destruction
+    stopTimer();
+}
 
 void FrequencyDataComponent::resized()
 {
@@ -229,13 +264,24 @@ void FrequencyDataComponent::paint(Graphics &g)
 
 void FrequencyDataComponent::pushUpdate()
 {
+    // Safety check: projectManager must be valid
+    if (projectManager == nullptr)
+        return;
+
     fftSize                 = projectManager->getFFTSize();
     sampleRate              = projectManager->getSampleRate();
 
-    double ema;
+    // Validate sample rate before proceeding
+    if (sampleRate <= 0.0f)
+        return;
+
+    double ema = 0.0;
 //    projectManager->createFrequencyData(peakFrequency, peakDB, *upperHarmonics, *intervals, keynote, octave, ema);
-    
-    int fftRef = (int)visualiserSource - 1;
+
+    const int fftRef = static_cast<int>(visualiserSource) - 1;
+    if (fftRef < 0 || fftRef >= 8)
+        return;
+
     projectManager->createFrequencyData(fftRef, peakFrequency, peakDB, *upperHarmonics, *intervals, keynote, octave, ema);
     
     
@@ -282,7 +328,11 @@ void FrequencyDataComponent::pushUpdate()
         // keynote
         int midiNote = -1;
         float freqDif = 0.f;
-        
+
+        // Safety check: frequencyManager must be valid
+        if (projectManager->frequencyManager == nullptr)
+            return;
+
         projectManager->frequencyManager->getMIDINoteForFrequency(peakFrequency, midiNote, keynote, octave, freqDif);
         
         if (midiNote >= 0)
@@ -313,14 +363,25 @@ void FrequencyDataComponent::pushUpdate()
 #pragma mark Octave Analyzer
 
 OctaveVisualiserComponent2::OctaveVisualiserComponent2(ProjectManager * pm)
+    : projectManager(pm)
+    , sampleRate(44100.0)  // Safe default
+    , numOctaves(10)
+    , numBands(32)
 {
-    projectManager  = pm;
-    sampleRate      = projectManager->getSampleRate();
-    numOctaves      = 10;
-    numBands        = 32;
+    // Get actual sample rate if projectManager is valid
+    if (projectManager != nullptr)
+    {
+        const double sr = projectManager->getSampleRate();
+        if (sr > 0.0)
+            sampleRate = sr;
+    }
 }
 
-OctaveVisualiserComponent2::~OctaveVisualiserComponent2(){}
+OctaveVisualiserComponent2::~OctaveVisualiserComponent2()
+{
+    // CRITICAL: Stop timer before destruction to prevent race condition
+    stopTimer();
+}
 
 void OctaveVisualiserComponent2::mouseDown (const MouseEvent& event)
 {
@@ -374,55 +435,81 @@ void OctaveVisualiserComponent2::didSwipe (float deltaX, float deltaY, Point<flo
 
 void OctaveVisualiserComponent2::paint (Graphics&g)
 {
-    Array<float> magnitudes;
-    
-//    projectManager->createOctaveMagnitudes(magnitudes, numBands, kDefaultMinHertz, sampleRate / 2.f, centralFrequencies );
-    int fftRef = (int)visualiserSource - 1;
-    projectManager->createOctaveMagnitudes(fftRef, magnitudes, numBands, kDefaultMinHertz, sampleRate / 2.f, centralFrequencies );
+    // Validate projectManager pointer
+    if (projectManager == nullptr)
+    {
+        g.fillAll(Colours::black);
+        return;
+    }
 
-    float space = 2 * scaleFactor;
-    float bandW = (getWidth() / numBands);
-    
-    // set background colour
+    // Set background first
     g.setColour(Colours::black);
     g.fillAll();
-    
+
+    // Validate fftRef is in valid range (0-7)
+    const int fftRef = static_cast<int>(visualiserSource) - 1;
+    if (fftRef < 0 || fftRef >= 8)
+        return;
+
+    // Validate sampleRate before using
+    if (sampleRate <= 0.0)
+        return;
+
+    // Get magnitude data - use local copy for thread safety
+    Array<float> magnitudes;
+    Array<float> localCentralFrequencies;
+    int localNumBands = numBands;
+
+    projectManager->createOctaveMagnitudes(fftRef, magnitudes, localNumBands, kDefaultMinHertz, static_cast<float>(sampleRate / 2.0), localCentralFrequencies);
+
+    // Comprehensive safety check: ensure we have valid and consistent data
+    if (localNumBands <= 0 ||
+        magnitudes.size() < localNumBands ||
+        localCentralFrequencies.size() < localNumBands)
+    {
+        return;
+    }
+
+    // Update member variable only after validation
+    numBands = localNumBands;
+    centralFrequencies = localCentralFrequencies;
+
+    const float space = 2.0f * scaleFactor;
+    const float bandW = static_cast<float>(getWidth()) / static_cast<float>(numBands);
+
     for (int i = 0; i < numBands; i++)
     {
-        float x     = bandW * i;
-        float mag   = magnitudes.getReference(i);
-        
-        // catch bad mag / inf+
-        if (std::isnan(mag) || std::isinf(mag))
+        const float x = bandW * static_cast<float>(i);
+        float mag = magnitudes[i];
+
+        // Sanitize magnitude value - catch NaN, Inf, and negative values
+        if (std::isnan(mag) || std::isinf(mag) || mag < 0.0f)
         {
-            mag = 0.f;
+            mag = 0.0f;
         }
 
-        float top   = magnitudeToY(mag); //dbValue or magnitude
-        float right = x + bandW - space;
-        
-        Rectangle<float> barRect(Rectangle<float>::leftTopRightBottom(x, getHeight() - top, right, getHeight()));
-        
+        const float top = magnitudeToY(mag);
+        const float right = x + bandW - space;
+
+        Rectangle<float> barRect(Rectangle<float>::leftTopRightBottom(x, static_cast<float>(getHeight()) - top, right, static_cast<float>(getHeight())));
+
         Colour barColour(projectManager->getSettingsColorParameter(2));
-        
+
         g.setColour(barColour);
         g.fillRect(barRect);
         g.setColour(Colours::darkgrey);
-        g.setOpacity (1.0);
+        g.setOpacity(1.0f);
         g.drawRect(barRect);
-        
-        
-        
-        
-        if (getWidth() > 800)
+
+        // Draw frequency labels only if width is sufficient
+        if (getWidth() > 800 && i < centralFrequencies.size())
         {
             g.setColour(Colours::lightgrey);
-            // draw central freq @ bottom
-            float textH = 20;
+            const float textH = getAxisFontSize(scaleFactor);
             String freqString(centralFrequencies.getReference(i), 1, false);
             freqString.append("hz", 2);
-            g.setFont(textH * scaleFactor);
-            g.drawText(freqString, x, getHeight() - (textH * scaleFactor), bandW, textH * scaleFactor, Justification::centred);
+            g.setFont(textH);
+            g.drawText(freqString, x, static_cast<float>(getHeight()) - textH, bandW, textH, Justification::centred);
         }
     }
     
@@ -453,26 +540,25 @@ void OctaveVisualiserComponent2::drawDBLinesNew(Graphics&g)
         String db2String(" dB");
         dbString.append(db2String, 3);
 
-        float fontSize = 24;
-        float textWidth = 120 * scaleFactor;
+        const float fontSize = getAxisFontSize(scaleFactor);
+        const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
         
-        g.setFont(fontSize*scaleFactor);
-        g.drawText(dbString, getWidth() - textWidth, (getHeight() / numDivs) * i, textWidth, fontSize * scaleFactor, Justification::right);
+        g.setFont(fontSize);
+        g.drawText(dbString, getWidth() - textWidth, (getHeight() / numDivs) * i, textWidth, fontSize, Justification::right);
     }
 }
 
 
 void OctaveVisualiserComponent2::drawDataDisplay(Graphics &g)
 {
-    float boxWidth = 150 * scaleFactor;
-    float boxHeight = 50 * scaleFactor;
+    const float fontSize = getValueFontSize(scaleFactor);
+    const float boxWidth = jmax(150.0f * scaleFactor, fontSize * 6.0f);
+    const float boxHeight = jmax(50.0f * scaleFactor, fontSize * 2.4f);
     
     g.setColour(Colours::white);
     
     g.drawLine(0, displayDataPoint.y, getWidth(), displayDataPoint.y, 1.f * scaleFactor);
     g.drawLine(displayDataPoint.x, 0, displayDataPoint.x, getHeight(), 1.f * scaleFactor);
-
-    float fontSize = 24 * scaleFactor;
 
     float position = displayDataPoint.x;
     float bandW = getWidth() / numBands;
@@ -488,7 +574,8 @@ void OctaveVisualiserComponent2::drawDataDisplay(Graphics &g)
 
     float centralFreq = 0.f;
 
-    if (!centralFrequencies.isEmpty())
+    // Bounds check: ensure band index is valid for centralFrequencies array
+    if (!centralFrequencies.isEmpty() && band >= 0 && band < centralFrequencies.size())
     {
         centralFreq = centralFrequencies.getReference(band);
     }
@@ -514,21 +601,27 @@ void OctaveVisualiserComponent2::drawDataDisplay(Graphics &g)
     
     if (drawPositionX < boxWidth)
     {
-        g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+        g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder,
+                   boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
         
-        g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+        g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize,
+                   boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
         
-        g.drawText(bandString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+        g.drawText(bandString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize + fontSize,
+                   boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
     }
     else
     {
         drawPositionX-= boxWidth;
         
-        g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+        g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder,
+                   boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
         
-        g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+        g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize,
+                   boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
         
-        g.drawText(bandString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+        g.drawText(bandString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize + fontSize,
+                   boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
     }
     
 }
@@ -565,10 +658,20 @@ void OctaveVisualiserComponent2::resized()
 
 void OctaveVisualiserComponent2::pushUpdate()
 {
+    // Safety check: projectManager must be valid
+    if (projectManager == nullptr)
+        return;
+
     fftSize                 = projectManager->getFFTSize();
-    sampleRate              = projectManager->getSampleRate();
-    numOctaves              = (int)(log2(sampleRate / 2.f) - log2(kDefaultMinHertz));
-    
+    const double sr         = projectManager->getSampleRate();
+
+    // Validate sample rate before using
+    if (sr > 0.0)
+    {
+        sampleRate = sr;
+        numOctaves = static_cast<int>(log2(sampleRate / 2.0) - log2(kDefaultMinHertz));
+    }
+
     repaint();
 }
 
@@ -581,32 +684,36 @@ void OctaveVisualiserComponent2::pushUpdate()
 
 #pragma mark Spectrum Analyzer
 SpectrogramComponent::SpectrogramComponent(ProjectManager * pm, Rectangle<float> initialSize, bool popup)
+    : isPopup(popup)
+    , projectManager(pm)
+    , fftSize(2048)           // Safe default
+    , sampleRate(44100.0)     // Safe default
+    , shouldUpdateSpectrum(false)
 {
-    isPopup                 = popup;
-    projectManager          = pm;
-    shouldUpdateSpectrum    = false;
-    fftSize                 = projectManager->getFFTSize();
-    sampleRate              = projectManager->getSampleRate();
-    
-    plotHistory             = Image(Image::RGB, initialSize.getWidth(), initialSize.getHeight(), true);
-    imageMainSpectrumPlot   = new Image(Image::RGB, initialSize.getWidth(), initialSize.getHeight(), true);
-    
-    
-    if (isPopup)
+    // Get actual values if projectManager is valid
+    if (projectManager != nullptr)
     {
-        imageBackground = new Image(Image::RGB, initialSize.getWidth(), initialSize.getHeight(), true);
+        fftSize = projectManager->getFFTSize();
+        const double sr = projectManager->getSampleRate();
+        if (sr > 0.0)
+            sampleRate = sr;
     }
-    else
-    {
-        imageBackground = new Image(Image::RGB, initialSize.getWidth(), initialSize.getHeight(), true);
-    }
-    
+
+    // Ensure valid image dimensions (at least 1x1)
+    const int imgWidth = jmax(1, static_cast<int>(initialSize.getWidth()));
+    const int imgHeight = jmax(1, static_cast<int>(initialSize.getHeight()));
+
+    plotHistory             = Image(Image::RGB, imgWidth, imgHeight, true);
+    imageMainSpectrumPlot   = new Image(Image::RGB, imgWidth, imgHeight, true);
+    imageBackground         = new Image(Image::RGB, imgWidth, imgHeight, true);
+
     p.preallocateSpace (8 + 32768);
 }
 
 SpectrogramComponent::~SpectrogramComponent()
 {
-    
+    // CRITICAL: Stop timer before destruction to prevent race condition
+    stopTimer();
 }
 
 void SpectrogramComponent::resized()
@@ -626,14 +733,14 @@ void SpectrogramComponent::resized()
     else
     {
         // should prob recreate the images with correct sizes...
-        if (getWidth() != imageBackground->getWidth())
+        if (getWidth() > 0 && getHeight() > 0 && getWidth() != imageBackground->getWidth())
         {
             imageBackground         = new Image(Image::RGB, getWidth(), getHeight(), true);
             imageMainSpectrumPlot   = new Image(Image::RGB, getWidth(), getHeight(), true);
             plotHistory             = Image(Image::RGB, getWidth(), getHeight(), true);
-            
+
 //            plotHistory.rescaled(getWidth(), getHeight());
-            
+
             shouldDrawLines         = true;
         }
     }
@@ -659,24 +766,32 @@ void SpectrogramComponent::mouseUp (const MouseEvent& event)
 
 void SpectrogramComponent::pushUpdate()
 {
-    fftSize                 = projectManager->getFFTSize();
-    
-    if (sampleRate != projectManager->getSampleRate())
+    // Safety check: projectManager must be valid
+    if (projectManager == nullptr)
+        return;
+
+    fftSize = projectManager->getFFTSize();
+
+    const double sr = projectManager->getSampleRate();
+    if (sr > 0.0 && sampleRate != sr)
     {
-        sampleRate              = projectManager->getSampleRate();
-        shouldDrawLines         = true;
+        sampleRate = sr;
+        shouldDrawLines = true;
     }
-    
-    shouldUpdateSpectrum    = true;
-    
+
+    shouldUpdateSpectrum = true;
+
     repaint();
 }
 
-void SpectrogramComponent::paint (Graphics&g) 
+void SpectrogramComponent::paint (Graphics&g)
 {
     g.setColour(Colours::black);
     g.fillAll();
-    
+
+    if (projectManager == nullptr)
+        return;
+
     drawLayersNew(g);
 }
 
@@ -756,14 +871,15 @@ void SpectrogramComponent::drawLayersNew(Graphics &g)
             g.drawLine(x, 0.0f, x, (float) getHeight(), 1.5f * scaleFactor);
 
             // Draw label at top-right
-            const float labelW = 160.0f * scaleFactor;
-            const float labelH = 22.0f * scaleFactor;
+            const float labelFont = getLegendFontSize(scaleFactor);
+            const float labelH = jmax(22.0f * scaleFactor, labelFont * 1.4f);
+            const float labelW = jmax(160.0f * scaleFactor, labelFont * 8.0f);
             const float pad = 6.0f * scaleFactor;
             const Rectangle<float> box((float) getWidth() - labelW - pad, pad, labelW, labelH);
             g.setColour(Colours::black.withAlpha(0.6f));
             g.fillRoundedRectangle(box, 4.0f * scaleFactor);
             g.setColour(Colours::white);
-            g.setFont(14.0f * scaleFactor);
+            g.setFont(labelFont);
 
             String txt;
             txt << "Peak: " << String(peakFreq, 1, false) << " Hz";
@@ -806,15 +922,14 @@ void SpectrogramComponent::drawDataDisplay(Graphics &g)
         // draw inside little box
         // above pointer, or below if pointer if at the top
         // to the right of the pointer unless it is to the right
-        float boxWidth = 150 * scaleFactor;
-        float boxHeight = 50 * scaleFactor;
+        const float fontSize = getValueFontSize(scaleFactor);
+        const float boxWidth = jmax(150.0f * scaleFactor, fontSize * 6.0f);
+        const float boxHeight = jmax(50.0f * scaleFactor, fontSize * 2.4f);
 
         g.setColour(Colours::white);
         
         g.drawLine(0, displayDataPoint.y, getWidth(), displayDataPoint.y, 1.f * scaleFactor);
         g.drawLine(displayDataPoint.x, 0, displayDataPoint.x, getHeight(), 1.f * scaleFactor);
-        
-        float fontSize = 24 * scaleFactor;
         
         float position = displayDataPoint.x;
         
@@ -839,17 +954,21 @@ void SpectrogramComponent::drawDataDisplay(Graphics &g)
         
         if (drawPositionX < boxWidth)
         {
-            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
             
-            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
         }
         else
         {
             drawPositionX-= boxWidth;
             
-            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
             
-            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
         }
     }
     else
@@ -858,8 +977,9 @@ void SpectrogramComponent::drawDataDisplay(Graphics &g)
         // draw inside little box
         // above pointer, or below if pointer if at the top
         // to the right of the pointer unless it is to the right
-        float boxWidth = 150 * scaleFactor;
-        float boxHeight = 50 * scaleFactor;
+        const float fontSize = getValueFontSize(scaleFactor);
+        const float boxWidth = jmax(150.0f * scaleFactor, fontSize * 6.0f);
+        const float boxHeight = jmax(50.0f * scaleFactor, fontSize * 2.4f);
         
         float xText = 0;
         
@@ -867,8 +987,6 @@ void SpectrogramComponent::drawDataDisplay(Graphics &g)
         
         g.drawLine(0, displayDataPoint.y, getWidth(), displayDataPoint.y, 1.f * scaleFactor);
         g.drawLine(displayDataPoint.x, 0, displayDataPoint.x, getHeight(), 1.f * scaleFactor);
-        
-        float fontSize = 24 * scaleFactor;
         
         float position = displayDataPoint.x;
         
@@ -893,17 +1011,21 @@ void SpectrogramComponent::drawDataDisplay(Graphics &g)
         
         if (drawPositionX < boxWidth)
         {
-            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
             
-            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::left);
+            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::left);
         }
         else
         {
             drawPositionX-= boxWidth;
             
-            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+            g.drawText(freqString, drawPositionX + leftBorder, displayDataPoint.y + topBorder,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
             
-            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+            g.drawText(dbString, drawPositionX + leftBorder, displayDataPoint.y + topBorder + fontSize,
+                       boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
         }
     }
 }
@@ -925,11 +1047,11 @@ void SpectrogramComponent::drawDBLinesNew(Graphics&g)
             String db2String(" dB");
             dbString.append(db2String, 3);
 
-            float fontSize = 24;
-            float textWidth = 120 * scaleFactor;
+            const float fontSize = getAxisFontSize(scaleFactor);
+            const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
             
-            g.setFont(fontSize*scaleFactor);
-            g.drawText(dbString, getWidth() - textWidth, (getHeight() / numDivs) * i, textWidth, fontSize * scaleFactor, Justification::right);
+            g.setFont(fontSize);
+            g.drawText(dbString, getWidth() - textWidth, (getHeight() / numDivs) * i, textWidth, fontSize, Justification::right);
         }
     }
     else
@@ -947,11 +1069,11 @@ void SpectrogramComponent::drawDBLinesNew(Graphics&g)
             String db2String(" dB");
             dbString.append(db2String, 3);
 
-            float fontSize = 24;
-            float textWidth = 120 * scaleFactor;
+            const float fontSize = getAxisFontSize(scaleFactor);
+            const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
             
-            g.setFont(fontSize*scaleFactor);
-            g.drawText(dbString, getWidth() - textWidth, (getHeight() / numDivs) * i, textWidth, fontSize * scaleFactor, Justification::right);
+            g.setFont(fontSize);
+            g.drawText(dbString, getWidth() - textWidth, (getHeight() / numDivs) * i, textWidth, fontSize, Justification::right);
         }
     }
 
@@ -977,10 +1099,10 @@ void SpectrogramComponent::drawFreqLinesNew(Graphics&g)
             String freq2String(" Hz");
             freqString.append(freq2String, 3);
 
-            float fontSize = 24;
-            float textWidth = 120 * scaleFactor;
-            g.setFont(fontSize*scaleFactor);
-            g.drawText(freqString,((getWidth() / numDivs) * i) - textWidth, getHeight() - (fontSize*scaleFactor), textWidth, fontSize*scaleFactor, Justification::right);
+            const float fontSize = getAxisFontSize(scaleFactor);
+            const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
+            g.setFont(fontSize);
+            g.drawText(freqString, ((getWidth() / numDivs) * i) - textWidth, getHeight() - fontSize, textWidth, fontSize, Justification::right);
         }
     }
     else
@@ -1000,10 +1122,10 @@ void SpectrogramComponent::drawFreqLinesNew(Graphics&g)
             String freq2String(" Hz");
             freqString.append(freq2String, 3);
 
-            float fontSize = 24;
-            float textWidth = 120 * scaleFactor;
-            g.setFont(fontSize*scaleFactor);
-            g.drawText(freqString,((getWidth() / numDivs) * i) - textWidth, getHeight() - (fontSize*scaleFactor), textWidth, fontSize*scaleFactor, Justification::right);
+            const float fontSize = getAxisFontSize(scaleFactor);
+            const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
+            g.setFont(fontSize);
+            g.drawText(freqString, ((getWidth() / numDivs) * i) - textWidth, getHeight() - fontSize, textWidth, fontSize, Justification::right);
         }
     }
 }
@@ -1047,11 +1169,18 @@ void SpectrogramComponent::createPathNew (Graphics&g)
 // drawing functions
 float SpectrogramComponent::getFrequencyForPosition (float pos)
 {
-    sampleRate      = projectManager->getSampleRate();
-    
-    float octaves   =  (log2(sampleRate / 2.f) - log2(kDefaultMinHertz));
-    
-    return kDefaultMinHertz * std::pow (2.0f, pos * octaves); // only doing 10 octaves...
+    // Safety check: projectManager must be valid
+    if (projectManager != nullptr)
+    {
+        const double sr = projectManager->getSampleRate();
+        if (sr > 0.0)
+            sampleRate = sr;
+    }
+
+    // Use current sampleRate (either updated or default)
+    const float octaves = static_cast<float>(log2(sampleRate / 2.0) - log2(kDefaultMinHertz));
+
+    return static_cast<float>(kDefaultMinHertz * std::pow(2.0f, pos * octaves));
 }
 
 float SpectrogramComponent::getDBForY(float yPos, float top, float bottom)
@@ -1107,18 +1236,29 @@ String SpectrogramComponent::stringForValue(double value, bool divide, bool deci
 
 #pragma mark Colour Spectrum Analyzer
 
-ColourSpectrumVisualiserComponent::ColourSpectrumVisualiserComponent(ProjectManager * pm, int initW, int initH) /*: spectrogramImage (Image::RGB, initW, initH, true)*/
+ColourSpectrumVisualiserComponent::ColourSpectrumVisualiserComponent(ProjectManager * pm, int initW, int initH)
+    : projectManager(pm)
+    , sampleRate(44100.0f)    // Safe default
+    , fftSize(2048)           // Safe default
+    , visualiserSource(VISUALISER_SOURCE::OUTPUT_1)
 {
-    
-    projectManager      = pm;
-    sampleRate          = projectManager->getSampleRate();
-    fftSize             = projectManager->getFFTSize();
-    newSpectrogramImage = new Image (Image::RGB, initW, initH, true);
-    
-    
+    // Get actual values if projectManager is valid
+    if (projectManager != nullptr)
+    {
+        const float sr = projectManager->getSampleRate();
+        if (sr > 0.0f)
+            sampleRate = sr;
+        fftSize = projectManager->getFFTSize();
+    }
+
+    newSpectrogramImage = std::make_unique<Image>(Image::RGB, jmax(1, initW), jmax(1, initH), true);
 }
 
-ColourSpectrumVisualiserComponent::~ColourSpectrumVisualiserComponent(){}
+ColourSpectrumVisualiserComponent::~ColourSpectrumVisualiserComponent()
+{
+    // CRITICAL: Stop timer before destruction to prevent race condition
+    stopTimer();
+}
 
 void ColourSpectrumVisualiserComponent::mouseDown (const MouseEvent& event)
 {
@@ -1145,8 +1285,8 @@ void ColourSpectrumVisualiserComponent::paint (Graphics&g)
     
     g.setOpacity (1.0f);
     
-    
-    g.drawImage (*newSpectrogramImage, getLocalBounds().toFloat());
+    if (newSpectrogramImage != nullptr)
+        g.drawImage (*newSpectrogramImage, getLocalBounds().toFloat());
     
     drawFrequencyLines(g);
     drawTimelineGrid(g);
@@ -1164,15 +1304,14 @@ void ColourSpectrumVisualiserComponent::paint (Graphics&g)
 
 void ColourSpectrumVisualiserComponent::drawDisplayData(Graphics &g)
 {
-    float boxWidth = 150 * scaleFactor;
-    float boxHeight = 50 * scaleFactor;
+    const float fontSize = getValueFontSize(scaleFactor);
+    const float boxWidth = jmax(150.0f * scaleFactor, fontSize * 6.0f);
+    const float boxHeight = jmax(50.0f * scaleFactor, fontSize * 2.4f);
     
     g.setColour(Colours::white);
     
     g.drawLine(0, displayDataPoint.y, getWidth(), displayDataPoint.y, 1.f * scaleFactor);
     g.drawLine(displayDataPoint.x, 0, displayDataPoint.x, getHeight(), 1.f * scaleFactor);
-    
-    float fontSize = 24 * scaleFactor;
     
     float y                     = getHeight() - displayDataPoint.y;
     float yScale                = y / getHeight();
@@ -1187,7 +1326,8 @@ void ColourSpectrumVisualiserComponent::drawDisplayData(Graphics &g)
     float topBorder = 3;
     
     g.setFont(fontSize);
-    g.drawText(freqString, displayDataPoint.x - boxWidth + leftBorder, displayDataPoint.y + topBorder, boxWidth - (leftBorder * 2), boxHeight / 2 - (topBorder*2), Justification::right);
+    g.drawText(freqString, displayDataPoint.x - boxWidth + leftBorder, displayDataPoint.y + topBorder,
+               boxWidth - (leftBorder * 2), boxHeight * 0.5f - (topBorder * 2), Justification::right);
 
 }
 
@@ -1213,11 +1353,11 @@ void ColourSpectrumVisualiserComponent::drawFrequencyLines(Graphics &g)
         String freq2String("hz");
         freqString.append(freq2String, 3);
 
-        float fontSize = 24;
-        float textWidth = 120 * scaleFactor;
+        const float fontSize = getAxisFontSize(scaleFactor);
+        const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
         
-        g.setFont(fontSize*scaleFactor);
-        g.drawText(freqString, 0, (getHeight() / numDivs) * i, textWidth, fontSize * scaleFactor, Justification::left);
+        g.setFont(fontSize);
+        g.drawText(freqString, 0, (getHeight() / numDivs) * i, textWidth, fontSize, Justification::left);
     }
 }
 
@@ -1243,11 +1383,11 @@ void ColourSpectrumVisualiserComponent::drawTimelineGrid(Graphics &g)
         String freq2String("secs");
         freqString.append(freq2String, 4);
 
-        float fontSize = 24;
-        float textWidth = 120 * scaleFactor;
+        const float fontSize = getAxisFontSize(scaleFactor);
+        const float textWidth = jmax(120.0f * scaleFactor, fontSize * 4.5f);
 
-        g.setFont(fontSize*scaleFactor);
-        g.drawText(freqString, getWidth() - (w + textWidth), getHeight() - (fontSize * scaleFactor), textWidth, fontSize * scaleFactor, Justification::right);
+        g.setFont(fontSize);
+        g.drawText(freqString, getWidth() - (w + textWidth), getHeight() - fontSize, textWidth, fontSize, Justification::right);
         
     }
 
@@ -1255,27 +1395,42 @@ void ColourSpectrumVisualiserComponent::drawTimelineGrid(Graphics &g)
 
 void ColourSpectrumVisualiserComponent::resized()
 {
-    Image rescaledImage(newSpectrogramImage->createCopy());
-    newSpectrogramImage = new Image(rescaledImage.rescaled(getWidth(), getHeight()));
+    if (newSpectrogramImage != nullptr)
+    {
+        Image rescaledImage(newSpectrogramImage->createCopy());
+        newSpectrogramImage = std::make_unique<Image>(rescaledImage.rescaled(jmax(1, getWidth()), jmax(1, getHeight())));
+    }
+    else
+    {
+        newSpectrogramImage = std::make_unique<Image>(Image::RGB, jmax(1, getWidth()), jmax(1, getHeight()), true);
+    }
 }
 
 void ColourSpectrumVisualiserComponent::pushUpdate()
 {
-    fftSize     = projectManager->getFFTSize();
-    sampleRate  = projectManager->getSampleRate();
-    
+    // Safety check: projectManager must be valid
+    if (projectManager == nullptr)
+        return;
+
+    fftSize = projectManager->getFFTSize();
+    const float sr = projectManager->getSampleRate();
+    if (sr > 0.0f)
+        sampleRate = sr;
+
     drawNextLineOfSpectrogram();
-    
+
     repaint();
 }
 
 void ColourSpectrumVisualiserComponent::drawNextLineOfSpectrogram()
 {
-//    projectManager->createColourSpectrum(*newSpectrogramImage, zoomRange_FreqLow, zoomRange_FreqHigh, 0.2);
-    int fftRef = (int)visualiserSource - 1;
-    
+    // Safety checks
+    if (projectManager == nullptr || newSpectrogramImage == nullptr)
+        return;
+
+    const int fftRef = static_cast<int>(visualiserSource) - 1;
+    if (fftRef < 0 || fftRef >= 8)
+        return;
+
     projectManager->createColourSpectrum(fftRef, *newSpectrogramImage, zoomRange_FreqLow, zoomRange_FreqHigh, 0.2);
-    
-    
-//    projectManager->createColourSpectrum(*newSpectrogramImage, kDefaultMinHertz, sampleRate / 2.f, 0.2);
 }

@@ -2,22 +2,23 @@
   ==============================================================================
 
     CustomLookAndFeel.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "CustomLookAndFeel.h"
 #include "utility_components/ComboBox.h"
-#include "TSSConstants.h"
 
 CustomLookAndFeel::CustomLookAndFeel()
 {
 //    setColour(TextEditor::textColourId, Colours::darkgrey);
     setColour(Slider::textBoxTextColourId, Colours::lightgrey);
-    setColour(Slider::textBoxBackgroundColourId, juce::Colour(TSS::UI::Colors::kSliderBackground));
+    setColour(Slider::textBoxBackgroundColourId, juce::Colour(98, 103, 114));
     setColour(PopupMenu::textColourId, Colours::darkgrey);
     setColour(PopupMenu::highlightedBackgroundColourId, Colours::darkgrey);
     setColour(ComboBox::textColourId, Colours::darkgrey);
@@ -26,7 +27,7 @@ CustomLookAndFeel::CustomLookAndFeel()
     setColour(juce::Label::textWhenEditingColourId, Colours::darkgrey);
     
     Typeface::Ptr AssistantLight   = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
-    fontLight = std::make_unique<Font>(AssistantLight);
+    fontLight = new Font(AssistantLight);
     
 }
 
@@ -174,7 +175,7 @@ void CustomLookAndFeel::drawComboBox (Graphics&g, int width, int height, bool is
         }
     }
 
-    Colour c(TSS::UI::Colors::kComboBoxBackground);
+    Colour c(Colour::fromRGB(249, 250, 250));
 
     g.setColour (c);
     g.fillRoundedRectangle (boxBounds.toFloat(), cornerSize);
@@ -249,7 +250,7 @@ Font CustomLookAndFeel::getPopupMenuFont()
 /** Fills the background of a popup menu component. */
 void CustomLookAndFeel::drawPopupMenuBackground (Graphics&g, int width, int height)
 {
-    g.fillAll (Colour(TSS::UI::Colors::kPopupMenuBackground));
+    g.fillAll (Colour::fromRGB(183, 183, 183));
     ignoreUnused (width, height);
 }
 
@@ -350,8 +351,8 @@ void CustomLookAndFeel::drawPopupMenuItem (Graphics&g, const Rectangle<int>& are
                            float sliderPos, float rotaryStartAngle,
                            float rotaryEndAngle, Slider& slider)
 {
-    auto outline = juce::Colour(TSS::UI::Colors::kSliderOutline);
-    auto fill    = juce::Colour(TSS::UI::Colors::kSliderFill);
+    auto outline = juce::Colour(42, 48, 60);
+    auto fill = juce::Colour(0, 122, 205);
 
     auto bounds = Rectangle<int> (x, y, width, height).toFloat().reduced (10);
 
@@ -393,7 +394,7 @@ void CustomLookAndFeel::drawPopupMenuItem (Graphics&g, const Rectangle<int>& are
     Point<float> thumbPoint (bounds.getCentreX() + arcRadius * std::cos (toAngle - MathConstants<float>::halfPi),
                              bounds.getCentreY() + arcRadius * std::sin (toAngle - MathConstants<float>::halfPi));
 
-    g.setColour (juce::Colour(TSS::UI::Colors::kSliderFill));
+    g.setColour (juce::Colour(0, 122, 205));
     g.fillEllipse (Rectangle<float> (thumbWidth, thumbWidth).withCentre (thumbPoint));
 }
 
@@ -421,6 +422,9 @@ void CustomLookAndFeel::drawTooltip (Graphics&g, const String& text, int width, 
     tl.createLayoutWithBalancedLineLengths (s, (float) maxToolTipWidth);
     
     tl.draw (g, { static_cast<float> (width), static_cast<float> (height) });
+    
+    // hacked it back into life !
+    
 //        LookAndFeelHelpers::layoutTooltipText (text, findColour (TooltipWindow::textColourId))
 //        .draw (g, { static_cast<float> (width), static_cast<float> (height) });
     
@@ -432,7 +436,7 @@ void CustomLookAndFeel::drawTooltip (Graphics&g, const String& text, int width, 
 void CustomLookAndFeel::fillTextEditorBackground (Graphics& g, int width, int height, TextEditor& editor)
 
 {
-    g.setColour(juce::Colour(TSS::UI::Colors::kTextEditorBackground));
+    g.setColour(juce::Colour(98, 103, 114));
     g.fillRoundedRectangle(editor.getLocalBounds().toFloat(), 5);
 }
 void CustomLookAndFeel::drawTextEditorOutline (Graphics&, int width, int height, TextEditor&)

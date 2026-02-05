@@ -2,9 +2,11 @@
   ==============================================================================
 
     ResponsiveUIHelper.h
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -80,6 +82,12 @@ public:
         else
             return baseSize * scaleFactor;
     }
+
+    // Helper to scale font size with a readable minimum
+    static float getReadableFontSize(float baseSize, float scaleFactor, float minSize)
+    {
+        return jmax(minSize, scaleFontSize(baseSize, scaleFactor));
+    }
     
     // Helper for responsive margins/padding
     static int getResponsiveMargin(float scaleFactor, int baseMargin = 10)
@@ -91,6 +99,48 @@ public:
     static int getResponsiveSpacing(float scaleFactor, int baseSpacing = 8)
     {
         return jmax(2, roundToInt(baseSpacing * scaleFactor));
+    }
+
+    struct LayoutMetrics
+    {
+        float scale = 1.0f;
+        Rectangle<int> bounds;
+    };
+
+    // Calculate a centered, letterboxed layout for a fixed reference size
+    static LayoutMetrics getLetterboxLayout(const Rectangle<int>& availableBounds,
+                                            float referenceWidth,
+                                            float referenceHeight)
+    {
+        LayoutMetrics metrics;
+        if (referenceWidth <= 0.0f || referenceHeight <= 0.0f || availableBounds.isEmpty())
+        {
+            metrics.scale = 1.0f;
+            metrics.bounds = availableBounds;
+            return metrics;
+        }
+
+        const float scaleX = availableBounds.getWidth() / referenceWidth;
+        const float scaleY = availableBounds.getHeight() / referenceHeight;
+        metrics.scale = jmin(scaleX, scaleY);
+
+        const int width = roundToInt(referenceWidth * metrics.scale);
+        const int height = roundToInt(referenceHeight * metrics.scale);
+        const int x = availableBounds.getX() + (availableBounds.getWidth() - width) / 2;
+        const int y = availableBounds.getY() + (availableBounds.getHeight() - height) / 2;
+
+        metrics.bounds = { x, y, width, height };
+        return metrics;
+    }
+
+    // Scale a rectangle from reference coordinates into the letterboxed layout
+    static Rectangle<int> scaleRect(const LayoutMetrics& metrics,
+                                    float x, float y, float w, float h)
+    {
+        return Rectangle<int>(roundToInt(metrics.bounds.getX() + x * metrics.scale),
+                              roundToInt(metrics.bounds.getY() + y * metrics.scale),
+                              roundToInt(w * metrics.scale),
+                              roundToInt(h * metrics.scale));
     }
 };
 

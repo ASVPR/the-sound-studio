@@ -2,9 +2,11 @@
   ==============================================================================
 
     SynthesisProcessor.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -34,6 +36,7 @@ SynthesisProcessorVoice2::~SynthesisProcessorVoice2()
 
 //void SynthesisProcessorVoice::setCurrentPlaybackSampleRate (double newRate)
 //{
+//    printf("voice cplaybacksample rate called");
 //
 //    SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
 //
@@ -121,10 +124,13 @@ void SynthesisProcessorVoice2::stopNote (float velocity, bool allowTailOff)
 void SynthesisProcessorVoice2::debugParameters()
 {
 //    if (isVoiceActive()) {
+//        printf("\n voice %i is active", voiceRef);
+//        //            printf("\n frequency = %f", osc->getFrequency());
 //    }
 //
 //    if (envelope->isActive())
 //    {
+//        printf("\n voice %i ENV is active", voiceRef);
 //    }
 }
 
@@ -315,7 +321,8 @@ SynthesisProcessorVoice::~SynthesisProcessorVoice()
 
 //void SynthesisProcessorVoice::setCurrentPlaybackSampleRate (double newRate)
 //{
-//
+//    printf("voice cplaybacksample rate called");
+//    
 //    SynthesiserVoice::setCurrentPlaybackSampleRate(newRate);
 //    
 //    envelope    ->setSampleRate(newRate);
@@ -403,6 +410,7 @@ void SynthesisProcessorVoice::debugParameters()
 {
     if (isVoiceActive()) {
         printf("\n voice %i is active", voiceRef);
+        //            printf("\n frequency = %f", osc->getFrequency());
     }
     
     if (envelope->isActive())

@@ -1,21 +1,27 @@
-# Large Graphics Files
+# The Sound Studio - Git Ignore Configuration
+
+# Large Graphics Files (PSD files)
 *.psd
 Graphics/*.psd
 Assets/*.psd
 
-# Build files
+# Build files and artifacts
 **/Builds/**/build/
 **/Builds/**/DerivedData/
+**/Builds/**/DD_OUT/
 **/.vs/
 **/x64/
 **/Debug/
 **/Release/
 
-# IDE files
+# IDE and editor files
 **/.vscode/
 **/.idea/
 **/*.vcxproj.user
 **/*.vcxproj.filters.user
+*.swp
+*.swo
+*~
 
 # System files
 .DS_Store
@@ -23,19 +29,20 @@ Thumbs.db
 **/.DS_Store
 **/Thumbs.db
 
-# JUCE
+# JUCE auto-generated binary data
 **/JuceLibraryCode/BinaryData.cpp
 **/JuceLibraryCode/BinaryData.h
 **/JuceLibraryCode/BinaryData2.cpp
 
-# Temporary files
+# Temporary and backup files
 **/*.tmp
 **/*.temp
 **/*.log
-
-# Audio samples (if needed to reduce size)
-# **/Samples/**/*.wav
-# **/Samples/**/*.aiff
+**/*.bak
+**/*.bak2
+**/*.bak3
+**/*.bak4
+**/*.orig
 
 # Compiled application binary
 The Sound Studio.app/
@@ -46,7 +53,6 @@ The Sound Studio.app/
 logs/
 app_output.log
 
-# Development scripts
+# Development utility scripts (keep scripts/ but exclude dev helpers)
 launch.sh
 monitor_app.sh
-scripts/

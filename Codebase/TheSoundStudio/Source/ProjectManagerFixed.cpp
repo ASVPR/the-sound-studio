@@ -2,9 +2,11 @@
   ==============================================================================
 
     ProjectManagerFixed.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -180,6 +182,7 @@ void ProjectManager::initializeAnalysisProcessors()
 {
     realtimeAnalysisProcessor = std::make_unique<RealtimeAnalysisProcessor>(frequencyManager.get());
     fundamentalFrequencyProcessor = std::make_unique<FundamentalFrequencyProcessor>(frequencyManager.get());
+    feedbackModuleProcessor = std::make_unique<FeedbackModuleProcessor>();
 }
 
 // FIXED: Thread-safe mode management
@@ -256,4 +259,7 @@ void ProjectManager::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFil
         processFundamentalFrequency(*bufferToFill.buffer);
     }
     
+    if (feedbackModuleProcessor) {
+        processFeedbackModule(*bufferToFill.buffer);
+    }
 }

@@ -39,7 +39,7 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=0" "-DTSS_SYNTHESIS_ENGINE=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0.0" "-DJUCE_APP_VERSION_HEX=0x1000000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 fontconfig gl libcurl) -pthread -I../../JuceLibraryCode -I../../user_modules -I../../modules -I../../Source/Views/Interface/ -I../../Source/ $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DDEBUG=1" "-D_DEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=0" "-DTSS_SYNTHESIS_ENGINE=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0.0" "-DJUCE_APP_VERSION_HEX=0x1000000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 fontconfig gl libcurl) -pthread -I../../JuceLibraryCode -I../../user_modules -I../../modules -I../../Source/Views/Interface/ -I../../Source/ -I../../Source/FeedbackModule/ $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := The\ Sound\ Studio
 
@@ -60,7 +60,7 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=0" "-DTSS_SYNTHESIS_ENGINE=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0.0" "-DJUCE_APP_VERSION_HEX=0x1000000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 fontconfig gl libcurl) -pthread -I../../JuceLibraryCode -I../../user_modules -I../../modules -I../../Source/Views/Interface/ -I../../Source/ $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=0" "-DTSS_SYNTHESIS_ENGINE=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0.0" "-DJUCE_APP_VERSION_HEX=0x1000000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 fontconfig gl libcurl) -pthread -I../../JuceLibraryCode -I../../user_modules -I../../modules -I../../Source/Views/Interface/ -I../../Source/ -I../../Source/FeedbackModule/ $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := The\ Sound\ Studio
 
@@ -81,7 +81,7 @@ ifeq ($(CONFIG),Build\ Configuration)
     TARGET_ARCH := 
   endif
 
-  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=0" "-DTSS_SYNTHESIS_ENGINE=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0.0" "-DJUCE_APP_VERSION_HEX=0x1000000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 fontconfig gl libcurl) -pthread -I../../JuceLibraryCode -I../../user_modules -I../../modules -I../../Source/Views/Interface/ -I../../Source/ $(CPPFLAGS)
+  JUCE_CPPFLAGS := $(DEPFLAGS) "-DLINUX=1" "-DNDEBUG=1" "-DJUCE_DISPLAY_SPLASH_SCREEN=0" "-DTSS_SYNTHESIS_ENGINE=1" "-DJUCER_LINUX_MAKE_6D53C8B4=1" "-DJUCE_APP_VERSION=1.0.0.0" "-DJUCE_APP_VERSION_HEX=0x1000000" $(shell $(PKG_CONFIG) --cflags alsa freetype2 fontconfig gl libcurl) -pthread -I../../JuceLibraryCode -I../../user_modules -I../../modules -I../../Source/Views/Interface/ -I../../Source/ -I../../Source/FeedbackModule/ $(CPPFLAGS)
   JUCE_CPPFLAGS_APP :=  "-DJucePlugin_Build_VST=0" "-DJucePlugin_Build_VST3=0" "-DJucePlugin_Build_AU=0" "-DJucePlugin_Build_AUv3=0" "-DJucePlugin_Build_AAX=0" "-DJucePlugin_Build_Standalone=0" "-DJucePlugin_Build_Unity=0" "-DJucePlugin_Build_LV2=0"
   JUCE_TARGET_APP := The\ Sound\ Studio
 
@@ -107,6 +107,11 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/FrequencyPlayerComponent_2e49a0a9.o \
   $(JUCE_OBJDIR)/FrequencyPlayerSettingsComponent_f18abe46.o \
   $(JUCE_OBJDIR)/FrequencyScannerComponent_144fedfc.o \
+  $(JUCE_OBJDIR)/FeedbackModuleComponent_a8317057.o \
+  $(JUCE_OBJDIR)/FeedbackModuleProcessor_c0e5cd6c.o \
+  $(JUCE_OBJDIR)/FeedbackModuleParameterSettingsComponent_f0ead521.o \
+  $(JUCE_OBJDIR)/FeedbackSpectrumSettingsComponent_b431476f.o \
+  $(JUCE_OBJDIR)/FeedbackInputOutputComponent_9d6059f6.o \
   $(JUCE_OBJDIR)/FrequencyToLightSubComponents_744f7538.o \
   $(JUCE_OBJDIR)/FrequencyToLightComponent_92f637bf.o \
   $(JUCE_OBJDIR)/RealtimeAnalysisComponent_b59b59b7.o \
@@ -161,6 +166,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/SamplerProcessor_aa8916f3.o \
   $(JUCE_OBJDIR)/SynthesisProcessor_3706f1e7.o \
   $(JUCE_OBJDIR)/CustomLookAndFeel_ab3d772e.o \
+  $(JUCE_OBJDIR)/TransportToolbarComponent_d49a74ec.o \
   $(JUCE_OBJDIR)/LogFileWriter_3b6b2154.o \
   $(JUCE_OBJDIR)/ProjectManager_ec121fdd.o \
   $(JUCE_OBJDIR)/ProfileManager_fb4e274d.o \
@@ -233,7 +239,6 @@ $(JUCE_OBJDIR)/FundamentalFrequencyComponent_b23b387.o: ../../Source/Fundamental
 	@echo "Compiling FundamentalFrequencyComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
-
 $(JUCE_OBJDIR)/ChordPlayerComponent_c41ac3a9.o: ../../Source/ChordPlayerComponent.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling ChordPlayerComponent.cpp"
@@ -272,6 +277,31 @@ $(JUCE_OBJDIR)/FrequencyPlayerSettingsComponent_f18abe46.o: ../../Source/Frequen
 $(JUCE_OBJDIR)/FrequencyScannerComponent_144fedfc.o: ../../Source/FrequencyScannerComponent.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling FrequencyScannerComponent.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FeedbackModuleComponent_a8317057.o: ../../Source/FeedbackModule/FeedbackModuleComponent.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FeedbackModuleComponent.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FeedbackModuleProcessor_c0e5cd6c.o: ../../Source/FeedbackModule/FeedbackModuleProcessor.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FeedbackModuleProcessor.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FeedbackModuleParameterSettingsComponent_f0ead521.o: ../../Source/FeedbackModule/FeedbackModuleParameterSettingsComponent.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FeedbackModuleParameterSettingsComponent.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FeedbackSpectrumSettingsComponent_b431476f.o: ../../Source/FeedbackModule/FeedbackSpectrumSettingsComponent.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FeedbackSpectrumSettingsComponent.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/FeedbackInputOutputComponent_9d6059f6.o: ../../Source/FeedbackModule/FeedbackInputOutputComponent.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling FeedbackInputOutputComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/FrequencyToLightSubComponents_744f7538.o: ../../Source/FrequencyToLightSubComponents.cpp
@@ -542,6 +572,11 @@ $(JUCE_OBJDIR)/SynthesisProcessor_3706f1e7.o: ../../Source/SynthesisProcessor.cp
 $(JUCE_OBJDIR)/CustomLookAndFeel_ab3d772e.o: ../../Source/CustomLookAndFeel.cpp
 	-$(V_AT)mkdir -p $(@D)
 	@echo "Compiling CustomLookAndFeel.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/TransportToolbarComponent_d49a74ec.o: ../../Source/TransportToolbarComponent.cpp
+	-$(V_AT)mkdir -p $(@D)
+	@echo "Compiling TransportToolbarComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/LogFileWriter_3b6b2154.o: ../../Source/LogFileWriter.cpp

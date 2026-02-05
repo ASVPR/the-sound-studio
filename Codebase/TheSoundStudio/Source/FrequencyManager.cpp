@@ -2,9 +2,11 @@
   ==============================================================================
 
     FrequencyManager.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
@@ -14,8 +16,7 @@
 
 FrequencyManager::FrequencyManager()
 {
-    ownedScalesManager = std::make_unique<ScalesManager>();
-    scalesManager = ownedScalesManager.get();
+    scalesManager = new ScalesManager();
 }
 
 FrequencyManager::~FrequencyManager()
@@ -43,7 +44,7 @@ float FrequencyManager::getBaseAFrequency()
 
 ScalesManager::ScalesManager()
 {
-    central_frequency   = TSS::Audio::kDefaultA4Frequency;
+    central_frequency   = 432.0;
     currentScale        = SCALES::DIATONIC_PYTHAGOREAN;
     changeMainScaleTo(currentScale);
     changeLissajousScaleTo(currentScale);  // Initialize lissajousScale to prevent null pointer
@@ -99,7 +100,7 @@ void ScalesManager::setScale(int scale)
     
     // if default is reset, it should also rest Chordplayer and lissajous
     
-    for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++) {
+    for (int i = 0; i < 10; i++) {
         setChordPlayerScale(i, currentScale);
     }
     

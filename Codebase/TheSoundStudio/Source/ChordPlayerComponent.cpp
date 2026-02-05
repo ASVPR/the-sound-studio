@@ -2,77 +2,171 @@
   ==============================================================================
 
     ChordPlayerComponent.cpp
-
-    Part of: The Sound Studio
+    The Sound Studio
     Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
 
   ==============================================================================
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ChordPlayerComponent.h"
-#include "TSSConstants.h"
+#include "ResponsiveUIHelper.h"
+#include "UI/DesignSystem.h"
 
-using Layout = TSS::Design::Layout;
+//==============================================================================
 
+
+//==============================================================================
 //==============================================================================
 ChordPlayerComponent::ChordPlayerComponent(ProjectManager * pm)
 {
     projectManager = pm;
     projectManager->addUIListener(this);
-
+    
     setWantsKeyboardFocus(true);
-
+    
     // fonts
-    Typeface::Ptr AssistantBold     = Typeface::createSystemTypefaceFor(BinaryData::AssistantBold_ttf, BinaryData::AssistantBold_ttfSize);
-    Typeface::Ptr AssistantSemiBold   = Typeface::createSystemTypefaceFor(BinaryData::AssistantSemiBold_ttf, BinaryData::AssistantSemiBold_ttfSize);
-    Font fontNormal(AssistantSemiBold);
-    fontNormal.setHeight(33);
-
-    // Shortcut container
+    Font fontNormal = ProjectManager::getAssistantFont(ProjectManager::FontType::SemiBold);
+    fontNormal.setHeight(TSS::Design::Typography::body1);
+    
+    // images
+    imageCheckboxBackground             = ImageCache::getFromMemory(BinaryData::CheckboxBackground2x_png, BinaryData::CheckboxBackground2x_pngSize);
+    imageMainContainerBackground        = ImageCache::getFromMemory(BinaryData::MainContainerBackground2x_png, BinaryData::MainContainerBackground2x_pngSize);
+    imageShortcutContainerBackground    = ImageCache::getFromMemory(BinaryData::ShortcutContainerBackground2x_png, BinaryData::ShortcutContainerBackground2x_pngSize);
+    imageShortcutBackground             = ImageCache::getFromMemory(BinaryData::ShortcutBackground2x_png, BinaryData::ShortcutBackground2x_pngSize);
+    imagePanicButton                    = ImageCache::getFromMemory(BinaryData::PanicButton2x_png, BinaryData::PanicButton2x_pngSize);
+    imagePlayButton                     = ImageCache::getFromMemory(BinaryData::playPause2x_png, BinaryData::playPause2x_pngSize);
+    imageProgresBarFill                 = ImageCache::getFromMemory(BinaryData::ProgressBarFill2x_png, BinaryData::ProgressBarFill2x_pngSize);
+    imageSettingsIcon                   = ImageCache::getFromMemory(BinaryData::settings2x_png, BinaryData::settings2x_pngSize);
+    imageAddIcon                        = ImageCache::getFromMemory(BinaryData::ShortcutAdd2x_png, BinaryData::ShortcutAdd2x_pngSize);
+    imageCloseIcon                      = ImageCache::getFromMemory(BinaryData::ShortcutClose2x_png, BinaryData::ShortcutClose2x_pngSize);
+    imageLeftIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutLeft2x_png, BinaryData::ShortcutLeft2x_pngSize);
+    imageRightIcon                      = ImageCache::getFromMemory(BinaryData::ShortcutRight2x_png, BinaryData::ShortcutRight2x_pngSize);
+    imageLoopIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutLoop2x_png, BinaryData::ShortcutLoop2x_pngSize);
+    imageMuteIcon                       = ImageCache::getFromMemory(BinaryData::ShortcutMute2x_png, BinaryData::ShortcutMute2x_pngSize);
+    imageStopButton                     = ImageCache::getFromMemory(BinaryData::stop2x_png, BinaryData::stop2x_pngSize);
+    imageRecordButton                   = ImageCache::getFromMemory(BinaryData::RecordButton_png, BinaryData::RecordButton_pngSize);
+    imageFFTMockup                      = ImageCache::getFromMemory(BinaryData::FFTMockup_png, BinaryData::FFTMockup_pngSize);
+    imageColorSpectrumMockup            = ImageCache::getFromMemory(BinaryData::ColorSpectrumMockup_png, BinaryData::ColorSpectrumMockup_pngSize);
+    imageOctaveSpectrumMockup           = ImageCache::getFromMemory(BinaryData::OctaveSpectrumMockup_png, BinaryData::OctaveSpectrumMockup_pngSize);
+    
+    
     containerView_Shortcut = std::make_unique<ShortcutContainerComponent>(projectManager);
     for (int i = 0; i < NUM_SHORTCUT_SYNTHS; i++)
     {
+        // add ShortcutListener to open settings view for selected shortcut
         containerView_Shortcut->shortcutComponent[i]->addShortcutListener(this);
     }
+    
     addAndMakeVisible(containerView_Shortcut.get());
-
-    // Main container (holds visualiser and toolbar)
+    
+    
     containerView_Main = std::make_unique<Component>();
+    containerView_Main->setBounds(0, shortcutHeight, shortcutWidth, mainContainerHeight);
+
+    imageComp = std::make_unique<ImageComponent>();
+    imageComp->setImage(imageMainContainerBackground);
+    imageComp->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight());
+    containerView_Main->addAndMakeVisible(imageComp.get());
     addAndMakeVisible(containerView_Main.get());
 
-    // Per-note frequencies label
-    label_NoteFrequencies = std::make_unique<Label>();
-    label_NoteFrequencies->setText("", dontSendNotification);
-    label_NoteFrequencies->setJustificationType(Justification::left);
-    label_NoteFrequencies->setFont(fontNormal);
-    label_NoteFrequencies->setMinimumHorizontalScale(0.7f);
-    containerView_Main->addAndMakeVisible(label_NoteFrequencies.get());
+    // Labels - added to containerView_Main like FrequencyPlayerComponent
+    label_Playing = std::make_unique<Label>();
+    label_Playing->setText("Playing (00:00)", dontSendNotification);
+    label_Playing->setBounds(playingLeftMargin, playingTopMargin, 300, 40);
+    label_Playing->setJustificationType(Justification::left);
+    fontNormal.setHeight(33);
+    label_Playing->setFont(fontNormal);
+    containerView_Main->addAndMakeVisible(label_Playing.get());
 
-    // Transport toolbar (replaces individual play/stop/record/panic/loop/simultaneous/save/load buttons)
-    TransportToolbarComponent::ButtonVisibility toolbarVis;
-    toolbarVis.play = true;
-    toolbarVis.stop = true;
-    toolbarVis.record = true;
-    toolbarVis.panic = true;
-    toolbarVis.progress = true;
-    toolbarVis.loop = true;
-    toolbarVis.simultaneous = true;
-    toolbarVis.save = true;
-    toolbarVis.load = true;
-    toolbarVis.playingLabel = true;
-    transportToolbar = std::make_unique<TransportToolbarComponent>(toolbarVis);
-    transportToolbar->addTransportListener(this);
-    addAndMakeVisible(transportToolbar.get());
+    // Buttons - added to containerView_Main like FrequencyPlayerComponent
+    button_Record = std::make_unique<ImageButton>();
+    button_Record->setTriggeredOnMouseDown(true);
+    button_Record->setImages (false, true, true,
+                                       imageRecordButton, 0.999f, Colour (0x00000000),
+                                       Image(), 1.000f, Colour (0x00000000),
+                                       imageRecordButton, 0.6, Colour (0x00000000));
+    button_Record->addListener(this);
+    button_Record->setBounds(recordLeftMargin, recordTopMargin, recordWidth, recordHeight);
+    containerView_Main->addAndMakeVisible(button_Record.get());
 
+    button_Play = std::make_unique<ImageButton>();
+    button_Play->setTriggeredOnMouseDown(true);
+    button_Play->setImages (false, true, true,
+                              imagePlayButton, 0.999f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              imagePlayButton, 0.6, Colour (0x00000000));
+    button_Play->addListener(this);
+    button_Play->setBounds(playLeftMargin, playTopMargin, playWidth, playHeight);
+    containerView_Main->addAndMakeVisible(button_Play.get());
+
+    button_Stop = std::make_unique<ImageButton>();
+    button_Stop->setTriggeredOnMouseDown(true);
+    button_Stop->setImages (false, true, true,
+                              imageStopButton, 0.999f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              imageStopButton, 0.6, Colour (0x00000000));
+    button_Stop->addListener(this);
+    button_Stop->setBounds(stopLeftMargin, stopTopMargin, playWidth, playHeight);
+    containerView_Main->addAndMakeVisible(button_Stop.get());
+
+    button_Panic = std::make_unique<ImageButton>();
+    button_Panic->setTriggeredOnMouseDown(true);
+    button_Panic->setImages (false, true, true,
+                              imagePanicButton, 0.999f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              imagePanicButton, 0.6, Colour (0x00000000));
+    button_Panic->addListener(this);
+    button_Panic->setBounds(panicLeftMargin, panicTopMargin, panicWidth, panicHeight);
+    containerView_Main->addAndMakeVisible(button_Panic.get());
+
+    // Progress bar - added directly to component like FrequencyPlayerComponent
+    progressBar = std::make_unique<CustomProgressBar>();
+    progressBar->setBounds(214, 1196, 1126, 56);
+    addAndMakeVisible(progressBar.get());
+
+    // Play In Loop Button - added directly to component
+    button_PlayInLoop = std::make_unique<ToggleButton>("Loop");
+    button_PlayInLoop->setBounds(1173, 1100, 200, 100);
+    button_PlayInLoop->setLookAndFeel(&lookAndFeel);
+    button_PlayInLoop->addListener(this);
+    addAndMakeVisible(button_PlayInLoop.get());
+
+    button_PlaySimultaneous = std::make_unique<ToggleButton>("Simultaneous");
+    button_PlaySimultaneous->setBounds(1173-340, 1100, 300, 100);
+    button_PlaySimultaneous->setLookAndFeel(&lookAndFeel);
+    button_PlaySimultaneous->addListener(this);
+    addAndMakeVisible(button_PlaySimultaneous.get());
+
+    // Load / Save Button - added directly to component
+    button_Load = std::make_unique<TextButton>("Load");
+    button_Load->setBounds(1470, 1204, 100, 40);
+    button_Load->addListener(this);
+    button_Load->setLookAndFeel(&lookAndFeel);
+    addAndMakeVisible(button_Load.get());
+
+    button_Save = std::make_unique<TextButton>("Save");
+    button_Save->setBounds(1360, 1204, 100, 40);
+    button_Save->addListener(this);
+    button_Save->setLookAndFeel(&lookAndFeel);
+    addAndMakeVisible(button_Save.get());
+    
+    
+    
     // settings component
     chordPlayerSettingsComponent = std::make_unique<ChordPlayerSettingsComponent>(projectManager);
     addAndMakeVisible(chordPlayerSettingsComponent.get());
     chordPlayerSettingsComponent->setVisible(false);
-
+    
+    
     // visualiser component
     visualiserContainerComponent = std::make_unique<VisualiserContainerComponent2>(projectManager, AUDIO_MODE::MODE_CHORD_PLAYER);
+    visualiserContainerComponent->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight()-300);
     containerView_Main->addAndMakeVisible(visualiserContainerComponent.get());
+    
 
     // shortcut Keys
     shortcutKey[SHORTCUT_A] = 'a';
@@ -95,9 +189,9 @@ ChordPlayerComponent::ChordPlayerComponent(ProjectManager * pm)
     shortcutKey[SHORTCUT_W] = 'w';
     shortcutKey[SHORTCUT_E] = 'e';
     shortcutKey[SHORTCUT_R] = 'r';
-
-    clearHeldNotes();
-
+    
+    clearHeldNotes(); // 
+    
     startTimerHz(TIMER_UPDATE_RATE);
 }
 
@@ -105,32 +199,39 @@ ChordPlayerComponent::~ChordPlayerComponent() { }
 
 void ChordPlayerComponent::resized()
 {
-    auto bounds = getLocalBounds();
-    const int h = bounds.getHeight();
-    const int w = bounds.getWidth();
+    // Match FrequencyPlayerComponent layout exactly
+    containerView_Shortcut->setBounds(0, 0, shortcutWidth * scaleFactor, shortcutHeight * scaleFactor);
+    containerView_Main->setBounds(0, shortcutHeight * scaleFactor, shortcutWidth * scaleFactor, mainContainerHeight * scaleFactor);
+    imageComp->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight());
 
-    // Shortcut bar at top
-    int shortcutH = (int)(h * Layout::kShortcutBarHeightRatio);
-    containerView_Shortcut->setBounds(bounds.removeFromTop(shortcutH));
+    // Labels inside containerView_Main
+    label_Playing->setBounds(playingLeftMargin * scaleFactor, playingTopMargin * scaleFactor, 300 * scaleFactor, 40 * scaleFactor);
+    label_Playing->setFont(33 * scaleFactor);
 
-    // Toolbar at bottom
-    int toolbarH = (int)(h * Layout::kToolbarHeightRatio);
-    transportToolbar->setBounds(bounds.removeFromBottom(toolbarH));
+    // Buttons inside containerView_Main (same coordinates as FrequencyPlayerComponent)
+    button_Record->setBounds(recordLeftMargin * scaleFactor, recordTopMargin * scaleFactor, recordWidth * scaleFactor, recordHeight * scaleFactor);
+    button_Play->setBounds(playLeftMargin * scaleFactor, playTopMargin * scaleFactor, playWidth * scaleFactor, playHeight * scaleFactor);
+    button_Stop->setBounds(stopLeftMargin * scaleFactor, stopTopMargin * scaleFactor, playWidth * scaleFactor, playHeight * scaleFactor);
+    button_Panic->setBounds(panicLeftMargin * scaleFactor, panicTopMargin * scaleFactor, panicWidth * scaleFactor, panicHeight * scaleFactor);
 
-    // Main container fills the remainder (visualiser area)
-    containerView_Main->setBounds(bounds);
+    // Progress bar - absolute coordinates from top of component
+    progressBar->setBounds(214 * scaleFactor, 1196 * scaleFactor, 1126 * scaleFactor, 56 * scaleFactor);
 
-    // Visualiser fills the main container
-    visualiserContainerComponent->setBounds(0, 0, bounds.getWidth(), bounds.getHeight());
+    // Toggle buttons - absolute coordinates
+    button_PlayInLoop->setBounds(1173 * scaleFactor, 1100 * scaleFactor, 200 * scaleFactor, 100 * scaleFactor);
+    button_PlaySimultaneous->setBounds((1173 - 340) * scaleFactor, 1100 * scaleFactor, 300 * scaleFactor, 100 * scaleFactor);
 
-    // Note frequencies label at top of main container area
-    float localScale = w / Layout::kRefContentWidth;
-    int labelH = (int)(33 * localScale);
-    label_NoteFrequencies->setBounds(10, 0, bounds.getWidth() - 20, labelH);
-    label_NoteFrequencies->setFont(jmax(10.0f, 33.0f * localScale));
+    // Load/Save buttons - absolute coordinates
+    button_Load->setBounds(1470 * scaleFactor, 1204 * scaleFactor, 100 * scaleFactor, 40 * scaleFactor);
+    button_Save->setBounds(1360 * scaleFactor, 1204 * scaleFactor, 100 * scaleFactor, 40 * scaleFactor);
 
-    // Settings overlay fills entire component
-    chordPlayerSettingsComponent->setBounds(0, 0, getWidth(), getHeight());
+    // Settings overlay
+    int w = shortcutWidth * scaleFactor;
+    int h = (mainContainerHeight + shortcutHeight) * scaleFactor;
+    chordPlayerSettingsComponent->setBounds(0, 0, w, h);
+
+    // Visualiser
+    visualiserContainerComponent->setBounds(0, 0, containerView_Main->getWidth(), containerView_Main->getHeight() - (300 * scaleFactor));
 }
 
 
@@ -141,103 +242,131 @@ void ChordPlayerComponent::timerCallback()
         MessageManagerLock lock;
 
         float val = projectManager->chordPlayerProcessor->repeater->getProgressBarValue();
-        transportToolbar->setProgressValue(val);
+
+        progressBar->setValue(val);
 
         String text = projectManager->chordPlayerProcessor->repeater->getTimeRemainingInSecondsString();
-        transportToolbar->setPlayingText(text);
+
+        label_Playing->setText(text, dontSendNotification);
     }
     else
     {
         float val = projectManager->chordPlayerProcessor->repeater->getProgressBarValue();
-        transportToolbar->setProgressValue(val);
+
+        progressBar->setValue(val);
     }
+
+    // visualiser
+
 }
 
 void ChordPlayerComponent::paint (Graphics& g)
 {
-    // Vector background — dark fill replacing MainContainerBackground2x_png
-    g.fillAll(juce::Colour(45, 44, 44));
+    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+    g.setColour (Colours::grey);
+    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 }
 
 
 void ChordPlayerComponent::buttonClicked (Button*button)
 {
-    // No individual transport buttons anymore — handled by TransportToolbarComponent::Listener
-}
-
-// TransportToolbarComponent::Listener implementations
-void ChordPlayerComponent::transportPlayClicked()
-{
-    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
-}
-
-void ChordPlayerComponent::transportStopClicked()
-{
-    projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
-}
-
-void ChordPlayerComponent::transportRecordClicked()
-{
-    if (projectManager->isRecording())
+    if (button == button_Record.get())
     {
-        projectManager->stopRecording();
+//        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_RECORD);
+  
+        if (projectManager->isRecording())
+        {
+            projectManager->stopRecording();
+        }
+        else
+        {
+            projectManager->createNewFileForRecordingChordPlayer();
+            projectManager->startRecording();
+        }
+        
     }
-    else
+    else if (button == button_Play.get())
     {
-        projectManager->createNewFileForRecordingChordPlayer();
-        projectManager->startRecording();
+        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PLAYPAUSE);
     }
-}
-
-void ChordPlayerComponent::transportPanicClicked()
-{
-    projectManager->setPanicButton();
-}
-
-void ChordPlayerComponent::transportLoopToggled(bool isOn)
-{
-    if (isOn)
-        projectManager->setPlayerPlayMode(PLAY_MODE::LOOP);
-    else
-        projectManager->setPlayerPlayMode(PLAY_MODE::NORMAL);
-}
-
-void ChordPlayerComponent::transportSimultaneousToggled(bool isOn)
-{
-    projectManager->setProjectSettingsParameter(PLAYER_PLAY_SIMULTANEOUS, isOn ? 1.0 : 0.0);
-}
-
-void ChordPlayerComponent::transportSaveClicked()
-{
-    projectManager->saveProfileForMode(AUDIO_MODE::MODE_CHORD_PLAYER);
-}
-
-void ChordPlayerComponent::transportLoadClicked()
-{
-    projectManager->loadProfileForMode(AUDIO_MODE::MODE_CHORD_PLAYER);
+    else if (button == button_Stop.get())
+    {
+        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_STOP);
+    }
+    else if (button == button_Panic.get())
+    {
+//        projectManager->setPlayerCommand(PLAYER_COMMANDS::COMMAND_PLAYER_PANIC);
+        
+        projectManager->setPanicButton();
+    }
+    else if (button == button_PlayInLoop.get())
+    {
+        if (button_PlayInLoop->getToggleState())
+        {
+            projectManager->setPlayerPlayMode(PLAY_MODE::LOOP);
+        }
+        else
+        {
+            projectManager->setPlayerPlayMode(PLAY_MODE::NORMAL); // might be trigger for shortcuts..
+        }
+    }
+    else if (button == button_PlaySimultaneous.get())
+    {
+        if (button_PlaySimultaneous->getToggleState())
+        {
+            projectManager->setProjectSettingsParameter(PLAYER_PLAY_SIMULTANEOUS, 1.0);
+        }
+        else
+        {
+            projectManager->setProjectSettingsParameter(PLAYER_PLAY_SIMULTANEOUS, 0.0);
+        }
+    }
+    else if (button == button_Load.get())
+    {
+        projectManager->loadProfileForMode(AUDIO_MODE::MODE_CHORD_PLAYER);
+    }
+    else if (button == button_Save.get())
+    {
+        projectManager->saveProfileForMode(AUDIO_MODE::MODE_CHORD_PLAYER);
+        
+    }
 }
 
 void ChordPlayerComponent::openChordPlayerSettingsForShortcut(int shortcutRef)
 {
     chordPlayerSettingsComponent->openView(shortcutRef);
+    
 }
 
+//
 void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int paramIndex)
 {
     // shortcut units first
     if (paramIndex == SHORTCUT_IS_ACTIVE)
     {
         bool shouldBeActive = projectManager->getChordPlayerParameter(shortcutRef, SHORTCUT_IS_ACTIVE).operator bool();
+        
         containerView_Shortcut->shortcutComponent[shortcutRef]->setState(shouldBeActive);
+        
+//        int keynote = projectManager->getChordPlayerParameter(shortcutRef, KEYNOTE).operator int();
+//        int oct = projectManager->getChordPlayerParameter(shortcutRef, OCTAVE).operator int();
+//        
+//        int midiNote = keynote + (oct * 12) - 1;
+//        
+//        float baseFreq = projectManager->frequencyManager->getFrequencyForMIDINote(midiNote);
+//        containerView_Shortcut  ->shortcutComponent[shortcutRef]->setFrequency(baseFreq);
     }
+    // need to split between component and settings ui
     else if (paramIndex == SHORTCUT_MUTE)
     {
         bool shouldMute = projectManager->getChordPlayerParameter(shortcutRef, SHORTCUT_MUTE).operator bool();
+        
         containerView_Shortcut->shortcutComponent[shortcutRef]->setMute(shouldMute);
     }
     else if (paramIndex == SHORTCUT_PLAY_AT_SAME_TIME)
     {
         bool shouldLoop = projectManager->getChordPlayerParameter(shortcutRef, SHORTCUT_PLAY_AT_SAME_TIME).operator bool();
+        
         containerView_Shortcut->shortcutComponent[shortcutRef]->setLoop(shouldLoop);
     }
     else if (paramIndex == KEYNOTE)
@@ -245,38 +374,52 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
         int keynote             = projectManager->getChordPlayerParameter(shortcutRef, KEYNOTE).operator int();
         int oct                 = projectManager->getChordPlayerParameter(shortcutRef, OCTAVE).operator int() + 1;
         int chordRef            = projectManager->getChordPlayerParameter(shortcutRef, KEYNOTE).operator int();
-
+        
         String chordString(ProjectStrings::getKeynoteArray().getReference(chordRef-1));
         chordString.append("-", 3); String octString(oct-1); chordString.append(octString, 3);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setChordString(chordString);
-
+        
         int midiNote = keynote + (oct * 12) - 1;
+
         float baseFreq = projectManager->frequencyManager->getFrequencyForMIDINote(midiNote);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setFrequency(baseFreq);
-        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
+        // Refresh frequency list
     }
     else if (paramIndex == OCTAVE)
     {
         int keynote             = projectManager->getChordPlayerParameter(shortcutRef, KEYNOTE).operator int();
         int oct                 = projectManager->getChordPlayerParameter(shortcutRef, OCTAVE).operator int() + 1;
         int chordRef            = projectManager->getChordPlayerParameter(shortcutRef, KEYNOTE).operator int();
-
+        
         String chordString(ProjectStrings::getKeynoteArray().getReference(chordRef-1));
         chordString.append("-", 3); String octString(oct-1); chordString.append(octString, 3);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setChordString(chordString);
+        
 
         int midiNote = keynote + (oct * 12) - 1;
+
         float baseFreq = projectManager->frequencyManager->getFrequencyForMIDINote(midiNote);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setFrequency(baseFreq);
-        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
+        // Refresh frequency list
+        
+//        // get chord type and octave
+//        int chordRef            = projectManager->getChordPlayerParameter(shortcutRef, CHORD_TYPE).operator int();
+//        String chordString      = ProjectStrings::getChordTypeArray().getReference(chordRef-1);
+//        oct-=1;
+//
+//        String comboString(oct); comboString.append(chordString, 20);
+//        containerView_Shortcut  ->shortcutComponent[shortcutRef]->setChordTypeString(comboString);
+        
     }
     else if (paramIndex == CHORD_TYPE)
     {
         int chordRef            = projectManager->getChordPlayerParameter(shortcutRef, CHORD_TYPE).operator int();
+//        int oct                 = projectManager->getChordPlayerParameter(shortcutRef, OCTAVE).operator int();
         String chordString      = ProjectStrings::getChordTypeArray().getReference(chordRef-1);
         String comboString(""); comboString.append(chordString, 20);
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setChordTypeString(comboString);
-        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
+
+        // Update per-note frequency list for this shortcut
     }
     else if (paramIndex == CHORDPLAYER_SCALE)
     {
@@ -294,38 +437,46 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
             case 7: scaleString = "Ha-Si"; break;
             case 8: scaleString = "Enharm"; break;
             case 9: scaleString = "Solf"; break;
+   
             default: break;
         }
-
+        
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setScaleString(scaleString);
-        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
+        // Scale change affects frequencies; refresh list
     }
     else if (paramIndex == INSTRUMENT_TYPE || paramIndex == WAVEFORM_TYPE)
     {
+        // Waveform Type
         String stringLabel;
         String stringWaveform;
-
+        
         int waveformType = projectManager->getChordPlayerParameter(shortcutRef, WAVEFORM_TYPE).operator int();
-        if (waveformType == 0)
+        if (waveformType == 0) // playing instrument
         {
+            // Map enum INSTRUMENTS directly to names
             const int instrumentType = projectManager->getChordPlayerParameter(shortcutRef, INSTRUMENT_TYPE).operator int();
-            String instName = "Grand Piano";
+            String instName = "Grand Piano"; // default
             switch (instrumentType)
             {
-                case 1: instName = "Grand Piano"; break;
-                case 4: instName = "Acoustic Guitar"; break;
-                case 5: instName = "Harp"; break;
-                case 7: instName = "Strings"; break;
-                case 3: instName = "Flute"; break;
+                case 1: instName = "Grand Piano"; break;      // PIANO
+                case 4: instName = "Acoustic Guitar"; break;  // GUITAR
+                case 5: instName = "Harp"; break;             // HARP
+                case 7: instName = "Strings"; break;          // STRINGS
+                case 3: instName = "Flute"; break;            // FLUTE
                 default: break;
             }
-
+            
             stringLabel         = "Instrument :";
             stringWaveform      = instName;
         }
-        else { stringWaveform = TSS::Waveforms::getName(waveformType);  stringLabel = "Type :"; }
+        else if (waveformType == 1) { stringWaveform = "Sinewave";  stringLabel = "Type :"; }
+        else if (waveformType == 2) { stringWaveform = "Triangle";  stringLabel = "Type :"; }
+        else if (waveformType == 3) { stringWaveform = "Square";    stringLabel = "Type :"; }
+        else if (waveformType == 4) { stringWaveform = "Sawtooth";  stringLabel = "Type :"; }
+        else if (waveformType == 5) { stringWaveform = "Custom";    stringLabel = "Type :"; }
 
         containerView_Shortcut  ->shortcutComponent[shortcutRef]->setInstrumentString(stringWaveform, stringLabel);
+        // Instrument change doesn't affect note frequencies; skip recompute
     }
     else if (paramIndex == CUSTOM_CHORD)
     {
@@ -350,56 +501,21 @@ void ChordPlayerComponent::updateChordPlayerUIParameter(int shortcutRef, int par
             ChordPlayerComponent::updateChordPlayerUIParameter(shortcutRef,CHORD_TYPE);
             ChordPlayerComponent::updateChordPlayerUIParameter(shortcutRef,KEYNOTE);
         }
-        label_NoteFrequencies->setText(computeNoteFrequenciesStringForShortcut(shortcutRef), dontSendNotification);
+        // Custom chord toggle can change notes; refresh list
     }
-
+    
     chordPlayerSettingsComponent->syncUI();
-}
-
-juce::String ChordPlayerComponent::computeNoteFrequenciesStringForShortcut(int shortcutRef)
-{
-    if (!projectManager || !projectManager->chordPlayerProcessor || !projectManager->frequencyManager || !projectManager->frequencyManager->scalesManager)
-        return {};
-
-    auto cmgr = projectManager->chordPlayerProcessor->chordManager[shortcutRef];
-    if (!cmgr) return {};
-
-    juce::Array<int> notes = cmgr->getMIDIKeysForChord();
-    if (notes.isEmpty()) return {};
-
-    juce::String result;
-    result << "Notes (Hz): ";
-
-    bool first = true;
-    for (int i = 0; i < notes.size(); ++i)
-    {
-        const int midiNote = notes.getReference(i);
-        if (midiNote < 0 || midiNote > 127) continue;
-
-        const double freq = projectManager->frequencyManager->scalesManager->getFrequencyForMIDINoteShortcut(midiNote, shortcutRef);
-        if (freq <= 0.0) continue;
-
-        const int key = midiNote % 12;
-        const int oct = (midiNote / 12) - 1;
-        juce::String noteName = ProjectStrings::getKeynoteArray().getReference(key);
-
-        if (!first) result << ", ";
-        first = false;
-        result << noteName << oct << " " << juce::String(freq, 3, false) << "Hz";
-    }
-
-    return result;
 }
 
 void ChordPlayerComponent::updateSettingsUIParameter(int settingIndex)
 {
     if (settingIndex == PLAYER_PLAY_IN_LOOP)
     {
-        transportToolbar->setLoopState(projectManager->getProjectSettingsParameter(settingIndex));
+        button_PlayInLoop->setToggleState(projectManager->getProjectSettingsParameter(settingIndex), dontSendNotification);
     }
     else if (settingIndex == PLAYER_PLAY_SIMULTANEOUS)
     {
-        transportToolbar->setSimultaneousState(projectManager->getProjectSettingsParameter(settingIndex));
+        button_PlaySimultaneous->setToggleState(projectManager->getProjectSettingsParameter(settingIndex), dontSendNotification);
     }
     else if (settingIndex == DEFAULT_SCALE)
     {
@@ -415,6 +531,7 @@ bool ChordPlayerComponent::keyPressed (const KeyPress& key)
 
 bool ChordPlayerComponent::keyStateChanged (bool isKeyDown)
 {
+    // set to num shortcut synth to avoid calling out of bounds indexes
     for (int s = 0; s < NUM_SHORTCUT_SYNTHS; s++)
     {
         if (KeyPress::isKeyCurrentlyDown(shortcutKey[s]))
@@ -425,7 +542,7 @@ bool ChordPlayerComponent::keyStateChanged (bool isKeyDown)
                 projectManager->shortcutKeyDown(s);
             }
         }
-
+        
         if (shortcutKeyStateDown[s] && !KeyPress::isKeyCurrentlyDown(shortcutKey[s]))
         {
             shortcutKeyStateDown[s] = false;
@@ -433,6 +550,7 @@ bool ChordPlayerComponent::keyStateChanged (bool isKeyDown)
         }
     }
     return false;
+    
 }
 
 void ChordPlayerComponent::clearHeldNotes()
