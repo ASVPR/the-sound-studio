@@ -1,9 +1,9 @@
 # The Sound Studio
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/Platform-macOS-blue.svg)](https://www.apple.com/macos/)
+[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Windows%20%7C%20Linux-blue.svg)](#supported-platforms)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
-[![JUCE](https://img.shields.io/badge/JUCE-Framework-orange.svg)](https://juce.com/)
+[![JUCE](https://img.shields.io/badge/JUCE-8.0+-orange.svg)](https://juce.com/)
 
 A professional audio synthesis and analysis platform built with the [JUCE](https://juce.com/) framework. The Sound Studio replaces traditional sample-based audio with real-time synthesis algorithms, delivering a lightweight application with rich sound design capabilities.
 
@@ -35,35 +35,109 @@ A professional audio synthesis and analysis platform built with the [JUCE](https
 |:---:|:---:|
 | ![Chord Player Settings](Screenshots/Chord%20Player%20Settings.png) | ![Frequency Player](Screenshots/Frequency%20Player.png) |
 
+## Supported Platforms
+
+| Platform | Status | Build System |
+|----------|--------|--------------|
+| macOS 10.13+ | Fully Supported | Xcode |
+| Windows 10+ | Supported | Visual Studio 2019+ |
+| Linux (Ubuntu 20.04+) | Supported | Make |
+
+## Prerequisites
+
+### Install JUCE Framework
+
+JUCE is required to build The Sound Studio. Choose one of these methods:
+
+#### Option 1: Download from JUCE website (Recommended)
+1. Go to [https://juce.com/download](https://juce.com/download)
+2. Download JUCE 8.0 or later
+3. Extract to a location (e.g., `~/JUCE` on macOS/Linux or `C:\JUCE` on Windows)
+
+#### Option 2: Clone from GitHub
+```bash
+git clone https://github.com/juce-framework/JUCE.git
+cd JUCE
+git checkout master  # or a specific version tag like 8.0.0
+```
+
+#### Option 3: Package Manager
+
+**macOS (Homebrew):**
+```bash
+brew install juce
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Install dependencies first
+sudo apt-get update
+sudo apt-get install -y \
+    libasound2-dev libjack-jackd2-dev ladspa-sdk libcurl4-openssl-dev \
+    libfreetype6-dev libx11-dev libxcomposite-dev libxcursor-dev \
+    libxext-dev libxinerama-dev libxrandr-dev libxrender-dev \
+    libwebkit2gtk-4.0-dev libglu1-mesa-dev mesa-common-dev
+
+# Then download JUCE from https://juce.com/download
+```
+
+### Platform-Specific Requirements
+
+#### macOS
+- macOS 10.13 (High Sierra) or later
+- Xcode 14+ (Xcode 15+ recommended)
+- Command Line Tools: `xcode-select --install`
+
+#### Windows
+- Windows 10 or later
+- Visual Studio 2019 or later (with C++ Desktop Development workload)
+- Or Visual Studio Build Tools
+
+#### Linux
+- GCC 9+ or Clang 10+
+- Development libraries (see package manager commands above)
+
 ## Building
 
-### Requirements
-- macOS 10.13+
-- Xcode 15+
-- JUCE 8.0+
-- C++17 compatible compiler
+### 1. Clone the repository
+```bash
+git clone https://github.com/ASVPR/the-sound-studio.git
+cd the-sound-studio
+```
 
-### Build Steps
+### 2. Configure JUCE path
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/ASVPR/the-sound-studio.git
-   cd the-sound-studio
-   ```
+Open `Codebase/TheSoundStudio/TheSoundStudio.jucer` in JUCE Projucer and:
+1. Set your JUCE modules path in **Global Paths**
+2. Click **Save and Open in IDE**
 
-2. **Open the Projucer file:**
-   Open `Codebase/TheSoundStudio/TheSoundStudio.jucer` in the JUCE Projucer and click "Save and Open in IDE" to generate the Xcode project.
+Or set the environment variable:
+```bash
+export JUCE_DIR=/path/to/JUCE  # macOS/Linux
+set JUCE_DIR=C:\JUCE           # Windows
+```
 
-3. **Build in Xcode:**
-   Select the **The Sound Studio - App** scheme and build (⌘B).
+### 3. Build
 
-Alternatively, build from the command line:
+#### macOS
 ```bash
 cd Codebase/TheSoundStudio/Builds/MacOSX
 xcodebuild -project "The Sound Studio.xcodeproj" \
   -scheme "The Sound Studio - App" \
-  -configuration Release \
-  CODE_SIGNING_ALLOWED=NO
+  -configuration Release
+```
+
+#### Windows (Visual Studio)
+1. Open `Codebase/TheSoundStudio/TheSoundStudio.jucer` in Projucer
+2. Add a Visual Studio exporter if not present (File → Export Targets)
+3. Click **Save and Open in IDE**
+4. In Visual Studio, select **Release** configuration
+5. Build → Build Solution (Ctrl+Shift+B)
+
+#### Linux
+```bash
+cd Codebase/TheSoundStudio/Builds/LinuxMakefile
+make CONFIG=Release -j$(nproc)
 ```
 
 ## Project Structure
@@ -73,13 +147,16 @@ The Sound Studio/
 ├── Codebase/TheSoundStudio/
 │   ├── Source/              # Application source code
 │   │   ├── Main.cpp         # Application entry point
-│   │   ├── Synth/           # Synthesis engine components
 │   │   ├── UI/              # Modern UI components
 │   │   ├── FeedbackModule/  # Real-time feedback processing
 │   │   └── ...
-│   ├── Builds/MacOSX/       # Xcode project files
+│   ├── Builds/
+│   │   ├── MacOSX/          # Xcode project
+│   │   ├── VisualStudio2022/# Visual Studio project
+│   │   └── LinuxMakefile/   # Linux Makefile
 │   └── TheSoundStudio.jucer # Projucer project file
 ├── Assets/                  # UI assets, images, and fonts
+├── Screenshots/             # Application screenshots
 ├── documentation/           # Technical documentation
 └── README.md
 ```
