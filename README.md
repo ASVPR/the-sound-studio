@@ -31,9 +31,9 @@ A professional audio synthesis and analysis platform built with the [JUCE](https
 
 ## Screenshots
 
-| Chord Scanner | Settings |
+| Chord Player Settings | Frequency Player |
 |:---:|:---:|
-| ![Chord Scanner](Screenshots/Chord%20Scanner.png) | ![Settings](Screenshots/Settings.png) |
+| ![Chord Player Settings](Screenshots/Chord%20Player%20Settings.png) | ![Frequency Player](Screenshots/Frequency%20Player.png) |
 
 ## Building
 
@@ -47,7 +47,7 @@ A professional audio synthesis and analysis platform built with the [JUCE](https
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/the-sound-studio.git
+   git clone https://github.com/ASVPR/the-sound-studio.git
    cd the-sound-studio
    ```
 
