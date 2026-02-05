@@ -56,3 +56,6 @@ app_output.log
 # Development utility scripts (keep scripts/ but exclude dev helpers)
 launch.sh
 monitor_app.sh
+
+# JUCE modules (users should install JUCE separately)
+Codebase/TheSoundStudio/modules/
