@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="TssStd" name="The Sound Studio" projectType="guiapp" reportAppUsage="0"
+              jucerFormatVersion="1" version="1.0.0.0" cppLanguageStandard="17"
+              displaySplashScreen="1" defines="JUCE_DISPLAY_SPLASH_SCREEN=0&#10;TSS_SYNTHESIS_ENGINE=1"
+              headerPath="../../Source/Views/Interface/&#10;../../Source/&#10;../../Source/FeedbackModule/">
+  <MAINGROUP id="hjLDaa" name="The Sound Studio">
+    <GROUP id="{23453521-7FF0-2AFB-D26F-A48F5AD9BCE8}" name="Source">
+      <GROUP id="{77BB7B11-A842-0FD3-9591-F461C16D9E72}" name="Synthesis">
+        <FILE id="SynthEngine" name="SynthesisEngine.h" compile="0" resource="0" file="Source/SynthesisEngine.h"/>
+        <FILE id="SynthEngineImpl" name="SynthesisEngine.cpp" compile="1" resource="0" file="Source/SynthesisEngine.cpp"/>
+        <FILE id="PhysModel" name="PhysicalModelingSynth.h" compile="0" resource="0" file="Source/PhysicalModelingSynth.h"/>
+        <FILE id="PhysModelImpl" name="PhysicalModelingSynth.cpp" compile="1" resource="0" file="Source/PhysicalModelingSynth.cpp"/>
+        <FILE id="KarplusStrong" name="KarplusStrongSynth.h" compile="0" resource="0" file="Source/KarplusStrongSynth.h"/>
+        <FILE id="KarplusStrongImpl" name="KarplusStrongSynth.cpp" compile="1" resource="0" file="Source/KarplusStrongSynth.cpp"/>
+        <FILE id="WavetableSynth" name="WavetableSynth.h" compile="0" resource="0" file="Source/WavetableSynth.h"/>
+        <FILE id="WavetableSynthImpl" name="WavetableSynth.cpp" compile="1" resource="0" file="Source/WavetableSynth.cpp"/>
+      </GROUP>
+      <GROUP id="{E1A360F2-22BC-F2D7-367D-7F31BA2DFC2D}" name="Graphic Assets">
+        <FILE id="JIQoVy" name="ButtonSettingsAudio" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsAudio"/>
+        <FILE id="PKxAkC" name="ButtonSettingsChange" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsChange"/>
+        <FILE id="EiWl29" name="ButtonSettingsLoad" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsLoad"/>
+        <FILE id="RHppKY" name="SynthParamsLayover.png" compile="0" resource="1"
+              file="../../Assets/SynthParamsLayover.png"/>
+        <FILE id="lQqrIk" name="ButtonSettingsResetToDefault" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsResetToDefault"/>
+        <FILE id="p2tvIF" name="ButtonSettingsSave" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsSave"/>
+        <FILE id="ZpJoVk" name="ButtonSettingsScalesAdd" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsScalesAdd"/>
+        <FILE id="Z5I5N8" name="ButtonSettingsScan" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsScan"/>
+        <FILE id="rbq3TI" name="ButtonSettingsSpectrogram" compile="0" resource="1"
+              file="../../Assets/ButtonSettingsSpectrogram"/>
+        <FILE id="T988t6" name="ButtonPluginPlay" compile="0" resource="1"
+              file="../../Assets/ButtonPluginPlay"/>
+        <FILE id="AwvfZc" name="SettingsSpectrogramBackground" compile="0"
+              resource="1" file="../../Assets/SettingsSpectrogramBackground"/>
+        <FILE id="SWuGB7" name="SettingsSetNotesBackground" compile="0" resource="1"
+              file="../../Assets/SettingsSetNotesBackground"/>
+        <FILE id="m2ozd5" name="ButtonSaveSettings" compile="0" resource="1"
+              file="../../Assets/ButtonSaveSettings"/>
+        <FILE id="xPFitB" name="ButtonScale25Normal" compile="0" resource="1"
+              file="../../Assets/ButtonScale25Normal"/>
+        <FILE id="YBYVgl" name="ButtonScale25Selected" compile="0" resource="1"
+              file="../../Assets/ButtonScale25Selected"/>
+        <FILE id="fu8CvD" name="ButtonScale50Normal" compile="0" resource="1"
+              file="../../Assets/ButtonScale50Normal"/>
+        <FILE id="GNuVrF" name="ButtonScale50Selected" compile="0" resource="1"
+              file="../../Assets/ButtonScale50Selected"/>
+        <FILE id="jThMKE" name="ButtonScale75Normal" compile="0" resource="1"
+              file="../../Assets/ButtonScale75Normal"/>
+        <FILE id="aU76vH" name="ButtonScale75Selected" compile="0" resource="1"
+              file="../../Assets/ButtonScale75Selected"/>
+        <FILE id="ZaUZyc" name="ButtonScale100Normal" compile="0" resource="1"
+              file="../../Assets/ButtonScale100Normal"/>
+        <FILE id="SLgCGB" name="ButtonScale100Selected" compile="0" resource="1"
+              file="../../Assets/ButtonScale100Selected"/>
+        <FILE id="spBnW2" name="SettingsBackgroundNew" compile="0" resource="1"
+              file="../../Assets/SettingsBackgroundNew"/>
+        <FILE id="p4m5wf" name="icon_128.png" compile="0" resource="1" file="../../Assets/icon_128.png"/>
+        <FILE id="Rq6E4Q" name="icon_512.png" compile="0" resource="1" file="../../Assets/icon_512.png"/>
+        <FILE id="iconLarge" name="icon_large.png" compile="0" resource="1" file="../../Assets/icon_large.png"/>
+        <FILE id="jIxgBB" name="ButtonChordFrequencyNormal" compile="0" resource="1"
+              file="../../Assets/ButtonChordFrequencyNormal"/>
+        <FILE id="RHX9rz" name="FrequencyPlayerSettingsBackground2.png" compile="0"
+              resource="1" file="../../Assets/FrequencyPlayerSettingsBackground2.png"/>
+        <FILE id="ricSGS" name="ButtonChordFrequencySelected" compile="0" resource="1"
+              file="../../Assets/ButtonChordFrequencySelected"/>
+        <FILE id="ylV8XN" name="ButtonNoisePanic" compile="0" resource="1"
+              file="../../Assets/ButtonNoisePanic"/>
+        <FILE id="DLardK" name="ChordScannerBackground.png" compile="0" resource="1"
+              file="../../Assets/ChordScannerBackground.png"/>
+        <FILE id="L3pvCQ" name="ChordScannerBackground2.png" compile="0" resource="1"
+              file="../../Assets/ChordScannerBackground2.png"/>
+        <FILE id="JGLYie" name="Logo3D.png" compile="0" resource="1" file="../../Assets/Logo3D.png"/>
+        <FILE id="R4r3vm" name="ChordPlayerSettingsBackground2.png" compile="0"
+              resource="1" file="../../Assets/ChordPlayerSettingsBackground2.png"/>
+        <FILE id="K4l8ai" name="LissajousAddChordButtonImage.png" compile="0"
+              resource="1" file="../../Assets/LissajousAddChordButtonImage.png"/>
+        <FILE id="uA416x" name="Button_SpectrumOpen.png" compile="0" resource="1"
+              file="../../Assets/Button_SpectrumOpen.png"/>
+        <FILE id="JL6kpL" name="LissajousAddButtonActive.png" compile="0" resource="1"
+              file="../../Assets/LissajousAddButtonActive.png"/>
+        <FILE id="B7WAru" name="LissajousAddButtonInactive.png" compile="0"
+              resource="1" file="../../Assets/LissajousAddButtonInactive.png"/>
+        <FILE id="LGDgFR" name="LissajousAddFileButtonImage.png" compile="0"
+              resource="1" file="../../Assets/LissajousAddFileButtonImage.png"/>
+        <FILE id="fQqKjM" name="LissajousCurveBackground.png" compile="0" resource="1"
+              file="../../Assets/LissajousCurveBackground.png"/>
+        <FILE id="j0Wqu3" name="FrequencyScannerBackground2.png" compile="0"
+              resource="1" file="../../Assets/FrequencyScannerBackground2.png"/>
+        <FILE id="efNR7y" name="LissajousCurveBackground2.png" compile="0"
+              resource="1" file="../../Assets/LissajousCurveBackground2.png"/>
+        <FILE id="dRvnK3" name="FrequencyPlayerSettingsBackgroundNew.png" compile="0"
+              resource="1" file="../../Assets/FrequencyPlayerSettingsBackgroundNew.png"/>
+        <FILE id="gDKdtj" name="FrequencyPlayerSettingsBackground.png" compile="0"
+              resource="1" file="../../Assets/FrequencyPlayerSettingsBackground.png"/>
+        <FILE id="MgYF8l" name="FrequencyToLightBackground2.png" compile="0"
+              resource="1" file="../../Assets/FrequencyToLightBackground2.png"/>
+        <FILE id="ozF0dQ" name="FrequencyToLightPopupBackground.png" compile="0"
+              resource="1" file="../../Assets/FrequencyToLightPopupBackground.png"/>
+        <FILE id="vobGI2" name="Button_Start.png" compile="0" resource="1"
+              file="../../Assets/Button_Start.png"/>
+        <FILE id="PKZqzz" name="Button_Stop.png" compile="0" resource="1" file="../../Assets/Button_Stop.png"/>
+        <FILE id="gmOT7d" name="FrequencyScannerBackground.png" compile="0"
+              resource="1" file="../../Assets/FrequencyScannerBackground.png"/>
+        <FILE id="EmsA9r" name="RealtimeAnalysisBackground.png" compile="0"
+              resource="1" file="../../Assets/RealtimeAnalysisBackground.png"/>
+        <FILE id="d3BIYX" name="FrequencyToLightBackground.png" compile="0"
+              resource="1" file="../../Assets/FrequencyToLightBackground.png"/>
+        <GROUP id="{C2F609E2-783A-6285-F9A4-CFB73DE895F9}" name="Fonts">
+          <GROUP id="{6040434F-526F-0FB7-A8A2-1DAF7828CAC6}" name="Assistant">
+            <FILE id="rIkk2L" name="Assistant-Bold.ttf" compile="0" resource="1"
+                  file="../../Assets/Fonts/Assistant/Assistant-Bold.ttf"/>
+            <FILE id="KvVaM4" name="Assistant-ExtraBold.ttf" compile="0" resource="1"
+                  file="../../Assets/Fonts/Assistant/Assistant-ExtraBold.ttf"/>
+            <FILE id="gE4QmN" name="Assistant-ExtraLight.ttf" compile="0" resource="1"
+                  file="../../Assets/Fonts/Assistant/Assistant-ExtraLight.ttf"/>
+            <FILE id="zktrcx" name="Assistant-Light.ttf" compile="0" resource="1"
+                  file="../../Assets/Fonts/Assistant/Assistant-Light.ttf"/>
+            <FILE id="D4W1PQ" name="Assistant-Regular.ttf" compile="0" resource="1"
+                  file="../../Assets/Fonts/Assistant/Assistant-Regular.ttf"/>
+            <FILE id="kBprQO" name="Assistant-SemiBold.ttf" compile="0" resource="1"
+                  file="../../Assets/Fonts/Assistant/Assistant-SemiBold.ttf"/>
+            <FILE id="riUSP4" name="OFL.txt" compile="0" resource="1" file="../../Assets/Fonts/Assistant/OFL.txt"/>
+          </GROUP>
+        </GROUP>
+        <GROUP id="{DFAD0056-8691-A0BB-BC0B-9C6C971DD2AB}" name="Settings">
+          <FILE id="bKBQqE" name="AudioSettingsBackground.png" compile="0" resource="1"
+                file="../../Assets/AudioSettingsBackground.png"/>
+          <FILE id="ZzRxhT" name="SaveSettingsButton.png" compile="0" resource="1"
+                file="../../Assets/SaveSettingsButton.png"/>
+          <FILE id="u5T8wK" name="Settings_Background_Max.png" compile="0" resource="1"
+                file="../../Assets/Settings_Background_Max.png"/>
+        </GROUP>
+        <GROUP id="{0CBC281B-32AC-3214-95E8-AE3A47461622}" name="Menu">
+          <FILE id="S4Baj5" name="SidebarNew.png" compile="0" resource="1" file="../../Assets/SidebarNew.png"/>
+          <FILE id="rnDTAR" name="Sidebar_Button_Normal.png" compile="0" resource="1"
+                file="../../Assets/Sidebar_Button_Normal.png"/>
+          <FILE id="mRcloY" name="Sidebar_ButtonHighlighted.png" compile="0"
+                resource="1" file="../../Assets/Sidebar_ButtonHighlighted.png"/>
+          <FILE id="rzilCD" name="LogoButton_Normal.png" compile="0" resource="1"
+                file="../../Assets/LogoButton_Normal.png"/>
+          <FILE id="pRxyPl" name="MenuButton_ChordPlayer_Normal.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_ChordPlayer_Normal.png"/>
+          <FILE id="OjhBia" name="MenuButton_ChordPlayer_Selected.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_ChordPlayer_Selected.png"/>
+          <FILE id="AqCK7U" name="MenuButton_ChordScanner_Normal.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_ChordScanner_Normal.png"/>
+          <FILE id="bjc9J5" name="MenuButton_ChordScanner_Selected.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_ChordScanner_Selected.png"/>
+          <FILE id="A7OISD" name="MenuButton_FrequencyPlayer_Normal.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_FrequencyPlayer_Normal.png"/>
+          <FILE id="KMDcIY" name="MenuButton_FrequencyPlayer_Selected.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_FrequencyPlayer_Selected.png"/>
+          <FILE id="sTbNen" name="MenuButton_FrequencyToLight_Normal.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_FrequencyToLight_Normal.png"/>
+          <FILE id="v7tpUN" name="MenuButton_FrequencyToLight_Selected.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_FrequencyToLight_Selected.png"/>
+          <FILE id="pwm84I" name="MenuButton_RealtimeAnalysis_Normal.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_RealtimeAnalysis_Normal.png"/>
+          <FILE id="a2Oqg5" name="MenuButton_RealtimeAnalysis_Selected.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_RealtimeAnalysis_Selected.png"/>
+          <FILE id="IFMwSI" name="MenuButton_Settings_Normal.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_Settings_Normal.png"/>
+          <FILE id="zQPdPg" name="MenuButton_Settings_Selected.png" compile="0"
+                resource="1" file="../../Assets/MenuButton_Settings_Selected.png"/>
+        </GROUP>
+        <GROUP id="{C49E0A0A-B4E0-D79B-5235-7C902205F972}" name="ChordPlayer">
+          <GROUP id="{631C8031-F86D-CD1F-5727-0E55EEB53CDA}" name="ChordPlayerSettings">
+            <FILE id="b2bxu3" name="ApplyButton@2x.png" compile="0" resource="1"
+                  file="../../Assets/ApplyButton@2x.png"/>
+            <FILE id="ffGGeS" name="ChordPlayerSettingsBackground.png" compile="0"
+                  resource="1" file="../../Assets/ChordPlayerSettingsBackground.png"/>
+            <FILE id="erVeoU" name="CustomChordDetailsBackground_Max.png" compile="0"
+                  resource="1" file="../../Assets/CustomChordDetailsBackground_Max.png"/>
+            <FILE id="hdff5u" name="CustomChordSettingsBackground_Max.png" compile="0"
+                  resource="1" file="../../Assets/CustomChordSettingsBackground_Max.png"/>
+            <FILE id="V74LnD" name="Button_Checkbox_Normal_Max.png" compile="0"
+                  resource="1" file="../../Assets/Button_Checkbox_Normal_Max.png"/>
+            <FILE id="X7vqP5" name="Button_Checkbox_Selected_Max.png" compile="0"
+                  resource="1" file="../../Assets/Button_Checkbox_Selected_Max.png"/>
+            <FILE id="gkJq2v" name="AddOn_Background_Max.png" compile="0" resource="1"
+                  file="../../Assets/AddOn_Background_Max.png"/>
+            <FILE id="S4xTXe" name="ChordNoteBackgroundActive.png" compile="0"
+                  resource="1" file="../../Assets/ChordNoteBackgroundActive.png"/>
+            <FILE id="CFvNJN" name="ChordNoteBackgroundInactive.png" compile="0"
+                  resource="1" file="../../Assets/ChordNoteBackgroundInactive.png"/>
+            <FILE id="UetUrq" name="AddCustomChordBackground.png" compile="0" resource="1"
+                  file="../../Assets/AddCustomChordBackground.png"/>
+            <FILE id="zpKzou" name="AddButton@2x.png" compile="0" resource="1"
+                  file="../../Assets/AddButton@2x.png"/>
+            <FILE id="Cz5vWl" name="BlueButton_Normal.png" compile="0" resource="1"
+                  file="../../Assets/BlueButton_Normal.png"/>
+            <FILE id="uvi0zH" name="BlueButton_Selected.png" compile="0" resource="1"
+                  file="../../Assets/BlueButton_Selected.png"/>
+            <FILE id="yAwOGX" name="CloseButton@2x.png" compile="0" resource="1"
+                  file="../../Assets/CloseButton@2x.png"/>
+            <FILE id="K8y502" name="AddChordButton.png" compile="0" resource="1"
+                  file="../../Assets/AddChordButton.png"/>
+          </GROUP>
+          <FILE id="O8BzrQ" name="RecordButton.png" compile="0" resource="1"
+                file="../../Assets/RecordButton.png"/>
+          <FILE id="CP6FlH" name="OctaveSpectrumMockup.png" compile="0" resource="1"
+                file="../../Assets/OctaveSpectrumMockup.png"/>
+          <FILE id="i1wL6A" name="ColorSpectrumMockup.png" compile="0" resource="1"
+                file="../../Assets/ColorSpectrumMockup.png"/>
+          <FILE id="feLjQs" name="FFTMockup.png" compile="0" resource="1" file="../../Assets/FFTMockup.png"/>
+          <FILE id="K9bf0n" name="CheckboxBackground@2x.png" compile="0" resource="1"
+                file="../../Assets/CheckboxBackground@2x.png"/>
+          <FILE id="REt9Yq" name="MainContainerBackground@2x.png" compile="0"
+                resource="1" file="../../Assets/MainContainerBackground@2x.png"/>
+          <FILE id="RPGf0V" name="PanicButton@2x.png" compile="0" resource="1"
+                file="../../Assets/PanicButton@2x.png"/>
+          <FILE id="EAqpqi" name="playPause@2x.png" compile="0" resource="1"
+                file="../../Assets/playPause@2x.png"/>
+          <FILE id="q4IO6e" name="ProgressBarFill@2x.png" compile="0" resource="1"
+                file="../../Assets/ProgressBarFill@2x.png"/>
+          <FILE id="e98Naw" name="settings@2x.png" compile="0" resource="1" file="../../Assets/settings@2x.png"/>
+          <FILE id="PpOiJk" name="ShortcutAdd@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutAdd@2x.png"/>
+          <FILE id="AlJQa1" name="ShortcutBackground@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutBackground@2x.png"/>
+          <FILE id="JRQ9iD" name="ShortcutClose@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutClose@2x.png"/>
+          <FILE id="O0rTu5" name="ShortcutContainerBackground@2x.png" compile="0"
+                resource="1" file="../../Assets/ShortcutContainerBackground@2x.png"/>
+          <FILE id="w15tK1" name="ShortcutLeft@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutLeft@2x.png"/>
+          <FILE id="TotXDf" name="ShortcutLoop@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutLoop@2x.png"/>
+          <FILE id="ZxUc07" name="ShortcutMute@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutMute@2x.png"/>
+          <FILE id="UlYQVv" name="ShortcutRight@2x.png" compile="0" resource="1"
+                file="../../Assets/ShortcutRight@2x.png"/>
+          <FILE id="VorLl3" name="stop@2x.png" compile="0" resource="1" file="../../Assets/stop@2x.png"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="{75018AC0-5864-2800-05D2-7A8CD8022D73}" name="utilities">
+        <FILE id="X4wjoD" name="double_buffer.h" compile="0" resource="0" file="Source/utilities/double_buffer.h"/>
+        <FILE id="iVX3DK" name="scoped_toggle_atomic.h" compile="0" resource="0"
+              file="Source/utilities/scoped_toggle_atomic.h"/>
+      </GROUP>
+      <GROUP id="{6D2202A2-7783-9BDF-796A-51AF5847B9EF}" name="utility_components">
+        <FILE id="wnemSD" name="ComboBox.h" compile="0" resource="0" file="Source/utility_components/ComboBox.h"/>
+        <FILE id="bwnO29" name="Containers.h" compile="0" resource="0" file="Source/utility_components/Containers.h"/>
+        <FILE id="Wz1eaT" name="ContentContainer.h" compile="0" resource="0"
+              file="Source/utility_components/ContentContainer.h"/>
+        <FILE id="Nt84sj" name="PlayerButton.h" compile="0" resource="0" file="Source/utility_components/PlayerButton.h"/>
+      </GROUP>
+      <GROUP id="{A8884379-B165-E509-E3A3-D366518D48F8}" name="Views">
+        <GROUP id="{2CF8F16E-3FCE-7FDE-BFCE-4414E0EDB99F}" name="Interface">
+          <FILE id="YeQHT0" name="MenuViewInterface.h" compile="0" resource="0"
+                file="Source/Views/Interface/MenuViewInterface.h"/>
+        </GROUP>
+        <GROUP id="{UI000001-PROF-FRAM-EWOR-K00000000001}" name="Professional UI Framework">
+          <FILE id="UIDS001" name="DesignSystem.cpp" compile="1" resource="0"
+                file="Source/UI/DesignSystem.cpp"/>
+          <FILE id="UIDS002" name="DesignSystem.h" compile="0" resource="0"
+                file="Source/UI/DesignSystem.h"/>
+          <FILE id="UIRL001" name="ResponsiveLayout.h" compile="0" resource="0"
+                file="Source/UI/ResponsiveLayout.h"/>
+          <FILE id="UIMB001" name="ModernButton.h" compile="0" resource="0"
+                file="Source/UI/ModernButton.h"/>
+          <FILE id="UIKS001" name="KeyboardShortcuts.h" compile="0" resource="0"
+                file="Source/UI/KeyboardShortcuts.h"/>
+          <FILE id="UIET001" name="EnhancedTooltip.h" compile="0" resource="0"
+                file="Source/UI/EnhancedTooltip.h"/>
+          <FILE id="UIUR001" name="UndoRedoManager.h" compile="0" resource="0"
+                file="Source/UI/UndoRedoManager.h"/>
+        </GROUP>
+        <GROUP id="{07BDC490-1711-EBED-A3C1-0FB8B05DB91F}" name="Fundamental Frequency">
+          <FILE id="zUE9Wr" name="FundamentalFrequencyComponent.cpp" compile="1"
+                resource="0" file="Source/FundamentalFrequencyComponent.cpp"/>
+          <FILE id="o4lfPl" name="FundamentalFrequencyComponent.h" compile="0"
+                resource="0" file="Source/FundamentalFrequencyComponent.h"/>
+        </GROUP>
+        <GROUP id="{EACD2FEA-F130-0419-DA43-08FFEEAC8A00}" name="ChordPlayer">
+          <FILE id="eHwyTs" name="ChordPlayerComponent.cpp" compile="1" resource="0"
+                file="Source/ChordPlayerComponent.cpp"/>
+          <FILE id="Aybzct" name="ChordPlayerComponent.h" compile="0" resource="0"
+                file="Source/ChordPlayerComponent.h"/>
+          <FILE id="AxRvL6" name="ChordPlayerSettingsComponent.cpp" compile="1"
+                resource="0" file="Source/ChordPlayerSettingsComponent.cpp"/>
+          <FILE id="N4UJpC" name="ChordPlayerSettingsComponent.h" compile="0"
+                resource="0" file="Source/ChordPlayerSettingsComponent.h"/>
+          <FILE id="wKuIhn" name="CustomChordComponent.cpp" compile="1" resource="0"
+                file="Source/CustomChordComponent.cpp"/>
+          <FILE id="hPOJr0" name="CustomChordComponent.h" compile="0" resource="0"
+                file="Source/CustomChordComponent.h"/>
+          <FILE id="MI0w7O" name="ShortcutComponent.cpp" compile="1" resource="0"
+                file="Source/ShortcutComponent.cpp"/>
+          <FILE id="Oyoa08" name="ShortcutComponent.h" compile="0" resource="0"
+                file="Source/ShortcutComponent.h"/>
+        </GROUP>
+        <GROUP id="{4010FC67-EC36-140D-CF60-04003E4D0FF9}" name="ChordScanner">
+          <FILE id="XNBcV6" name="ChordScannerComponent.cpp" compile="1" resource="0"
+                file="Source/ChordScannerComponent.cpp"/>
+          <FILE id="wK77HA" name="ChordScannerComponent.h" compile="0" resource="0"
+                file="Source/ChordScannerComponent.h"/>
+        </GROUP>
+        <GROUP id="{36709400-5DA8-1E88-F30E-1152C1FFD4F1}" name="FrequencyPlayer">
+          <FILE id="nY6hgb" name="FrequencyPlayerComponent.cpp" compile="1" resource="0"
+                file="Source/FrequencyPlayerComponent.cpp"/>
+          <FILE id="paVlWs" name="FrequencyPlayerComponent.h" compile="0" resource="0"
+                file="Source/FrequencyPlayerComponent.h"/>
+          <FILE id="rKD7RE" name="FrequencyPlayerSettingsComponent.cpp" compile="1"
+                resource="0" file="Source/FrequencyPlayerSettingsComponent.cpp"/>
+          <FILE id="xFFIjl" name="FrequencyPlayerSettingsComponent.h" compile="0"
+                resource="0" file="Source/FrequencyPlayerSettingsComponent.h"/>
+        </GROUP>
+              <GROUP id="{A5200909-8E6E-1470-DAE4-64E4DFA7BEC0}" name="FrequencyScanner">
+                <FILE id="cpUKMC" name="FrequencyScannerComponent.cpp" compile="1"
+                      resource="0" file="Source/FrequencyScannerComponent.cpp"/>
+                <FILE id="QYITwn" name="FrequencyScannerComponent.h" compile="0" resource="0"
+                      file="Source/FrequencyScannerComponent.h"/>
+              </GROUP>
+              <GROUP id="{FB000001-FEED-BACK-MODU-LE00000000001}" name="FeedbackModule">
+                <FILE id="FBMC001" name="FeedbackModuleComponent.cpp" compile="1" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleComponent.cpp"/>
+                <FILE id="FBMC002" name="FeedbackModuleComponent.h" compile="0" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleComponent.h"/>
+                <FILE id="FBMP001" name="FeedbackModuleProcessor.cpp" compile="1" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleProcessor.cpp"/>
+                <FILE id="FBMP002" name="FeedbackModuleProcessor.h" compile="0" resource="0"
+                      file="Source/FeedbackModule/FeedbackModuleProcessor.h"/>
+                <FILE id="FBPS001" name="FeedbackModuleParameterSettingsComponent.cpp" compile="1"
+                      resource="0" file="Source/FeedbackModule/FeedbackModuleParameterSettingsComponent.cpp"/>
+                <FILE id="FBPS002" name="FeedbackModuleParameterSettingsComponent.h" compile="0"
+                      resource="0" file="Source/FeedbackModule/FeedbackModuleParameterSettingsComponent.h"/>
+                <FILE id="FBSS001" name="FeedbackSpectrumSettingsComponent.cpp" compile="1"
+                      resource="0" file="Source/FeedbackModule/FeedbackSpectrumSettingsComponent.cpp"/>
+                <FILE id="FBSS002" name="FeedbackSpectrumSettingsComponent.h" compile="0"
+                      resource="0" file="Source/FeedbackModule/FeedbackSpectrumSettingsComponent.h"/>
+                <FILE id="FBIO001" name="FeedbackInputOutputComponent.cpp" compile="1" resource="0"
+                      file="Source/FeedbackModule/FeedbackInputOutputComponent.cpp"/>
+                <FILE id="FBIO002" name="FeedbackInputOutputComponent.h" compile="0" resource="0"
+                      file="Source/FeedbackModule/FeedbackInputOutputComponent.h"/>
+              </GROUP>        <GROUP id="{D8FA3B42-9FDA-2C09-FCFF-26A1E7AFD605}" name="FrequencyToLight">
+          <FILE id="b8C1ou" name="FrequencyToLightSubComponents.cpp" compile="1"
+                resource="0" file="Source/FrequencyToLightSubComponents.cpp"/>
+          <FILE id="hgBunt" name="FrequencyToLightSubComponents.h" compile="0"
+                resource="0" file="Source/FrequencyToLightSubComponents.h"/>
+          <FILE id="zssbvx" name="FrequencyToLightComponent.cpp" compile="1"
+                resource="0" file="Source/FrequencyToLightComponent.cpp"/>
+          <FILE id="foCoOQ" name="FrequencyToLightComponent.h" compile="0" resource="0"
+                file="Source/FrequencyToLightComponent.h"/>
+        </GROUP>
+        <GROUP id="{ACD40B85-3B6F-1584-DE83-2F38C99F49C1}" name="Realtime Analysis">
+          <FILE id="Ascb3l" name="RealtimeAnalysisComponent.cpp" compile="1"
+                resource="0" file="Source/RealtimeAnalysisComponent.cpp"/>
+          <FILE id="GeokZJ" name="RealtimeAnalysisComponent.h" compile="0" resource="0"
+                file="Source/RealtimeAnalysisComponent.h"/>
+        </GROUP>
+        <GROUP id="{27299B7B-884C-58A2-36E3-EEEA8C3873C5}" name="Lissajous">
+          <FILE id="rxiiqK" name="LissajousCurveAddChordComponent.cpp" compile="1"
+                resource="0" file="Source/LissajousCurveAddChordComponent.cpp"/>
+          <FILE id="jxzHb1" name="LissajousCurveAddChordComponent.h" compile="0"
+                resource="0" file="Source/LissajousCurveAddChordComponent.h"/>
+          <FILE id="BZoS2z" name="LissajousCurveComponent.cpp" compile="1" resource="0"
+                file="Source/LissajousCurveComponent.cpp"/>
+          <FILE id="HbKoZS" name="LissajousCurveComponent.h" compile="0" resource="0"
+                file="Source/LissajousCurveComponent.h"/>
+        </GROUP>
+        <GROUP id="{D5697B00-5D6E-D643-4A20-62472B3D312A}" name="Settings">
+          <FILE id="l6We8L" name="SettingsComponent.cpp" compile="1" resource="0"
+                file="Source/SettingsComponent.cpp"/>
+          <FILE id="Mm06Ba" name="SettingsComponent.h" compile="0" resource="0"
+                file="Source/SettingsComponent.h"/>
+        </GROUP>
+        <GROUP id="{FA106981-5911-4770-6DC4-68C08529D898}" name="Plugin Rack">
+          <FILE id="nsIAOj" name="PluginBrowser_Component.cpp" compile="1" resource="0"
+                file="Source/PluginBrowser_Component.cpp"/>
+          <FILE id="Qnf1fm" name="PluginBrowser_Component.h" compile="0" resource="0"
+                file="Source/PluginBrowser_Component.h"/>
+          <FILE id="K6hUS0" name="PluginWindow.cpp" compile="1" resource="0"
+                file="Source/PluginWindow.cpp"/>
+          <FILE id="lzMMLS" name="PluginWindow.h" compile="0" resource="0" file="Source/PluginWindow.h"/>
+          <FILE id="tjpPDq" name="PluginRackComponent.cpp" compile="1" resource="0"
+                file="Source/PluginRackComponent.cpp"/>
+          <FILE id="AeD2mT" name="PluginRackComponent.h" compile="0" resource="0"
+                file="Source/PluginRackComponent.h"/>
+        </GROUP>
+        <GROUP id="{61B383A0-CB25-97AE-D03B-65FEDC964516}" name="Visualisers">
+          <GROUP id="{E3ABDE5A-6F3C-5133-A8D0-44ABE6F9A2BA}" name="OpenGL ">
+            <FILE id="IWIDSz" name="2DVisualisers.cpp" compile="1" resource="0"
+                  file="Source/2DVisualisers.cpp"/>
+            <FILE id="EMx2Os" name="2DVisualisers.h" compile="0" resource="0" file="Source/2DVisualisers.h"/>
+            <FILE id="GAMzT8" name="Oscilloscope2D.h" compile="0" resource="0"
+                  file="Source/Oscilloscope2D.h"/>
+            <FILE id="Jk8g2Y" name="Spectrum.h" compile="0" resource="0" file="Source/Spectrum.h"/>
+          </GROUP>
+          <GROUP id="{954E90C3-12F6-6416-6C59-0976503AA836}" name="FFT Based">
+            <FILE id="KpJv4i" name="RingBuffer.h" compile="0" resource="0" file="Source/RingBuffer.h"/>
+            <FILE id="JTLY83" name="OscilloscopeVisualiserComponent.cpp" compile="1"
+                  resource="0" file="Source/OscilloscopeVisualiserComponent.cpp"/>
+            <FILE id="p0wq2l" name="OscilloscopeVisualiserComponent.h" compile="0"
+                  resource="0" file="Source/OscilloscopeVisualiserComponent.h"/>
+            <FILE id="D1WUL5" name="HarmonographVisualiserComponent.cpp" compile="1"
+                  resource="0" file="Source/HarmonographVisualiserComponent.cpp"/>
+            <FILE id="jwJsPI" name="HarmonographVisualiserComponent.h" compile="0"
+                  resource="0" file="Source/HarmonographVisualiserComponent.h"/>
+            <FILE id="PZhuyq" name="OctaveVisualiserComponent.cpp" compile="1"
+                  resource="0" file="Source/OctaveVisualiserComponent.cpp"/>
+            <FILE id="Km7MSv" name="OctaveVisualiserComponent.h" compile="0" resource="0"
+                  file="Source/OctaveVisualiserComponent.h"/>
+            <FILE id="HKdhm4" name="FrequencyDataComponent.cpp" compile="1" resource="0"
+                  file="Source/FrequencyDataComponent.cpp"/>
+            <FILE id="QOMycR" name="FrequencyDataComponent.h" compile="0" resource="0"
+                  file="Source/FrequencyDataComponent.h"/>
+            <FILE id="RNON58" name="SpectrogramComponent.cpp" compile="1" resource="0"
+                  file="Source/SpectrogramComponent.cpp"/>
+            <FILE id="V8rasz" name="SpectrogramComponent.h" compile="0" resource="0"
+                  file="Source/SpectrogramComponent.h"/>
+            <FILE id="SHA001" name="SpectraHarmonicsChart.cpp" compile="1" resource="0"
+                  file="Source/SpectraHarmonicsChart.cpp"/>
+            <FILE id="SHA002" name="SpectraHarmonicsChart.h" compile="0" resource="0"
+                  file="Source/SpectraHarmonicsChart.h"/>
+            <FILE id="FCS001" name="FrequencyColorSpectrogram.cpp" compile="1" resource="0"
+                  file="Source/FrequencyColorSpectrogram.cpp"/>
+            <FILE id="FCS002" name="FrequencyColorSpectrogram.h" compile="0" resource="0"
+                  file="Source/FrequencyColorSpectrogram.h"/>
+            <FILE id="SWS001" name="StandingWaveSpectrogram.cpp" compile="1" resource="0"
+                  file="Source/StandingWaveSpectrogram.cpp"/>
+            <FILE id="SWS002" name="StandingWaveSpectrogram.h" compile="0" resource="0"
+                  file="Source/StandingWaveSpectrogram.h"/>
+            <FILE id="moVPpR" name="ColourSpectrumVisualiserComponent.cpp" compile="1"
+                  resource="0" file="Source/ColourSpectrumVisualiserComponent.cpp"/>
+            <FILE id="El3Ai7" name="ColourSpectrumVisualiserComponent.h" compile="0"
+                  resource="0" file="Source/ColourSpectrumVisualiserComponent.h"/>
+            <FILE id="I12y7f" name="VisualiserContainerComponent.cpp" compile="1"
+                  resource="0" file="Source/VisualiserContainerComponent.cpp"/>
+            <FILE id="tuyqEI" name="VisualiserContainerComponent.h" compile="0"
+                  resource="0" file="Source/VisualiserContainerComponent.h"/>
+            <FILE id="Tew2kS" name="PopupFFTWindow.h" compile="0" resource="0"
+                  file="Source/PopupFFTWindow.h"/>
+          </GROUP>
+        </GROUP>
+        <GROUP id="{97E32EA0-BC9B-BA89-86BC-CC95E3C5B67F}" name="Widgets">
+          <FILE id="aLCuft" name="HighQualityMeter.cpp" compile="1" resource="0"
+                file="Source/HighQualityMeter.cpp"/>
+          <FILE id="Ij8w71" name="HighQualityMeter.h" compile="0" resource="0"
+                file="Source/HighQualityMeter.h"/>
+          <FILE id="LQXsvn" name="CustomProgressBar.h" compile="0" resource="0"
+                file="Source/CustomProgressBar.h"/>
+          <FILE id="Ijx7qL" name="CustomRotarySlider.cpp" compile="1" resource="0"
+                file="Source/CustomRotarySlider.cpp"/>
+          <FILE id="L8TQOJ" name="CustomRotarySlider.h" compile="0" resource="0"
+                file="Source/CustomRotarySlider.h"/>
+          <FILE id="r7iwIm" name="WaveTableOscViewComponent.cpp" compile="1"
+                resource="0" file="Source/WaveTableOscViewComponent.cpp"/>
+          <FILE id="gVNYYd" name="WaveTableOscViewComponent.h" compile="0" resource="0"
+                file="Source/WaveTableOscViewComponent.h"/>
+        </GROUP>
+        <FILE id="zqhdHF" name="MainViewComponent.cpp" compile="1" resource="0"
+              file="Source/MainViewComponent.cpp"/>
+        <FILE id="zADXDZ" name="MainViewComponent.h" compile="0" resource="0"
+              file="Source/MainViewComponent.h"/>
+      </GROUP>
+      <GROUP id="{A0BD5AA1-1D46-C783-0340-805CEA38DAC7}" name="DSP">
+        <FILE id="MqiSxA" name="FundamentalFrequencyProcessor.cpp" compile="1"
+              resource="0" file="Source/FundamentalFrequencyProcessor.cpp"/>
+        <FILE id="JZp3zG" name="FundamentalFrequencyProcessor.h" compile="0"
+              resource="0" file="Source/FundamentalFrequencyProcessor.h"/>
+        <FILE id="fimMC3" name="AnalyzerNew.h" compile="0" resource="0" file="Source/AnalyzerNew.h"/>
+        <FILE id="a2MIOv" name="Analyzer.cpp" compile="1" resource="0" file="Source/Analyzer.cpp"/>
+        <FILE id="metXfq" name="Analyzer.h" compile="0" resource="0" file="Source/Analyzer.h"/>
+        <FILE id="IVIv1V" name="WaveStackOsc.cpp" compile="1" resource="0"
+              file="Source/WaveStackOsc.cpp"/>
+        <FILE id="ZiQMqL" name="WaveStackOsc.h" compile="0" resource="0" file="Source/WaveStackOsc.h"/>
+        <FILE id="tG5gwn" name="WavetableSynthProcessor.cpp" compile="1" resource="0"
+              file="Source/WavetableSynthProcessor.cpp"/>
+        <FILE id="k4SQfn" name="WavetableSynthProcessor.h" compile="0" resource="0"
+              file="Source/WavetableSynthProcessor.h"/>
+        <FILE id="Nnn6xr" name="WaveTableOsc.cpp" compile="1" resource="0"
+              file="Source/WaveTableOsc.cpp"/>
+        <FILE id="sJcygY" name="WaveTableOsc.h" compile="0" resource="0" file="Source/WaveTableOsc.h"/>
+        <GROUP id="{CF5A6A52-0019-B276-D9F8-8DA2FBAE9541}" name="Plugin Manager">
+          <FILE id="cJVeia" name="Delay.cpp" compile="1" resource="0" file="Source/Delay.cpp"/>
+          <FILE id="iEzh5b" name="Delay.h" compile="0" resource="0" file="Source/Delay.h"/>
+          <FILE id="YAdoIC" name="PluginAssignProcessor.cpp" compile="1" resource="0"
+                file="Source/PluginAssignProcessor.cpp"/>
+          <FILE id="f3xJNP" name="PluginAssignProcessor.h" compile="0" resource="0"
+                file="Source/PluginAssignProcessor.h"/>
+        </GROUP>
+        <FILE id="qyH9QY" name="FrequencyManager.cpp" compile="1" resource="0"
+              file="Source/FrequencyManager.cpp"/>
+        <FILE id="V31EXr" name="FrequencyManager.h" compile="0" resource="0"
+              file="Source/FrequencyManager.h"/>
+        <FILE id="AP0QDi" name="Scales.cpp" compile="1" resource="0" file="Source/Scales.cpp"/>
+        <FILE id="dofsUR" name="Scales.h" compile="0" resource="0" file="Source/Scales.h"/>
+        <FILE id="mG26y5" name="ChordManager.cpp" compile="1" resource="0"
+              file="Source/ChordManager.cpp"/>
+        <FILE id="sc64Ry" name="ChordManager.h" compile="0" resource="0" file="Source/ChordManager.h"/>
+        <FILE id="vA1GmK" name="SynthesisLibraryManager.cpp" compile="1" resource="0"
+              file="Source/SynthesisLibraryManager.cpp"/>
+        <FILE id="dMtcSP" name="SynthesisLibraryManager.h" compile="0" resource="0"
+              file="Source/SynthesisLibraryManager.h"/>
+        <GROUP id="{C3776CA9-7779-6CBA-2DCC-1D8624067F97}" name="OpenGL"/>
+        <GROUP id="{5017453F-A848-25A0-AB11-B23EEC9349B4}" name="Osc Files">
+          <FILE id="lEi0Gp" name="NoiseOscillator.cpp" compile="1" resource="0"
+                file="Source/NoiseOscillator.cpp"/>
+          <FILE id="uV34sc" name="NoiseOscillator.h" compile="0" resource="0"
+                file="Source/NoiseOscillator.h"/>
+          <FILE id="a3mWLo" name="vConstants.h" compile="0" resource="0" file="Source/vConstants.h"/>
+          <FILE id="oYi0RZ" name="lookuptables.h" compile="0" resource="0" file="Source/lookuptables.h"/>
+          <FILE id="Qjcxvl" name="pluginconstants.h" compile="0" resource="0"
+                file="Source/pluginconstants.h"/>
+          <FILE id="SrPNPm" name="synthfunctions.h" compile="0" resource="0"
+                file="Source/synthfunctions.h"/>
+        </GROUP>
+        <FILE id="my7qC2" name="PlayRepeaterBase.cpp" compile="1" resource="0"
+              file="Source/PlayRepeaterBase.cpp"/>
+        <FILE id="neqBdM" name="PlayRepeaterBase.h" compile="0" resource="0"
+              file="Source/PlayRepeaterBase.h"/>
+        <FILE id="XWcbtZ" name="VotanBuffer.cpp" compile="1" resource="0" file="Source/VotanBuffer.cpp"/>
+        <FILE id="DW7bxv" name="VotanBuffer.h" compile="0" resource="0" file="Source/VotanBuffer.h"/>
+        <FILE id="Z1ky1L" name="OSCManager.cpp" compile="1" resource="0" file="Source/OSCManager.cpp"/>
+        <FILE id="AJ4CXi" name="OSCManager.h" compile="0" resource="0" file="Source/OSCManager.h"/>
+        <FILE id="PQEZnZ" name="VotanSynthProcessor.cpp" compile="1" resource="0"
+              file="Source/VotanSynthProcessor.cpp"/>
+        <FILE id="HP56vS" name="VotanSynthProcessor.h" compile="0" resource="0"
+              file="Source/VotanSynthProcessor.h"/>
+        <FILE id="hD097h" name="VAOscillator.cpp" compile="1" resource="0"
+              file="Source/VAOscillator.cpp"/>
+        <FILE id="GIRZtU" name="VAOscillator.h" compile="0" resource="0" file="Source/VAOscillator.h"/>
+        <FILE id="bDfQIf" name="ADSR2.cpp" compile="1" resource="0" file="Source/ADSR2.cpp"/>
+        <FILE id="Yzt2O1" name="ADSR2.h" compile="0" resource="0" file="Source/ADSR2.h"/>
+        <FILE id="F03iKn" name="ChordPlayerProcessor.cpp" compile="1" resource="0"
+              file="Source/ChordPlayerProcessor.cpp"/>
+        <FILE id="ktkf9l" name="ChordPlayerProcessor.h" compile="0" resource="0"
+              file="Source/ChordPlayerProcessor.h"/>
+        <FILE id="boZcqd" name="ChordScannerProcessor.cpp" compile="1" resource="0"
+              file="Source/ChordScannerProcessor.cpp"/>
+        <FILE id="WmRSzq" name="ChordScannerProcessor.h" compile="0" resource="0"
+              file="Source/ChordScannerProcessor.h"/>
+        <FILE id="vCG0eq" name="FrequencyPlayerProcessor.cpp" compile="1" resource="0"
+              file="Source/FrequencyPlayerProcessor.cpp"/>
+        <FILE id="COJXJs" name="FrequencyPlayerProcessor.h" compile="0" resource="0"
+              file="Source/FrequencyPlayerProcessor.h"/>
+        <FILE id="CbyoNY" name="FrequencyScannerProcessor.cpp" compile="1"
+              resource="0" file="Source/FrequencyScannerProcessor.cpp"/>
+        <FILE id="YsP4qd" name="FrequencyScannerProcessor.h" compile="0" resource="0"
+              file="Source/FrequencyScannerProcessor.h"/>
+        <FILE id="nBZKLs" name="FrequencyToLightProcessor.cpp" compile="1"
+              resource="0" file="Source/FrequencyToLightProcessor.cpp"/>
+        <FILE id="XYL33m" name="FrequencyToLightProcessor.h" compile="0" resource="0"
+              file="Source/FrequencyToLightProcessor.h"/>
+        <FILE id="TliBfJ" name="RealtimeAnalysisProcessor.cpp" compile="1"
+              resource="0" file="Source/RealtimeAnalysisProcessor.cpp"/>
+        <FILE id="zmtV4q" name="RealtimeAnalysisProcessor.h" compile="0" resource="0"
+              file="Source/RealtimeAnalysisProcessor.h"/>
+        <FILE id="dfpnnc" name="LissajousCurveProcessor.cpp" compile="1" resource="0"
+              file="Source/LissajousCurveProcessor.cpp"/>
+        <FILE id="Ai8br7" name="LissajousCurveProcessor.h" compile="0" resource="0"
+              file="Source/LissajousCurveProcessor.h"/>
+        <GROUP id="{FE3C81B4-1202-E24C-DB1A-7A6600CFFCAF}" name="hiir">
+          <FILE id="m00WHJ" name="Array.h" compile="0" resource="0" file="Source/hiir/Array.h"/>
+          <FILE id="UJSJfD" name="Array.hpp" compile="0" resource="0" file="Source/hiir/Array.hpp"/>
+          <FILE id="DxmJO1" name="def.h" compile="0" resource="0" file="Source/hiir/def.h"/>
+          <FILE id="LnIjeG" name="Downsampler2xFpu.h" compile="0" resource="0"
+                file="Source/hiir/Downsampler2xFpu.h"/>
+          <FILE id="JJr9Y3" name="Downsampler2xFpu.hpp" compile="0" resource="0"
+                file="Source/hiir/Downsampler2xFpu.hpp"/>
+          <FILE id="bMaKJ8" name="Downsampler2xSse.h" compile="0" resource="0"
+                file="Source/hiir/Downsampler2xSse.h"/>
+          <FILE id="FJYGIT" name="Downsampler2xSse.hpp" compile="0" resource="0"
+                file="Source/hiir/Downsampler2xSse.hpp"/>
+          <FILE id="lWC87q" name="fnc.h" compile="0" resource="0" file="Source/hiir/fnc.h"/>
+          <FILE id="jPPPhx" name="fnc.hpp" compile="0" resource="0" file="Source/hiir/fnc.hpp"/>
+          <FILE id="q30zNR" name="iir_resample.h" compile="0" resource="0" file="Source/hiir/iir_resample.h"/>
+          <FILE id="hz5bUn" name="PhaseHalfPiFpu.h" compile="0" resource="0"
+                file="Source/hiir/PhaseHalfPiFpu.h"/>
+          <FILE id="xTGiVI" name="PhaseHalfPiFpu.hpp" compile="0" resource="0"
+                file="Source/hiir/PhaseHalfPiFpu.hpp"/>
+          <FILE id="iArv71" name="PolyphaseIir2Designer.cpp" compile="1" resource="0"
+                file="Source/hiir/PolyphaseIir2Designer.cpp"/>
+          <FILE id="IwMDHz" name="PolyphaseIir2Designer.h" compile="0" resource="0"
+                file="Source/hiir/PolyphaseIir2Designer.h"/>
+          <FILE id="Ur66e0" name="StageDataSse.h" compile="0" resource="0" file="Source/hiir/StageDataSse.h"/>
+          <FILE id="vdhHrP" name="StageProcFpu.h" compile="0" resource="0" file="Source/hiir/StageProcFpu.h"/>
+          <FILE id="in4nZA" name="StageProcFpu.hpp" compile="0" resource="0"
+                file="Source/hiir/StageProcFpu.hpp"/>
+          <FILE id="HuGFix" name="StageProcSse.h" compile="0" resource="0" file="Source/hiir/StageProcSse.h"/>
+          <FILE id="qQfyEk" name="StageProcSse.hpp" compile="0" resource="0"
+                file="Source/hiir/StageProcSse.hpp"/>
+          <FILE id="DE88rL" name="Upsampler2xFpu.h" compile="0" resource="0"
+                file="Source/hiir/Upsampler2xFpu.h"/>
+          <FILE id="BlE6ea" name="Upsampler2xFpu.hpp" compile="0" resource="0"
+                file="Source/hiir/Upsampler2xFpu.hpp"/>
+          <FILE id="U0TY67" name="Upsampler2xSse.h" compile="0" resource="0"
+                file="Source/hiir/Upsampler2xSse.h"/>
+          <FILE id="GRXSoA" name="Upsampler2xSse.hpp" compile="0" resource="0"
+                file="Source/hiir/Upsampler2xSse.hpp"/>
+        </GROUP>
+        <FILE id="wpouK9" name="LUTs.h" compile="0" resource="0" file="Source/LUTs.h"/>
+        <FILE id="tcci1k" name="Oscillators.cpp" compile="1" resource="0" file="Source/Oscillators.cpp"/>
+        <FILE id="eZ1IAD" name="Oscillators.h" compile="0" resource="0" file="Source/Oscillators.h"/>
+        <FILE id="gDTO8f" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
+        <FILE id="VLyqc6" name="SamplerProcessor.cpp" compile="1" resource="0"
+              file="Source/SamplerProcessor.cpp"/>
+        <FILE id="e5Tvxy" name="SamplerProcessor.h" compile="0" resource="0"
+              file="Source/SamplerProcessor.h"/>
+        <FILE id="cMeAw7" name="SynthesisProcessor.cpp" compile="1" resource="0"
+              file="Source/SynthesisProcessor.cpp"/>
+        <FILE id="Ikb0ON" name="SynthesisProcessor.h" compile="0" resource="0"
+              file="Source/SynthesisProcessor.h"/>
+      </GROUP>
+      <FILE id="H0Hfjn" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/CustomLookAndFeel.cpp"/>
+      <FILE id="fT8xNQ" name="CustomLookAndFeel.h" compile="0" resource="0"
+            file="Source/CustomLookAndFeel.h"/>
+      <FILE id="TrTb01" name="TransportToolbarComponent.cpp" compile="1" resource="0"
+            file="Source/TransportToolbarComponent.cpp"/>
+      <FILE id="TrTb02" name="TransportToolbarComponent.h" compile="0" resource="0"
+            file="Source/TransportToolbarComponent.h"/>
+      <FILE id="oDHitA" name="LogFileWriter.cpp" compile="1" resource="0"
+            file="Source/LogFileWriter.cpp"/>
+      <FILE id="jcmif7" name="LogFileWriter.h" compile="0" resource="0" file="Source/LogFileWriter.h"/>
+      <FILE id="DF2X8l" name="ProjectManager.cpp" compile="1" resource="0"
+            file="Source/ProjectManager.cpp"/>
+      <FILE id="KWk1MV" name="ProjectManager.h" compile="0" resource="0"
+            file="Source/ProjectManager.h"/>
+      <FILE id="PM0001" name="ProfileManager.cpp" compile="1" resource="0"
+            file="Source/ProfileManager.cpp"/>
+      <FILE id="PM0002" name="ProfileManager.h" compile="0" resource="0"
+            file="Source/ProfileManager.h"/>
+      <FILE id="IB94AT" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="YIgPkB" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="B6Tpcp" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="p4m5wf" bigIcon="Rq6E4Q"
+               hardenedRuntime="0" microphonePermissionNeeded="1" extraDefs="JUCE_MODAL_LOOPS_PERMITTED=1&#10;TSS_SYNTHESIS_ENGINE=1"
+               enableGNUExtensions="1" postBuildScript="if [ &quot;$CONFIGURATION&quot; == &quot;Release&quot; ] || [ &quot;$CONFIGURATION&quot; == &quot;Debug&quot; ]; then&#10;  echo &quot;Cleaning detritus from ${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app&quot;&#10;  /usr/bin/xattr -cr &quot;${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app&quot;&#10;  /usr/sbin/dot_clean -m &quot;${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app&quot;&#10;fi">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" macOSDeploymentTarget="10.13" osxCompatibility="10.13 SDK"/>
+        <CONFIGURATION isDebug="0" name="Release" macOSDeploymentTarget="10.13" osxCompatibility="10.13 SDK"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../JUCE/modules"/>
+        <MODULEPATH id="audio_fft" path="user_modules"/>
+        <MODULEPATH id="pitch_detector" path="user_modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile" extraCompilerFlags="-no-pie">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_opengl" path="modules"/>
+        <MODULEPATH id="juce_gui_extra" path="modules"/>
+        <MODULEPATH id="juce_gui_basics" path="modules"/>
+        <MODULEPATH id="juce_graphics" path="modules"/>
+        <MODULEPATH id="juce_events" path="modules"/>
+        <MODULEPATH id="juce_dsp" path="modules"/>
+        <MODULEPATH id="juce_data_structures" path="modules"/>
+        <MODULEPATH id="juce_cryptography" path="modules"/>
+        <MODULEPATH id="juce_core" path="modules"/>
+        <MODULEPATH id="juce_audio_utils" path="modules"/>
+        <MODULEPATH id="juce_audio_processors" path="modules"/>
+        <MODULEPATH id="juce_audio_formats" path="modules"/>
+        <MODULEPATH id="juce_audio_devices" path="modules"/>
+        <MODULEPATH id="juce_audio_basics" path="modules"/>
+        <MODULEPATH id="audio_fft" path="user_modules"/>
+        <MODULEPATH id="pitch_detector" path="user_modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="audio_fft" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="pitch_detector" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <OSX/>
+  </LIVE_SETTINGS>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_USE_MP3AUDIOFORMAT="0"
+               JUCE_USE_LAME_AUDIO_FORMAT="0" JUCE_USE_OGGVORBIS="0" JUCE_USE_FLAC="1"
+               JUCE_USE_WINDOWS_MEDIA_FORMAT="0" JUCE_WEB_BROWSER="0" JUCE_USE_ANDROID_OBOE="1"/>
+</JUCERPROJECT>

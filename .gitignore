@@ -1,41 +1,58 @@
-# Prerequisites
-*.d
+# The Sound Studio - Git Ignore Configuration
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Large Graphics Files (PSD files)
+*.psd
+Graphics/*.psd
+Assets/*.psd
 
-# Precompiled Headers
-*.gch
-*.pch
+# Build files and artifacts
+**/Builds/**/build/
+**/Builds/**/DerivedData/
+**/Builds/**/DD_OUT/
+**/.vs/
+**/x64/
+**/Debug/
+**/Release/
 
-# Linker files
-*.ilk
+# IDE and editor files
+**/.vscode/
+**/.idea/
+**/*.vcxproj.user
+**/*.vcxproj.filters.user
+*.swp
+*.swo
+*~
 
-# Debugger Files
-*.pdb
+# System files
+.DS_Store
+Thumbs.db
+**/.DS_Store
+**/Thumbs.db
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# JUCE auto-generated binary data
+**/JuceLibraryCode/BinaryData.cpp
+**/JuceLibraryCode/BinaryData.h
+**/JuceLibraryCode/BinaryData2.cpp
 
-# Fortran module files
-*.mod
-*.smod
+# Temporary and backup files
+**/*.tmp
+**/*.temp
+**/*.log
+**/*.bak
+**/*.bak2
+**/*.bak3
+**/*.bak4
+**/*.orig
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# Compiled application binary
+The Sound Studio.app/
 
-# Executables
-*.exe
-*.out
-*.app
+# Runtime files
+*.pid
+.tss_pid
+logs/
+app_output.log
 
-# debug information files
-*.dwo
+# Development utility scripts (keep scripts/ but exclude dev helpers)
+launch.sh
+monitor_app.sh

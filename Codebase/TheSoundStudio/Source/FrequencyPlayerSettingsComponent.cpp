@@ -1,0 +1,1044 @@
+/*
+  ==============================================================================
+
+    FrequencyPlayerSettingsComponent.cpp
+    The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
+
+  ==============================================================================
+*/
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "FrequencyPlayerSettingsComponent.h"
+
+//==============================================================================
+FrequencyPlayerSettingsComponent::FrequencyPlayerSettingsComponent(ProjectManager * pm)
+{
+    projectManager  = pm;
+    shortcutRef     = 0;
+    // LookAndFeels
+    
+    
+    
+    mainBackgroundImage         = ImageCache::getFromMemory(BinaryData::FrequencyPlayerSettingsBackground2_png, BinaryData::FrequencyPlayerSettingsBackground2_pngSize);
+    imageCloseButton            = ImageCache::getFromMemory(BinaryData::CloseButton2x_png, BinaryData::CloseButton2x_pngSize);
+    imageBlueButtonNormal       = ImageCache::getFromMemory(BinaryData::BlueButton_Normal_png, BinaryData::BlueButton_Normal_pngSize);
+    imageBlueButtonSelected     = ImageCache::getFromMemory(BinaryData::BlueButton_Selected_png, BinaryData::BlueButton_Selected_pngSize);
+    imageAddButton              = ImageCache::getFromMemory(BinaryData::AddButton2x_png, BinaryData::AddButton2x_pngSize);
+    
+    imageBlueCheckButtonNormal  = ImageCache::getFromMemory(BinaryData::Button_Checkbox_Normal_Max_png, BinaryData::Button_Checkbox_Normal_Max_pngSize);
+    imageBlueCheckButtonSelected= ImageCache::getFromMemory(BinaryData::Button_Checkbox_Selected_Max_png, BinaryData::Button_Checkbox_Selected_Max_pngSize);
+    
+    
+    button_Close = std::make_unique<ImageButton>();
+    button_Close->setTriggeredOnMouseDown(true);
+    button_Close->setImages (false, true, true,
+                             imageCloseButton, 0.999f, Colour (0x00000000),
+                             Image(), 1.000f, Colour (0x00000000),
+                             imageCloseButton, 0.75, Colour (0x00000000));
+    button_Close->addListener(this);
+    button_Close->setBounds(1408, 275, 150, 28);
+    addAndMakeVisible(button_Close.get());
+    
+    // toggle between these two
+    button_ChooseSpecificFrequency = std::make_unique<ImageButton>();
+    button_ChooseSpecificFrequency->setTriggeredOnMouseDown(true);
+    button_ChooseSpecificFrequency->setImages (false, true, true,
+                                           imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                           Image(), 1.000f, Colour (0x00000000),
+                                           imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_ChooseSpecificFrequency->addListener(this);
+    button_ChooseSpecificFrequency->setBounds(90, 360, 38, 38);
+    addAndMakeVisible(button_ChooseSpecificFrequency.get());
+    
+    
+    button_ChooseRangeOfFrequencies = std::make_unique<ImageButton>();
+    button_ChooseRangeOfFrequencies->setTriggeredOnMouseDown(true);
+    button_ChooseRangeOfFrequencies->setImages (false, true, true,
+                                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                                Image(), 1.000f, Colour (0x00000000),
+                                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_ChooseRangeOfFrequencies->addListener(this);
+    button_ChooseRangeOfFrequencies->setBounds(628, 360, 38, 38);
+    addAndMakeVisible(button_ChooseRangeOfFrequencies.get());
+    
+    
+    int shift = 0;
+    int waveY = 547;
+    int shiftBack = 20;
+    int mulDivY = 410;
+    
+    
+    // act as toggle between 5 buttons
+    button_Default = std::make_unique<ImageButton>();
+    button_Default->setTriggeredOnMouseDown(true);
+    button_Default->setImages (false, true, true,
+                               imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                               Image(), 1.000f, Colour (0x00000000),
+                               imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Default->addListener(this);
+    button_Default->setBounds(260, waveY, 38, 38);
+//    addAndMakeVisible(button_Default.get());
+    
+
+    button_Sine = std::make_unique<ImageButton>();
+    button_Sine->setTriggeredOnMouseDown(true);
+    button_Sine->setImages (false, true, true,
+                            imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                            Image(), 1.000f, Colour (0x00000000),
+                            imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Sine->addListener(this);
+    button_Sine->setBounds(420-shift-10+6, waveY, 38, 38);
+    addAndMakeVisible(button_Sine.get());
+    
+    button_Triangle = std::make_unique<ImageButton>();
+    button_Triangle->setTriggeredOnMouseDown(true);
+    button_Triangle->setImages (false, true, true,
+                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000),
+                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Triangle->addListener(this);
+    button_Triangle->setBounds(660-shift+16-16, waveY, 38, 38);
+    addAndMakeVisible(button_Triangle.get());
+    
+    button_Square = std::make_unique<ImageButton>();
+    button_Square->setTriggeredOnMouseDown(true);
+    button_Square->setImages (false, true, true,
+                              imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Square->addListener(this);
+    button_Square->setBounds(910-shift, waveY, 38, 38);
+    addAndMakeVisible(button_Square.get());
+    
+    button_Sawtooth = std::make_unique<ImageButton>();
+    button_Sawtooth->setTriggeredOnMouseDown(true);
+    button_Sawtooth->setImages (false, true, true,
+                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000),
+                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Sawtooth->addListener(this);
+    button_Sawtooth->setBounds(1180-shift, waveY, 38, 38);
+    addAndMakeVisible(button_Sawtooth.get());
+    
+    button_Wavetable = std::make_unique<ImageButton>();
+    button_Wavetable->setTriggeredOnMouseDown(true);
+    button_Wavetable->setImages (false, true, true,
+                                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                                Image(), 1.000f, Colour (0x00000000),
+                                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Wavetable->addListener(this);
+    addAndMakeVisible(button_Wavetable.get());
+    
+    
+    button_WavetableEditor = std::make_unique<TextButton>("");
+    button_WavetableEditor->setButtonText("WT Editor");
+    button_WavetableEditor->setLookAndFeel(&lookAndFeel);
+    button_WavetableEditor->addListener(this);
+    addAndMakeVisible(button_WavetableEditor.get());
+
+    
+    button_Add = std::make_unique<ImageButton>();
+    button_Add->setTriggeredOnMouseDown(true);
+    button_Add->setImages (false, true, true,
+                           imageAddButton, 0.999f, Colour (0x00000000),
+                           Image(), 1.000f, Colour (0x00000000),
+                           imageAddButton, 0.888, Colour (0x00000000));
+    button_Add->addListener(this);
+    button_Add->setBounds(609, 980, 341, 84);
+    addAndMakeVisible(button_Add.get());
+    
+    
+    button_ManipulateFreq = std::make_unique<ImageButton>();
+    button_ManipulateFreq->setTriggeredOnMouseDown(true);
+    button_ManipulateFreq->setImages (false, true, true,
+                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
+                                      Image(), 1.000f, Colour (0x00000000),
+                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
+    button_ManipulateFreq->addListener(this);
+    button_ManipulateFreq->setBounds(1054, 357, 30, 30);
+    addAndMakeVisible(button_ManipulateFreq.get());
+    
+    button_Log = std::make_unique<ImageButton>();
+    button_Log->setTriggeredOnMouseDown(true);
+    button_Log->setImages (false, true, true,
+                                      imageBlueCheckButtonNormal, 0.999f, Colour (0x00000000),
+                                      Image(), 1.000f, Colour (0x00000000),
+                                      imageBlueCheckButtonSelected, 1.0, Colour (0x00000000));
+    button_Log->addListener(this);
+    button_Log->setBounds(632, 460, 30, 30);
+    addAndMakeVisible(button_Log.get());
+    
+    
+    button_Multiplication = std::make_unique<ImageButton>();
+    button_Multiplication->setTriggeredOnMouseDown(true);
+    button_Multiplication->setImages (false, true, true,
+                                      imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                      Image(), 1.000f, Colour (0x00000000),
+                                      imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Multiplication->addListener(this);
+    button_Multiplication->setBounds(1086-shiftBack, mulDivY, 38, 38);
+    addAndMakeVisible(button_Multiplication.get());
+    
+    button_Division = std::make_unique<ImageButton>();
+    button_Division->setTriggeredOnMouseDown(true);
+    button_Division->setImages (false, true, true,
+                                imageBlueButtonNormal, 0.999f, Colour (0x00000000),
+                                Image(), 1.000f, Colour (0x00000000),
+                                imageBlueButtonSelected, 1.0, Colour (0x00000000));
+    button_Division->addListener(this);
+    button_Division->setBounds(1317-shiftBack, mulDivY, 38, 38);
+    addAndMakeVisible(button_Division.get());
+    
+    // Font
+    Typeface::Ptr AssistantLight        = Typeface::createSystemTypefaceFor(BinaryData::AssistantLight_ttf, BinaryData::AssistantLight_ttfSize);
+    Typeface::Ptr AssistantSemiBold     = Typeface::createSystemTypefaceFor(BinaryData::AssistantSemiBold_ttf, BinaryData::AssistantSemiBold_ttfSize);
+    Font fontSemiBold(AssistantSemiBold);
+    Font fontLight(AssistantLight);
+    
+    fontSemiBold.setHeight(33 * scaleFactor);
+    fontLight.setHeight(33 * scaleFactor);
+    
+    int playY = 894;
+    
+    comboBoxOutputSelection = std::make_unique<ComboBox>();
+    comboBoxOutputSelection->setLookAndFeel(&lookAndFeel);
+    comboBoxOutputSelection->addListener(this);
+    comboBoxOutputSelection->setSelectedId(0);
+    projectManager->getOutputsPopupMenu(*comboBoxOutputSelection->getRootMenu());
+    addAndMakeVisible(comboBoxOutputSelection.get());
+
+
+    textEditorRepeat = std::make_unique<TextEditor>();
+    textEditorRepeat->setReturnKeyStartsNewLine(false);
+    textEditorRepeat->setInputRestrictions(2, "0123456789");
+    textEditorRepeat->setMultiLine(false);
+    textEditorRepeat->setText("1");
+    textEditorRepeat->addListener(this);
+    textEditorRepeat->setLookAndFeel(&lookAndFeel);
+    textEditorRepeat->setJustification(Justification::centred);
+    textEditorRepeat->setFont(fontSemiBold);
+    textEditorRepeat->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorRepeat->applyFontToAllText(fontSemiBold);
+    textEditorRepeat->applyColourToAllText(Colours::lightgrey);
+    textEditorRepeat->setBounds(466, playY, 111, 35);
+    addAndMakeVisible(textEditorRepeat.get());
+    
+    textEditorPause = std::make_unique<TextEditor>();
+    textEditorPause->setReturnKeyStartsNewLine(false);
+    textEditorPause->setInputRestrictions(5, "0123456789");
+    textEditorPause->setMultiLine(false);
+    textEditorPause->setText("1000");
+    textEditorPause->addListener(this);
+    textEditorPause->setLookAndFeel(&lookAndFeel);
+    textEditorPause->setJustification(Justification::centred);
+    textEditorPause->setFont(fontSemiBold);
+    textEditorPause->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorPause->applyFontToAllText(fontSemiBold);
+    textEditorPause->applyColourToAllText(Colours::lightgrey);
+    textEditorPause->setBounds(1094, playY, 111, 35);
+    addAndMakeVisible(textEditorPause.get());
+    
+    
+    textEditorLength = std::make_unique<TextEditor>();
+    textEditorLength->setReturnKeyStartsNewLine(false);
+    textEditorLength->setMultiLine(false);
+    textEditorLength->setInputRestrictions(5, "0123456789");
+    textEditorLength->setText("1000");
+    textEditorLength->addListener(this);
+    textEditorLength->setLookAndFeel(&lookAndFeel);
+    textEditorLength->setJustification(Justification::centred);
+    textEditorLength->setFont(fontSemiBold);
+    textEditorLength->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorLength->applyFontToAllText(fontSemiBold);
+    textEditorLength->applyColourToAllText(Colours::lightgrey);
+    textEditorLength->setBounds(794, playY, 111, 35);
+    addAndMakeVisible(textEditorLength.get());
+    
+
+    
+    // TextEntryBoxes
+    textEditorInsertFreq = std::make_unique<TextEditor>();
+    textEditorInsertFreq->setReturnKeyStartsNewLine(false);
+    textEditorInsertFreq->setMultiLine(false);
+    textEditorInsertFreq->setInputRestrictions(12, "0123456789.");
+    textEditorInsertFreq->setText("432");
+    textEditorInsertFreq->addListener(this);
+    textEditorInsertFreq->setLookAndFeel(&lookAndFeel);
+    textEditorInsertFreq->setJustification(Justification::centred);
+    textEditorInsertFreq->setFont(fontSemiBold);
+    textEditorInsertFreq->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorInsertFreq->applyFontToAllText(fontSemiBold);
+    textEditorInsertFreq->applyColourToAllText(Colours::lightgrey);
+    textEditorInsertFreq->setBounds(476, 360, 96, 35);
+    addAndMakeVisible(textEditorInsertFreq.get());
+    
+    
+    int y = 402;
+    textEditorFreqFrom = std::make_unique<TextEditor>();
+    textEditorFreqFrom->setReturnKeyStartsNewLine(false);
+    textEditorFreqFrom->setMultiLine(false);
+    textEditorFreqFrom->setInputRestrictions(12, "0123456789.");
+    textEditorFreqFrom->setText("432");
+    textEditorFreqFrom->addListener(this);
+    textEditorFreqFrom->setLookAndFeel(&lookAndFeel);
+    textEditorFreqFrom->setJustification(Justification::centred);
+    textEditorFreqFrom->setFont(fontSemiBold);
+    textEditorFreqFrom->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorFreqFrom->applyFontToAllText(fontSemiBold);
+    textEditorFreqFrom->applyColourToAllText(Colours::lightgrey);
+    textEditorFreqFrom->setBounds(708, y, 96, 35);
+    addAndMakeVisible(textEditorFreqFrom.get());
+    
+    textEditorFreqTo = std::make_unique<TextEditor>("");
+    textEditorFreqTo->setReturnKeyStartsNewLine(false);
+    textEditorFreqTo->setMultiLine(false);
+    textEditorFreqTo->setInputRestrictions(12, "0123456789.");
+    textEditorFreqTo->setText("432");
+    textEditorFreqTo->addListener(this);
+    textEditorFreqTo->setLookAndFeel(&lookAndFeel);
+    textEditorFreqTo->setJustification(Justification::centred);
+    textEditorFreqTo->setFont(fontSemiBold);
+    textEditorFreqTo->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorFreqTo->applyFontToAllText(fontSemiBold);
+    textEditorFreqTo->applyColourToAllText(Colours::lightgrey);
+    textEditorFreqTo->setBounds(910, y, 96, 35);
+    addAndMakeVisible(textEditorFreqTo.get());
+    
+    textEditorRangeLength = std::make_unique<TextEditor>("");
+    textEditorRangeLength->setReturnKeyStartsNewLine(false);
+    textEditorRangeLength->setMultiLine(false);
+    textEditorRangeLength->setInputRestrictions(5, "0123456789.");
+    textEditorRangeLength->setText("1000ms");
+    textEditorRangeLength->addListener(this);
+    textEditorRangeLength->setLookAndFeel(&lookAndFeel);
+    textEditorRangeLength->setJustification(Justification::centred);
+    textEditorRangeLength->setFont(fontSemiBold);
+    textEditorRangeLength->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorRangeLength->applyFontToAllText(fontSemiBold);
+    textEditorRangeLength->applyColourToAllText(Colours::lightgrey);
+    textEditorRangeLength->setBounds(907, 456, 96, 35);
+    addAndMakeVisible(textEditorRangeLength.get());
+    
+    int multTy= 458;
+    int shiftxx = 12;
+    textEditorMultiplication = std::make_unique<TextEditor>("");
+    textEditorMultiplication->setReturnKeyStartsNewLine(false);
+    textEditorMultiplication->setMultiLine(false);
+    textEditorMultiplication->setInputRestrictions(10, "0123456789.");
+    textEditorMultiplication->setText("1.0");
+    textEditorMultiplication->addListener(this);
+    textEditorMultiplication->setLookAndFeel(&lookAndFeel);
+    textEditorMultiplication->setJustification(Justification::centred);
+    textEditorMultiplication->setFont(fontSemiBold);
+    textEditorMultiplication->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorMultiplication->applyFontToAllText(fontSemiBold);
+    textEditorMultiplication->applyColourToAllText(Colours::lightgrey);
+    textEditorMultiplication->setBounds(1128-shiftxx, multTy, 111, 35);
+    addAndMakeVisible(textEditorMultiplication.get());
+    
+    textEditorDivision = std::make_unique<TextEditor>("");
+    textEditorDivision->setReturnKeyStartsNewLine(false);
+    textEditorDivision->setMultiLine(false);
+    textEditorDivision->setInputRestrictions(10, "0123456789.");
+    textEditorDivision->setText("1.0");
+    textEditorDivision->addListener(this);
+    textEditorDivision->setLookAndFeel(&lookAndFeel);
+    textEditorDivision->setJustification(Justification::centred);
+    textEditorDivision->setFont(fontSemiBold);
+    textEditorDivision->setColour(TextEditor::textColourId, Colours::darkgrey);
+    textEditorDivision->applyFontToAllText(fontSemiBold);
+    textEditorDivision->applyColourToAllText(Colours::lightgrey);
+    textEditorDivision->setBounds(1359-shiftxx, multTy, 111, 35);
+    addAndMakeVisible(textEditorDivision.get());
+    
+    
+    // Knobs
+    int sliderY = 622;
+    int sliderXShift = 14;
+    int dif = 219;
+
+    slider_Amplitude    = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_AMPLITUDE);
+    slider_Amplitude    ->setRange (0, 1.0, 0);
+    slider_Amplitude    ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
+    slider_Amplitude    ->addListener (this);
+    slider_Amplitude    ->setTextValueSuffix("%");
+    slider_Amplitude    ->setBounds(428+sliderXShift, sliderY, 130, 158);
+    slider_Amplitude    ->setNumDecimalPlacesToDisplay(1);
+    slider_Amplitude    ->setLookAndFeel(&lookAndFeel);
+    
+    addAndMakeVisible(slider_Amplitude.get());
+    
+    
+    slider_Attack       = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_ATTACK);
+    slider_Attack       ->setRange (0, 1.0, 0);
+    slider_Attack       ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
+    slider_Attack       ->addListener (this);
+    slider_Attack       ->setTextValueSuffix("Ms");
+    slider_Attack       ->setBounds(426+(1 * dif)+sliderXShift, sliderY, 130, 158);
+    slider_Attack       ->setNumDecimalPlacesToDisplay(0);
+    slider_Attack       ->setLookAndFeel(&lookAndFeel);
+    addAndMakeVisible(slider_Attack.get());
+    
+    slider_Decay        = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_DECAY);
+    slider_Decay        ->setRange (0, 1.0, 0);
+    slider_Decay        ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
+    slider_Decay        ->addListener (this);
+    slider_Decay        ->setTextValueSuffix("Ms");
+    slider_Decay        ->setBounds(426+(3 * dif)+sliderXShift, sliderY, 130, 158);
+    slider_Decay        ->setNumDecimalPlacesToDisplay(0);
+    slider_Decay        ->setLookAndFeel(&lookAndFeel);
+    addAndMakeVisible(slider_Decay.get());
+    
+    slider_Sustain      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_SUSTAIN);
+    slider_Sustain      ->setRange (0, 1.0, 0);
+    slider_Sustain      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
+    slider_Sustain      ->addListener (this);
+    slider_Sustain      ->setTextValueSuffix("%");
+    slider_Sustain      ->setBounds(426+(2 * dif)+sliderXShift, sliderY, 130, 158);
+    slider_Sustain      ->setNumDecimalPlacesToDisplay(2);
+    slider_Sustain        ->setLookAndFeel(&lookAndFeel);
+    addAndMakeVisible(slider_Sustain.get());
+    
+    slider_Release      = std::make_unique<CustomRotarySlider>(CustomRotarySlider::ROTARY_RELEASE);
+    slider_Release      ->setRange (0, 1.0, 0);
+    slider_Release      ->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78, 28);
+    slider_Release      ->addListener (this);
+    slider_Release      ->setTextValueSuffix("Ms");
+    slider_Release      ->setBounds(426+(4 * dif)+sliderXShift, sliderY, 130, 158);
+    slider_Release      ->setNumDecimalPlacesToDisplay(0);
+    slider_Release      ->setLookAndFeel(&lookAndFeel);
+    addAndMakeVisible(slider_Release.get());
+    
+
+    for (int i = AMPLITUDE_MIN; i <= RELEASE_MAX; i++)
+    {
+        updateMinMaxSettings(i);
+    }
+    
+    wavetableEditorComponent          = new WaveTableOscViewComponent(projectManager, AUDIO_MODE::MODE_FREQUENCY_PLAYER, shortcutRef);
+    wavetableEditorComponent->setBounds(0, 0, 600, 400);
+    
+    // need to update the contents of each editor for each shortcut.....
+    
+    // Hand ownership of the editor to the popup window to avoid double-deletion
+    popupWavetableWindow = std::make_unique<PopupFFTWindow>("Wavetable Editor - Frequency Player", wavetableEditorComponent, Colours::black, DocumentWindow::allButtons, true);
+    popupWavetableWindow ->centreWithSize(600, 400);
+    popupWavetableWindow ->setVisible(false);
+    popupWavetableWindow ->setResizable(true, true);
+
+}
+
+FrequencyPlayerSettingsComponent::~FrequencyPlayerSettingsComponent() { }
+
+
+void FrequencyPlayerSettingsComponent::resized()
+{
+    button_Close->setBounds(1408 * scaleFactor, 275 * scaleFactor, 150 * scaleFactor, 28 * scaleFactor);
+    
+    int shift = 0;
+    int waveY = 578 * scaleFactor;
+    int shiftBack = 20;
+    int mulDivY = 410 * scaleFactor;
+    
+//    button_Default->setBounds(260 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
+    button_Sine->setBounds(260 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
+    button_Triangle->setBounds(500 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
+    button_Square->setBounds(740  * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
+    button_Sawtooth->setBounds(1020  * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
+    
+    shift = 154;
+    button_Wavetable                ->setBounds(1292 * scaleFactor, waveY, 38 * scaleFactor, 38 * scaleFactor);
+    
+    button_WavetableEditor          ->setBounds((1465-shift) * scaleFactor, 536 * scaleFactor, 150 * scaleFactor, 38 * scaleFactor);
+    
+    button_Add->setBounds(609 * scaleFactor, 980 * scaleFactor, 341 * scaleFactor, 84 * scaleFactor);
+    button_ManipulateFreq->setBounds(1054 * scaleFactor, 357 * scaleFactor, 30 * scaleFactor, 30 * scaleFactor);
+    button_Log->setBounds(632 * scaleFactor, 460 * scaleFactor, 30 * scaleFactor, 30 * scaleFactor);
+    button_Multiplication->setBounds((1086-shiftBack) * scaleFactor, mulDivY, 38 * scaleFactor, 38 * scaleFactor);
+    button_Division->setBounds((1317-shiftBack) * scaleFactor, mulDivY, 38 * scaleFactor, 38 * scaleFactor);
+    
+    button_ChooseSpecificFrequency->setBounds(90 * scaleFactor, 360 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
+    
+    button_ChooseRangeOfFrequencies->setBounds(628 * scaleFactor, 360 * scaleFactor, 38 * scaleFactor, 38 * scaleFactor);
+    
+    int playY = 894 * scaleFactor;
+    int fontSize = 24;
+    
+    textEditorRepeat->setBounds((466 - 200) * scaleFactor, playY, 111 * scaleFactor, 35 * scaleFactor);
+    textEditorRepeat->applyFontToAllText(fontSize * scaleFactor);
+    
+    textEditorPause->setBounds((1094-200) * scaleFactor, playY, 111 * scaleFactor, 35 * scaleFactor);
+    textEditorPause->applyFontToAllText(fontSize * scaleFactor);
+    
+    textEditorLength->setBounds((794-200) * scaleFactor, playY, 111 * scaleFactor, 35 * scaleFactor);
+    textEditorLength->applyFontToAllText(fontSize * scaleFactor);
+    
+    textEditorInsertFreq->setBounds(454 * scaleFactor, 360 * scaleFactor, 150 * scaleFactor, 35 * scaleFactor);
+    textEditorInsertFreq->applyFontToAllText(fontSize * scaleFactor);
+    
+    int y = 402 * scaleFactor;
+    textEditorFreqFrom->setBounds(678 * scaleFactor, y, 150 * scaleFactor, 35 * scaleFactor);
+    textEditorFreqFrom->applyFontToAllText(fontSize * scaleFactor);
+    
+    textEditorFreqTo->setBounds(860 * scaleFactor, y, 150 * scaleFactor, 35 * scaleFactor);
+    textEditorFreqTo->applyFontToAllText(fontSize * scaleFactor);
+    
+    textEditorRangeLength->setBounds(890 * scaleFactor, 456 * scaleFactor, 110 * scaleFactor, 35 * scaleFactor);
+    textEditorRangeLength->applyFontToAllText(fontSize * scaleFactor);
+    
+    int multTy= 458 * scaleFactor;
+    int shiftxx = 12;
+    
+    textEditorMultiplication->setBounds((1128-shiftxx) * scaleFactor, multTy, 111 * scaleFactor, 35 * scaleFactor);
+    textEditorMultiplication->applyFontToAllText(fontSize * scaleFactor);
+    
+    textEditorDivision->setBounds((1359-shiftxx) * scaleFactor, multTy, 111 * scaleFactor, 35 * scaleFactor);
+    textEditorDivision->applyFontToAllText(fontSize * scaleFactor);
+    
+    int sliderY = 622 * scaleFactor;
+    int sliderXShift = 14;
+    int dif = 219;
+    
+    slider_Amplitude    ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
+    slider_Amplitude    ->setBounds((428+sliderXShift) * scaleFactor, sliderY, 130 * scaleFactor, 158 * scaleFactor);
+    
+    slider_Attack       ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
+    slider_Attack       ->setBounds((426+(1 * dif)+sliderXShift) * scaleFactor, sliderY, 130 * scaleFactor, 158 * scaleFactor);
+    
+    slider_Decay        ->setBounds((426+(3 * dif)+sliderXShift) * scaleFactor, sliderY, 130 * scaleFactor, 158 * scaleFactor);
+    slider_Decay        ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
+    
+    slider_Sustain      ->setBounds((426+(2 * dif)+sliderXShift) * scaleFactor, sliderY, 130 * scaleFactor, 158 * scaleFactor);
+    slider_Sustain      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
+    
+    slider_Release      ->setBounds((426+(4 * dif)+sliderXShift) * scaleFactor, sliderY, 130 * scaleFactor, 158 * scaleFactor);
+    slider_Release      ->setTextBoxStyle (Slider::TextBoxBelow, false, 78 * scaleFactor, 28 * scaleFactor);
+    
+    comboBoxOutputSelection -> setBounds(1150 * scaleFactor, 894 * scaleFactor, 250 * scaleFactor, 43 * scaleFactor);
+    
+}
+
+void FrequencyPlayerSettingsComponent::paint (Graphics&g)
+{
+    g.setColour(Colours::black);
+    g.setOpacity(0.88);
+    g.fillAll();
+    
+    g.setOpacity(1.0);
+    g.drawImage(mainBackgroundImage, 52 * scaleFactor, 252 * scaleFactor, 1463 * scaleFactor, 847 * scaleFactor, 0, 0, 1463, 847);
+}
+
+void FrequencyPlayerSettingsComponent::updateMinMaxSettings(int paramIndex)
+{
+    switch (paramIndex) {
+        case AMPLITUDE_MIN:
+        {
+            double min = projectManager->getProjectSettingsParameter(AMPLITUDE_MIN);
+            double max = projectManager->getProjectSettingsParameter(AMPLITUDE_MAX);
+            
+            slider_Amplitude->setRange(min, max, 0.1);
+        }
+            break;
+            
+        case AMPLITUDE_MAX:
+        {
+            double min = projectManager->getProjectSettingsParameter(AMPLITUDE_MIN);
+            double max = projectManager->getProjectSettingsParameter(AMPLITUDE_MAX);
+            
+            slider_Amplitude->setRange(min, max, 0.1);
+        }
+            break;
+        case ATTACK_MIN:
+        {
+            double min = projectManager->getProjectSettingsParameter(ATTACK_MIN);
+            double max = projectManager->getProjectSettingsParameter(ATTACK_MAX);
+            
+            slider_Attack->setRange(min, max, 1);
+        }
+            break;
+        case ATTACK_MAX:
+        {
+            double min = projectManager->getProjectSettingsParameter(ATTACK_MIN);
+            double max = projectManager->getProjectSettingsParameter(ATTACK_MAX);
+            
+            slider_Attack->setRange(min, max, 1);
+        }
+            break;
+        case DECAY_MIN:
+        {
+            double min = projectManager->getProjectSettingsParameter(DECAY_MIN);
+            double max = projectManager->getProjectSettingsParameter(DECAY_MAX);
+            
+            slider_Decay->setRange(min, max, 1);
+        }
+            break;
+        case DECAY_MAX:
+        {
+            double min = projectManager->getProjectSettingsParameter(DECAY_MIN);
+            double max = projectManager->getProjectSettingsParameter(DECAY_MAX);
+            
+            slider_Decay->setRange(min, max, 1);
+        }
+            break;
+        case SUSTAIN_MIN:
+        {
+            double min = projectManager->getProjectSettingsParameter(SUSTAIN_MIN);
+            double max = projectManager->getProjectSettingsParameter(SUSTAIN_MAX);
+            
+            slider_Sustain->setRange(min, max, 0.1);
+        }
+            
+        case SUSTAIN_MAX:
+        {
+            double min = projectManager->getProjectSettingsParameter(SUSTAIN_MIN);
+            double max = projectManager->getProjectSettingsParameter(SUSTAIN_MAX);
+            
+            slider_Sustain->setRange(min, max, 0.1);
+        }
+            break;
+        case RELEASE_MIN:
+        {
+            double min = projectManager->getProjectSettingsParameter(RELEASE_MIN);
+            double max = projectManager->getProjectSettingsParameter(RELEASE_MAX);
+            
+            slider_Release->setRange(min, max, 1);
+        }
+            break;
+        case RELEASE_MAX:
+        {
+            double min = projectManager->getProjectSettingsParameter(RELEASE_MIN);
+            double max = projectManager->getProjectSettingsParameter(RELEASE_MAX);
+            
+            slider_Release->setRange(min, max, 1);
+        }
+            break;
+            
+        default: break;
+    }
+}
+
+void FrequencyPlayerSettingsComponent::buttonClicked (Button*button)
+{
+    if (button == button_Close.get())
+    {
+        closeView();
+        
+        popupWavetableWindow->setVisible(false);
+    }
+    else if (button == button_ChooseSpecificFrequency.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_FREQ_SOURCE, false);
+    }
+    else if (button == button_ChooseRangeOfFrequencies.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_FREQ_SOURCE, true);
+    }
+    else if (button == button_Multiplication.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION, false);
+    }
+    else if (button == button_Division.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION, true);
+    }
+    else if (button == button_ManipulateFreq.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MANIPULATE_CHOSEN_FREQUENCY, !button_ManipulateFreq->getToggleState());
+    }
+    else if (button == button_Default.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 0);
+    }
+    else if (button == button_Sine.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 1);
+    }
+    else if (button == button_Triangle.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 2);
+    }
+    else if (button == button_Square.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 3);
+    }
+    else if (button == button_Sawtooth.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 4);
+    }
+    else if (button == button_Wavetable.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE, 5);
+    }
+    else if (button == button_WavetableEditor.get())
+    {
+        if (!popupWavetableWindow ->isVisible())
+        {
+            popupWavetableWindow ->setVisible(true);
+            wavetableEditorComponent->setShortcut(shortcutRef);
+        }
+        else popupWavetableWindow ->setVisible(false);
+    }
+    else if (button == button_Log.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_LOG, !button_Log->getToggleState());
+    }
+    else if (button == button_Add.get())
+    {
+        closeView();
+        
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SHORTCUT_IS_ACTIVE, true);
+        
+        projectManager->logFileWriter->processLog_FrequencyPlayer_Parameters();
+    }
+}
+
+void FrequencyPlayerSettingsComponent::sliderValueChanged (Slider* slider)
+{
+    if (slider == slider_Amplitude.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_AMPLITUDE, slider_Amplitude->getValue());
+    }
+    else if (slider == slider_Attack.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_ATTACK, slider_Attack->getValue());
+    }
+    else if (slider == slider_Decay.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_DECAY, slider_Decay->getValue());
+    }
+    else if (slider == slider_Sustain.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SUSTAIN, slider_Sustain->getValue());
+    }
+    else if (slider == slider_Release.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RELEASE, slider_Release->getValue());
+    }
+}
+
+void FrequencyPlayerSettingsComponent::textEditorReturnKeyPressed (TextEditor&editor)
+{
+    if (&editor == textEditorPause.get())
+    {
+        int value = editor.getText().getIntValue();
+        
+        // bounds check
+        if (value >= PAUSE_MAX) {  value = PAUSE_MAX; }
+        if (value <= PAUSE_MIN) {  value = PAUSE_MIN; }
+        
+        String newVal(value); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_PAUSE, value);
+    }
+    else if (&editor == textEditorRepeat.get())
+    {
+        int value = editor.getText().getIntValue();
+        
+        // bounds check
+        if (value >= REPEAT_MAX) {  value = REPEAT_MAX; }
+        if (value <= REPEAT_MIN) { value = REPEAT_MIN; }
+        
+        String newVal(value); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_REPEATS, value);
+    }
+    else if (&editor == textEditorLength.get())
+    {
+        int value = editor.getText().getIntValue();
+        
+        // bounds check
+        if (value >= LENGTH_MAX) {  value = LENGTH_MAX; }
+        if (value <= LENGTH_MIN) { value = LENGTH_MIN; }
+        
+        String newVal(value); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_DURATION, value);
+    }
+    else if (&editor == textEditorDivision.get())
+    {
+        double value = editor.getText().getDoubleValue();
+        
+        // bounds check
+        if (value >= DIVISION_MAXIMUM) {  value = DIVISION_MAXIMUM; }
+        if (value <= DIVISION_MINIMUM) { value = DIVISION_MINIMUM; }
+        
+//        String newVal(value, 3, false); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_DIVISION_VALUE, value);
+    }
+    else if (&editor == textEditorMultiplication.get())
+    {
+        double value = editor.getText().getDoubleValue();
+        
+        // bounds check
+        if (value >= MULTIPLY_MAXIMUM) {  value = MULTIPLY_MAXIMUM; }
+        if (value <= MULTIPLY_MINIMUM) {  value = MULTIPLY_MINIMUM; }
+        
+//        String newVal(value, 3, false); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_VALUE, value);
+    }
+    else if (&editor == textEditorInsertFreq.get())
+    {
+        double value = editor.getText().getDoubleValue();
+        
+        // bounds check
+        if (value >= FREQUENCY_MAX) {  value = FREQUENCY_MAX; }
+        if (value <= FREQUENCY_MIN) {  value = FREQUENCY_MIN; }
+        
+//        String newVal(value, 3, false); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_CHOOSE_FREQ, value);
+    }
+    else if (&editor == textEditorFreqFrom.get())
+    {
+        double value = editor.getText().getDoubleValue();
+        
+        // bounds check
+        if (value >= FREQUENCY_MAX) {  value = FREQUENCY_MAX; }
+        if (value <= FREQUENCY_MIN) {  value = FREQUENCY_MIN; }
+        
+//        String newVal(value, 3, false); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_MIN, value);
+    }
+    else if (&editor == textEditorFreqTo.get())
+    {
+        double value = editor.getText().getDoubleValue();
+        
+        // bounds check
+        if (value >= FREQUENCY_MAX) {  value = FREQUENCY_MAX; }
+        if (value <= FREQUENCY_MIN) {  value = FREQUENCY_MIN; }
+        
+//        String newVal(value, 3, false); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_MAX, value);
+    }
+    else if (&editor == textEditorRangeLength.get())
+    {
+        float value = editor.getText().getFloatValue();
+        
+        // bounds check
+        if (value >= LENGTH_MAX) {  value = LENGTH_MAX; }
+        if (value <= LENGTH_MIN) {  value = LENGTH_MIN; }
+        
+        String newVal(value); editor.setText(newVal);
+        
+        // send to projectManager
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_LENGTH, value);
+    }
+    
+    Component::unfocusAllComponents();
+}
+
+void FrequencyPlayerSettingsComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    if (comboBoxThatHasChanged == comboBoxOutputSelection.get())
+    {
+        projectManager->setFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_OUTPUT_SELECTION, comboBoxOutputSelection->getSelectedId());
+    }
+}
+
+void FrequencyPlayerSettingsComponent::openView(int shortcut)
+{
+    shortcutRef = shortcut;
+    
+    syncUI();
+    
+    setVisible(true);
+}
+
+void FrequencyPlayerSettingsComponent::closeView()
+{
+    setVisible(false);
+    isSynced = false;
+}
+
+void FrequencyPlayerSettingsComponent::syncUI()
+{
+    // grabs
+    // CHORD_SOURCE
+    //==============================================================
+    bool source = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_FREQ_SOURCE).operator bool();
+    if (source)
+    {
+        button_ChooseSpecificFrequency      ->setToggleState(false, dontSendNotification);
+        button_ChooseRangeOfFrequencies ->setToggleState(true, dontSendNotification);
+    }
+    else
+    {
+        button_ChooseSpecificFrequency      ->setToggleState(true, dontSendNotification);
+        button_ChooseRangeOfFrequencies ->setToggleState(false, dontSendNotification);
+    }
+    //==============================================================
+    
+    slider_Amplitude    ->setValue(projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_AMPLITUDE).operator double());
+    slider_Attack       ->setValue(projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_ATTACK).operator double());
+    slider_Sustain      ->setValue(projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_SUSTAIN).operator double());
+    slider_Decay        ->setValue(projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_DECAY).operator double());
+    slider_Release      ->setValue(projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RELEASE).operator double());
+    
+    // act as toggle between 5 buttons WAVEFORM_TYPE
+    int waveformType =  projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_WAVEFORM_TYPE).operator int();
+    switch (waveformType) {
+        case 0:
+        {
+            button_Default  ->setToggleState(true,  dontSendNotification);
+            button_Sine     ->setToggleState(false, dontSendNotification);
+            button_Triangle ->setToggleState(false, dontSendNotification);
+            button_Square   ->setToggleState(false, dontSendNotification);
+            button_Sawtooth ->setToggleState(false, dontSendNotification);
+            button_Wavetable->setToggleState(false, dontSendNotification);
+        }
+            break;
+        case 1:
+        {
+            button_Default  ->setToggleState(false, dontSendNotification);
+            button_Sine     ->setToggleState(true,  dontSendNotification);
+            button_Triangle ->setToggleState(false, dontSendNotification);
+            button_Square   ->setToggleState(false, dontSendNotification);
+            button_Sawtooth ->setToggleState(false, dontSendNotification);
+            button_Wavetable->setToggleState(false, dontSendNotification);
+        }
+            break;
+        case 2:
+        {
+            button_Default  ->setToggleState(false, dontSendNotification);
+            button_Sine     ->setToggleState(false, dontSendNotification);
+            button_Triangle ->setToggleState(true,  dontSendNotification);
+            button_Square   ->setToggleState(false, dontSendNotification);
+            button_Sawtooth ->setToggleState(false, dontSendNotification);
+            button_Wavetable->setToggleState(false, dontSendNotification);
+        }
+            break;
+        case 3:
+        {
+            button_Default  ->setToggleState(false, dontSendNotification);
+            button_Sine     ->setToggleState(false, dontSendNotification);
+            button_Triangle ->setToggleState(false, dontSendNotification);
+            button_Square   ->setToggleState(true,  dontSendNotification);
+            button_Sawtooth ->setToggleState(false, dontSendNotification);
+            button_Wavetable->setToggleState(false, dontSendNotification);
+        }
+            break;
+        case 4:
+        {
+            button_Default  ->setToggleState(false, dontSendNotification);
+            button_Sine     ->setToggleState(false, dontSendNotification);
+            button_Triangle ->setToggleState(false, dontSendNotification);
+            button_Square   ->setToggleState(false, dontSendNotification);
+            button_Sawtooth ->setToggleState(true,  dontSendNotification);
+            button_Wavetable->setToggleState(false, dontSendNotification);
+        }
+            break;
+        case 5:
+        {
+            button_Default  ->setToggleState(false, dontSendNotification);
+            button_Sine     ->setToggleState(false, dontSendNotification);
+            button_Triangle ->setToggleState(false, dontSendNotification);
+            button_Square   ->setToggleState(false, dontSendNotification);
+            button_Sawtooth ->setToggleState(false, dontSendNotification);
+            button_Wavetable->setToggleState(true, dontSendNotification);
+        }
+            break;
+            
+        default:
+        {
+            button_Default  ->setToggleState(false, dontSendNotification);
+            button_Sine     ->setToggleState(true,  dontSendNotification);
+            button_Triangle ->setToggleState(false, dontSendNotification);
+            button_Square   ->setToggleState(false, dontSendNotification);
+            button_Sawtooth ->setToggleState(false, dontSendNotification);
+            button_Wavetable->setToggleState(false, dontSendNotification);
+        }
+            
+            break;
+    }
+    
+    //NUM_REPEATS
+    
+    int pause = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_PAUSE).operator int();
+    //    comboBoxPause ->setSelectedId(pause);  //NUM_PAUSE
+    
+    bool manipulateFreq = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MANIPULATE_CHOSEN_FREQUENCY).operator bool();
+    button_ManipulateFreq->setToggleState(manipulateFreq, dontSendNotification); //MANIPULATE_CHOSEN_FREQUENCY,
+    
+    bool multOrDivide = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_OR_DIVISION).operator bool();
+    if (multOrDivide)
+    {
+        button_Multiplication   ->setToggleState(false, dontSendNotification);
+        button_Division         ->setToggleState(true, dontSendNotification);
+    }
+    else
+    {
+        button_Multiplication   ->setToggleState(true, dontSendNotification);
+        button_Division         ->setToggleState(false, dontSendNotification);
+    }
+    
+    // Button Log needs im-ple,enting ******
+    bool logBool = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_LOG).operator bool();
+    button_Log->setToggleState(logBool, dontSendNotification);
+    
+    
+    // TextEntryBoxes
+    double insertFreqVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_CHOOSE_FREQ).operator double();
+    String freqString(insertFreqVal, 3, false); /*freqString.append("Hz", 2);*/
+    textEditorInsertFreq->setText(freqString);
+    
+    double minFreqVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_MIN).operator double();
+    String minFreqString(minFreqVal, 3, false); /*minFreqString.append("Hz", 2);*/
+    textEditorFreqFrom->setText(minFreqString);
+    
+    double maxFreqVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_MAX).operator double();
+    String maxFreqString(maxFreqVal, 3, false); /*maxFreqString.append("Hz", 2);*/
+    textEditorFreqTo->setText(maxFreqString);
+    
+    double multVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_MULTIPLY_VALUE).operator double();
+    String multString(multVal, 3, false);
+    textEditorMultiplication->setText(multString);
+    
+    double divVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_DIVISION_VALUE).operator double();
+    String divString(divVal, 3, false);
+    textEditorDivision->setText(divString);
+    
+    int pauseVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_PAUSE).operator int();
+    String pauseString(pauseVal);
+    pauseString.append("ms", 2);
+    textEditorPause->setText(pauseString);
+    
+    int lengthVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_DURATION).operator int();
+    String lengthString(lengthVal);
+    lengthString.append("ms", 2);
+    textEditorLength->setText(lengthString);
+    
+    int numRepeats = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_NUM_REPEATS).operator int();
+    String repeatsString(numRepeats);
+    textEditorRepeat->setText(repeatsString);
+    
+    int rangeLengthVal = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_RANGE_LENGTH).operator int();
+    String lengthString2(rangeLengthVal);
+    lengthString2.append("ms", 2);
+    textEditorRangeLength->setText(lengthString2);
+    
+    int output = projectManager->getFrequencyPlayerParameter(shortcutRef, FREQUENCY_PLAYER_OUTPUT_SELECTION).operator int();
+    comboBoxOutputSelection ->setSelectedId(output); 
+
+    isSynced = true;
+}

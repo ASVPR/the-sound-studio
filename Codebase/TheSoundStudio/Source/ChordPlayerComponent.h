@@ -1,0 +1,216 @@
+/*
+  ==============================================================================
+
+    ChordPlayerComponent.h
+    The Sound Studio
+    Copyright (c) 2026 Ziv Elovitch. All rights reserved.
+    all right reserves... - Ziv Elovitch
+
+    Licensed under the MIT License. See LICENSE file for details.
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "ChordPlayerSettingsComponent.h"
+#include "ShortcutComponent.h"
+#include "ProjectManager.h"
+#include "VisualiserContainerComponent.h"
+#include "CustomLookAndFeel.h"
+#include "CustomProgressBar.h"
+#include "MenuViewInterface.h"
+#include <memory>
+
+class ChordPlayerComponent :
+        public MenuViewInterface,
+        public Button::Listener,
+        public ShortcutComponent::ShortcutListener,
+        public ProjectManager::UIListener,
+        public Timer
+{
+public:
+    ChordPlayerComponent(ProjectManager * pm);
+    ~ChordPlayerComponent();
+
+    void paint (Graphics&) override;
+    void resized() override;
+    
+    void buttonClicked (Button*button)override;
+    void openChordPlayerSettingsForShortcut(int shortcutRef)override;
+    
+    void updateChordPlayerUIParameter(int shortcutRef, int paramIndex)override;
+    
+    void updateSettingsUIParameter(int settingIndex) override;
+    
+    bool keyPressed (const KeyPress& key)override;
+    bool keyStateChanged (bool isKeyDown)override;
+    
+    bool shortcutKeyStateDown[NUM_CHORD_PLAYER_SHORTCUT_KEYS];
+    juce_wchar shortcutKey[NUM_CHORD_PLAYER_SHORTCUT_KEYS];
+    
+    void clearHeldNotes();
+    
+    void timerCallback() override;
+    
+        
+    
+    void closePopups()
+    
+    {
+    
+        visualiserContainerComponent->setPopupsAreVisible(false);
+    
+    }
+    
+    
+    
+    float scaleFactor = 0.5;
+    
+        void setScale(float factor) override
+    
+        {
+    
+            scaleFactor = factor;
+    
+            
+    
+            if (chordPlayerSettingsComponent)
+    
+                chordPlayerSettingsComponent->setScale(scaleFactor);
+    
+            if (containerView_Shortcut)
+    
+                containerView_Shortcut->setScale(scaleFactor);
+    
+            if (visualiserContainerComponent)
+    
+                visualiserContainerComponent->setScale(scaleFactor);
+    
+            
+    
+            lookAndFeel.setScale(scaleFactor);
+    
+            resized(); // Trigger re-layout with new scale
+    
+        }
+    
+        
+    
+private:
+    
+    
+    
+    ProjectManager * projectManager;
+    
+    
+    
+    std::unique_ptr<ChordPlayerSettingsComponent> chordPlayerSettingsComponent;
+    
+    
+    
+    std::unique_ptr<ImageComponent> imageComp;
+    
+    
+    
+    std::unique_ptr<ShortcutContainerComponent> containerView_Shortcut;
+    
+    std::unique_ptr<Component> containerView_Main;
+    
+
+    
+    std::unique_ptr<Component> containerView_Visualiser;
+    
+    
+    
+    std::unique_ptr<ImageButton> button_Record;
+    
+    std::unique_ptr<ImageButton> button_Play;
+    
+    std::unique_ptr<ImageButton> button_Stop;
+    
+    std::unique_ptr<ImageButton> button_Panic;
+    
+    std::unique_ptr<Label> label_Playing;
+    
+    
+    
+    
+    
+    std::unique_ptr<VisualiserContainerComponent2> visualiserContainerComponent;
+    
+    
+    
+    // need checkbox
+    
+    std::unique_ptr<ToggleButton> button_PlayInLoop;
+    
+    std::unique_ptr<ToggleButton> button_PlaySimultaneous;
+    
+    std::unique_ptr<TextButton>   button_Save;
+    
+    std::unique_ptr<TextButton>   button_Load;
+    
+    
+    
+    // needs custom progress bar
+    
+    std::unique_ptr<CustomProgressBar> progressBar;
+    
+    
+    
+    
+    
+    // Image Cache
+    
+    Image imageCheckboxBackground;    Image imageMainContainerBackground;
+    Image imageShortcutContainerBackground;
+    Image imageShortcutBackground;
+    Image imagePanicButton;
+    Image imagePlayButton;
+    Image imageProgresBarFill;
+    Image imageSettingsIcon;
+    Image imageAddIcon;
+    Image imageCloseIcon;
+    Image imageLeftIcon;
+    Image imageRightIcon;
+    Image imageLoopIcon;
+    Image imageMuteIcon;
+    Image imageStopButton;
+    Image imageRecordButton;
+    
+    Image imageFFTMockup;
+    Image imageColorSpectrumMockup;
+    Image imageOctaveSpectrumMockup;
+
+    // UI Layout Variables - matching FrequencyPlayerComponent design
+    int mainContainerHeight = 1096;
+    int shortcutHeight      = 344;
+    int shortcutWidth       = 1566;
+
+    int recordLeftMargin    = 102;
+    int recordTopMargin     = 835;
+    int recordWidth         = 95;
+    int recordHeight        = 95;
+
+    int playingLeftMargin   = 219;
+    int playingTopMargin    = 799;
+
+    int playLeftMargin      = 521;
+    int playTopMargin       = 970;
+    int playWidth           = 249;
+    int playHeight          = 61;
+
+    int stopLeftMargin      = 802;
+    int stopTopMargin       = 970;
+
+    int panicLeftMargin     = 1360;
+    int panicTopMargin      = 910;
+    int panicWidth          = 180;
+    int panicHeight         = 180;
+
+    CustomLookAndFeel lookAndFeel;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChordPlayerComponent)
+};
